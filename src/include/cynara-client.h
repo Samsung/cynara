@@ -86,7 +86,7 @@ typedef struct cynara_configuration cynara_configuration;
  *
  * \return CYNARA_API_SUCCESS on success, or error code on error.
  */
-int cynara_initialize (cynara **pp_cynara, const cynara_configuration *p_conf);
+int cynara_initialize(cynara **pp_cynara, const cynara_configuration *p_conf);
 
 /**
  * \par Description:

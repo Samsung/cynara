@@ -22,6 +22,7 @@ Summary:    Cynara - client library
 Requires:   cynara = %{version}-%{release}
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
+BuildRequires: pkgconfig(security-server)
 
 %description -n libcynara-client
 client library for checking policies

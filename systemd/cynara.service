@@ -1,0 +1,11 @@
+[Unit]
+Description=Start the cynara service
+
+[Service]
+Type=notify
+ExecStart=/usr/bin/cynara
+Sockets=cynara.socket
+Sockets=cynara-admin.socket
+
+[Install]
+WantedBy=multi-user.target

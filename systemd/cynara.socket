@@ -1,0 +1,14 @@
+[Socket]
+ListenStream=/run/cynara/cynara.socket
+SocketMode=0777
+SmackLabelIPIn=@
+SmackLabelIPOut=@
+
+Service=cynara.service
+
+[Unit]
+Wants=cynara.target
+Before=cynara.target
+
+[Install]
+WantedBy=sockets.target

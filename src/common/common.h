@@ -25,5 +25,19 @@
 #define COMMON_H
 
 #include "attributes/attributes.h"
+#include "attributes/debug_attributes.h"
+
+#include "result/Result.h"
+
+#include "types/ClientId.h"
+#include "types/ExtendedPolicyType.h"
+#include "types/Policy.h"
+#include "types/PolicyBucket.h"
+#include "types/PolicyKey.h"
+#include "types/PolicyType.h"
+#include "types/PolicyTypeExtension.h"
+#include "types/PolicyVector.h"
+#include "types/PrivilegeId.h"
+#include "types/UserId.h"
 
 #endif /* COMMON_H */

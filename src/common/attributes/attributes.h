@@ -20,10 +20,10 @@
  * @brief       This file defines common used attributes
  */
 
-#ifndef ATTRIBUTES_ATTRIBUTES_H
-#define ATTRIBUTES_ATTRIBUTES_H
+#ifndef CYNARA_COMMON_ATTRIBUTES_ATTRIBUTES_H
+#define CYNARA_COMMON_ATTRIBUTES_ATTRIBUTES_H
 
 #define CYNARA_API __attribute__((visibility("default")))
 #define UNUSED __attribute__((unused))
 
-#endif /* ATTRIBUTES_ATTRIBUTES_H */
+#endif /* CYNARA_COMMON_ATTRIBUTES_ATTRIBUTES_H */

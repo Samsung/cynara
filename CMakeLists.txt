@@ -28,9 +28,9 @@ INCLUDE(FindPkgConfig)
 ############################# compiler flags ##################################
 
 SET(CMAKE_C_FLAGS_PROFILING    "-g -O0 -pg")
-SET(CMAKE_CXX_FLAGS_PROFILING  "-g -std=c++0x -O0 -pg")
+SET(CMAKE_CXX_FLAGS_PROFILING  "-g -std=c++0x -O0 -pg -Wp,-U_FORTIFY_SOURCE")
 SET(CMAKE_C_FLAGS_DEBUG        "-g -O0 -ggdb")
-SET(CMAKE_CXX_FLAGS_DEBUG      "-g -std=c++0x -O0 -ggdb")
+SET(CMAKE_CXX_FLAGS_DEBUG      "-g -std=c++0x -O0 -ggdb -Wp,-U_FORTIFY_SOURCE")
 SET(CMAKE_C_FLAGS_RELEASE      "-g -O2")
 SET(CMAKE_CXX_FLAGS_RELEASE    "-g -std=c++0x -O2")
 SET(CMAKE_C_FLAGS_CCOV         "-g -O2 --coverage")

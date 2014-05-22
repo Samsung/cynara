@@ -18,6 +18,7 @@
 
 PKG_CHECK_MODULES(CYNARA_DEP
     libsystemd-daemon
+    libsystemd-journal
     REQUIRED
     )
 

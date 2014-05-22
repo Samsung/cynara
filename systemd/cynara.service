@@ -1,11 +1,24 @@
 [Unit]
-Description=Start the cynara service
+Description=Cynara service
 
 [Service]
-Type=notify
 ExecStart=/usr/bin/cynara
+
+Type=notify
+
+KillMode=process
+TimeoutStopSec=3
+Restart=always
+
 Sockets=cynara.socket
 Sockets=cynara-admin.socket
+
+UMask=0000
+User=cynara
+Group=cynara
+NoNewPrivileges=true
+
+#Environment="CYNARA_LOG_LEVEL=LOG_DEBUG"
 
 [Install]
 WantedBy=multi-user.target

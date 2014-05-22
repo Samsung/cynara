@@ -11,6 +11,7 @@ Source1003:    libcynara-admin.manifest
 BuildRequires: cmake
 BuildRequires: zip
 BuildRequires: pkgconfig(libsystemd-daemon)
+BuildRequires: pkgconfig(libsystemd-journal)
 %{?systemd_requires}
 
 %description
@@ -76,7 +77,7 @@ export FFLAGS="$FFLAGS -DTIZEN_DEBUG_ENABLE"
 export LDFLAGS+="-Wl,--rpath=%{_libdir}"
 
 %cmake . -DVERSION=%{version} \
-        -DCMAKE_BUILD_TYPE=%{?build_type:%build_type}%{!?build_type:RELEASE} \
+        -DCMAKE_BUILD_TYPE=%{?build_type:%build_type}%{!?build_type:DEBUG} \
         -DCMAKE_VERBOSE_MAKEFILE=ON
 make %{?jobs:-j%jobs}
 
@@ -84,23 +85,36 @@ make %{?jobs:-j%jobs}
 rm -rf %{buildroot}
 %make_install
 
-mkdir -p %{buildroot}/usr/lib/systemd/system/multi-user.target.wants
-ln -s ../cynara.service %{buildroot}/usr/lib/systemd/system/multi-user.target.wants/cynara.service
 mkdir -p %{buildroot}/usr/lib/systemd/system/sockets.target.wants
 ln -s ../cynara.socket %{buildroot}/usr/lib/systemd/system/sockets.target.wants/cynara.socket
 ln -s ../cynara-admin.socket %{buildroot}/usr/lib/systemd/system/sockets.target.wants/cynara-admin.socket
 
 %post
+USER=%{name}
+GROUP=%{name}
+
+### Add file capabilities if needed
+### setcap/getcap binary are useful. To use them you must install libcap and libcap-tools packages
+### In such case uncomment Requires with those packages
+
 systemctl daemon-reload
+
 if [ $1 = 1 ]; then
-    # installation
-    systemctl start cynara.service
+
+    id -g $GROUP 2> /dev/null
+    if [ $? -eq 1 ]; then
+        groupadd $GROUP
+    fi
+
+    id -u $USER 2> /dev/null
+    if [ $? -eq 1 ]; then
+    useradd -m $USER
+    fi
+
+    systemctl enable %{name}.service
 fi
 
-if [ $1 = 2 ]; then
-    # update
-    systemctl restart cynara.service
-fi
+systemctl restart %{name}.service
 
 /sbin/ldconfig
 
@@ -111,10 +125,14 @@ if [ $1 = 0 ]; then
 fi
 
 %postun
+USER=%{name}
+GROUP=%{name}
 if [ $1 = 0 ]; then
-    # unistall
+    userdel -r $USER 2> /dev/null
+    groupdel $GROUP 2> /dev/null
     systemctl daemon-reload
 fi
+
 /sbin/ldconfig
 
 %post -n libcynara-client -p /sbin/ldconfig
@@ -138,7 +156,6 @@ fi
 %license LICENSE
 %attr(755,root,root) /usr/bin/cynara
 %{_libdir}/libcynara-commons.so*
-%attr(-,root,root) /usr/lib/systemd/system/multi-user.target.wants/cynara.service
 %attr(-,root,root) /usr/lib/systemd/system/cynara.service
 %attr(-,root,root) /usr/lib/systemd/system/cynara.target
 %attr(-,root,root) /usr/lib/systemd/system/sockets.target.wants/cynara.socket

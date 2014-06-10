@@ -14,21 +14,21 @@
  *    limitations under the License.
  */
 /*
- * @file        PolicBucketId.h
+ * @file        fakeinmemorystoragebackend.h
  * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @version     1.0
- * @brief       Definition of Cynara::PolicyBucketId type
+ * @brief       Mock of InMemoryStorageBackend
  */
-#ifndef POLICBUCKETID_H_
-#define POLICBUCKETID_H_
 
-#include <string>
+#ifndef FAKEINMEMORYSTORAGEBACKEND_H_
+#define FAKEINMEMORYSTORAGEBACKEND_H_
 
-namespace Cynara {
+#include "service/storage/InMemoryStorageBackend.h"
 
-typedef std::string PolicyBucketId;
+class FakeInMemoryStorageBackend : public Cynara::InMemoryStorageBackend {
+public:
+    MOCK_METHOD0(buckets, Cynara::InMemoryStorageBackend::Buckets&());
+};
 
-}  // namespace Cynara
 
-
-#endif /* POLICBUCKETID_H_ */
+#endif /* FAKEINMEMORYSTORAGEBACKEND_H_ */

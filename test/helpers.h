@@ -14,21 +14,21 @@
  *    limitations under the License.
  */
 /*
- * @file        PolicBucketId.h
+ * @file        helpers.h
  * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @version     1.0
- * @brief       Definition of Cynara::PolicyBucketId type
+ * @brief       Helper functions for tests
  */
-#ifndef POLICBUCKETID_H_
-#define POLICBUCKETID_H_
 
-#include <string>
+#ifndef HELPERS_H
+#define HELPERS_H
 
-namespace Cynara {
+#include "common/types/PolicyKey.h"
 
-typedef std::string PolicyBucketId;
+namespace Helpers {
 
-}  // namespace Cynara
+Cynara::PolicyKey generatePolicyKey(const std::string &sufix = "");
 
+}
 
-#endif /* POLICBUCKETID_H_ */
+#endif // HELPERS_H

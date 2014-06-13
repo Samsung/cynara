@@ -16,6 +16,7 @@
 /*
  * @file        Storage.h
  * @author      Lukasz Wojciechowski <l.wojciechowski@partner.samsung.com>
+ * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @version     1.0
  * @brief       This file is the implementation file of log system
  */
@@ -23,27 +24,43 @@
 #ifndef CYNARA_SERVICE_STORAGE_STORAGE_H
 #define CYNARA_SERVICE_STORAGE_STORAGE_H
 
-#include <common.h>
+#include "types/pointers.h"
+#include "types/PolicyBucketId.h"
+#include "types/PolicyResult.h"
+#include "types/PolicyKey.h"
+
+#include <memory>
+#include <vector>
+#include <tuple>
+
+namespace Cynara {
+
+class StorageBackend;
+class PolicyBucket;
 
 class Storage
 {
 public:
-//CHECKING policies
-//checks policies matching key and returns minimal policy type as result
-	Result checkPolicy(const PolicyKey& key, ExtendedPolicyType& result);
+    // TODO: These tuples are ugly -- refactorize
+    typedef std::tuple<PolicyPtr, PolicyBucketId> PolicyPolicyBucket;
+    typedef std::tuple<PolicyKey, PolicyBucketId> PolicyKeyBucket;
 
-//ADMINISTRATION of polices
-//insert (or update) new policies defined in policyVector into bucket
-	Result insertOrUpdatePolicy(const PolicyVector& policyVector, const PolicyBucket& bucket = defaultPolicyBucket);
-//insert (or update) new bucket (newBucket) in bucket for key with defaultPolicyKey
-	Result insertOrUpdateBucket(const PolicyBucket& newBucket, const PolicyKey& key, const ExtendedPolicyType& defaultBucketPolicy, const PolicyBucket& bucket = defaultPolicyBucket);
-//remove single policy rule
-	Result deletePolicy(const PolicyKey& policyKey, const PolicyBucket& bucket = defaultPolicyBucket);
-//remove bucket and all policy rules related (inside or pointing to) bucket
-	Result deleteBucket(const PolicyBucket& bucket);
+    Storage(StorageBackend &backend) : m_backend(backend) {}
 
-//listing will be defined later
-//	Result listPolicy(const PolicyKey& policyKey, PolicyVector& result);
+    PolicyResult checkPolicy(const PolicyKey &key);
+
+    void insertPolicies(const std::vector<PolicyPolicyBucket> &policies);
+    void createBucket(const PolicyBucketId &newBucketId, const PolicyResult &defaultBucketPolicy);
+    void deletePolicies(const std::vector<PolicyKeyBucket> &policies);
+    void deleteBucket(const PolicyBucketId &bucketId);
+
+protected:
+    PolicyResult minimalPolicy(const PolicyBucket &bucket);
+
+private:
+    StorageBackend &m_backend; // backend strategy
 };
+
+} // namespace Cynara
 
 #endif /* CYNARA_SERVICE_STORAGE_STORAGE_H */

@@ -14,24 +14,24 @@
  *    limitations under the License.
  */
 /*
- * @file        PolicyType.h
+ * @file        PolicyCollection.h
  * @author      Lukasz Wojciechowski <l.wojciechowski@partner.samsung.com>
  * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @version     1.0
- * @brief       This file defines PolicyType e.g. ALLOW or DENY
+ * @brief       This file defines a collection of policies
  */
 
-#ifndef CYNARA_COMMON_TYPES_POLICYTYPE_H
-#define CYNARA_COMMON_TYPES_POLICYTYPE_H
+#ifndef CYNARA_COMMON_TYPES_POLICYCOLLECTION_H
+#define CYNARA_COMMON_TYPES_POLICYCOLLECTION_H
+
+#include "types/pointers.h"
+
+#include <vector>
 
 namespace Cynara {
 
-enum class PolicyType : std::uint16_t {
-    DENY = 0,
-    BUCKET = 0xFFFE,
-    ALLOW = 0xFFFF
-};
+typedef std::vector<PolicyPtr> PolicyCollection;
 
-}  // namespace Cynara
+} // namespace Cynara
 
-#endif /* CYNARA_COMMON_TYPES_POLICYTYPE_H */
+#endif /* CYNARA_COMMON_TYPES_POLICYCOLLECTION_H     */

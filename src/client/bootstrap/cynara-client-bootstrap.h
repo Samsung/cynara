@@ -32,8 +32,8 @@ class CynaraClientBootstrap : public CynaraClientInterface {
 public:
     CynaraClientBootstrap();
     virtual ~CynaraClientBootstrap();
-    virtual cynara_api_result check(const std::string& client, const std::string& session,
-        const std::string& user, const std::string& privilege);
+    virtual cynara_api_result check(const std::string &client, const std::string &session,
+        const std::string &user, const std::string &privilege);
 };
 
 #endif /* CYNARA_CLIENT_BOOTSTRAP_H */

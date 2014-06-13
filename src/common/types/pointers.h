@@ -14,24 +14,24 @@
  *    limitations under the License.
  */
 /*
- * @file        PolicyType.h
- * @author      Lukasz Wojciechowski <l.wojciechowski@partner.samsung.com>
+ * @file        pointers.h
  * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @version     1.0
- * @brief       This file defines PolicyType e.g. ALLOW or DENY
+ * @brief       Typedefs for smart pointers of common types
  */
 
-#ifndef CYNARA_COMMON_TYPES_POLICYTYPE_H
-#define CYNARA_COMMON_TYPES_POLICYTYPE_H
+#ifndef POINTERS_H_
+#define POINTERS_H_
+
+#include <memory>
 
 namespace Cynara {
 
-enum class PolicyType : std::uint16_t {
-    DENY = 0,
-    BUCKET = 0xFFFE,
-    ALLOW = 0xFFFF
-};
+class Policy;
 
-}  // namespace Cynara
+typedef std::shared_ptr<Policy> PolicyPtr;
 
-#endif /* CYNARA_COMMON_TYPES_POLICYTYPE_H */
+
+} /* namespace Cynara */
+
+#endif /* POINTERS_H_ */

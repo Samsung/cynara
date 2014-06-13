@@ -16,59 +16,109 @@
 /*
  * @file        Storage.cpp
  * @author      Lukasz Wojciechowski <l.wojciechowski@partner.samsung.com>
+ * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @version     1.0
  * @brief       This file implements policy rules storage procedures
  */
 
 #include "Storage.h"
+#include "StorageBackend.h"
+#include "types/pointers.h"
+#include "types/PolicyType.h"
+#include "exceptions/NotImplementedException.h"
+#include "exceptions/BucketAlreadyExistsException.h"
+#include "exceptions/DefaultBucketDeletionException.h"
 
-Result Storage::checkPolicy(const PolicyKey& key, ExtendedPolicyType& result)
-{
-	//todo
-	TODO_USE_ME(key);
-	TODO_USE_ME(result);
-	return RESULT_OK;
+#include <iostream>
+#include <memory>
+
+
+namespace Cynara {
+
+PolicyResult Storage::checkPolicy(const PolicyKey &key) {
+    auto policies = m_backend.searchDefaultBucket(key);
+    return minimalPolicy(policies);
+};
+
+PolicyResult Storage::minimalPolicy(const PolicyBucket &bucket) {
+    bool hasMinimal = false;
+    PolicyResult minimal = bucket.defaultPolicy();
+
+    const auto &policies = bucket.policyCollection();
+
+    auto proposeMinimal = [&minimal, &hasMinimal](const PolicyResult &candidate) {
+        if(hasMinimal == false) {
+            minimal = candidate;
+        } else if(candidate < minimal) {
+            minimal = candidate;
+        }
+        hasMinimal = true;
+    };
+
+    for(const auto &policyRecord : policies) {
+        const auto &policyResult = policyRecord->result();
+
+        switch(policyResult.policyType()) {
+        case PolicyType::DENY:
+            return policyResult; // Do not expect lower value than DENY
+            break;
+        case PolicyType::BUCKET: {
+                auto bucketResults = m_backend.searchBucket(policyResult.metaData(),
+                        policyRecord->key());
+                auto minimumOfBucket = minimalPolicy(bucketResults);
+                proposeMinimal(minimumOfBucket);
+                continue;
+            }
+            break;
+        case PolicyType::ALLOW:
+        default:
+            break;
+        }
+
+        proposeMinimal(policyResult);
+    }
+
+    return minimal;
 }
 
-Result Storage::insertOrUpdatePolicy(const PolicyVector& policyVector, const PolicyBucket& bucket)
-{
-	//todo
-	TODO_USE_ME(policyVector);
-	TODO_USE_ME(bucket);
-	return RESULT_OK;
+void Storage::insertPolicies(const std::vector<PolicyPolicyBucket> &policies) {
+    for(const auto &policyTuple : policies) {
+        PolicyBucketId bucketId;
+        PolicyPtr policyPtr;
+        std::tie(policyPtr, bucketId) = policyTuple;
+        auto existingPolicies = m_backend.searchBucket(bucketId, policyPtr->key());
+        for(auto existingPolicy : existingPolicies.policyCollection()) {
+            m_backend.deletePolicy(bucketId, existingPolicy->key());
+        }
+        m_backend.insertPolicy(bucketId, policyPtr);
+    }
 }
 
-Result Storage::insertOrUpdateBucket(const PolicyBucket& newBucket, const PolicyKey& key, const ExtendedPolicyType& defaultBucketPolicy, const PolicyBucket& bucket)
-{
-	//todo
-	TODO_USE_ME(newBucket);
-	TODO_USE_ME(key);
-	TODO_USE_ME(defaultBucketPolicy);
-	TODO_USE_ME(bucket);
-	return RESULT_OK;
+void Storage::createBucket(const PolicyBucketId &newBucketId, const PolicyResult &defaultBucketPolicy) {
+    // TODO: Check if bucket already exists
+
+    if (newBucketId == defaultPolicyBucketId) {
+        throw BucketAlreadyExistsException(newBucketId);
+    }
+
+    m_backend.createBucket(newBucketId, defaultBucketPolicy);
 }
 
-Result Storage::deletePolicy(const PolicyKey& policyKey, const PolicyBucket& bucket)
-{
-	//todo
-	TODO_USE_ME(policyKey);
-	TODO_USE_ME(bucket);
-	return RESULT_OK;
+void Storage::deleteBucket(const PolicyBucketId &bucketId) {
+    // TODO: Check if bucket exists
+
+    if (bucketId == defaultPolicyBucketId) {
+        throw DefaultBucketDeletionException();
+    }
+
+    m_backend.deleteLinking(bucketId);
+    m_backend.deleteBucket(bucketId);
 }
 
-Result Storage::deleteBucket(const PolicyBucket& bucket)
-{
-	//todo
-	TODO_USE_ME(bucket);
-	return RESULT_OK;
+void Storage::deletePolicies(const std::vector<PolicyKeyBucket> &policies) {
+    for(const auto &policy : policies) {
+        m_backend.deletePolicy(std::get<1>(policy), std::get<0>(policy));
+    }
 }
 
-/*
-Result Storage::listPolicy(const PolicyKey& policyKey, PolicyVector& result)
-{
-	//todo
-	TODO_USE_ME(policyKey);
-	TODO_USE_ME(result);;
-	return RESULT_OK;
-}
-*/
+} // namespace Cynara

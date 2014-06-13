@@ -14,24 +14,23 @@
  *    limitations under the License.
  */
 /*
- * @file        PolicyType.h
- * @author      Lukasz Wojciechowski <l.wojciechowski@partner.samsung.com>
+ * @file        DefaultBucketDeletionException.h
  * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @version     1.0
- * @brief       This file defines PolicyType e.g. ALLOW or DENY
+ * @brief       Implementation of DefaultBucketDeletionException
  */
 
-#ifndef CYNARA_COMMON_TYPES_POLICYTYPE_H
-#define CYNARA_COMMON_TYPES_POLICYTYPE_H
+#ifndef DEFAULTBUCKETDELETIONEXCEPTION_H
+#define DEFAULTBUCKETDELETIONEXCEPTION_H
+
+#include <exception>
 
 namespace Cynara {
 
-enum class PolicyType : std::uint16_t {
-    DENY = 0,
-    BUCKET = 0xFFFE,
-    ALLOW = 0xFFFF
+class DefaultBucketDeletionException : public std::exception {
+
 };
 
-}  // namespace Cynara
+} /* namespace Cynara */
 
-#endif /* CYNARA_COMMON_TYPES_POLICYTYPE_H */
+#endif // DEFAULTBUCKETDELETIONEXCEPTION_H

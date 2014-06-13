@@ -16,6 +16,7 @@
 /*
  * @file        PolicyBucket.h
  * @author      Lukasz Wojciechowski <l.wojciechowski@partner.samsung.com>
+ * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @version     1.0
  * @brief       This file defines PolicyBucket type - a policy aggregation
                 entity name
@@ -24,9 +25,56 @@
 #ifndef CYNARA_COMMON_TYPES_POLICYBUCKET_H
 #define CYNARA_COMMON_TYPES_POLICYBUCKET_H
 
+#include "PolicyCollection.h"
+#include "PolicyKey.h"
+#include "Policy.h"
+#include "exceptions/NotImplementedException.h"
+#include "types/pointers.h"
+#include "types/PolicyType.h"
+#include "PolicyBucketId.h"
+
 #include <string>
-typedef std::string PolicyBucket;
+#include <memory>
+#include <algorithm>
 
-const PolicyBucket defaultPolicyBucket("");
+namespace Cynara {
 
+// TODO: Move this const somewhere else
+const PolicyBucketId defaultPolicyBucketId("");
+
+class PolicyBucket {
+public:
+
+    PolicyBucket() : m_defaultPolicy(PolicyResult(PolicyType::DENY)) {}
+
+    PolicyBucket filtered(const PolicyKey &key) const;
+
+private:
+    PolicyCollection m_policyCollection;
+    PolicyResult m_defaultPolicy;
+    PolicyBucketId m_id;
+
+public:
+    const PolicyResult &defaultPolicy() const {
+        return m_defaultPolicy;
+    }
+
+    const PolicyBucketId &id() const {
+        return m_id;
+    }
+
+    PolicyCollection &policyCollection() {
+        return m_policyCollection;
+    }
+
+    const PolicyCollection &policyCollection() const {
+        return m_policyCollection;
+    }
+
+    void setDefaultPolicy(const PolicyResult &defaultPolicy) {
+        m_defaultPolicy = defaultPolicy;
+    }
+};
+
+} /* namespace Cynara */
 #endif /* CYNARA_COMMON_TYPES_POLICYBUCKET_H */

@@ -29,8 +29,8 @@ CynaraClientBootstrap :: CynaraClientBootstrap() {
 CynaraClientBootstrap :: ~CynaraClientBootstrap() {
 }
 
-cynara_api_result CynaraClientBootstrap :: check(const std::string& client,
-    const std::string& session UNUSED, const std::string& user UNUSED, const std::string& privilege)
+cynara_api_result CynaraClientBootstrap :: check(const std::string &client,
+    const std::string &session UNUSED, const std::string &user UNUSED, const std::string &privilege)
 {
     int is_enabled = 0;
 

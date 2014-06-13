@@ -14,23 +14,24 @@
  *    limitations under the License.
  */
 /*
- * @file        ExtendedPolicyType.h
- * @author      Lukasz Wojciechowski <l.wojciechowski@partner.samsung.com>
+ * @file        NotImplementedException.h
+ * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @version     1.0
- * @brief       This file defines ExtendedPolicyType - used to describe policy
-                type with extended data (that may be used by plugins)
+ * @brief       Implementation of NotImplementedException
  */
 
-#ifndef CYNARA_COMMON_TYPES_EXTENDEDPOLICYTYPE_H
-#define CYNARA_COMMON_TYPES_EXTENDEDPOLICYTYPE_H
+#ifndef NOTIMPLEMENTEDEXCEPTION_H_
+#define NOTIMPLEMENTEDEXCEPTION_H_
 
-#include "PolicyType.h"
-#include "PolicyTypeExtension.h"
+#include <exception>
 
-struct ExtendedPolicyType
-{
-	PolicyType m_type;
-	PolicyTypeExtension m_ext;
+namespace Cynara {
+
+class NotImplementedException : public std::exception {
+
 };
 
-#endif /* CYNARA_COMMON_TYPES_EXTENDEDPOLICYTYPE_H */
+
+}
+
+#endif /* NOTIMPLEMENTEDEXCEPTION_H_ */

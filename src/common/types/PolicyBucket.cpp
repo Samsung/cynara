@@ -14,24 +14,29 @@
  *    limitations under the License.
  */
 /*
- * @file        PolicyType.h
- * @author      Lukasz Wojciechowski <l.wojciechowski@partner.samsung.com>
+ * @file        PolicyBucket.cpp
  * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @version     1.0
- * @brief       This file defines PolicyType e.g. ALLOW or DENY
+ * @brief       Implementation of Cynara::PolicyBucket methods
  */
 
-#ifndef CYNARA_COMMON_TYPES_POLICYTYPE_H
-#define CYNARA_COMMON_TYPES_POLICYTYPE_H
+
+#include "PolicyBucket.h"
 
 namespace Cynara {
 
-enum class PolicyType : std::uint16_t {
-    DENY = 0,
-    BUCKET = 0xFFFE,
-    ALLOW = 0xFFFF
-};
+PolicyBucket PolicyBucket::filtered(const PolicyKey &key) const {
+    PolicyBucket result;
+
+    const auto &policies = policyCollection();
+    std::copy_if(policies.begin(), policies.end(), std::back_inserter(result.policyCollection()),
+        [=] (PolicyCollection::value_type policy) {
+            return policy->key() == key;
+    });
+
+    // Inherit original policy
+    result.setDefaultPolicy(defaultPolicy());
+    return result;
+}
 
 }  // namespace Cynara
-
-#endif /* CYNARA_COMMON_TYPES_POLICYTYPE_H */

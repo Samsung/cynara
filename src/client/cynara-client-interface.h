@@ -31,8 +31,8 @@ class CynaraClientInterface {
 public:
     virtual ~CynaraClientInterface() {
     }
-    virtual cynara_api_result check(const std::string& client, const std::string& session,
-        const std::string& user, const std::string& privilege) = 0;
+    virtual cynara_api_result check(const std::string &client, const std::string &session,
+        const std::string &user, const std::string &privilege) = 0;
 };
 
 #endif /* CYNARA_CLIENT_INTERFACE_H */

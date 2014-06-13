@@ -14,24 +14,32 @@
  *    limitations under the License.
  */
 /*
- * @file        PolicyType.h
- * @author      Lukasz Wojciechowski <l.wojciechowski@partner.samsung.com>
+ * @file        BucketNotExistsException.h
  * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @version     1.0
- * @brief       This file defines PolicyType e.g. ALLOW or DENY
+ * @brief       Implementation of BucketNotExistsException
  */
 
-#ifndef CYNARA_COMMON_TYPES_POLICYTYPE_H
-#define CYNARA_COMMON_TYPES_POLICYTYPE_H
+#ifndef BUCKETNOTEXISTSEXCEPTION_H_
+#define BUCKETNOTEXISTSEXCEPTION_H_
+
+#include "types/PolicyBucketId.h"
+
+#include <exception>
 
 namespace Cynara {
 
-enum class PolicyType : std::uint16_t {
-    DENY = 0,
-    BUCKET = 0xFFFE,
-    ALLOW = 0xFFFF
+class BucketNotExistsException : public std::exception {
+public:
+    BucketNotExistsException(const PolicyBucketId &bucketId) : m_bucketId(bucketId) {
+
+    }
+
+private:
+    PolicyBucketId m_bucketId;
 };
 
-}  // namespace Cynara
+} /* namespace Cynara */
 
-#endif /* CYNARA_COMMON_TYPES_POLICYTYPE_H */
+
+#endif /* BUCKETNOTEXISTSEXCEPTION_H_ */

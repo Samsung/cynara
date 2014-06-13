@@ -27,7 +27,7 @@
 #include <bootstrap/cynara-client-bootstrap.h>
 
 struct cynara {
-    CynaraClientInterface* impl;
+    CynaraClientInterface *impl;
 
     cynara(CynaraClientInterface *_impl) : impl(_impl) {
     }
@@ -44,7 +44,7 @@ int cynara_initialize(cynara **pp_cynara, const cynara_configuration *p_conf UNU
 
     try {
         *pp_cynara = new cynara(new CynaraClientBootstrap);
-    } catch (std::bad_alloc& ex) {
+    } catch (std::bad_alloc &ex) {
         return cynara_api_result::CYNARA_API_OUT_OF_MEMORY;
     }
 

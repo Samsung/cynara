@@ -16,6 +16,7 @@
 /*
  * @file        Policy.h
  * @author      Lukasz Wojciechowski <l.wojciechowski@partner.samsung.com>
+ * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @version     1.0
  * @brief       This file defines Policy type - used to describe single policy
                 rule identified by policy key
@@ -25,12 +26,44 @@
 #define CYNARA_COMMON_TYPES_POLICY_H
 
 #include "PolicyKey.h"
-#include "ExtendedPolicyType.h"
+#include "PolicyResult.h"
+#include "types/pointers.h"
+#include "types/PolicyType.h"
+#include "types/PolicyBucketId.h"
 
-struct Policy
+#include <memory>
+
+namespace Cynara {
+
+class Policy
 {
-	PolicyKey m_key;
-	ExtendedPolicyType m_extType;
+public:
+    Policy(const PolicyKey &key, const PolicyResult &result) :
+        m_key(key), m_result(result) {}
+
+    static PolicyPtr simpleWithKey(const PolicyKey &key, const PolicyType &type) {
+        return std::make_shared<Policy>(key, PolicyResult(type));
+    }
+
+    static PolicyPtr bucketWithKey(const PolicyKey &key, const PolicyBucketId &bucketId) {
+        auto result = PolicyResult(PolicyType::BUCKET, bucketId);
+        return std::make_shared<Policy>(key, result);
+    }
+
+private:
+    PolicyKey m_key;
+    PolicyResult m_result;
+
+public:
+    const PolicyKey &key() const {
+        return m_key;
+    }
+
+    const PolicyResult &result() const {
+        return m_result;
+    }
 };
+
+} // namespace Cynara
 
 #endif /* CYNARA_COMMON_TYPES_POLICY_H */

@@ -16,8 +16,9 @@
 /*
  * @file        PolicyKey.h
  * @author      Lukasz Wojciechowski <l.wojciechowski@partner.samsung.com>
+ * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @version     1.0
- * @brief       This file defines PolicyKey - tripple that defines a single
+ * @brief       This file defines PolicyKey - triple, which defines a single
                 policy rule
  */
 
@@ -28,11 +29,27 @@
 #include "UserId.h"
 #include "PrivilegeId.h"
 
+#include <tuple>
+
+namespace Cynara {
+
 struct PolicyKey
 {
-	ClientId m_client;
-	UserId m_user;
-	PrivilegeId m_privilege;
+public:
+    PolicyKey() {};
+    PolicyKey(const ClientId &clientId, const UserId &userId, const PrivilegeId &privilegeId)
+        : m_client(clientId), m_user(userId), m_privilege(privilegeId) {};
+
+    bool operator==(const PolicyKey &other) const {
+        return std::tie(m_client, m_user, m_privilege)
+            == std::tie(other.m_client, other.m_user, other.m_privilege);
+    }
+
+private:
+    ClientId m_client;
+    UserId m_user;
+    PrivilegeId m_privilege;
 };
 
+}
 #endif /* CYNARA_COMMON_TYPES_POLICYKEY_H */

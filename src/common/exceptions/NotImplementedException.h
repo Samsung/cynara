@@ -20,18 +20,21 @@
  * @brief       Implementation of NotImplementedException
  */
 
-#ifndef NOTIMPLEMENTEDEXCEPTION_H_
-#define NOTIMPLEMENTEDEXCEPTION_H_
+#ifndef SRC_COMMON_EXCEPTIONS_NOTIMPLEMENTEDEXCEPTION_H_
+#define SRC_COMMON_EXCEPTIONS_NOTIMPLEMENTEDEXCEPTION_H_
+
+#include "Exception.h"
 
 #include <exception>
 
 namespace Cynara {
 
-class NotImplementedException : public std::exception {
-
+class NotImplementedException : public Exception {
+public:
+    NotImplementedException() = default;
+    virtual ~NotImplementedException() = default;
 };
 
+} /* namespace Cynara */
 
-}
-
-#endif /* NOTIMPLEMENTEDEXCEPTION_H_ */
+#endif /* SRC_COMMON_EXCEPTIONS_NOTIMPLEMENTEDEXCEPTION_H_ */

@@ -14,27 +14,24 @@
  *    limitations under the License.
  */
 /*
- * @file        DefaultBucketDeletionException.h
+ * @file        Exception.h
  * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @version     1.0
- * @brief       Implementation of DefaultBucketDeletionException
+ * @brief       Header for generic Cynara exception
  */
-
-#ifndef SRC_COMMON_EXCEPTIONS_DEFAULTBUCKETDELETIONEXCEPTION_H_
-#define SRC_COMMON_EXCEPTIONS_DEFAULTBUCKETDELETIONEXCEPTION_H_
-
-#include "Exception.h"
+#ifndef SRC_COMMON_EXCEPTIONS_EXCEPTION_H_
+#define SRC_COMMON_EXCEPTIONS_EXCEPTION_H_
 
 #include <exception>
 
 namespace Cynara {
 
-class DefaultBucketDeletionException : public Exception {
+class Exception : public std::exception {
 public:
-    DefaultBucketDeletionException() = default;
-    virtual ~DefaultBucketDeletionException() = default;
+    Exception() = default;
+    virtual ~Exception() = default;
 };
 
 } /* namespace Cynara */
 
-#endif // SRC_COMMON_EXCEPTIONS_DEFAULTBUCKETDELETIONEXCEPTION_H_
+#endif /* SRC_COMMON_EXCEPTIONS_EXCEPTION_H_ */

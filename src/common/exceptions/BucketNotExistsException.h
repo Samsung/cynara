@@ -20,26 +20,32 @@
  * @brief       Implementation of BucketNotExistsException
  */
 
-#ifndef BUCKETNOTEXISTSEXCEPTION_H_
-#define BUCKETNOTEXISTSEXCEPTION_H_
+#ifndef SRC_COMMON_EXCEPTIONS_BUCKETNOTEXISTSEXCEPTION_H_
+#define SRC_COMMON_EXCEPTIONS_BUCKETNOTEXISTSEXCEPTION_H_
 
+#include "Exception.h"
 #include "types/PolicyBucketId.h"
 
 #include <exception>
 
 namespace Cynara {
 
-class BucketNotExistsException : public std::exception {
+class BucketNotExistsException : public Exception {
 public:
-    BucketNotExistsException(const PolicyBucketId &bucketId) : m_bucketId(bucketId) {
-
-    }
+    BucketNotExistsException() = delete;
+    BucketNotExistsException(const PolicyBucketId &bucketId) : m_bucketId(bucketId) {}
+    virtual ~BucketNotExistsException() = default;
 
 private:
     PolicyBucketId m_bucketId;
+
+public:
+    const PolicyBucketId &bucketId() const {
+        return m_bucketId;
+    }
 };
 
 } /* namespace Cynara */
 
 
-#endif /* BUCKETNOTEXISTSEXCEPTION_H_ */
+#endif /* SRC_COMMON_EXCEPTIONS_BUCKETNOTEXISTSEXCEPTION_H_ */

@@ -20,24 +20,31 @@
  * @brief       Implementation of BucketAlreadyExistsException
  */
 
-#ifndef BUCKETALREADYEXISTS_H
-#define BUCKETALREADYEXISTS_H
+#ifndef SRC_COMMON_EXCEPTIONS_BUCKETALREADYEXISTSEXCEPTION_H_
+#define SRC_COMMON_EXCEPTIONS_BUCKETALREADYEXISTSEXCEPTION_H_
 
+#include "Exception.h"
 #include "types/PolicyBucketId.h"
 
 #include <exception>
 
 namespace Cynara {
 
-class BucketAlreadyExistsException : public std::exception {
+class BucketAlreadyExistsException : public Exception {
 public:
-    BucketAlreadyExistsException(const PolicyBucketId &bucketId) : m_bucketId(bucketId) {
-    }
+    BucketAlreadyExistsException() = delete;
+    BucketAlreadyExistsException(const PolicyBucketId &bucketId) : m_bucketId(bucketId) {}
+    virtual ~BucketAlreadyExistsException() = default;
 
 private:
     PolicyBucketId m_bucketId;
+
+public:
+    const PolicyBucketId &bucketId() const {
+        return m_bucketId;
+    }
 };
 
 } /* namespace Cynara */
 
-#endif // BUCKETALREADYEXISTS_H
+#endif // SRC_COMMON_EXCEPTIONS_BUCKETALREADYEXISTSEXCEPTION_H_

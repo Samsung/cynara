@@ -24,11 +24,15 @@
 #define HELPERS_H
 
 #include "common/types/PolicyKey.h"
+#include "common/types/PolicyBucketId.h"
 
+namespace Cynara {
 namespace Helpers {
 
-Cynara::PolicyKey generatePolicyKey(const std::string &sufix = "");
+PolicyKey generatePolicyKey(const PolicyKeyFeature::ValueType &sufix = "");
+PolicyBucketId generateBucketId(const PolicyBucketId &sufix = "");
 
-}
+} // namespace Helpers
+} // namespace Cynara
 
 #endif // HELPERS_H

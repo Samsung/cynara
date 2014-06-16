@@ -14,31 +14,32 @@
  *    limitations under the License.
  */
 /*
- * @file        helpers.cpp
+ * @file        policykey.cpp
  * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @version     1.0
- * @brief       Helper functions for tests
+ * @brief       Tests for Cynara::PolicyKey
  */
 
 
-#include "helpers.h"
+
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
+
+#include "../helpers.h"
+
 #include "common/types/PolicyKey.h"
 
-namespace Cynara {
-namespace Helpers {
+using namespace Cynara;
 
-PolicyKey generatePolicyKey(const PolicyKeyFeature::ValueType &sufix) {
-    auto createPKF = [&sufix](const PolicyKeyFeature::ValueType &value) -> PolicyKeyFeature {
-        return PolicyKeyFeature::create(value + sufix);
-    };
+TEST(PolicyKey, to_string) {
+    typedef Cynara::PolicyKeyFeature PKF;
 
-    return PolicyKey(createPKF("c"), createPKF("u"), createPKF("p"));
+    PolicyKey pk1 = Helpers::generatePolicyKey();
+    ASSERT_EQ("c\tu\tp", pk1.toString());
+
+    PolicyKey pk2(PKF::createWildcard(), PKF::createWildcard(), PKF::createWildcard());
+    ASSERT_EQ("*\t*\t*", pk2.toString());
+
+    PolicyKey pk3(PKF::createWildcard(), PKF::create("u"), PKF::createWildcard());
+    ASSERT_EQ("*\tu\t*", pk3.toString());
 }
-
-PolicyBucketId generateBucketId(const PolicyBucketId &sufix) {
-    return "bucket" + sufix;
-}
-
-} // namespace Helpers
-} // namespace Cynara
-

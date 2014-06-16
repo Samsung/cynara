@@ -25,19 +25,67 @@
 #ifndef CYNARA_COMMON_TYPES_POLICYKEY_H
 #define CYNARA_COMMON_TYPES_POLICYKEY_H
 
-#include "ClientId.h"
-#include "UserId.h"
-#include "PrivilegeId.h"
-
 #include <tuple>
+#include <string>
 
 namespace Cynara {
 
-struct PolicyKey
-{
+class PolicyKey;
+
+class PolicyKeyFeature {
+friend PolicyKey;
+
 public:
-    PolicyKey() {};
-    PolicyKey(const ClientId &clientId, const UserId &userId, const PrivilegeId &privilegeId)
+    typedef std::string ValueType;
+
+    static PolicyKeyFeature create(ValueType value) {
+        return PolicyKeyFeature(value);
+    }
+
+    static PolicyKeyFeature createWildcard() {
+        return PolicyKeyFeature();
+    }
+
+    // TODO: Different features (client, user, privilege)
+    //       shouldn't be comparable
+    bool operator==(const PolicyKeyFeature &other) const {
+        return anyWildcard(*this, other) || valuesMatch(*this, other);
+    }
+
+    const std::string &toString() const;
+
+protected:
+    PolicyKeyFeature(ValueType value) : m_value(value), m_isWildcard(false) {}
+    PolicyKeyFeature() : m_value(m_wildcardValue), m_isWildcard(true) {}
+
+    static bool anyWildcard(const PolicyKeyFeature &pkf1, const PolicyKeyFeature &pkf2) {
+        return pkf1.isWildcard() || pkf2.isWildcard();
+    }
+
+    static bool valuesMatch(const PolicyKeyFeature &pkf1, const PolicyKeyFeature &pkf2) {
+        return pkf1.value() == pkf2.value();
+    }
+
+private:
+    ValueType m_value;
+    bool m_isWildcard;
+    static std::string m_wildcardValue;
+
+public:
+    bool isWildcard() const {
+        return m_isWildcard;
+    }
+    const ValueType& value() const {
+        return m_value;
+    }
+};
+
+class PolicyKey
+{
+
+public:
+    PolicyKey(const PolicyKeyFeature &clientId, const PolicyKeyFeature &userId,
+            const PolicyKeyFeature &privilegeId)
         : m_client(clientId), m_user(userId), m_privilege(privilegeId) {};
 
     bool operator==(const PolicyKey &other) const {
@@ -45,11 +93,28 @@ public:
             == std::tie(other.m_client, other.m_user, other.m_privilege);
     }
 
+    std::string toString() const;
+
 private:
-    ClientId m_client;
-    UserId m_user;
-    PrivilegeId m_privilege;
+    PolicyKeyFeature m_client;
+    PolicyKeyFeature m_user;
+    PolicyKeyFeature m_privilege;
+
+public:
+    const PolicyKeyFeature &client() const {
+        return m_client;
+    }
+
+    const PolicyKeyFeature &user() const {
+        return m_user;
+    }
+
+    const PolicyKeyFeature &privilege() const {
+        return m_privilege;
+    }
 };
 
-}
+} /* namespace Cynara */
+
+
 #endif /* CYNARA_COMMON_TYPES_POLICYKEY_H */

@@ -46,6 +46,9 @@ class PolicyBucket {
 public:
 
     PolicyBucket() : m_defaultPolicy(PolicyResult(PolicyType::DENY)) {}
+    PolicyBucket(const PolicyCollection &policies)
+        : m_policyCollection(policies),
+          m_defaultPolicy(PolicyResult(PolicyType::DENY)) {}
 
     PolicyBucket filtered(const PolicyKey &key) const;
 

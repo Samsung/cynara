@@ -34,18 +34,27 @@ public:
 public:
     PolicyResult(const PolicyType &policyType) : m_type(policyType) {}
     PolicyResult(const PolicyType &policyType, const PolicyMetadata &metadata)
-        : m_type(policyType), m_metaData(metadata) {}
+        : m_type(policyType), m_metadata(metadata) {}
 
 private:
     PolicyType m_type;
-    PolicyMetadata m_metaData;
+    PolicyMetadata m_metadata;
 
 public:
-    PolicyType policyType() const { return m_type; }
-    const PolicyMetadata& metaData() const { return m_metaData; }
+    const PolicyType &policyType() const {
+        return m_type;
+    }
 
-    bool operator <(const PolicyResult& other) const {
+    const PolicyMetadata& metadata() const {
+        return m_metadata;
+    }
+
+    bool operator <(const PolicyResult &other) const {
         return this->m_type < other.m_type;
+    }
+
+    bool operator ==(const PolicyResult &other) const {
+        return std::tie(m_type, m_metadata) == std::tie(other.m_type, other.m_metadata);
     }
 };
 

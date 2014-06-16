@@ -14,16 +14,31 @@
  *    limitations under the License.
  */
 /*
- * @file        UserId.h
- * @author      Lukasz Wojciechowski <l.wojciechowski@partner.samsung.com>
+ * @file        PolicyKey.cpp
+ * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @version     1.0
- * @brief       This file defines UserId type
+ * @brief       Implementation of Cynara:PolicyKey methods
  */
 
-#ifndef CYNARA_COMMON_TYPES_USERID_H
-#define CYNARA_COMMON_TYPES_USERID_H
 
-#include <string>
-typedef std::string UserId;
+#include  "PolicyKey.h"
 
-#endif /* CYNARA_COMMON_TYPES_USERID_H */
+#include <sstream>
+
+namespace Cynara {
+
+std::string PolicyKeyFeature::m_wildcardValue = "*";
+
+const std::string &PolicyKeyFeature::toString() const {
+    return isWildcard() ? m_wildcardValue : value();
+}
+
+std::string PolicyKey::toString() const {
+    std::stringstream ss;
+    ss << client().toString() << "\t"
+       << user().toString() << "\t"
+       << privilege().toString();
+    return ss.str();
+}
+
+} /* namespace Cynara */

@@ -63,7 +63,7 @@ PolicyResult Storage::minimalPolicy(const PolicyBucket &bucket) {
             return policyResult; // Do not expect lower value than DENY
             break;
         case PolicyType::BUCKET: {
-                auto bucketResults = m_backend.searchBucket(policyResult.metaData(),
+                auto bucketResults = m_backend.searchBucket(policyResult.metadata(),
                         policyRecord->key());
                 auto minimumOfBucket = minimalPolicy(bucketResults);
                 proposeMinimal(minimumOfBucket);

@@ -27,6 +27,9 @@
 #include "attributes/attributes.h"
 #include "attributes/debug_attributes.h"
 
+#include "containers/BinaryQueue.h"
+#include "containers/RawBuffer.h"
+
 #include "result/Result.h"
 
 #include "types/PolicyTypeExtension.h"

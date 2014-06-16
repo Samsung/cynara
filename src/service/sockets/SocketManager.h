@@ -1,0 +1,78 @@
+/*
+ * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+/*
+ * @file        SocketManager.h
+ * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @version     1.0
+ * @brief       This file defines socket layer manager for cynara
+ */
+
+#ifndef SRC_SERVICE_SOCKETS_SOCKETMANAGER_H_
+#define SRC_SERVICE_SOCKETS_SOCKETMANAGER_H_
+
+#include <vector>
+#include <stdio.h>
+
+#include <common.h>
+
+#include "Descriptor.h"
+
+namespace Cynara {
+
+const size_t DEFAULT_BUFFER_SIZE = BUFSIZ;
+
+class SocketManager {
+public:
+    SocketManager();
+    ~SocketManager();
+
+    void run(void);
+    void mainLoopStop(void);
+
+private:
+    typedef std::vector<Descriptor> FDVector;
+    FDVector m_fds;
+
+    bool m_working;
+
+    fd_set m_readSet;
+    fd_set m_writeSet;
+    int m_maxDesc;
+
+    void init(void);
+    void mainLoop(void);
+
+    void readyForRead(int fd);
+    void readyForWrite(int fd);
+    void readyForAccept(int fd);
+    void closeSocket(int fd);
+    bool handleRead(int fd, const RawBuffer &readbuffer);
+
+    void createDomainSocket(Protocol *protocol, const std::string &path, mode_t mask);
+    int createDomainSocketHelp(const std::string &path, mode_t mask);
+    int getSocketFromSystemD(const std::string &path);
+
+    Descriptor &createDescriptor(int fd);
+
+    void addReadSocket(int fd);
+    void removeReadSocket(int fd);
+    void addWriteSocket(int fd);
+    void removeWriteSocket(int fd);
+};
+
+} // namespace Cynara
+
+#endif /* SRC_SERVICE_SOCKETS_SOCKETMANAGER_H_ */

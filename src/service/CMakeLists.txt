@@ -19,7 +19,17 @@
 SET(CYNARA_SERVICE_PATH ${CYNARA_PATH}/service)
 
 SET(CYNARA_SOURCES
+    ${CYNARA_SERVICE_PATH}/logic/Logic.cpp
+    ${CYNARA_SERVICE_PATH}/main/Cynara.cpp
     ${CYNARA_SERVICE_PATH}/main/main.cpp
+    ${CYNARA_SERVICE_PATH}/protocol/Protocol.cpp
+    ${CYNARA_SERVICE_PATH}/protocol/ProtocolAdmin.cpp
+    ${CYNARA_SERVICE_PATH}/protocol/ProtocolClient.cpp
+    ${CYNARA_SERVICE_PATH}/protocol/ProtocolSignal.cpp
+    ${CYNARA_SERVICE_PATH}/request/Request.cpp
+    ${CYNARA_SERVICE_PATH}/request/RequestContext.cpp
+    ${CYNARA_SERVICE_PATH}/sockets/Descriptor.cpp
+    ${CYNARA_SERVICE_PATH}/sockets/SocketManager.cpp
     ${CYNARA_SERVICE_PATH}/storage/Storage.cpp
     )
 
@@ -29,7 +39,7 @@ SET_SOURCE_FILES_PROPERTIES(
         COMPILE_FLAGS "-D_GNU_SOURCE -fvisibility=hidden")
 
 INCLUDE_DIRECTORIES(
-    ${CYNARA_SERVICE_PATH}/main
+    ${CYNARA_SERVICE_PATH}
     )
 
 ADD_EXECUTABLE(${TARGET_CYNARA} ${CYNARA_SOURCES})

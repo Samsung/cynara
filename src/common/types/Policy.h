@@ -15,7 +15,7 @@
  */
 /*
  * @file        Policy.h
- * @author      Lukasz Wojciechowski <l.wojciechowski@partner.samsung.com>
+ * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @version     1.0
  * @brief       This file defines Policy type - used to describe single policy

@@ -15,7 +15,7 @@
  */
 /*
  * @file        PolicyTypeExtension.h
- * @author      Lukasz Wojciechowski <l.wojciechowski@partner.samsung.com>
+ * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file defines an extension type for policy. It can be
                 used to keep some additional information by plugins related

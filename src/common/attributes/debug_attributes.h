@@ -15,7 +15,7 @@
  */
 /*
  * @file        debug_attributes.h
- * @author      Lukasz Wojciechowski <l.wojciechowski@partner.samsung.com>
+ * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file defines debug related attributes
  */
@@ -23,6 +23,6 @@
 #ifndef CYNARA_COMMON_ATTRIBUTES_DEBUGATTRIBUTES_H
 #define CYNARA_COMMON_ATTRIBUTES_DEBUGATTRIBUTES_H
 
-#define TODO_USE_ME(a)	(void)(a)
+#define TODO_USE_ME(a)  (void)(a)
 
 #endif /* CYNARA_COMMON_ATTRIBUTES_DEBUGATTRIBUTES_H */

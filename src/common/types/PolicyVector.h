@@ -15,7 +15,7 @@
  */
 /*
  * @file        PolicyVector.h
- * @author      Lukasz Wojciechowski <l.wojciechowski@partner.samsung.com>
+ * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file defines vector of policies
  */

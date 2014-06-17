@@ -22,7 +22,6 @@ SET(CYNARA_COMMON_VERSION ${CYNARA_COMMON_VERSION_MAJOR}.0.1)
 SET(COMMON_PATH ${CYNARA_PATH}/common)
 
 SET(COMMON_SOURCES
-    ${COMMON_PATH}/common.cpp
     ${COMMON_PATH}/containers/BinaryQueue.cpp
     ${COMMON_PATH}/log/log.cpp
     )

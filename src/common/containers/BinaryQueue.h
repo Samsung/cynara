@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2011-2014 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -14,21 +14,20 @@
  *    limitations under the License.
  */
 /*
- * @file        binary_queue.h
- * @author      Przemyslaw Dobrowolski (p.dobrowolsk@samsung.com)
+ * @file        BinaryQueue.h
+ * @author      Przemyslaw Dobrowolski <p.dobrowolsk@samsung.com>
+ * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file is the header file of binary queue
  */
-#ifndef SECURITY_SERVER_BINARY_QUEUE_H
-#define SECURITY_SERVER_BINARY_QUEUE_H
 
-//#include <dpl/abstract_input_output.h>
-#include <dpl/exception.h>
-#include <dpl/noncopyable.h>
+#ifndef SRC_COMMON_CONTAINERS_BINARYQUEUE_H_
+#define SRC_COMMON_CONTAINERS_BINARYQUEUE_H_
+
 #include <memory>
 #include <list>
 
-namespace SecurityServer {
+namespace Cynara {
 /**
  * Binary queue auto pointer
  */
@@ -41,19 +40,11 @@ typedef std::auto_ptr<BinaryQueue> BinaryQueueAutoPtr;
  * @todo Add optimized implementation for FlattenConsume
  */
 class BinaryQueue
-//  : public AbstractInputOutput
 {
   public:
-    class Exception
-    {
-      public:
-        DECLARE_EXCEPTION_TYPE(SecurityServer::Exception, Base)
-        DECLARE_EXCEPTION_TYPE(Base, OutOfData)
-    };
-
     typedef void (*BufferDeleter)(const void *buffer, size_t bufferSize,
                                   void *userParam);
-    static void BufferDeleterFree(const void *buffer,
+    static void bufferDeleterFree(const void *buffer,
                                   size_t bufferSize,
                                   void *userParam);
 
@@ -72,12 +63,11 @@ class BinaryQueue
          * @param[in] buffer Constant pointer to bucket data buffer
          * @param[in] bufferSize Number of bytes in bucket
          */
-        virtual void OnVisitBucket(const void *buffer, size_t bufferSize) = 0;
+        virtual void onVisitBucket(const void *buffer, size_t bufferSize) = 0;
     };
 
   private:
-    struct Bucket :
-        private Noncopyable
+    struct Bucket
     {
         const void *buffer;
         const void *ptr;
@@ -91,14 +81,20 @@ class BinaryQueue
                size_t bufferSize,
                BufferDeleter deleter,
                void *userParam);
-        virtual ~Bucket();
+        ~Bucket();
+        // make it noncopyable
+        Bucket(const Bucket &) = delete;
+        const Bucket &operator=(const Bucket &) = delete;
+        // make it nonmoveable
+        Bucket(Bucket &&) = delete;
+        Bucket &operator=(Bucket &&) = delete;
     };
 
     typedef std::list<Bucket *> BucketList;
     BucketList m_buckets;
     size_t m_size;
 
-    static void DeleteBucket(Bucket *bucket);
+    static void deleteBucket(Bucket *bucket);
 
     class BucketVisitorCall
     {
@@ -129,7 +125,7 @@ class BinaryQueue
     /**
      * Destructor
      */
-    virtual ~BinaryQueue();
+    ~BinaryQueue();
 
     /**
      * Construct binary queue via bare copy of other binary queue
@@ -149,7 +145,7 @@ class BinaryQueue
      * @exception std::bad_alloc Cannot allocate memory to hold additional data
      * @see BinaryQueue::BufferDeleterFree
      */
-    void AppendCopy(const void *buffer, size_t bufferSize);
+    void appendCopy(const void *buffer, size_t bufferSize);
 
     /**
      * Append @a bufferSize bytes from memory pointed by @a buffer
@@ -163,13 +159,14 @@ class BinaryQueue
      * buffer
      * @param[in] userParam User parameter passed to deleter routine
      * @exception std::bad_alloc Cannot allocate memory to hold additional data
+     * @exception Cynara::NullPointerException buffer or deleter are nullptr
      */
-    void AppendUnmanaged(
+    void appendUnmanaged(
         const void *buffer,
         size_t bufferSize,
         BufferDeleter deleter =
-            &BinaryQueue::BufferDeleterFree,
-        void *userParam = NULL);
+            &BinaryQueue::bufferDeleterFree,
+        void *userParam = nullptr);
 
     /**
      * Append copy of other binary queue to the end of this binary queue
@@ -180,7 +177,7 @@ class BinaryQueue
      * @exception std::bad_alloc Cannot allocate memory to hold additional data
      * @warning One cannot assume that bucket structure is preserved during copy
      */
-    void AppendCopyFrom(const BinaryQueue &other);
+    void appendCopyFrom(const BinaryQueue &other);
 
     /**
      * Move bytes from other binary queue to the end of this binary queue.
@@ -193,7 +190,7 @@ class BinaryQueue
      * @param[in] other Reference to other binary queue to move data from
      * @exception std::bad_alloc Cannot allocate memory to hold additional data
      */
-    void AppendMoveFrom(BinaryQueue &other);
+    void appendMoveFrom(BinaryQueue &other);
 
     /**
      * Append copy of binary queue to the end of other binary queue
@@ -203,7 +200,7 @@ class BinaryQueue
      * @exception std::bad_alloc Cannot allocate memory to hold additional data
      * @warning One cannot assume that bucket structure is preserved during copy
      */
-    void AppendCopyTo(BinaryQueue &other) const;
+    void appendCopyTo(BinaryQueue &other) const;
 
     /**
      * Move bytes from binary queue to the end of other binary queue.
@@ -216,38 +213,38 @@ class BinaryQueue
      * @param[in] other Reference to other binary queue to move data to
      * @exception std::bad_alloc Cannot allocate memory to hold additional data
      */
-    void AppendMoveTo(BinaryQueue &other);
+    void appendMoveTo(BinaryQueue &other);
 
     /**
      * Retrieve total size of all data contained in binary queue
      *
      * @return Number of bytes in binary queue
      */
-    size_t Size() const;
+    size_t size() const;
 
     /**
      * Remove all data from binary queue
      *
      * @return none
      */
-    void Clear();
+    void clear();
 
     /**
      * Check if binary queue is empty
      *
      * @return true if binary queue is empty, false otherwise
      */
-    bool Empty() const;
+    bool empty() const;
 
     /**
      * Remove @a size bytes from beginning of binary queue
      *
      * @return none
      * @param[in] size Number of bytes to remove
-     * @exception BinaryQueue::Exception::OutOfData Number of bytes is larger
+     * @exception Cynara::OutOfDataException Number of bytes is larger
      *            than available bytes in binary queue
      */
-    void Consume(size_t size);
+    void consume(size_t size);
 
     /**
      * Retrieve @a bufferSize bytes from beginning of binary queue and copy them
@@ -256,10 +253,10 @@ class BinaryQueue
      * @return none
      * @param[in] buffer Pointer to user buffer to receive bytes
      * @param[in] bufferSize Size of user buffer pointed by @a buffer
-     * @exception BinaryQueue::Exception::OutOfData Number of bytes to flatten
+     * @exception Cynara::OutOfDataException Number of bytes to flatten
      *            is larger than available bytes in binary queue
      */
-    void Flatten(void *buffer, size_t bufferSize) const;
+    void flatten(void *buffer, size_t bufferSize) const;
 
     /**
      * Retrieve @a bufferSize bytes from beginning of binary queue, copy them
@@ -268,10 +265,10 @@ class BinaryQueue
      * @return none
      * @param[in] buffer Pointer to user buffer to receive bytes
      * @param[in] bufferSize Size of user buffer pointed by @a buffer
-     * @exception BinaryQueue::Exception::OutOfData Number of bytes to flatten
+     * @exception Cynara::OutOfDataException Number of bytes to flatten
      *            is larger than available bytes in binary queue
      */
-    void FlattenConsume(void *buffer, size_t bufferSize);
+    void flattenConsume(void *buffer, size_t bufferSize);
 
     /**
      * Visit each buffer with data using visitor object
@@ -279,20 +276,11 @@ class BinaryQueue
      * @return none
      * @param[in] visitor Pointer to bucket visitor
      * @see BinaryQueue::BucketVisitor
+     * @exception Cynara::NullPointerException visitor is nullptr
      */
-    void VisitBuckets(BucketVisitor *visitor) const;
-
-    /**
-     * IAbstractInput interface
-     */
-    virtual BinaryQueueAutoPtr Read(size_t size);
-
-    /**
-     * IAbstractOutput interface
-     */
-    virtual size_t Write(const BinaryQueue &buffer, size_t bufferSize);
+    void visitBuckets(BucketVisitor *visitor) const;
 };
 
-} // namespace SecurityServer
+} // namespace Cynara
 
-#endif // SECURITY_SERVER_BINARY_QUEUE_H
+#endif /* SRC_COMMON_CONTAINERS_BINARYQUEUE_H_ */

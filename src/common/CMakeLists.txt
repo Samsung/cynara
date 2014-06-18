@@ -24,6 +24,8 @@ SET(COMMON_PATH ${CYNARA_PATH}/common)
 SET(COMMON_SOURCES
     ${COMMON_PATH}/containers/BinaryQueue.cpp
     ${COMMON_PATH}/log/log.cpp
+    ${COMMON_PATH}/types/PolicyBucket.cpp
+    ${COMMON_PATH}/types/PolicyKey.cpp
     )
 
 ADD_LIBRARY(${TARGET_CYNARA_COMMON} SHARED ${COMMON_SOURCES})

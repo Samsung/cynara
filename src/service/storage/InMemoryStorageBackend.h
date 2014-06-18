@@ -24,9 +24,9 @@
 #define INMEMORYSTORAGEBACKEND_H_
 
 #include "StorageBackend.h"
-#include "common/exceptions/NotImplementedException.h"
-#include "common/exceptions/BucketNotExistsException.h"
-#include "common/types/Policy.h"
+#include <exceptions/NotImplementedException.h>
+#include <exceptions/BucketNotExistsException.h>
+#include <types/Policy.h>
 
 #include <unordered_map>
 #include <algorithm>

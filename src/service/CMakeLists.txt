@@ -26,6 +26,7 @@ SET(CYNARA_SOURCES
     ${CYNARA_SERVICE_PATH}/protocol/ProtocolAdmin.cpp
     ${CYNARA_SERVICE_PATH}/protocol/ProtocolClient.cpp
     ${CYNARA_SERVICE_PATH}/protocol/ProtocolSignal.cpp
+    ${CYNARA_SERVICE_PATH}/request/CheckRequest.cpp
     ${CYNARA_SERVICE_PATH}/request/Request.cpp
     ${CYNARA_SERVICE_PATH}/request/RequestContext.cpp
     ${CYNARA_SERVICE_PATH}/sockets/Descriptor.cpp

@@ -20,6 +20,9 @@
  * @brief       This file implements protocol base class
  */
 
+#include <common.h>
+#include <exceptions/NotImplementedException.h>
+
 #include "Protocol.h"
 
 namespace Cynara {
@@ -28,6 +31,10 @@ Protocol::Protocol() {
 }
 
 Protocol::~Protocol() {
+}
+
+void Protocol::appendResponseToBuffer(CheckResponse &&response UNUSED) {
+    throw NotImplementedException();
 }
 
 } // namespace Cynara

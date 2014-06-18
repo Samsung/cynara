@@ -14,31 +14,28 @@
  *    limitations under the License.
  */
 /*
- * @file        Protocol.h
+ * @file        CheckResponse.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
- * @brief       This file defines protocol base class
+ * @brief       This file defines response class for check request
  */
 
-#ifndef SRC_SERVICE_PROTOCOL_PROTOCOL_H_
-#define SRC_SERVICE_PROTOCOL_PROTOCOL_H_
+#ifndef SRC_SERVICE_RESPONSE_CHECKRESPONSE_H_
+#define SRC_SERVICE_RESPONSE_CHECKRESPONSE_H_
 
 #include <common.h>
-#include <request/Request.h>
-#include <response/CheckResponse.h>
+#include <types/PolicyResult.h>
 
 namespace Cynara {
 
-class Protocol {
-public:
-    Protocol();
-    virtual ~Protocol();
+struct CheckResponse {
+    BinaryQueue &m_queueRef;
+    const PolicyResult &m_resultRef;
 
-    virtual Request *extractRequestFromBuffer(BinaryQueue &bufferQueue) = 0;
-
-    virtual void appendResponseToBuffer(CheckResponse &&response);
+    CheckResponse(BinaryQueue &queue, const PolicyResult &result)
+        : m_queueRef(queue), m_resultRef(result) {}
 };
 
 } // namespace Cynara
 
-#endif /* SRC_SERVICE_PROTOCOL_PROTOCOL_H_ */
+#endif /* SRC_SERVICE_RESPONSE_CHECKRESPONSE_H_ */

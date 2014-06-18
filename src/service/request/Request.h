@@ -24,7 +24,6 @@
 #define SRC_SERVICE_REQUEST_REQUEST_H_
 
 #include <logic/Logic.h>
-#include "RequestContext.h"
 
 namespace Cynara {
 
@@ -33,7 +32,7 @@ public:
     Request();
     virtual ~Request();
 
-    virtual void execute(Logic *logic, const RequestContext &context) = 0;
+    virtual void execute(Logic *logic, int sourceDesc) = 0;
 };
 
 } // namespace Cynara

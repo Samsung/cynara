@@ -23,13 +23,19 @@
 #ifndef SRC_SERVICE_REQUEST_REQUESTCONTEXT_H_
 #define SRC_SERVICE_REQUEST_REQUESTCONTEXT_H_
 
+#include <common.h>
+
+#include <protocol/Protocol.h>
+
 namespace Cynara {
 
-class RequestContext {
-public:
-    RequestContext(int fd);
+class Protocol;
 
-    int m_sourceFd;
+class RequestContext {
+
+public:
+    static BinaryQueue &resultQueue(int fd);
+    static Protocol *protocol(int fd);
 };
 
 } // namespace Cynara

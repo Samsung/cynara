@@ -20,11 +20,19 @@
  * @brief       This file implements request context class
  */
 
+#include <main/Cynara.h>
+#include <sockets/SocketManager.h>
+
 #include "RequestContext.h"
 
 namespace Cynara {
 
-RequestContext::RequestContext(int fd) : m_sourceFd(fd) {
+BinaryQueue &RequestContext::resultQueue(int fd) {
+    return Cynara::getSocketManager()->descriptor(fd).writeQueue();
+}
+
+Protocol *RequestContext::protocol(int fd) {
+    return Cynara::getSocketManager()->descriptor(fd).protocol();
 }
 
 } // namespace Cynara

@@ -23,12 +23,17 @@
 #ifndef SRC_SERVICE_LOGIC_LOGIC_H_
 #define SRC_SERVICE_LOGIC_LOGIC_H_
 
+#include <types/PolicyKey.h>
+#include <types/PolicyResult.h>
+
 namespace Cynara {
 
 class Logic {
 public:
     Logic();
     ~Logic();
+
+    PolicyResult check(int sourceDesc, const PolicyKey &key);
 };
 
 } // namespace Cynara

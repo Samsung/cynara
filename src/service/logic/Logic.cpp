@@ -20,6 +20,8 @@
  * @brief       This file implements main class of logic layer in cynara service
  */
 
+#include <common.h>
+
 #include "Logic.h"
 
 namespace Cynara {
@@ -28,4 +30,10 @@ Logic::Logic() {
 
 Logic::~Logic() {
 }
+
+PolicyResult Logic::check(int sourceDesc UNUSED, const PolicyKey &key UNUSED) {
+//todo this is only a stub
+    return PolicyResult(PredefinedPolicyType::ALLOW);
+}
+
 } // namespace Cynara

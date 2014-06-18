@@ -25,6 +25,8 @@
 
 #include <logic/Logic.h>
 #include <sockets/SocketManager.h>
+#include <storage/Storage.h>
+#include <storage/StorageBackend.h>
 
 namespace Cynara {
 
@@ -32,10 +34,12 @@ class Cynara {
 private:
     Logic *m_logic;
     SocketManager *m_socketManager;
+    Storage *m_storage;
+    StorageBackend *m_storageBackend;
 
     Cynara();
 
-    static Cynara* getInstance(void);
+    static Cynara *getInstance(void);
 
 public:
     ~Cynara();
@@ -44,8 +48,9 @@ public:
     static void run(void);
     static void finalize(void);
 
-    static Logic* getLogic(void);
-    static SocketManager* getSocketManager(void);
+    static Logic *getLogic(void);
+    static SocketManager *getSocketManager(void);
+    static Storage *getStorage(void);
 
 };
 

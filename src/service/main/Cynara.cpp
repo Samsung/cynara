@@ -21,11 +21,15 @@
  */
 
 #include <stddef.h>
+
+#include <storage/InMemoryStorageBackend.h>
+
 #include "Cynara.h"
 
 namespace Cynara {
 
-Cynara::Cynara() : m_logic(nullptr), m_socketManager(nullptr) {
+Cynara::Cynara()
+    : m_logic(nullptr), m_socketManager(nullptr), m_storage(nullptr), m_storageBackend(nullptr) {
 }
 
 Cynara* Cynara::getInstance(void) {
@@ -39,6 +43,8 @@ Cynara::~Cynara() {
 void Cynara::init(void) {
     getInstance()->m_logic = new Logic();
     getInstance()->m_socketManager = new SocketManager();
+    getInstance()->m_storageBackend = new InMemoryStorageBackend();
+    getInstance()->m_storage = new Storage(*getInstance()->m_storageBackend);
 }
 
 void Cynara::run(void) {
@@ -46,16 +52,22 @@ void Cynara::run(void) {
 }
 
 void Cynara::finalize(void) {
-    delete getInstance()->m_socketManager;
     delete getInstance()->m_logic;
+    delete getInstance()->m_socketManager;
+    delete getInstance()->m_storageBackend;
+    delete getInstance()->m_storage;
 }
 
-Logic* Cynara::getLogic(void) {
+Logic *Cynara::getLogic(void) {
     return getInstance()->m_logic;
 }
 
-SocketManager* Cynara::getSocketManager(void) {
+SocketManager *Cynara::getSocketManager(void) {
     return getInstance()->m_socketManager;
+}
+
+Storage *Cynara::getStorage(void) {
+    return getInstance()->m_storage;
 }
 
 } // namespace Cynara

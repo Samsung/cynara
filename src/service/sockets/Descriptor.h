@@ -32,8 +32,8 @@ namespace Cynara {
 
 class Descriptor {
 private:
-    int m_fd;
     bool m_listen;
+    bool m_used;
 
     BinaryQueue m_readQueue;
     BinaryQueue m_writeQueue;
@@ -42,14 +42,24 @@ private:
     Protocol *m_protocol;
 
 public:
+    Descriptor();
+
     bool isListen(void) const {
         return m_listen;
     }
 
-    bool isDataToWrite(void) const;
+    bool isUsed(void) const {
+        return m_used;
+    }
+
+    bool hasDataToWrite(void) const;
 
     Protocol *protocol(void) {
         return m_protocol;
+    }
+
+    BinaryQueue &writeQueue(void) {
+        return m_writeQueue;
     }
 
     void setProtocol(Protocol *protocol) {
@@ -58,6 +68,10 @@ public:
 
     void setListen(bool listen) {
         m_listen = listen;
+    }
+
+    void setUsed(bool used) {
+        m_used = used;
     }
 
     void pushReadBuffer(const RawBuffer &readbuffer);

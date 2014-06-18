@@ -33,6 +33,7 @@
 
 #include <log/log.h>
 #include <common.h>
+#include <exceptions/DescriptorNotExistsException.h>
 #include <exceptions/InitException.h>
 #include <exceptions/UnexpectedErrorException.h>
 
@@ -41,6 +42,7 @@
 #include <protocol/ProtocolAdmin.h>
 #include <protocol/ProtocolClient.h>
 #include <protocol/ProtocolSignal.h>
+#include <stdexcept>
 
 #include "SocketManager.h"
 
@@ -222,7 +224,7 @@ bool SocketManager::handleRead(int fd, const RawBuffer &readbuffer) {
             req->execute(Cynara::getLogic(), {fd});
             delete req;
 
-            if (desc.isDataToWrite())
+            if (desc.hasDataToWrite())
                     addWriteSocket(fd);
         }
     } catch (const Exception &ex) {
@@ -326,7 +328,9 @@ Descriptor &SocketManager::createDescriptor(int fd) {
         if (fd >= static_cast<int>(m_fds.size()))
             m_fds.resize(fd + 20);
     }
-    return m_fds[fd];
+    auto &desc = m_fds[fd];
+    desc.setUsed(true);
+    return desc;
 }
 
 void SocketManager::addReadSocket(int fd) {
@@ -343,6 +347,17 @@ void SocketManager::addWriteSocket(int fd) {
 
 void SocketManager::removeWriteSocket(int fd) {
     FD_CLR(fd, &m_writeSet);
+}
+
+Descriptor &SocketManager::descriptor(int fd) {
+    try {
+        auto &desc = m_fds.at(fd);
+        if (!desc.isUsed())
+            throw DescriptorNotExistsException(fd);
+        return desc;
+    } catch (const std::out_of_range &e) {
+        throw DescriptorNotExistsException(fd);
+    }
 }
 
 } // namespace Cynara

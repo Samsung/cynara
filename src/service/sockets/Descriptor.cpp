@@ -24,7 +24,10 @@
 
 namespace Cynara {
 
-bool Descriptor::isDataToWrite(void) const {
+Descriptor::Descriptor() : m_listen(false), m_used(false), m_protocol(nullptr) {
+}
+
+bool Descriptor::hasDataToWrite(void) const {
     return !(m_writeQueue.empty() && m_writeBuffer.empty());
 }
 
@@ -47,6 +50,8 @@ RawBuffer &Descriptor::prepareWriteBuffer(void) {
 }
 
 void Descriptor::clear(void) {
+    m_listen = false;
+    m_used = false;
     m_readQueue.clear();
     m_writeQueue.clear();
     m_writeBuffer.clear();

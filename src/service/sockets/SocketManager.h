@@ -28,6 +28,8 @@
 
 #include <common.h>
 
+#include <protocol/Protocol.h>
+#include <request/RequestContext.h>
 #include "Descriptor.h"
 
 namespace Cynara {
@@ -71,6 +73,9 @@ private:
     void removeReadSocket(int fd);
     void addWriteSocket(int fd);
     void removeWriteSocket(int fd);
+
+    friend class RequestContext;
+    Descriptor &descriptor(int fd);
 };
 
 } // namespace Cynara

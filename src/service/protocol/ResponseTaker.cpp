@@ -14,26 +14,21 @@
  *    limitations under the License.
  */
 /*
- * @file        Protocol.cpp
+ * @file        ResponseTaker.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
- * @brief       This file implements protocol base class
+ * @brief       This file implements ResponseTaker class
  */
+
 
 #include <common.h>
 #include <exceptions/NotImplementedException.h>
 
-#include "Protocol.h"
+#include "ResponseTaker.h"
 
 namespace Cynara {
 
-Protocol::Protocol() {
-}
-
-Protocol::~Protocol() {
-}
-
-void Protocol::appendResponseToBuffer(CheckResponse &&response UNUSED) {
+void ResponseTaker::appendResponseToBuffer(CheckResponse &&response UNUSED) {
     throw NotImplementedException();
 }
 

@@ -60,6 +60,10 @@ public:
         return m_protocol;
     }
 
+    ResponseTaker &responseTaker(void) {
+        return *m_protocol;
+    }
+
     BinaryQueue &writeQueue(void) {
         return m_writeQueue;
     }

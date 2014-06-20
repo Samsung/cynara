@@ -14,35 +14,27 @@
  *    limitations under the License.
  */
 /*
- * @file        Protocol.h
+ * @file        ResponseTaker.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
- * @brief       This file defines protocol base class
+ * @brief       This file defines ResponseTaker class
  */
 
-#ifndef SRC_SERVICE_PROTOCOL_PROTOCOL_H_
-#define SRC_SERVICE_PROTOCOL_PROTOCOL_H_
+#ifndef SRC_SERVICE_PROTOCOL_RESPONSETAKER_H_
+#define SRC_SERVICE_PROTOCOL_RESPONSETAKER_H_
 
-#include <memory>
-
-#include <common.h>
-
-#include <protocol/ResponseTaker.h>
-#include <request/Request.h>
 #include <response/CheckResponse.h>
 
 namespace Cynara {
 
-class Protocol : public ResponseTaker {
+class ResponseTaker {
 public:
-    Protocol() = default;
-    virtual ~Protocol() = default;
+    ResponseTaker() = default;
+    virtual ~ResponseTaker() = default;
 
-    virtual RequestPtr extractRequestFromBuffer(BinaryQueue &bufferQueue) = 0;
+    virtual void appendResponseToBuffer(CheckResponse &&response);
 };
-
-typedef std::shared_ptr<Protocol> ProtocolPtr;
 
 } // namespace Cynara
 
-#endif /* SRC_SERVICE_PROTOCOL_PROTOCOL_H_ */
+#endif /* SRC_SERVICE_PROTOCOL_RESPONSETAKER_H_ */

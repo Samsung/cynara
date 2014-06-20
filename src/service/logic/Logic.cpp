@@ -20,7 +20,12 @@
  * @brief       This file implements main class of logic layer in cynara service
  */
 
+#include <log/log.h>
 #include <common.h>
+#include <exceptions/PluginNotFoundException.h>
+
+#include <main/Cynara.h>
+#include <storage/Storage.h>
 
 #include "Logic.h"
 
@@ -31,9 +36,24 @@ Logic::Logic() {
 Logic::~Logic() {
 }
 
-PolicyResult Logic::check(const RequestContext &context UNUSED, const PolicyKey &key UNUSED) {
-//todo this is only a stub
-    return PolicyResult(PredefinedPolicyType::ALLOW);
+PolicyResult Logic::check(const RequestContext &context UNUSED, const PolicyKey &key) {
+    PolicyResult result = Cynara::getStorage()->checkPolicy(key);
+
+    switch (result.policyType()) {
+        case PredefinedPolicyType::ALLOW :
+            LOGD("check of policy key <%s> returned ALLOW", key.toString().c_str());
+            return result;
+        case PredefinedPolicyType::DENY :
+            LOGD("check of policy key <%s> returned DENY", key.toString().c_str());
+            return result;
+    }
+    //todo pass question to proper plugin that:
+    //  1) might throw NoResponseGeneratedException when answer has to be waited for (UI)
+    //  2) might return PolicyResult
+    // In case 1) context should be saved in plugin in order to return answer when ready.
+
+    //in case no proper plugin is found
+    throw PluginNotFoundException(result);
 }
 
 } // namespace Cynara

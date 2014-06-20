@@ -14,32 +14,19 @@
  *    limitations under the License.
  */
 /*
- * @file        PolicyType.h
- * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @file        PolicyType.cpp
  * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @version     1.0
- * @brief       This file defines PolicyType e.g. ALLOW or DENY
+ * @brief       Implementation of functions for Cynara::PolicyType
  */
 
-#ifndef SRC_COMMON_TYPES_POLICYTYPE_H_
-#define SRC_COMMON_TYPES_POLICYTYPE_H_
-
-#include <cstdint>
-#include <string>
+#include "PolicyType.h"
+#include "PolicyResult.h"
 
 namespace Cynara {
 
-typedef std::uint16_t PolicyType;
-
-namespace PredefinedPolicyType  {
-    const PolicyType DENY = 0;
-    const PolicyType BUCKET = 0xFFFE;
-    const PolicyType ALLOW = 0xFFFF;
-};
-
-class PolicyResult;
-bool operator ==(const PolicyType &policyType, const PolicyResult &policyResult);
+bool operator ==(const PolicyType &policyType, const PolicyResult &policyResult) {
+    return policyResult == policyType;
+}
 
 }  // namespace Cynara
-
-#endif /* SRC_COMMON_TYPES_POLICYTYPE_H_ */

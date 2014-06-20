@@ -29,11 +29,7 @@
 
 #include "result/Result.h"
 
-#include "types/Policy.h"
-#include "types/PolicyBucket.h"
-#include "types/PolicyKey.h"
-#include "types/PolicyType.h"
 #include "types/PolicyTypeExtension.h"
-#include "types/PolicyCollection.h"
+
 
 #endif /* COMMON_H */

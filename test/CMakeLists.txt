@@ -26,6 +26,7 @@ SET(CYNARA_SOURCES_FOR_TESTS
     ${CYNARA_SRC}/service/storage/Storage.cpp
     ${CYNARA_SRC}/common/types/PolicyBucket.cpp
     ${CYNARA_SRC}/service/storage/InMemoryStorageBackend.cpp
+    ${CYNARA_SRC}/service/storage/StorageSerializer.cpp
     ${CYNARA_SRC}/common/types/PolicyKey.cpp
 )
 
@@ -37,6 +38,7 @@ SET(CYNARA_TESTS_SOURCES
     storage/inmemorystoragebackend/inmemorystoragebackend.cpp
     storage/inmemorystoragebackend/search.cpp
     storage/inmemorystoragebackend/buckets.cpp
+    storage/serializer/dump.cpp
     helpers.cpp
 )
 

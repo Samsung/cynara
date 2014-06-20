@@ -29,11 +29,10 @@
 namespace Cynara {
 
 struct CheckResponse {
-    BinaryQueue &m_queueRef;
     const PolicyResult &m_resultRef;
 
-    CheckResponse(BinaryQueue &queue, const PolicyResult &result)
-        : m_queueRef(queue), m_resultRef(result) {}
+    CheckResponse(const PolicyResult &result) : m_resultRef(result) {
+    }
 };
 
 } // namespace Cynara

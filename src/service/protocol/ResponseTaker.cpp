@@ -28,7 +28,8 @@
 
 namespace Cynara {
 
-void ResponseTaker::appendResponseToBuffer(CheckResponse &&response UNUSED) {
+void ResponseTaker::appendResponseToBuffer(BinaryQueue &queue UNUSED,
+                                           CheckResponse &&response UNUSED) {
     throw NotImplementedException();
 }
 

@@ -25,15 +25,24 @@
 
 #include <common.h>
 
-#include <protocol/Protocol.h>
+#include <protocol/ResponseTaker.h>
 
 namespace Cynara {
 
 class RequestContext {
+private:
+    int m_desc;
+
+    ResponseTaker &responseTaker(void) const;
+    BinaryQueue &responseQueue(void) const;
 
 public:
-    static BinaryQueue &resultQueue(int fd);
-    static ProtocolPtr protocol(int fd);
+    RequestContext(int desc);
+
+    template <class T>
+    void returnResponse(T &&response) const {
+        responseTaker().appendResponseToBuffer(responseQueue(), std::move(response));
+    }
 };
 
 } // namespace Cynara

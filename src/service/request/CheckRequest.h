@@ -25,7 +25,8 @@
 
 #include <types/PolicyKey.h>
 
-#include "Request.h"
+#include <request/Request.h>
+#include <request/RequestContext.h>
 
 namespace Cynara {
 
@@ -37,7 +38,7 @@ public:
     CheckRequest(const PolicyKey &key);
     virtual ~CheckRequest() = default;
 
-    virtual void execute(Logic *logic, int sourceDesc);
+    virtual void execute(const RequestContext &context);
 };
 
 } // namespace Cynara

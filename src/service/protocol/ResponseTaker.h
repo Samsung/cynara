@@ -23,6 +23,8 @@
 #ifndef SRC_SERVICE_PROTOCOL_RESPONSETAKER_H_
 #define SRC_SERVICE_PROTOCOL_RESPONSETAKER_H_
 
+#include <common.h>
+
 #include <response/CheckResponse.h>
 
 namespace Cynara {
@@ -32,7 +34,7 @@ public:
     ResponseTaker() = default;
     virtual ~ResponseTaker() = default;
 
-    virtual void appendResponseToBuffer(CheckResponse &&response);
+    virtual void appendResponseToBuffer(BinaryQueue &queue, CheckResponse &&response);
 };
 
 } // namespace Cynara

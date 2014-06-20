@@ -31,7 +31,7 @@ Logic::Logic() {
 Logic::~Logic() {
 }
 
-PolicyResult Logic::check(int sourceDesc UNUSED, const PolicyKey &key UNUSED) {
+PolicyResult Logic::check(const RequestContext &context UNUSED, const PolicyKey &key UNUSED) {
 //todo this is only a stub
     return PolicyResult(PredefinedPolicyType::ALLOW);
 }

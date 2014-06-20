@@ -23,7 +23,8 @@
 #include <common.h>
 #include <types/PolicyResult.h>
 
-#include <protocol/Protocol.h>
+#include <logic/Logic.h>
+#include <main/Cynara.h>
 #include <request/RequestContext.h>
 
 #include "CheckRequest.h"
@@ -33,10 +34,9 @@ namespace Cynara {
 CheckRequest::CheckRequest(const PolicyKey &key) : m_key(key) {
 }
 
-void CheckRequest::execute(Logic *logic, int sourceDesc) {
-    PolicyResult result = logic->check(sourceDesc, m_key);
-    BinaryQueue &queue = RequestContext::resultQueue(sourceDesc);
-    RequestContext::protocol(sourceDesc)->appendResponseToBuffer(CheckResponse(queue, result));
+void CheckRequest::execute(const RequestContext &context) {
+    PolicyResult result = Cynara::getLogic()->check(context, m_key);
+    context.returnResponse(CheckResponse(result));
 }
 
 } // namespace Cynara

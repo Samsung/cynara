@@ -25,7 +25,7 @@
 
 #include <memory>
 
-#include <logic/Logic.h>
+#include "RequestContext.h"
 
 namespace Cynara {
 
@@ -34,7 +34,7 @@ public:
     Request();
     virtual ~Request();
 
-    virtual void execute(Logic *logic, int sourceDesc) = 0;
+    virtual void execute(const RequestContext &context) = 0;
 };
 
 typedef std::shared_ptr<Request> RequestPtr;

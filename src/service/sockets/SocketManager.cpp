@@ -224,7 +224,7 @@ bool SocketManager::handleRead(int fd, const RawBuffer &readbuffer) {
 
             LOGD("request extracted");
             try {
-                req->execute(Cynara::getLogic(), fd);
+                req->execute(fd);
 
                 if (desc.hasDataToWrite())
                     addWriteSocket(fd);

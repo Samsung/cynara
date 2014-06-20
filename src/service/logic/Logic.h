@@ -26,6 +26,8 @@
 #include <types/PolicyKey.h>
 #include <types/PolicyResult.h>
 
+#include <request/RequestContext.h>
+
 namespace Cynara {
 
 class Logic {
@@ -33,7 +35,7 @@ public:
     Logic();
     ~Logic();
 
-    PolicyResult check(int sourceDesc, const PolicyKey &key);
+    PolicyResult check(const RequestContext &context, const PolicyKey &key);
 };
 
 } // namespace Cynara

@@ -49,20 +49,20 @@ PolicyResult Storage::minimalPolicy(const PolicyBucket &bucket) {
     auto proposeMinimal = [&minimal, &hasMinimal](const PolicyResult &candidate) {
         if(hasMinimal == false) {
             minimal = candidate;
-        } else if(candidate < minimal) {
+        } else if (candidate < minimal) {
             minimal = candidate;
         }
         hasMinimal = true;
     };
 
-    for(const auto &policyRecord : policies) {
+    for (const auto &policyRecord : policies) {
         const auto &policyResult = policyRecord->result();
 
-        switch(policyResult.policyType()) {
-        case PolicyType::DENY:
+        switch (policyResult.policyType()) {
+        case PredefinedPolicyType::DENY:
             return policyResult; // Do not expect lower value than DENY
             break;
-        case PolicyType::BUCKET: {
+        case PredefinedPolicyType::BUCKET: {
                 auto bucketResults = m_backend.searchBucket(policyResult.metadata(),
                         policyRecord->key());
                 auto minimumOfBucket = minimalPolicy(bucketResults);
@@ -70,7 +70,7 @@ PolicyResult Storage::minimalPolicy(const PolicyBucket &bucket) {
                 continue;
             }
             break;
-        case PolicyType::ALLOW:
+        case PredefinedPolicyType::ALLOW:
         default:
             break;
         }

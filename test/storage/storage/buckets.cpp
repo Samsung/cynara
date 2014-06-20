@@ -48,7 +48,7 @@ TEST(storage, addBucket) {
     Cynara::Storage storage(backend);
 
     PolicyBucketId bucketId = "test-bucket";
-    PolicyResult defaultPolicy(PolicyType::DENY);
+    PolicyResult defaultPolicy(PredefinedPolicyType::DENY);
 
     EXPECT_CALL(backend, createBucket(bucketId, defaultPolicy));
 
@@ -59,7 +59,7 @@ TEST(storage, addBucket) {
 TEST(storage, addDefaultBucket) {
     FakeStorageBackend backend;
     Cynara::Storage storage(backend);
-    PolicyResult defaultPolicy(PolicyType::DENY);
+    PolicyResult defaultPolicy(PredefinedPolicyType::DENY);
 
     ASSERT_THROW(
         storage.createBucket(defaultPolicyBucketId, defaultPolicy),

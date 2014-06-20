@@ -46,9 +46,9 @@ TEST_F(InMemeoryStorageBackendFixture, searchDefault) {
     const auto &defaultBucket = createBucket(defaultPolicyBucketId);
 
     addToBucket(defaultPolicyBucketId, {
-       Policy::simpleWithKey(pk1, PolicyType::ALLOW),
-       Policy::simpleWithKey(pk2, PolicyType::DENY),
-       Policy::simpleWithKey(pk1, PolicyType::DENY),
+       Policy::simpleWithKey(pk1, PredefinedPolicyType::ALLOW),
+       Policy::simpleWithKey(pk2, PredefinedPolicyType::DENY),
+       Policy::simpleWithKey(pk1, PredefinedPolicyType::DENY),
     });
 
     // Just override buckets() accessor

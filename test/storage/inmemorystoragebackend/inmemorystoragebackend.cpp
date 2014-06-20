@@ -52,7 +52,7 @@ TEST_F(InMemeoryStorageBackendFixture, defaultPolicyIsDeny) {
     auto filteredBucket = backend.searchDefaultBucket(Helpers::generatePolicyKey());
     auto defaultPolicy = filteredBucket.defaultPolicy();
 
-    ASSERT_EQ(PolicyType::DENY, defaultPolicy.policyType());
+    ASSERT_EQ(PredefinedPolicyType::DENY, defaultPolicy.policyType());
 }
 
 TEST_F(InMemeoryStorageBackendFixture, deleteLinking) {
@@ -70,16 +70,16 @@ TEST_F(InMemeoryStorageBackendFixture, deleteLinking) {
     const PolicyBucketId testBucket3 = "test-bucket-3";
 
     // Create 2 buckets
-    for(const auto &bucketId : { testBucket1, testBucket2, testBucket3 }) {
-        PolicyResult defaultPolicy(PolicyType::DENY);
+    for (const auto &bucketId : { testBucket1, testBucket2, testBucket3 }) {
+        PolicyResult defaultPolicy(PredefinedPolicyType::DENY);
         backend.createBucket(bucketId, defaultPolicy);
     }
 
     // These policies do not link to buckets, so should stay untouched
     PolicyCollection policiesToStay = {
-        Policy::simpleWithKey(Helpers::generatePolicyKey("1"), PolicyType::DENY),
-        Policy::simpleWithKey(Helpers::generatePolicyKey("1"), PolicyType::DENY),
-        Policy::simpleWithKey(Helpers::generatePolicyKey("2"), PolicyType::ALLOW),
+        Policy::simpleWithKey(Helpers::generatePolicyKey("1"), PredefinedPolicyType::DENY),
+        Policy::simpleWithKey(Helpers::generatePolicyKey("1"), PredefinedPolicyType::DENY),
+        Policy::simpleWithKey(Helpers::generatePolicyKey("2"), PredefinedPolicyType::ALLOW),
     };
 
     // Add some policies to 1st bucket, which link to 2nd bucket
@@ -122,7 +122,7 @@ TEST_F(InMemeoryStorageBackendFixture, insertPolicy) {
     PolicyBucketId bucketId = "test-bucket";
     createBucket(bucketId);
 
-    auto policyToAdd = Policy::simpleWithKey(Helpers::generatePolicyKey(), PolicyType::ALLOW);
+    auto policyToAdd = Policy::simpleWithKey(Helpers::generatePolicyKey(), PredefinedPolicyType::ALLOW);
     backend.insertPolicy(bucketId, policyToAdd);
 
     ASSERT_THAT(m_buckets.at(bucketId).policyCollection(), UnorderedElementsAre(policyToAdd));
@@ -153,12 +153,12 @@ TEST_F(InMemeoryStorageBackendFixture, deletePolicy) {
     PolicyBucketId bucketId = "test-bucket";
     createBucket(bucketId);
 
-    auto policyToDelete = Policy::simpleWithKey(Helpers::generatePolicyKey(), PolicyType::ALLOW);
+    auto policyToDelete = Policy::simpleWithKey(Helpers::generatePolicyKey(), PredefinedPolicyType::ALLOW);
 
     PolicyCollection otherPolicies = {
-        Policy::simpleWithKey(Helpers::generatePolicyKey("other-policy-1"), PolicyType::ALLOW),
-        Policy::simpleWithKey(Helpers::generatePolicyKey("other-policy-2"), PolicyType::ALLOW),
-        Policy::simpleWithKey(Helpers::generatePolicyKey("other-policy-3"), PolicyType::ALLOW),
+        Policy::simpleWithKey(Helpers::generatePolicyKey("other-policy-1"), PredefinedPolicyType::ALLOW),
+        Policy::simpleWithKey(Helpers::generatePolicyKey("other-policy-2"), PredefinedPolicyType::ALLOW),
+        Policy::simpleWithKey(Helpers::generatePolicyKey("other-policy-3"), PredefinedPolicyType::ALLOW),
     };
 
     addToBucket(bucketId, {

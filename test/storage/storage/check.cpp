@@ -55,7 +55,7 @@ TEST(storage, checkEmpty) {
 
     // Default bucket empty -- return DENY
     auto policyAnswer = storage.checkPolicy(pk);
-    ASSERT_EQ(PolicyType::DENY, policyAnswer.policyType());
+    ASSERT_EQ(PredefinedPolicyType::DENY, policyAnswer.policyType());
 }
 
 TEST(storage, checkSimple) {
@@ -71,15 +71,15 @@ TEST(storage, checkSimple) {
         .WillRepeatedly(ReturnPointee(&bucket));
 
     // Default bucket empty -- return DENY
-    ASSERT_EQ(PolicyType::DENY, storage.checkPolicy(pk).policyType());
+    ASSERT_EQ(PredefinedPolicyType::DENY, storage.checkPolicy(pk).policyType());
 
     // Add ALLOW to default bucket -- return ALLOW
-    bucket.policyCollection().push_back(Policy::simpleWithKey(pk, PolicyType::ALLOW));
-    ASSERT_EQ(PolicyType::ALLOW, storage.checkPolicy(pk).policyType());
+    bucket.policyCollection().push_back(Policy::simpleWithKey(pk, PredefinedPolicyType::ALLOW));
+    ASSERT_EQ(PredefinedPolicyType::ALLOW, storage.checkPolicy(pk).policyType());
 
     // Add DENY to default bucket -- return DENY
-    bucket.policyCollection().push_back(Policy::simpleWithKey(pk, PolicyType::DENY));
-    ASSERT_EQ(PolicyType::DENY, storage.checkPolicy(pk).policyType());
+    bucket.policyCollection().push_back(Policy::simpleWithKey(pk, PredefinedPolicyType::DENY));
+    ASSERT_EQ(PredefinedPolicyType::DENY, storage.checkPolicy(pk).policyType());
 }
 
 TEST(storage, checkBucket) {
@@ -92,7 +92,7 @@ TEST(storage, checkBucket) {
     PolicyKey pk = Helpers::generatePolicyKey();
 
     PolicyBucket defaultBucket(PolicyCollection({
-        Policy::simpleWithKey(pk, PolicyType::ALLOW),
+        Policy::simpleWithKey(pk, PredefinedPolicyType::ALLOW),
         Policy::bucketWithKey(pk, additionalBucketId)
     }));
 
@@ -109,13 +109,13 @@ TEST(storage, checkBucket) {
 
 
     // Bucket empty -- should return DENY as default bucket value
-    ASSERT_EQ(PolicyType::DENY, storage.checkPolicy(pk).policyType());
+    ASSERT_EQ(PredefinedPolicyType::DENY, storage.checkPolicy(pk).policyType());
 
     // Add ALLOW to bucket, so return ALLOW
-    additionalBucket.policyCollection().push_back(Policy::simpleWithKey(pk, PolicyType::ALLOW));
-    ASSERT_EQ(PolicyType::ALLOW, storage.checkPolicy(pk).policyType());
+    additionalBucket.policyCollection().push_back(Policy::simpleWithKey(pk, PredefinedPolicyType::ALLOW));
+    ASSERT_EQ(PredefinedPolicyType::ALLOW, storage.checkPolicy(pk).policyType());
 
     // Add DENY to default bucket -- return DENY, even though ALLOW in other bucket
-    defaultBucket.policyCollection().push_back(Policy::simpleWithKey(pk, PolicyType::DENY));
-    ASSERT_EQ(PolicyType::DENY, storage.checkPolicy(pk).policyType());
+    defaultBucket.policyCollection().push_back(Policy::simpleWithKey(pk, PredefinedPolicyType::DENY));
+    ASSERT_EQ(PredefinedPolicyType::DENY, storage.checkPolicy(pk).policyType());
 }

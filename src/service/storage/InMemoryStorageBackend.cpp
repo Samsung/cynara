@@ -85,7 +85,7 @@ void InMemoryStorageBackend::deleteLinking(const PolicyBucketId &bucketId) {
 
         // Check bucket id only if policy is a bucket policy
         // TODO: Maybe move the test to PolicyResult
-        if (policyResult.policyType() == PolicyType::BUCKET) {
+        if (policyResult.policyType() == PredefinedPolicyType::BUCKET) {
             return policyResult.metadata() == bucketId;
         }
         return false;

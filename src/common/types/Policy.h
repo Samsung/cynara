@@ -46,7 +46,7 @@ public:
     }
 
     static PolicyPtr bucketWithKey(const PolicyKey &key, const PolicyBucketId &bucketId) {
-        auto result = PolicyResult(PolicyType::BUCKET, bucketId);
+        auto result = PolicyResult(PredefinedPolicyType::BUCKET, bucketId);
         return std::make_shared<Policy>(key, result);
     }
 

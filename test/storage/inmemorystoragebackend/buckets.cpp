@@ -38,7 +38,7 @@ TEST_F(InMemeoryStorageBackendFixture, addBucket) {
     EXPECT_CALL(backend, buckets())
         .WillOnce(ReturnRef(m_buckets));
 
-    PolicyResult defaultPolicy(PolicyType::ALLOW);
+    PolicyResult defaultPolicy(PredefinedPolicyType::ALLOW);
     PolicyBucketId bucketId = "new-bucket";
     backend.createBucket(bucketId, defaultPolicy);
 

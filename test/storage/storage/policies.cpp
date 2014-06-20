@@ -89,14 +89,14 @@ TEST(storage, insertPolicies) {
     PolicyBucketId testBucket2 = "test-bucket-2";
 
     std::vector<Storage::PolicyPolicyBucket> policiesToInsert = {
-        std::make_tuple(Policy::simpleWithKey(Helpers::generatePolicyKey("1"), PolicyType::ALLOW), testBucket1),
-        std::make_tuple(Policy::simpleWithKey(Helpers::generatePolicyKey("2"), PolicyType::DENY), testBucket1),
-        std::make_tuple(Policy::simpleWithKey(Helpers::generatePolicyKey("3"), PolicyType::DENY), testBucket1),
-        std::make_tuple(Policy::simpleWithKey(Helpers::generatePolicyKey("4"), PolicyType::ALLOW), testBucket2),
-        std::make_tuple(Policy::simpleWithKey(Helpers::generatePolicyKey("5"), PolicyType::ALLOW), testBucket2),
+        std::make_tuple(Policy::simpleWithKey(Helpers::generatePolicyKey("1"), PredefinedPolicyType::ALLOW), testBucket1),
+        std::make_tuple(Policy::simpleWithKey(Helpers::generatePolicyKey("2"), PredefinedPolicyType::DENY), testBucket1),
+        std::make_tuple(Policy::simpleWithKey(Helpers::generatePolicyKey("3"), PredefinedPolicyType::DENY), testBucket1),
+        std::make_tuple(Policy::simpleWithKey(Helpers::generatePolicyKey("4"), PredefinedPolicyType::ALLOW), testBucket2),
+        std::make_tuple(Policy::simpleWithKey(Helpers::generatePolicyKey("5"), PredefinedPolicyType::ALLOW), testBucket2),
     };
 
-    for(const auto &policy : policiesToInsert) {
+    for (const auto &policy : policiesToInsert) {
         PolicyBucketId bucketId;
         PolicyPtr policyPtr;
         std::tie(policyPtr, bucketId) = policy;
@@ -117,17 +117,17 @@ TEST(storage, updatePolicies) {
     PolicyBucketId testBucket2 = "test-bucket-2";
 
     std::vector<Storage::PolicyPolicyBucket> policiesToInsert = {
-        std::make_tuple(Policy::simpleWithKey(Helpers::generatePolicyKey("1"), PolicyType::ALLOW), testBucket1),
-        std::make_tuple(Policy::simpleWithKey(Helpers::generatePolicyKey("2"), PolicyType::DENY), testBucket1),
-        std::make_tuple(Policy::simpleWithKey(Helpers::generatePolicyKey("3"), PolicyType::DENY), testBucket1),
-        std::make_tuple(Policy::simpleWithKey(Helpers::generatePolicyKey("4"), PolicyType::ALLOW), testBucket2),
-        std::make_tuple(Policy::simpleWithKey(Helpers::generatePolicyKey("5"), PolicyType::ALLOW), testBucket2),
+        std::make_tuple(Policy::simpleWithKey(Helpers::generatePolicyKey("1"), PredefinedPolicyType::ALLOW), testBucket1),
+        std::make_tuple(Policy::simpleWithKey(Helpers::generatePolicyKey("2"), PredefinedPolicyType::DENY), testBucket1),
+        std::make_tuple(Policy::simpleWithKey(Helpers::generatePolicyKey("3"), PredefinedPolicyType::DENY), testBucket1),
+        std::make_tuple(Policy::simpleWithKey(Helpers::generatePolicyKey("4"), PredefinedPolicyType::ALLOW), testBucket2),
+        std::make_tuple(Policy::simpleWithKey(Helpers::generatePolicyKey("5"), PredefinedPolicyType::ALLOW), testBucket2),
     };
 
 
     PolicyCollection pc({std::get<0>(policiesToInsert.at(0))});
 
-    for(const auto &policy : policiesToInsert) {
+    for (const auto &policy : policiesToInsert) {
         PolicyBucketId bucketId;
         PolicyPtr policyPtr;
         std::tie(policyPtr, bucketId) = policy;

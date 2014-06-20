@@ -14,27 +14,27 @@
  *    limitations under the License.
  */
 /*
- * @file        ProtocolClient.h
+ * @file        NoResponseGeneratedException.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
- * @brief       This file defines protocol class for communication with client
+ * @brief       Implementation of NoResponseGeneratedException
  */
 
-#ifndef SRC_SERVICE_PROTOCOL_PROTOCOLCLIENT_H_
-#define SRC_SERVICE_PROTOCOL_PROTOCOLCLIENT_H_
+#ifndef SRC_COMMON_EXCEPTIONS_NORESPONSEGENERATEDEXCEPTION_H_
+#define SRC_COMMON_EXCEPTIONS_NORESPONSEGENERATEDEXCEPTION_H_
 
-#include "Protocol.h"
+#include "Exception.h"
+
+#include <exception>
 
 namespace Cynara {
 
-class ProtocolClient : public Protocol {
+class NoResponseGeneratedException : public Exception {
 public:
-    ProtocolClient();
-    virtual ~ProtocolClient();
-
-    virtual RequestPtr extractRequestFromBuffer(BinaryQueue &bufferQueue);
+    NoResponseGeneratedException() = default;
+    virtual ~NoResponseGeneratedException() = default;
 };
 
-} // namespace Cynara
+} /* namespace Cynara */
 
-#endif /* SRC_SERVICE_PROTOCOL_PROTOCOLCLIENT_H_ */
+#endif /* SRC_COMMON_EXCEPTIONS_NORESPONSEGENERATEDEXCEPTION_H_ */

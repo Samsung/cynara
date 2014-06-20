@@ -31,9 +31,9 @@ ProtocolSignal::ProtocolSignal() {
 ProtocolSignal::~ProtocolSignal() {
 }
 
-Request *ProtocolSignal::extractRequestFromBuffer(BinaryQueue& bufferQueue) {
+RequestPtr ProtocolSignal::extractRequestFromBuffer(BinaryQueue &bufferQueue) {
     TODO_USE_ME(bufferQueue);
-    return nullptr;
+    return RequestPtr(nullptr);
 }
 
 } // namespace Cynara

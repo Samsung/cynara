@@ -32,7 +32,7 @@ public:
     ProtocolAdmin();
     virtual ~ProtocolAdmin();
 
-    virtual Request *extractRequestFromBuffer(BinaryQueue &bufferQueue);
+    virtual RequestPtr extractRequestFromBuffer(BinaryQueue &bufferQueue);
 };
 
 } // namespace Cynara

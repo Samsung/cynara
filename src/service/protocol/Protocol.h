@@ -37,7 +37,7 @@ public:
     Protocol();
     virtual ~Protocol();
 
-    virtual Request *extractRequestFromBuffer(BinaryQueue &bufferQueue) = 0;
+    virtual RequestPtr extractRequestFromBuffer(BinaryQueue &bufferQueue) = 0;
 
     virtual void appendResponseToBuffer(CheckResponse &&response);
 };

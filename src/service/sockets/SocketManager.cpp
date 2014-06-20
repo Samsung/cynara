@@ -36,6 +36,7 @@
 #include <common.h>
 #include <exceptions/DescriptorNotExistsException.h>
 #include <exceptions/InitException.h>
+#include <exceptions/NoResponseGeneratedException.h>
 #include <exceptions/UnexpectedErrorException.h>
 
 #include <logic/Logic.h>
@@ -215,17 +216,21 @@ bool SocketManager::handleRead(int fd, const RawBuffer &readbuffer) {
     desc.pushReadBuffer(readbuffer);
 
     try {
-        std::unique_ptr<Request> req(nullptr);
+        std::shared_ptr<Request> req(nullptr);
         for (;;) {
-            req.reset(desc.extractRequest());
-            if (req)
+            req = desc.extractRequest();
+            if (!req)
                 break;
 
             LOGD("request extracted");
-            req->execute(Cynara::getLogic(), fd);
+            try {
+                req->execute(Cynara::getLogic(), fd);
 
-            if (desc.hasDataToWrite())
+                if (desc.hasDataToWrite())
                     addWriteSocket(fd);
+            } catch (const NoResponseGeneratedException &ex) {
+                LOGD("no response generated");
+            }
         }
     } catch (const Exception &ex) {
         LOGE("Error handling request <%s>. Closing socket", ex.what());

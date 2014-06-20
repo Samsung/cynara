@@ -23,6 +23,8 @@
 #ifndef SRC_SERVICE_REQUEST_REQUEST_H_
 #define SRC_SERVICE_REQUEST_REQUEST_H_
 
+#include <memory>
+
 #include <logic/Logic.h>
 
 namespace Cynara {
@@ -34,6 +36,8 @@ public:
 
     virtual void execute(Logic *logic, int sourceDesc) = 0;
 };
+
+typedef std::shared_ptr<Request> RequestPtr;
 
 } // namespace Cynara
 

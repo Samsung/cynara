@@ -31,8 +31,8 @@ ProtocolAdmin::ProtocolAdmin() {
 ProtocolAdmin::~ProtocolAdmin() {
 }
 
-Request *ProtocolAdmin::extractRequestFromBuffer(BinaryQueue& bufferQueue) {
+RequestPtr ProtocolAdmin::extractRequestFromBuffer(BinaryQueue &bufferQueue) {
     TODO_USE_ME(bufferQueue);
-    return nullptr;
+    return RequestPtr(nullptr);
 }
 } // namespace Cynara

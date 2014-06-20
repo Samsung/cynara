@@ -77,7 +77,7 @@ public:
     }
 
     void pushReadBuffer(const RawBuffer &readbuffer);
-    Request *extractRequest(void);
+    RequestPtr extractRequest(void);
 
     RawBuffer &prepareWriteBuffer(void);
 

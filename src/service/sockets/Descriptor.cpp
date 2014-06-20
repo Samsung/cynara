@@ -35,7 +35,7 @@ void Descriptor::pushReadBuffer(const RawBuffer &readbuffer) {
     m_readQueue.appendCopy(readbuffer.data(), readbuffer.size());
 }
 
-Request *Descriptor::extractRequest(void) {
+RequestPtr Descriptor::extractRequest(void) {
     return m_protocol->extractRequestFromBuffer(m_readQueue);
 }
 

@@ -55,7 +55,7 @@ void Descriptor::clear(void) {
     m_readQueue.clear();
     m_writeQueue.clear();
     m_writeBuffer.clear();
-    m_protocol = nullptr;
+    m_protocol.reset();
 }
 
 } // namespace Cynara

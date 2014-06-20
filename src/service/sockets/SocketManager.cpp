@@ -69,8 +69,8 @@ void SocketManager::init(void) {
     const mode_t clientSocketUMask(0);
     const mode_t adminSocketUMask(0077);
 
-    createDomainSocket(new ProtocolClient, clientSocketPath, clientSocketUMask);
-    createDomainSocket(new ProtocolAdmin, adminSocketPath, adminSocketUMask);
+    createDomainSocket(ProtocolPtr(new ProtocolClient), clientSocketPath, clientSocketUMask);
+    createDomainSocket(ProtocolPtr(new ProtocolAdmin), adminSocketPath, adminSocketUMask);
     // todo create signal descriptor
     LOGI("SocketManger init done");
 }
@@ -235,7 +235,7 @@ bool SocketManager::handleRead(int fd, const RawBuffer &readbuffer) {
     return true;
 }
 
-void SocketManager::createDomainSocket(Protocol *protocol, const std::string &path, mode_t mask) {
+void SocketManager::createDomainSocket(ProtocolPtr protocol, const std::string &path, mode_t mask) {
     int fd = getSocketFromSystemD(path);
     if (fd == -1)
         fd = createDomainSocketHelp(path, mask);

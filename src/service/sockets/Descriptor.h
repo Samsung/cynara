@@ -23,6 +23,8 @@
 #ifndef SRC_SERVICE_SOCKETS_DESCRIPTOR_H_
 #define SRC_SERVICE_SOCKETS_DESCRIPTOR_H_
 
+#include <memory>
+
 #include <common.h>
 
 #include <protocol/Protocol.h>
@@ -39,7 +41,7 @@ private:
     BinaryQueue m_writeQueue;
     RawBuffer m_writeBuffer;
 
-    Protocol *m_protocol;
+    ProtocolPtr m_protocol;
 
 public:
     Descriptor();
@@ -54,7 +56,7 @@ public:
 
     bool hasDataToWrite(void) const;
 
-    Protocol *protocol(void) {
+    ProtocolPtr protocol(void) {
         return m_protocol;
     }
 
@@ -62,7 +64,7 @@ public:
         return m_writeQueue;
     }
 
-    void setProtocol(Protocol *protocol) {
+    void setProtocol(ProtocolPtr protocol) {
         m_protocol = protocol;
     }
 

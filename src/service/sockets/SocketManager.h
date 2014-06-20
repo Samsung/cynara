@@ -24,6 +24,7 @@
 #define SRC_SERVICE_SOCKETS_SOCKETMANAGER_H_
 
 #include <vector>
+#include <memory>
 #include <stdio.h>
 
 #include <common.h>
@@ -63,7 +64,7 @@ private:
     void closeSocket(int fd);
     bool handleRead(int fd, const RawBuffer &readbuffer);
 
-    void createDomainSocket(Protocol *protocol, const std::string &path, mode_t mask);
+    void createDomainSocket(ProtocolPtr protocol, const std::string &path, mode_t mask);
     int createDomainSocketHelp(const std::string &path, mode_t mask);
     int getSocketFromSystemD(const std::string &path);
 

@@ -23,7 +23,10 @@
 #ifndef SRC_SERVICE_PROTOCOL_PROTOCOL_H_
 #define SRC_SERVICE_PROTOCOL_PROTOCOL_H_
 
+#include <memory>
+
 #include <common.h>
+
 #include <request/Request.h>
 #include <response/CheckResponse.h>
 
@@ -38,6 +41,8 @@ public:
 
     virtual void appendResponseToBuffer(CheckResponse &&response);
 };
+
+typedef std::shared_ptr<Protocol> ProtocolPtr;
 
 } // namespace Cynara
 

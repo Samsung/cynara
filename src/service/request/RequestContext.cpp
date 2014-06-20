@@ -31,7 +31,7 @@ BinaryQueue &RequestContext::resultQueue(int fd) {
     return Cynara::getSocketManager()->descriptor(fd).writeQueue();
 }
 
-Protocol *RequestContext::protocol(int fd) {
+ProtocolPtr RequestContext::protocol(int fd) {
     return Cynara::getSocketManager()->descriptor(fd).protocol();
 }
 

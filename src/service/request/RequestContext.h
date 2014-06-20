@@ -29,13 +29,11 @@
 
 namespace Cynara {
 
-class Protocol;
-
 class RequestContext {
 
 public:
     static BinaryQueue &resultQueue(int fd);
-    static Protocol *protocol(int fd);
+    static ProtocolPtr protocol(int fd);
 };
 
 } // namespace Cynara

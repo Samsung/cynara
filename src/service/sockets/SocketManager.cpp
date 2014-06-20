@@ -22,6 +22,7 @@
 
 #include <errno.h>
 #include <fcntl.h>
+#include <memory>
 #include <sys/select.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
@@ -214,15 +215,14 @@ bool SocketManager::handleRead(int fd, const RawBuffer &readbuffer) {
     desc.pushReadBuffer(readbuffer);
 
     try {
-        Request *req = nullptr;
+        std::unique_ptr<Request> req(nullptr);
         for (;;) {
-            req = desc.extractRequest();
-            if (!req)
+            req.reset(desc.extractRequest());
+            if (req)
                 break;
 
             LOGD("request extracted");
             req->execute(Cynara::getLogic(), fd);
-            delete req;
 
             if (desc.hasDataToWrite())
                     addWriteSocket(fd);

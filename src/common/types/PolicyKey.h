@@ -52,10 +52,15 @@ public:
         return anyWildcard(*this, other) || valuesMatch(*this, other);
     }
 
+    bool operator==(const PolicyKeyFeature::ValueType &other) const {
+        return anyWildcard(*this, other) || valuesMatch(*this, other);
+    }
+
     const std::string &toString() const;
 
 protected:
-    PolicyKeyFeature(ValueType value) : m_value(value), m_isWildcard(false) {}
+    PolicyKeyFeature(const ValueType &value) : m_value(value),
+        m_isWildcard(value == PolicyKeyFeature::m_wildcardValue) {}
     PolicyKeyFeature() : m_value(m_wildcardValue), m_isWildcard(true) {}
 
     static bool anyWildcard(const PolicyKeyFeature &pkf1, const PolicyKeyFeature &pkf2) {
@@ -88,6 +93,11 @@ public:
             const PolicyKeyFeature &privilegeId)
         : m_client(clientId), m_user(userId), m_privilege(privilegeId) {};
 
+    PolicyKey(const PolicyKeyFeature::ValueType &clientId,
+            const PolicyKeyFeature::ValueType &userId,
+            const PolicyKeyFeature::ValueType &privilegeId)
+        : m_client(clientId), m_user(userId), m_privilege(privilegeId) {};
+
     bool operator==(const PolicyKey &other) const {
         return std::tie(m_client, m_user, m_privilege)
             == std::tie(other.m_client, other.m_user, other.m_privilege);
@@ -113,6 +123,8 @@ public:
         return m_privilege;
     }
 };
+
+bool operator ==(const PolicyKeyFeature::ValueType &pkf1, const PolicyKeyFeature &pkf2);
 
 } /* namespace Cynara */
 

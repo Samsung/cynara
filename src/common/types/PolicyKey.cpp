@@ -41,4 +41,8 @@ std::string PolicyKey::toString() const {
     return ss.str();
 }
 
+bool operator ==(const PolicyKeyFeature::ValueType &pkf1, const PolicyKeyFeature &pkf2) {
+    return pkf2 == pkf1;
+}
+
 } /* namespace Cynara */

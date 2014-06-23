@@ -45,10 +45,10 @@ const PolicyBucketId defaultPolicyBucketId("");
 class PolicyBucket {
 public:
 
-    PolicyBucket() : m_defaultPolicy(PolicyResult(PredefinedPolicyType::DENY)) {}
+    PolicyBucket() : m_defaultPolicy(PredefinedPolicyType::DENY) {}
     PolicyBucket(const PolicyCollection &policies)
         : m_policyCollection(policies),
-          m_defaultPolicy(PolicyResult(PredefinedPolicyType::DENY)) {}
+          m_defaultPolicy(PredefinedPolicyType::DENY) {}
 
     PolicyBucket filtered(const PolicyKey &key) const;
 

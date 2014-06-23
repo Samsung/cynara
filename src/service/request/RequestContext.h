@@ -32,16 +32,17 @@ namespace Cynara {
 class RequestContext {
 private:
     int m_desc;
-
-    ResponseTaker &responseTaker(void) const;
-    BinaryQueue &responseQueue(void) const;
+    ResponseTaker &m_responseTaker;
+    BinaryQueue &m_responseQueue;
 
 public:
-    RequestContext(int desc);
+    RequestContext(int desc, ResponseTaker &responseTaker, BinaryQueue &responseQueue)
+        : m_desc(desc), m_responseTaker(responseTaker), m_responseQueue(responseQueue) {
+    }
 
     template <class T>
     void returnResponse(T &&response) const {
-        responseTaker().appendResponseToBuffer(responseQueue(), std::move(response));
+        m_responseTaker.appendResponseToBuffer(m_responseQueue, std::move(response));
     }
 };
 

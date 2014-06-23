@@ -74,9 +74,6 @@ private:
     void removeReadSocket(int fd);
     void addWriteSocket(int fd);
     void removeWriteSocket(int fd);
-
-    friend class RequestContext;
-    Descriptor &descriptor(int fd);
 };
 
 } // namespace Cynara

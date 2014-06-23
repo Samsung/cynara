@@ -216,15 +216,14 @@ bool SocketManager::handleRead(int fd, const RawBuffer &readbuffer) {
     desc.pushReadBuffer(readbuffer);
 
     try {
-        std::shared_ptr<Request> req(nullptr);
-        for (;;) {
-            req = desc.extractRequest();
+        while(true) {
+            auto req = desc.extractRequest();
             if (!req)
                 break;
 
             LOGD("request extracted");
             try {
-                req->execute(fd);
+                req->execute(RequestContext(fd, desc.responseTaker(), desc.writeQueue()));
 
                 if (desc.hasDataToWrite())
                     addWriteSocket(fd);
@@ -352,17 +351,6 @@ void SocketManager::addWriteSocket(int fd) {
 
 void SocketManager::removeWriteSocket(int fd) {
     FD_CLR(fd, &m_writeSet);
-}
-
-Descriptor &SocketManager::descriptor(int fd) {
-    try {
-        auto &desc = m_fds.at(fd);
-        if (!desc.isUsed())
-            throw DescriptorNotExistsException(fd);
-        return desc;
-    } catch (const std::out_of_range &e) {
-        throw DescriptorNotExistsException(fd);
-    }
 }
 
 } // namespace Cynara

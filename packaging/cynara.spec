@@ -14,6 +14,9 @@ BuildRequires: pkgconfig(libsystemd-daemon)
 BuildRequires: pkgconfig(libsystemd-journal)
 %{?systemd_requires}
 
+%global user_name %{name}
+%global group_name %{name}
+
 %global build_type %{?build_type:%build_type}%{!?build_type:RELEASE}
 
 %if %{?build_type} == "DEBUG"
@@ -23,7 +26,6 @@ BuildRequires: pkgconfig(zlib)
 BuildRequires: binutils-devel
 
 %endif
-
 
 %description
 service and client libraries (libcynara-client, libcynara-admin)
@@ -71,7 +73,6 @@ Requires:   cynara = %{version}-%{release}
 %description -n cynara-devel
 service (devel version)
 
-
 %prep
 %setup -q
 cp -a %{SOURCE1001} .
@@ -102,27 +103,23 @@ ln -s ../cynara.socket %{buildroot}/usr/lib/systemd/system/sockets.target.wants/
 ln -s ../cynara-admin.socket %{buildroot}/usr/lib/systemd/system/sockets.target.wants/cynara-admin.socket
 
 %post
-USER=%{name}
-GROUP=%{name}
-
 ### Add file capabilities if needed
 ### setcap/getcap binary are useful. To use them you must install libcap and libcap-tools packages
 ### In such case uncomment Requires with those packages
 
 systemctl daemon-reload
 
+id -g %{group_name} > /dev/null 2>&1
+if [ $? -eq 1 ]; then
+    groupadd %{group_name} -r > /dev/null 2>&1
+fi
+
+id -u %{user_name} > /dev/null 2>&1
+if [ $? -eq 1 ]; then
+    useradd -m %{user_name} -r > /dev/null 2>&1
+fi
+
 if [ $1 = 1 ]; then
-
-    id -g $GROUP 2> /dev/null
-    if [ $? -eq 1 ]; then
-        groupadd $GROUP
-    fi
-
-    id -u $USER 2> /dev/null
-    if [ $? -eq 1 ]; then
-    useradd -m $USER
-    fi
-
     systemctl enable %{name}.service
 fi
 
@@ -137,11 +134,9 @@ if [ $1 = 0 ]; then
 fi
 
 %postun
-USER=%{name}
-GROUP=%{name}
 if [ $1 = 0 ]; then
-    userdel -r $USER 2> /dev/null
-    groupdel $GROUP 2> /dev/null
+    userdel -r %{user_name} > /dev/null 2>&1
+    groupdel %{user_name} > /dev/null 2>&1
     systemctl daemon-reload
 fi
 

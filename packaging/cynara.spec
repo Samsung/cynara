@@ -14,6 +14,17 @@ BuildRequires: pkgconfig(libsystemd-daemon)
 BuildRequires: pkgconfig(libsystemd-journal)
 %{?systemd_requires}
 
+%global build_type %{?build_type:%build_type}%{!?build_type:RELEASE}
+
+%if %{?build_type} == "DEBUG"
+
+BuildRequires: pkgconfig(libunwind)
+BuildRequires: pkgconfig(zlib)
+BuildRequires: binutils-devel
+
+%endif
+
+
 %description
 service and client libraries (libcynara-client, libcynara-admin)
 
@@ -77,11 +88,12 @@ export FFLAGS="$FFLAGS -DTIZEN_DEBUG_ENABLE"
 export LDFLAGS+="-Wl,--rpath=%{_libdir}"
 
 %cmake . -DVERSION=%{version} \
-        -DCMAKE_BUILD_TYPE=%{?build_type:%build_type}%{!?build_type:DEBUG} \
+        -DCMAKE_BUILD_TYPE=%{?build_type} \
         -DCMAKE_VERBOSE_MAKEFILE=ON
 make %{?jobs:-j%jobs}
 
 %install
+
 rm -rf %{buildroot}
 %make_install
 

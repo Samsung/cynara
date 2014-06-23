@@ -16,10 +16,22 @@
 # @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
 #
 
-PKG_CHECK_MODULES(CYNARA_DEP
+SET(COMMON_DEPS
     libsystemd-daemon
     libsystemd-journal
+    )
+
+IF (CMAKE_BUILD_TYPE MATCHES "DEBUG")
+SET(COMMON_DEPS
+    ${COMMON_DEPS}
+    libunwind
+    zlib
+    )
+ENDIF (CMAKE_BUILD_TYPE MATCHES "DEBUG")
+
+PKG_CHECK_MODULES(CYNARA_DEP
     REQUIRED
+    ${COMMON_DEPS}
     )
 
 INCLUDE_DIRECTORIES(SYSTEM

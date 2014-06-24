@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2011-2014 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@
  *    limitations under the License.
  */
 /**
- * @file        serialization.cpp
+ * @file        ProtocolSerialization.cpp
  * @author      Tomasz Swierczek (t.swierczek@samsung.com)
  * @version     1.0
  * @brief       This file is the implementation file of data serialization.
  */
 #include <stddef.h>
-#include <dpl/serialization.h>
+#include <protocol/ProtocolSerialization.h>
 
 //
 // Note:

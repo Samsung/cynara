@@ -23,21 +23,20 @@
 #ifndef SRC_SERVICE_REQUEST_REQUEST_H_
 #define SRC_SERVICE_REQUEST_REQUEST_H_
 
-#include <memory>
-
-#include "RequestContext.h"
+#include <request/pointers.h>
+#include <request/RequestContext.h>
+#include <request/RequestTaker.h>
 
 namespace Cynara {
 
 class Request {
 public:
-    Request();
-    virtual ~Request();
+    Request() = default;
+    virtual ~Request() = default;
 
-    virtual void execute(const RequestContext &context) = 0;
+    virtual void execute(RequestPtr self, RequestTaker &taker,
+                         const RequestContext &context) const = 0;
 };
-
-typedef std::shared_ptr<Request> RequestPtr;
 
 } // namespace Cynara
 

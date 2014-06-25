@@ -14,20 +14,28 @@
  *    limitations under the License.
  */
 /*
- * @file        Request.cpp
+ * @file        RequestTaker.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
- * @brief       This file implements request base class
+ * @brief       This file defines RequestTaker class
  */
 
-#include "Request.h"
+#ifndef SRC_SERVICE_REQUEST_REQUESTTAKER_H_
+#define SRC_SERVICE_REQUEST_REQUESTTAKER_H_
+
+#include <request/pointers.h>
+#include <request/RequestContext.h>
 
 namespace Cynara {
 
-Request::Request() {
-}
+class RequestTaker {
+public:
+    RequestTaker() = default;
+    virtual ~RequestTaker() = default;
 
-Request::~Request() {
-}
+    virtual void execute(const RequestContext &context, CheckRequestPtr request);
+};
 
 } // namespace Cynara
+
+#endif /* SRC_SERVICE_REQUEST_REQUESTTAKER_H_ */

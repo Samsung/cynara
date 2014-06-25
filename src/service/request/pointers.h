@@ -14,27 +14,25 @@
  *    limitations under the License.
  */
 /*
- * @file        NoResponseGeneratedException.h
+ * @file        pointers.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
- * @brief       Implementation of NoResponseGeneratedException
+ * @brief       This file defines request base class
  */
 
-#ifndef SRC_COMMON_EXCEPTIONS_NORESPONSEGENERATEDEXCEPTION_H_
-#define SRC_COMMON_EXCEPTIONS_NORESPONSEGENERATEDEXCEPTION_H_
+#ifndef SRC_SERVICE_REQUEST_POINTERS_H_
+#define SRC_SERVICE_REQUEST_POINTERS_H_
 
-#include "Exception.h"
-
-#include <exception>
+#include <memory>
 
 namespace Cynara {
 
-class NoResponseGeneratedException : public Exception {
-public:
-    NoResponseGeneratedException() = default;
-    virtual ~NoResponseGeneratedException() = default;
-};
+class Request;
+typedef std::shared_ptr<Request> RequestPtr;
 
-} /* namespace Cynara */
+class CheckRequest;
+typedef std::shared_ptr<CheckRequest> CheckRequestPtr;
 
-#endif /* SRC_COMMON_EXCEPTIONS_NORESPONSEGENERATEDEXCEPTION_H_ */
+} // namespace Cynara
+
+#endif /* SRC_SERVICE_REQUEST_POINTERS_H_ */

@@ -25,8 +25,10 @@
 
 #include <types/PolicyKey.h>
 
+#include <request/pointers.h>
 #include <request/Request.h>
 #include <request/RequestContext.h>
+#include <request/RequestTaker.h>
 
 namespace Cynara {
 
@@ -35,10 +37,16 @@ private:
     PolicyKey m_key;
 
 public:
-    CheckRequest(const PolicyKey &key);
+    CheckRequest(const PolicyKey &key) : m_key(key) {
+    }
+
     virtual ~CheckRequest() = default;
 
-    virtual void execute(const RequestContext &context);
+    const PolicyKey &key(void) const {
+        return m_key;
+    }
+
+    virtual void execute(RequestPtr self, RequestTaker &taker, const RequestContext &context) const;
 };
 
 } // namespace Cynara

@@ -30,7 +30,7 @@
 #include <common.h>
 
 #include <protocol/Protocol.h>
-#include <request/RequestContext.h>
+#include <request/RequestTaker.h>
 #include "Descriptor.h"
 
 namespace Cynara {
@@ -74,6 +74,8 @@ private:
     void removeReadSocket(int fd);
     void addWriteSocket(int fd);
     void removeWriteSocket(int fd);
+
+    RequestTaker &requestTaker(void);
 };
 
 } // namespace Cynara

@@ -27,7 +27,7 @@ SET(CYNARA_SOURCES
     ${CYNARA_SERVICE_PATH}/protocol/ProtocolSignal.cpp
     ${CYNARA_SERVICE_PATH}/protocol/ResponseTaker.cpp
     ${CYNARA_SERVICE_PATH}/request/CheckRequest.cpp
-    ${CYNARA_SERVICE_PATH}/request/Request.cpp
+    ${CYNARA_SERVICE_PATH}/request/RequestTaker.cpp
     ${CYNARA_SERVICE_PATH}/sockets/Descriptor.cpp
     ${CYNARA_SERVICE_PATH}/sockets/SocketManager.cpp
     ${CYNARA_SERVICE_PATH}/storage/InMemoryStorageBackend.cpp

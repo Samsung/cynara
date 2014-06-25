@@ -36,7 +36,6 @@
 #include <common.h>
 #include <exceptions/DescriptorNotExistsException.h>
 #include <exceptions/InitException.h>
-#include <exceptions/NoResponseGeneratedException.h>
 #include <exceptions/UnexpectedErrorException.h>
 
 #include <logic/Logic.h>
@@ -44,6 +43,8 @@
 #include <protocol/ProtocolAdmin.h>
 #include <protocol/ProtocolClient.h>
 #include <protocol/ProtocolSignal.h>
+#include <request/pointers.h>
+#include <request/RequestContext.h>
 #include <stdexcept>
 
 #include "SocketManager.h"
@@ -219,16 +220,16 @@ bool SocketManager::handleRead(int fd, const RawBuffer &readbuffer) {
 
     try {
         while(true) {
+            //try extract request from binary data received on socket
             auto req = desc.extractRequest();
-            if (!req)
+            if (!req)   // not enough data to build request yet
                 break;
-
             LOGD("request extracted");
-            try {
-                req->execute(RequestContext(fd, desc.responseTaker(), desc.writeQueue()));
-            } catch (const NoResponseGeneratedException &ex) {
-                LOGD("no response generated");
-            }
+
+            //build context
+            RequestContext context(fd, desc.responseTaker(), desc.writeQueue());
+            //pass request to request taker
+            req->execute(req, requestTaker(), context);
         }
     } catch (const Exception &ex) {
         LOGE("Error handling request <%s>. Closing socket", ex.what());
@@ -350,6 +351,11 @@ void SocketManager::addWriteSocket(int fd) {
 
 void SocketManager::removeWriteSocket(int fd) {
     FD_CLR(fd, &m_writeSet);
+}
+
+RequestTaker &SocketManager::requestTaker(void) {
+    //todo change
+    return *Cynara::getLogic();
 }
 
 } // namespace Cynara

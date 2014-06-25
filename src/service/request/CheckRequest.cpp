@@ -20,23 +20,15 @@
  * @brief       This file implements check request class
  */
 
-#include <common.h>
-#include <types/PolicyResult.h>
-
-#include <logic/Logic.h>
-#include <main/Cynara.h>
-#include <request/RequestContext.h>
+#include <memory>
 
 #include "CheckRequest.h"
 
 namespace Cynara {
 
-CheckRequest::CheckRequest(const PolicyKey &key) : m_key(key) {
-}
-
-void CheckRequest::execute(const RequestContext &context) {
-    PolicyResult result = Cynara::getLogic()->check(context, m_key);
-    context.returnResponse(CheckResponse(result));
+void CheckRequest::execute(RequestPtr self, RequestTaker &taker,
+                           const RequestContext &context) const {
+    taker.execute(context, std::dynamic_pointer_cast<CheckRequest>(self));
 }
 
 } // namespace Cynara

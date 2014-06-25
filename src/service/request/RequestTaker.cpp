@@ -14,36 +14,20 @@
  *    limitations under the License.
  */
 /*
- * @file        Logic.h
+ * @file        RequestTaker.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
- * @brief       This file defines main class of logic layer in cynara service
+ * @brief       This file implements RequestTaker class
  */
 
-#ifndef SRC_SERVICE_LOGIC_LOGIC_H_
-#define SRC_SERVICE_LOGIC_LOGIC_H_
+#include <exceptions/NotImplementedException.h>
 
-#include <types/PolicyKey.h>
-#include <types/PolicyResult.h>
-
-#include <request/pointers.h>
-#include <request/RequestContext.h>
-#include <request/RequestTaker.h>
+#include "RequestTaker.h"
 
 namespace Cynara {
 
-class Logic : public RequestTaker {
-public:
-    Logic();
-    virtual ~Logic();
-
-    virtual void execute(const RequestContext &context, CheckRequestPtr request);
-
-private:
-    bool check(const RequestContext &context, const PolicyKey &key, PolicyResult& result);
-
-};
+void RequestTaker::execute(const RequestContext &context UNUSED, CheckRequestPtr request UNUSED) {
+    throw NotImplementedException();
+}
 
 } // namespace Cynara
-
-#endif /* SRC_SERVICE_LOGIC_LOGIC_H_ */

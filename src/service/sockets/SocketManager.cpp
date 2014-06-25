@@ -103,6 +103,8 @@ void SocketManager::mainLoop(void) {
                     readyForWrite(i);
                     --ret;
                 }
+                if (m_fds[i].isUsed() && m_fds[i].hasDataToWrite())
+                    addWriteSocket(i);
             }
         }
     }
@@ -224,9 +226,6 @@ bool SocketManager::handleRead(int fd, const RawBuffer &readbuffer) {
             LOGD("request extracted");
             try {
                 req->execute(RequestContext(fd, desc.responseTaker(), desc.writeQueue()));
-
-                if (desc.hasDataToWrite())
-                    addWriteSocket(fd);
             } catch (const NoResponseGeneratedException &ex) {
                 LOGD("no response generated");
             }

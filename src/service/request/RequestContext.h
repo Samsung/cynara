@@ -25,7 +25,7 @@
 
 #include <common.h>
 
-#include <protocol/ResponseTaker.h>
+#include <response/ResponseTaker.h>
 
 namespace Cynara {
 

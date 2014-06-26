@@ -25,16 +25,25 @@
 
 #include <request/pointers.h>
 #include <request/RequestTaker.h>
+#include <types/ProtocolFields.h>
 
 namespace Cynara {
 
 class Request {
 public:
-    Request() = default;
+    Request(ProtocolFrameSequenceNumber sequenceNumber) : m_sequenceNumber(sequenceNumber) {
+    }
     virtual ~Request() = default;
 
     virtual void execute(RequestPtr self, RequestTakerPtr taker,
-                         RequestContextPtr context) const = 0;
+            RequestContextPtr context) const = 0;
+
+    ProtocolFrameSequenceNumber sequenceNumber(void) const {
+        return m_sequenceNumber;
+    }
+
+private:
+    ProtocolFrameSequenceNumber m_sequenceNumber;
 };
 
 } // namespace Cynara

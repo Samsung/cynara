@@ -16,17 +16,21 @@
 /**
  * @file    ProtocolSerialization.h
  * @author  Tomasz Swierczek (t.swierczek@samsung.com)
+ * @author  Adam Malinowski (a.malinowsk2@samsung.com)
  * @version 1.0
  * @brief   Interfaces and templates used for data serialization.
  */
 #ifndef SRC_COMMON_PROTOCOL_PROTOCOLSERIALIZATION_H_
 #define SRC_COMMON_PROTOCOL_PROTOCOLSERIALIZATION_H_
 
-#include <string>
-#include <vector>
+#include <endian.h>
 #include <list>
 #include <map>
 #include <memory>
+#include <string>
+#include <vector>
+
+#include <protocol/ProtocolOpCode.h>
 
 namespace Cynara {
 // Abstract data stream buffer
@@ -72,20 +76,44 @@ struct ProtocolSerialization {
         stream.write(sizeof(*value), value);
     }
 
-    // unsigned int
-    static void serialize(IStream &stream, const unsigned value) {
-        stream.write(sizeof(value), &value);
+    // unsigned 16-bit int
+    static void serialize(IStream &stream, const uint16_t value) {
+        uint16_t _value = htole16(value);
+        stream.write(sizeof(value), &_value);
     }
-    static void serialize(IStream &stream, const unsigned* const value) {
-        stream.write(sizeof(*value), value);
+    static void serialize(IStream &stream, const uint16_t * const value) {
+        uint16_t _value = htole16(*value);
+        stream.write(sizeof(*value), &_value);
     }
 
-    // int
-    static void serialize(IStream &stream, const int value) {
-        stream.write(sizeof(value), &value);
+    // 16-bit int
+    static void serialize(IStream &stream, const int16_t value) {
+        int16_t _value = htole16(value);
+        stream.write(sizeof(value), &_value);
     }
-    static void serialize(IStream &stream, const int * const value) {
-        stream.write(sizeof(*value), value);
+    static void serialize(IStream &stream, const int16_t * const value) {
+        int16_t _value = htole16(*value);
+        stream.write(sizeof(*value), &_value);
+    }
+
+    // unsigned 32-bit int
+    static void serialize(IStream &stream, const uint32_t value) {
+        uint32_t _value = htole32(value);
+        stream.write(sizeof(value), &_value);
+    }
+    static void serialize(IStream &stream, const uint32_t * const value) {
+        uint32_t _value = htole32(*value);
+        stream.write(sizeof(*value), &_value);
+    }
+
+    // 32-bit int
+    static void serialize(IStream &stream, const int32_t value) {
+        int32_t _value = htole32(value);
+        stream.write(sizeof(value), &_value);
+    }
+    static void serialize(IStream &stream, const int32_t * const value) {
+        int32_t _value = htole32(*value);
+        stream.write(sizeof(*value), &_value);
     }
 
     // bool
@@ -104,6 +132,14 @@ struct ProtocolSerialization {
         stream.write(sizeof(*value), value);
     }
 
+    // ProtocolOpCode
+    static void serialize(IStream &stream, const ProtocolOpCode value) {
+        stream.write(sizeof(value), &value);
+    }
+    static void serialize(IStream &stream, const ProtocolOpCode * const value) {
+        stream.write(sizeof(*value), value);
+    }
+
     // std::string
     static void serialize(IStream &stream, const std::string &str) {
         int length = str.size();
@@ -113,6 +149,14 @@ struct ProtocolSerialization {
     static void serialize(IStream &stream, const std::string * const str) {
         int length = str->size();
         stream.write(sizeof(length), &length);
+        stream.write(length, str->c_str());
+    }
+    static void serializeNoSize(IStream &stream, const std::string &str) {
+        int length = str.size();
+        stream.write(length, str.c_str());
+    }
+    static void serializeNoSize(IStream &stream, const std::string * const str) {
+        int length = str->size();
         stream.write(length, str->c_str());
     }
 
@@ -213,22 +257,48 @@ struct ProtocolDeserialization {
         stream.read(sizeof(*value), value);
     }
 
-    // unsigned int
-    static void deserialize(IStream &stream, unsigned &value) {
+    // 16-bit int
+    static void deserialize(IStream &stream, int16_t &value) {
         stream.read(sizeof(value), &value);
+        value = le16toh(value);
     }
-    static void deserialize(IStream &stream, unsigned *&value) {
-        value = new unsigned;
+    static void deserialize(IStream &stream, int16_t *&value) {
+        value = new int16_t;
         stream.read(sizeof(*value), value);
+        value = le16toh(value);
     }
 
-    // int
-    static void deserialize(IStream &stream, int &value) {
+    // unsigned 16-bit int
+    static void deserialize(IStream &stream, uint16_t &value) {
         stream.read(sizeof(value), &value);
+        value = le16toh(value);
     }
-    static void deserialize(IStream &stream, int *&value) {
-        value = new int;
+    static void deserialize(IStream &stream, uint16_t *&value) {
+        value = new uint16_t;
         stream.read(sizeof(*value), value);
+        value = le16toh(value);
+    }
+
+    // 32-bit int
+    static void deserialize(IStream &stream, int32_t &value) {
+        stream.read(sizeof(value), &value);
+        value = le32toh(value);
+    }
+    static void deserialize(IStream &stream, int32_t *&value) {
+        value = new int32_t;
+        stream.read(sizeof(*value), value);
+        value = le32toh(value);
+    }
+
+    // unsigned 32-bit int
+    static void deserialize(IStream &stream, uint32_t &value) {
+        stream.read(sizeof(value), &value);
+        value = le32toh(value);
+    }
+    static void deserialize(IStream &stream, uint32_t *&value) {
+        value = new uint32_t;
+        stream.read(sizeof(*value), value);
+        value = le32toh(value);
     }
 
     // bool
@@ -249,24 +319,35 @@ struct ProtocolDeserialization {
         stream.read(sizeof(*value), value);
     }
 
+    // PrtocolOpCode
+    static void deserialize(IStream &stream, ProtocolOpCode &value) {
+        stream.read(sizeof(value), &value);
+    }
+    static void deserialize(IStream &stream, ProtocolOpCode *&value) {
+        value = new ProtocolOpCode;
+        stream.read(sizeof(*value), value);
+    }
+
     // std::string
     static void deserialize(IStream &stream, std::string &str) {
         int length;
         stream.read(sizeof(length), &length);
-        char *buf = new char[length + 1];
-        stream.read(length, buf);
-        buf[length] = 0;
-        str = std::string(buf);
-        delete[] buf;
+        str.resize(length);
+        stream.read(length, &str[0]);
     }
     static void deserialize(IStream &stream, std::string *&str) {
         int length;
         stream.read(sizeof(length), &length);
-        char *buf = new char[length + 1];
-        stream.read(length, buf);
-        buf[length] = 0;
-        str = new std::string(buf);
-        delete[] buf;
+        str = new std::string(length, '\0');
+        stream.read(length, &str[0]);
+    }
+    static void deserialize(IStream &stream, int length, std::string &str) {
+        str.resize(length);
+        stream.read(length, &str[0]);
+    }
+    static void deserialize(IStream &stream, int length, std::string *&str) {
+        str = new std::string(length, '\0');
+        stream.read(length, &str[0]);
     }
 
     // STL templates

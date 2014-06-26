@@ -23,6 +23,9 @@
 #ifndef SRC_COMMON_PROTOCOL_PROTOCOLCLIENT_H_
 #define SRC_COMMON_PROTOCOL_PROTOCOLCLIENT_H_
 
+#include <protocol/ProtocolFrameHeader.h>
+#include <request/pointers.h>
+
 #include "Protocol.h"
 
 namespace Cynara {
@@ -36,6 +39,11 @@ public:
 
     virtual RequestPtr extractRequestFromBuffer(BinaryQueue &bufferQueue);
     virtual ResponsePtr extractResponseFromBuffer(BinaryQueue &bufferQueue);
+
+    virtual void execute(RequestContextPtr context, CheckRequestPtr request);
+
+private:
+    RequestPtr deserializeCheckRequest(ProtocolFrameHeader &frame);
 };
 
 } // namespace Cynara

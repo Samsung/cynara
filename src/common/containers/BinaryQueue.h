@@ -32,7 +32,7 @@ namespace Cynara {
  * Binary queue auto pointer
  */
 class BinaryQueue;
-typedef std::auto_ptr<BinaryQueue> BinaryQueueAutoPtr;
+typedef std::shared_ptr<BinaryQueue> BinaryQueuePtr;
 
 /**
  * Binary stream implemented as constant size bucket list

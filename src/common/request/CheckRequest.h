@@ -36,7 +36,8 @@ private:
     PolicyKey m_key;
 
 public:
-    CheckRequest(const PolicyKey &key) : m_key(key) {
+    CheckRequest(const PolicyKey &key, ProtocolFrameSequenceNumber sequenceNumber) :
+        Request(sequenceNumber), m_key(key) {
     }
 
     virtual ~CheckRequest() = default;

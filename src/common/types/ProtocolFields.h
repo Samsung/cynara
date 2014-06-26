@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
  *
+ *  Contact: Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -14,24 +16,24 @@
  *    limitations under the License.
  */
 /*
- * @file        RequestTaker.cpp
- * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @file        ProtocolFields.h
  * @author      Adam Malinowski <a.malinowsk2@partner.samsung.com>
  * @version     1.0
- * @brief       This file implements RequestTaker class
+ * @brief       Types definition for protocol frame fields.
  */
 
-#include <attributes/attributes.h>
-#include <exceptions/NotImplementedException.h>
-#include <request/CheckRequest.h>
-#include <request/RequestContext.h>
+#ifndef SRC_COMMON_TYPES_PROTOCOLFIELDS_H_
+#define SRC_COMMON_TYPES_PROTOCOLFIELDS_H_
 
-#include "RequestTaker.h"
+#include <string>
+#include <cstddef>
 
 namespace Cynara {
 
-void RequestTaker::execute(RequestContextPtr context UNUSED, CheckRequestPtr request UNUSED) {
-    throw NotImplementedException();
-}
+typedef std::string ProtocolFrameSignature;
+typedef uint32_t ProtocolFrameLength;
+typedef uint16_t ProtocolFrameSequenceNumber;
 
-} // namespace Cynara
+} /* namespace Cynara */
+
+#endif /* SRC_COMMON_TYPES_PROTOCOLFIELDS_H_ */

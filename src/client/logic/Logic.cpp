@@ -56,7 +56,9 @@ cynara_api_result Logic::check(const std::string &client, const std::string &ses
     //Ask cynara service
     PolicyResult result(PredefinedPolicyType::DENY);
     try {
-        RequestPtr request = std::make_shared<CheckRequest>(PolicyKey(client, user, privilege));
+        // todo handle sequence number correctly
+        ProtocolFrameSequenceNumber sequenceNumber = 0;
+        RequestPtr request = std::make_shared<CheckRequest>(PolicyKey(client, user, privilege), sequenceNumber);
         ResponsePtr response = m_socketClient->askCynaraServer(request);
         if (!response) {
             LOGW("Disconnected by cynara server.");

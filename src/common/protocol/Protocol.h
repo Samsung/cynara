@@ -26,6 +26,7 @@
 #include <memory>
 
 #include <containers/BinaryQueue.h>
+#include <protocol/ProtocolFrameHeader.h>
 #include <request/pointers.h>
 #include <request/RequestTaker.h>
 #include <response/pointers.h>
@@ -45,6 +46,13 @@ public:
 
     virtual RequestPtr extractRequestFromBuffer(BinaryQueue &bufferQueue) = 0;
     virtual ResponsePtr extractResponseFromBuffer(BinaryQueue &bufferQueue) = 0;
+
+    ProtocolFrameHeader &frameHeader(void) {
+        return m_frameHeader;
+    }
+
+protected:
+    ProtocolFrameHeader m_frameHeader;
 };
 
 } // namespace Cynara

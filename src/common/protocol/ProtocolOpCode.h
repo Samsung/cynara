@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
  *
+ *  Contact: Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -14,24 +16,33 @@
  *    limitations under the License.
  */
 /*
- * @file        RequestTaker.cpp
- * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @file        ProtocolOpCode.h
  * @author      Adam Malinowski <a.malinowsk2@partner.samsung.com>
  * @version     1.0
- * @brief       This file implements RequestTaker class
+ * @brief       Decalaration of protocol frame operation codes.
  */
 
-#include <attributes/attributes.h>
-#include <exceptions/NotImplementedException.h>
-#include <request/CheckRequest.h>
-#include <request/RequestContext.h>
+#ifndef SRC_COMMON_TYPES_PROTOCOLOPCODE_H_
+#define SRC_COMMON_TYPES_PROTOCOLOPCODE_H_
 
-#include "RequestTaker.h"
+#include <cstddef>
 
 namespace Cynara {
 
-void RequestTaker::execute(RequestContextPtr context UNUSED, CheckRequestPtr request UNUSED) {
-    throw NotImplementedException();
-}
+enum ProtocolOpCode : uint8_t {
+    /** Client operations */
+    OpCheckPolicy = 0,
 
-} // namespace Cynara
+    /** Opcodes 1 - 19 are reserved for future use */
+
+    /** Admin operations */
+    OpInsertPolicy = 20,
+    OpDeletePolicy,
+    OpListPolicies,
+    OpBeginTransaction,
+    OpEndTransaction
+};
+
+} /* namespace Cynara */
+
+#endif /* SRC_COMMON_TYPES_PROTOCOLOPCODE_H_ */

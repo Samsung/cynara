@@ -16,12 +16,23 @@
 /*
  * @file        ProtocolClient.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @author      Adam Malinowski <a.malinowsk2@partner.samsung.com>
  * @version     1.0
  * @brief       This file implements protocol class for communication with client
  */
 
 #include <common.h>
 #include <memory>
+
+#include <exceptions/InvalidProtocolException.h>
+#include <exceptions/OutOfDataException.h>
+#include <protocol/ProtocolFrameSerializer.h>
+#include <protocol/ProtocolOpCode.h>
+#include <protocol/ProtocolSerialization.h>
+#include <request/CheckRequest.h>
+#include <request/RequestContext.h>
+#include <types/PolicyKey.h>
+
 #include "ProtocolClient.h"
 
 namespace Cynara {
@@ -36,14 +47,49 @@ ProtocolPtr ProtocolClient::clone(void) {
     return std::make_shared<ProtocolClient>();
 }
 
+RequestPtr ProtocolClient::deserializeCheckRequest(ProtocolFrameHeader &frame) {
+    std::string clientId, userId, privilegeId;
+    ProtocolDeserialization::deserialize(frame, clientId);
+    ProtocolDeserialization::deserialize(frame, userId);
+    ProtocolDeserialization::deserialize(frame, privilegeId);
+    return std::make_shared<CheckRequest>(PolicyKey(clientId, userId, privilegeId),
+            frame.sequenceNumber());
+}
+
 RequestPtr ProtocolClient::extractRequestFromBuffer(BinaryQueue &bufferQueue) {
-    TODO_USE_ME(bufferQueue);
-    return RequestPtr(nullptr);
+    ProtocolFrameSerializer::deserializeHeader(m_frameHeader, bufferQueue);
+
+    if (m_frameHeader.isFrameComplete()) {
+        ProtocolOpCode requestId;
+
+        m_frameHeader.resetState();
+        ProtocolDeserialization::deserialize(m_frameHeader, requestId);
+        switch (requestId) {
+        case OpCheckPolicy:
+            return deserializeCheckRequest(m_frameHeader);
+        default:
+            throw InvalidProtocolException(InvalidProtocolException::WrongOpCode);
+            break;
+        }
+    }
+
+    return nullptr;
 }
 
 ResponsePtr ProtocolClient::extractResponseFromBuffer(BinaryQueue &bufferQueue) {
     TODO_USE_ME(bufferQueue);
     return ResponsePtr(nullptr);
+}
+
+void ProtocolClient::execute(RequestContextPtr context, CheckRequestPtr request) {
+    ProtocolFramePtr frame = ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
+
+    ProtocolSerialization::serialize(*frame, OpCheckPolicy);
+    ProtocolSerialization::serialize(*frame, request->key().client().value());
+    ProtocolSerialization::serialize(*frame, request->key().user().value());
+    ProtocolSerialization::serialize(*frame, request->key().privilege().value());
+
+    ProtocolFrameSerializer::finishSerialization(frame, context->responseQueue());
 }
 
 } // namespace Cynara

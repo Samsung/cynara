@@ -26,6 +26,9 @@ SET(COMMON_SOURCES
     ${COMMON_PATH}/log/log.cpp
     ${COMMON_PATH}/protocol/ProtocolAdmin.cpp
     ${COMMON_PATH}/protocol/ProtocolClient.cpp
+    ${COMMON_PATH}/protocol/ProtocolFrame.cpp
+    ${COMMON_PATH}/protocol/ProtocolFrameHeader.cpp
+    ${COMMON_PATH}/protocol/ProtocolFrameSerializer.cpp
     ${COMMON_PATH}/protocol/ProtocolSerialization.cpp
     ${COMMON_PATH}/protocol/ProtocolSignal.cpp
     ${COMMON_PATH}/request/CheckRequest.cpp

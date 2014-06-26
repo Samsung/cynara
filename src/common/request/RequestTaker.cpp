@@ -20,8 +20,7 @@
  * @brief       This file implements RequestTaker class
  */
 
-#include <common.h>
-
+#include <attributes/attributes.h>
 #include <exceptions/NotImplementedException.h>
 
 #include "RequestTaker.h"

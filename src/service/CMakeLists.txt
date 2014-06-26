@@ -22,12 +22,6 @@ SET(CYNARA_SOURCES
     ${CYNARA_SERVICE_PATH}/logic/Logic.cpp
     ${CYNARA_SERVICE_PATH}/main/Cynara.cpp
     ${CYNARA_SERVICE_PATH}/main/main.cpp
-    ${CYNARA_SERVICE_PATH}/protocol/ProtocolAdmin.cpp
-    ${CYNARA_SERVICE_PATH}/protocol/ProtocolClient.cpp
-    ${CYNARA_SERVICE_PATH}/protocol/ProtocolSignal.cpp
-    ${CYNARA_SERVICE_PATH}/request/CheckRequest.cpp
-    ${CYNARA_SERVICE_PATH}/request/RequestTaker.cpp
-    ${CYNARA_SERVICE_PATH}/response/ResponseTaker.cpp
     ${CYNARA_SERVICE_PATH}/sockets/Descriptor.cpp
     ${CYNARA_SERVICE_PATH}/sockets/SocketManager.cpp
     ${CYNARA_SERVICE_PATH}/storage/InMemoryStorageBackend.cpp

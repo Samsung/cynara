@@ -20,13 +20,12 @@
  * @brief       This file defines protocol base class
  */
 
-#ifndef SRC_SERVICE_PROTOCOL_PROTOCOL_H_
-#define SRC_SERVICE_PROTOCOL_PROTOCOL_H_
+#ifndef SRC_COMMON_PROTOCOL_PROTOCOL_H_
+#define SRC_COMMON_PROTOCOL_PROTOCOL_H_
 
 #include <memory>
 
-#include <common.h>
-
+#include <containers/BinaryQueue.h>
 #include <request/pointers.h>
 #include <request/RequestTaker.h>
 #include <response/ResponseTaker.h>
@@ -45,4 +44,4 @@ typedef std::shared_ptr<Protocol> ProtocolPtr;
 
 } // namespace Cynara
 
-#endif /* SRC_SERVICE_PROTOCOL_PROTOCOL_H_ */
+#endif /* SRC_COMMON_PROTOCOL_PROTOCOL_H_ */

@@ -20,8 +20,8 @@
  * @brief       This file defines RequestTaker class
  */
 
-#ifndef SRC_SERVICE_REQUEST_REQUESTTAKER_H_
-#define SRC_SERVICE_REQUEST_REQUESTTAKER_H_
+#ifndef SRC_COMMON_REQUEST_REQUESTTAKER_H_
+#define SRC_COMMON_REQUEST_REQUESTTAKER_H_
 
 #include <request/pointers.h>
 
@@ -37,4 +37,4 @@ public:
 
 } // namespace Cynara
 
-#endif /* SRC_SERVICE_REQUEST_REQUESTTAKER_H_ */
+#endif /* SRC_COMMON_REQUEST_REQUESTTAKER_H_ */

@@ -20,8 +20,8 @@
  * @brief       This file defines protocol class for administration
  */
 
-#ifndef SRC_SERVICE_PROTOCOL_PROTOCOLADMIN_H_
-#define SRC_SERVICE_PROTOCOL_PROTOCOLADMIN_H_
+#ifndef SRC_COMMON_PROTOCOL_PROTOCOLADMIN_H_
+#define SRC_COMMON_PROTOCOL_PROTOCOLADMIN_H_
 
 #include "Protocol.h"
 
@@ -37,4 +37,4 @@ public:
 
 } // namespace Cynara
 
-#endif /* SRC_SERVICE_PROTOCOL_PROTOCOLADMIN_H_ */
+#endif /* SRC_COMMON_PROTOCOL_PROTOCOLADMIN_H_ */

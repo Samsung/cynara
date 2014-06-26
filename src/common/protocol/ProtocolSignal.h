@@ -20,8 +20,8 @@
  * @brief       This file defines protocol class for signals
  */
 
-#ifndef SRC_SERVICE_PROTOCOL_PROTOCOLSIGNAL_H_
-#define SRC_SERVICE_PROTOCOL_PROTOCOLSIGNAL_H_
+#ifndef SRC_COMMON_PROTOCOL_PROTOCOLSIGNAL_H_
+#define SRC_COMMON_PROTOCOL_PROTOCOLSIGNAL_H_
 
 #include "Protocol.h"
 
@@ -37,4 +37,4 @@ public:
 
 } // namespace Cynara
 
-#endif /* SRC_SERVICE_PROTOCOL_PROTOCOLSIGNAL_H_ */
+#endif /* SRC_COMMON_PROTOCOL_PROTOCOLSIGNAL_H_ */

@@ -20,13 +20,12 @@
  * @brief       This file defines request context class
  */
 
-#ifndef SRC_SERVICE_REQUEST_REQUESTCONTEXT_H_
-#define SRC_SERVICE_REQUEST_REQUESTCONTEXT_H_
+#ifndef SRC_COMMON_REQUEST_REQUESTCONTEXT_H_
+#define SRC_COMMON_REQUEST_REQUESTCONTEXT_H_
 
 #include <memory>
 
-#include <common.h>
-
+#include <containers/BinaryQueue.h>
 #include <request/pointers.h>
 #include <response/pointers.h>
 #include <response/ResponseTaker.h>
@@ -58,4 +57,4 @@ public:
 
 } // namespace Cynara
 
-#endif /* SRC_SERVICE_REQUEST_REQUESTCONTEXT_H_ */
+#endif /* SRC_COMMON_REQUEST_REQUESTCONTEXT_H_ */

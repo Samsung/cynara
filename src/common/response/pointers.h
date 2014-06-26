@@ -20,8 +20,8 @@
  * @brief       This file defines response classes pointers
  */
 
-#ifndef SRC_SERVICE_RESPONSE_POINTERS_H_
-#define SRC_SERVICE_RESPONSE_POINTERS_H_
+#ifndef SRC_COMMON_RESPONSE_POINTERS_H_
+#define SRC_COMMON_RESPONSE_POINTERS_H_
 
 #include <memory>
 
@@ -33,4 +33,4 @@ typedef std::weak_ptr<ResponseTaker> ResponseTakerWeakPtr;
 
 } // namespace Cynara
 
-#endif /* SRC_SERVICE_RESPONSE_POINTERS_H_ */
+#endif /* SRC_COMMON_RESPONSE_POINTERS_H_ */

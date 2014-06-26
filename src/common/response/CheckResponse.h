@@ -20,10 +20,9 @@
  * @brief       This file defines response class for check request
  */
 
-#ifndef SRC_SERVICE_RESPONSE_CHECKRESPONSE_H_
-#define SRC_SERVICE_RESPONSE_CHECKRESPONSE_H_
+#ifndef SRC_COMMON_RESPONSE_CHECKRESPONSE_H_
+#define SRC_COMMON_RESPONSE_CHECKRESPONSE_H_
 
-#include <common.h>
 #include <types/PolicyResult.h>
 
 namespace Cynara {
@@ -37,4 +36,4 @@ struct CheckResponse {
 
 } // namespace Cynara
 
-#endif /* SRC_SERVICE_RESPONSE_CHECKRESPONSE_H_ */
+#endif /* SRC_COMMON_RESPONSE_CHECKRESPONSE_H_ */

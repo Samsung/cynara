@@ -21,7 +21,7 @@
  */
 
 
-#include <common.h>
+#include <attributes/attributes.h>
 #include <exceptions/NotImplementedException.h>
 
 #include "ResponseTaker.h"

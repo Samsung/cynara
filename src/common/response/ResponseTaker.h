@@ -20,10 +20,8 @@
  * @brief       This file defines ResponseTaker class
  */
 
-#ifndef SRC_SERVICE_RESPONSE_RESPONSETAKER_H_
-#define SRC_SERVICE_RESPONSE_RESPONSETAKER_H_
-
-#include <common.h>
+#ifndef SRC_COMMON_RESPONSE_RESPONSETAKER_H_
+#define SRC_COMMON_RESPONSE_RESPONSETAKER_H_
 
 #include <request/pointers.h>
 #include <response/CheckResponse.h>
@@ -40,4 +38,4 @@ public:
 
 } // namespace Cynara
 
-#endif /* SRC_SERVICE_RESPONSE_RESPONSETAKER_H_ */
+#endif /* SRC_COMMON_RESPONSE_RESPONSETAKER_H_ */

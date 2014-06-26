@@ -20,8 +20,8 @@
  * @brief       This file defines request base class
  */
 
-#ifndef SRC_SERVICE_REQUEST_POINTERS_H_
-#define SRC_SERVICE_REQUEST_POINTERS_H_
+#ifndef SRC_COMMON_REQUEST_POINTERS_H_
+#define SRC_COMMON_REQUEST_POINTERS_H_
 
 #include <memory>
 
@@ -38,4 +38,4 @@ typedef std::shared_ptr<RequestContext> RequestContextPtr;
 
 } // namespace Cynara
 
-#endif /* SRC_SERVICE_REQUEST_POINTERS_H_ */
+#endif /* SRC_COMMON_REQUEST_POINTERS_H_ */

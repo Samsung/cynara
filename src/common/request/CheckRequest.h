@@ -20,8 +20,8 @@
  * @brief       This file defines check request class
  */
 
-#ifndef SRC_SERVICE_REQUEST_CHECKREQUEST_H_
-#define SRC_SERVICE_REQUEST_CHECKREQUEST_H_
+#ifndef SRC_COMMON_REQUEST_CHECKREQUEST_H_
+#define SRC_COMMON_REQUEST_CHECKREQUEST_H_
 
 #include <types/PolicyKey.h>
 
@@ -50,4 +50,4 @@ public:
 
 } // namespace Cynara
 
-#endif /* SRC_SERVICE_REQUEST_CHECKREQUEST_H_ */
+#endif /* SRC_COMMON_REQUEST_CHECKREQUEST_H_ */

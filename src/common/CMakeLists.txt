@@ -24,7 +24,13 @@ SET(COMMON_PATH ${CYNARA_PATH}/common)
 SET(COMMON_SOURCES
     ${COMMON_PATH}/containers/BinaryQueue.cpp
     ${COMMON_PATH}/log/log.cpp
+    ${COMMON_PATH}/protocol/ProtocolAdmin.cpp
+    ${COMMON_PATH}/protocol/ProtocolClient.cpp
     ${COMMON_PATH}/protocol/ProtocolSerialization.cpp
+    ${COMMON_PATH}/protocol/ProtocolSignal.cpp
+    ${COMMON_PATH}/request/CheckRequest.cpp
+    ${COMMON_PATH}/request/RequestTaker.cpp
+    ${COMMON_PATH}/response/ResponseTaker.cpp
     ${COMMON_PATH}/types/PolicyBucket.cpp
     ${COMMON_PATH}/types/PolicyKey.cpp
     )

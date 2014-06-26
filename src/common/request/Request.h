@@ -20,10 +20,9 @@
  * @brief       This file defines request base class
  */
 
-#ifndef SRC_SERVICE_REQUEST_REQUEST_H_
-#define SRC_SERVICE_REQUEST_REQUEST_H_
+#ifndef SRC_COMMON_REQUEST_REQUEST_H_
+#define SRC_COMMON_REQUEST_REQUEST_H_
 
-#include <request/pointers.h>
 #include <request/pointers.h>
 #include <request/RequestTaker.h>
 
@@ -39,4 +38,4 @@ public:
 
 } // namespace Cynara
 
-#endif /* SRC_SERVICE_REQUEST_REQUEST_H_ */
+#endif /* SRC_COMMON_REQUEST_REQUEST_H_ */

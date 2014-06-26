@@ -28,11 +28,12 @@
 #include <common.h>
 
 #include <request/pointers.h>
+#include <request/RequestTaker.h>
 #include <response/ResponseTaker.h>
 
 namespace Cynara {
 
-class Protocol : public ResponseTaker {
+class Protocol : public RequestTaker, public ResponseTaker {
 public:
     Protocol() = default;
     virtual ~Protocol() = default;

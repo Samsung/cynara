@@ -42,16 +42,15 @@
 #include <log/log.h>
 #include "Cynara.h"
 
-using namespace Cynara;
-
 int main(int argc UNUSED, char **argv UNUSED) {
     int ret;
 
     init_log();
 
     try {
+        Cynara::Cynara cynara;
         LOGI("Cynara service is starting ...");
-        Cynara::Cynara::init();
+        cynara.init();
         LOGI("Cynara service is started");
 
         ret = sd_notify(0, "READY=1");
@@ -62,10 +61,10 @@ int main(int argc UNUSED, char **argv UNUSED) {
         }
 
         LOGD("Starting the real job");
-        Cynara::Cynara::run();
+        cynara.run();
 
         LOGD("Time to clean up.");
-        Cynara::Cynara::finalize();
+        cynara.finalize();
         LOGD("Cynara service is stopped");
     } catch (std::exception &e) {
         LOGC("Cynara stoped because of unhandled exception: %s", e.what());

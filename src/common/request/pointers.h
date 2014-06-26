@@ -36,6 +36,9 @@ typedef std::shared_ptr<Request> RequestPtr;
 class RequestContext;
 typedef std::shared_ptr<RequestContext> RequestContextPtr;
 
+class RequestTaker;
+typedef std::shared_ptr<RequestTaker> RequestTakerPtr;
+
 } // namespace Cynara
 
 #endif /* SRC_COMMON_REQUEST_POINTERS_H_ */

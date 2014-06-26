@@ -45,7 +45,7 @@ public:
         return m_key;
     }
 
-    virtual void execute(RequestPtr self, RequestTaker &taker, RequestContextPtr context) const;
+    virtual void execute(RequestPtr self, RequestTakerPtr taker, RequestContextPtr context) const;
 };
 
 } // namespace Cynara

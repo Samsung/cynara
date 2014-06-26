@@ -48,7 +48,7 @@ void Logic::execute(RequestContextPtr context, CheckRequestPtr request) {
 
 bool Logic::check(RequestContextPtr context UNUSED, const PolicyKey &key,
                   PolicyResult& result) {
-    result = Cynara::getStorage()->checkPolicy(key);
+    result = m_storage->checkPolicy(key);
 
     switch (result.policyType()) {
         case PredefinedPolicyType::ALLOW :

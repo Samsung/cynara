@@ -20,9 +20,16 @@
  * @brief       This file implements main class of cynara service
  */
 
+#include <memory>
 #include <stddef.h>
 
+#include <exceptions/InitException.h>
+
+#include <logic/Logic.h>
+#include <sockets/SocketManager.h>
 #include <storage/InMemoryStorageBackend.h>
+#include <storage/Storage.h>
+#include <storage/StorageBackend.h>
 
 #include "Cynara.h"
 
@@ -32,42 +39,34 @@ Cynara::Cynara()
     : m_logic(nullptr), m_socketManager(nullptr), m_storage(nullptr), m_storageBackend(nullptr) {
 }
 
-Cynara* Cynara::getInstance(void) {
-    static Cynara instance;
-    return &instance;
-}
-
 Cynara::~Cynara() {
+    finalize();
 }
 
 void Cynara::init(void) {
-    getInstance()->m_logic = new Logic();
-    getInstance()->m_socketManager = new SocketManager();
-    getInstance()->m_storageBackend = new InMemoryStorageBackend();
-    getInstance()->m_storage = new Storage(*getInstance()->m_storageBackend);
+    m_logic = std::make_shared<Logic>();
+    m_socketManager = std::make_shared<SocketManager>();
+    m_storageBackend = std::make_shared<InMemoryStorageBackend>();
+    m_storage = std::make_shared<Storage>(*m_storageBackend);
+
+    m_logic->bindStorage(m_storage);
+    m_logic->bindSocketManager(m_socketManager);
+
+    m_socketManager->bindLogic(m_logic);
 }
 
 void Cynara::run(void) {
-    getInstance()->m_socketManager->run();
+    m_socketManager->run();
 }
 
 void Cynara::finalize(void) {
-    delete getInstance()->m_logic;
-    delete getInstance()->m_socketManager;
-    delete getInstance()->m_storageBackend;
-    delete getInstance()->m_storage;
-}
+    m_logic->unbindAll();
+    m_socketManager->unbindAll();
 
-Logic *Cynara::getLogic(void) {
-    return getInstance()->m_logic;
-}
-
-SocketManager *Cynara::getSocketManager(void) {
-    return getInstance()->m_socketManager;
-}
-
-Storage *Cynara::getStorage(void) {
-    return getInstance()->m_storage;
+    m_logic.reset();
+    m_socketManager.reset();
+    m_storageBackend.reset();
+    m_storage.reset();
 }
 
 } // namespace Cynara

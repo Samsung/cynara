@@ -354,9 +354,8 @@ void SocketManager::removeWriteSocket(int fd) {
     FD_CLR(fd, &m_writeSet);
 }
 
-RequestTaker &SocketManager::requestTaker(void) {
-    //todo change
-    return *Cynara::getLogic();
+RequestTakerPtr SocketManager::requestTaker(void) {
+    return std::static_pointer_cast<RequestTaker>(m_logic);
 }
 
 } // namespace Cynara

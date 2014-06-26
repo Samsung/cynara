@@ -33,7 +33,7 @@ public:
     Request() = default;
     virtual ~Request() = default;
 
-    virtual void execute(RequestPtr self, RequestTaker &taker, RequestContextPtr context) const = 0;
+    virtual void execute(RequestPtr self, RequestTakerPtr taker, RequestContextPtr context) const = 0;
 };
 
 } // namespace Cynara

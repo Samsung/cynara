@@ -14,21 +14,31 @@
  *    limitations under the License.
  */
 /*
- * @file        CheckRequest.cpp
+ * @file        pointers.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
- * @brief       This file implements check request class
+ * @brief       This file defines request base class
  */
+
+#ifndef SRC_SERVICE_MAIN_POINTERS_H_
+#define SRC_SERVICE_MAIN_POINTERS_H_
 
 #include <memory>
 
-#include "CheckRequest.h"
-
 namespace Cynara {
 
-void CheckRequest::execute(RequestPtr self, RequestTakerPtr taker,
-                           RequestContextPtr context) const {
-    taker->execute(context, std::dynamic_pointer_cast<CheckRequest>(self));
-}
+class Logic;
+typedef std::shared_ptr<Logic> LogicPtr;
+
+class SocketManager;
+typedef std::shared_ptr<SocketManager> SocketManagerPtr;
+
+class Storage;
+typedef std::shared_ptr<Storage> StoragePtr;
+
+class StorageBackend;
+typedef std::shared_ptr<StorageBackend> StorageBackendPtr;
 
 } // namespace Cynara
+
+#endif /* SRC_SERVICE_MAIN_POINTERS_H_ */

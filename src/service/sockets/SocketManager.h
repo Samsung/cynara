@@ -29,6 +29,7 @@
 
 #include <common.h>
 
+#include <main/pointers.h>
 #include <protocol/Protocol.h>
 #include <request/RequestTaker.h>
 #include "Descriptor.h"
@@ -45,7 +46,17 @@ public:
     void run(void);
     void mainLoopStop(void);
 
+    void bindLogic(LogicPtr logic) {
+        m_logic = logic;
+    }
+
+    void unbindAll(void) {
+        m_logic.reset();
+    }
+
 private:
+    LogicPtr m_logic;
+
     typedef std::vector<Descriptor> FDVector;
     FDVector m_fds;
 
@@ -75,7 +86,7 @@ private:
     void addWriteSocket(int fd);
     void removeWriteSocket(int fd);
 
-    RequestTaker &requestTaker(void);
+    RequestTakerPtr requestTaker(void);
 };
 
 } // namespace Cynara

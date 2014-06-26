@@ -23,35 +23,24 @@
 #ifndef SRC_SERVICE_MAIN_CYNARA_H_
 #define SRC_SERVICE_MAIN_CYNARA_H_
 
-#include <logic/Logic.h>
-#include <sockets/SocketManager.h>
-#include <storage/Storage.h>
-#include <storage/StorageBackend.h>
+#include <main/pointers.h>
 
 namespace Cynara {
 
 class Cynara {
 private:
-    Logic *m_logic;
-    SocketManager *m_socketManager;
-    Storage *m_storage;
-    StorageBackend *m_storageBackend;
-
-    Cynara();
-
-    static Cynara *getInstance(void);
+    LogicPtr m_logic;
+    SocketManagerPtr m_socketManager;
+    StoragePtr m_storage;
+    StorageBackendPtr m_storageBackend;
 
 public:
+    Cynara();
     ~Cynara();
 
-    static void init(void);
-    static void run(void);
-    static void finalize(void);
-
-    static Logic *getLogic(void);
-    static SocketManager *getSocketManager(void);
-    static Storage *getStorage(void);
-
+    void init(void);
+    void run(void);
+    void finalize(void);
 };
 
 } // namespace Cynara

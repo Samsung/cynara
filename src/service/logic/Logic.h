@@ -26,6 +26,7 @@
 #include <types/PolicyKey.h>
 #include <types/PolicyResult.h>
 
+#include <main/pointers.h>
 #include <request/pointers.h>
 #include <request/RequestTaker.h>
 
@@ -36,9 +37,25 @@ public:
     Logic();
     virtual ~Logic();
 
+    void bindStorage(StoragePtr storage) {
+        m_storage = storage;
+    }
+
+    void bindSocketManager(SocketManagerPtr socketManager) {
+        m_socketManager = socketManager;
+    }
+
+    void unbindAll(void) {
+        m_storage.reset();
+        m_socketManager.reset();
+    }
+
     virtual void execute(RequestContextPtr context, CheckRequestPtr request);
 
 private:
+    StoragePtr m_storage;
+    SocketManagerPtr m_socketManager;
+
     bool check(RequestContextPtr context, const PolicyKey &key, PolicyResult& result);
 
 };

@@ -45,13 +45,13 @@ protected:
     inline void dumpFields(const Arg1 arg1, const Args&... args) {
         dump(arg1);
         if (sizeof...(Args) > 0) {
-            outStream() << fieldSeparator;
+            outStream() << fieldSeparator();
         }
         dumpFields(args...);
     }
 
     inline void dumpFields(void) {
-        outStream() << recordSeparator;
+        outStream() << recordSeparator();
     }
 
     void dump(const PolicyKey &key);
@@ -67,8 +67,17 @@ protected:
 private:
     std::ostream &m_outStream;
 
-    static std::string fieldSeparator;
-    static std::string recordSeparator;
+    static char m_fieldSeparator;
+    static char m_recordSeparator;
+
+public:
+    static const char &fieldSeparator(void) {
+        return m_fieldSeparator;
+    }
+
+    static const char &recordSeparator(void) {
+        return m_recordSeparator;
+    }
 };
 
 } /* namespace Cynara */

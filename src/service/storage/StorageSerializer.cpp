@@ -22,15 +22,15 @@
 
 #include "StorageSerializer.h"
 
-#include "types/PolicyCollection.h"
 #include "types/PolicyBucket.h"
+#include "types/PolicyCollection.h"
 
 #include <algorithm>
 
 namespace Cynara {
 
-std::string StorageSerializer::fieldSeparator = ";";
-std::string StorageSerializer::recordSeparator = "\n";
+char StorageSerializer::m_fieldSeparator = ';';
+char StorageSerializer::m_recordSeparator = '\n';
 
 StorageSerializer::StorageSerializer(std::ostream &os) : m_outStream(os) {}
 

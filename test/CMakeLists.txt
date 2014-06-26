@@ -32,6 +32,7 @@ SET(CYNARA_SOURCES_FOR_TESTS
 )
 
 SET(CYNARA_TESTS_SOURCES
+    common/exceptions/bucketrecordcorrupted.cpp
     types/policykey.cpp
     storage/storage/policies.cpp
     storage/storage/check.cpp

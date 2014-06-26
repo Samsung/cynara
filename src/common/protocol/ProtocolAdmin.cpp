@@ -21,6 +21,7 @@
  */
 
 #include <common.h>
+#include <memory>
 #include "ProtocolAdmin.h"
 
 namespace Cynara {
@@ -29,6 +30,10 @@ ProtocolAdmin::ProtocolAdmin() {
 }
 
 ProtocolAdmin::~ProtocolAdmin() {
+}
+
+ProtocolPtr ProtocolAdmin::clone(void) {
+    return std::make_shared<ProtocolAdmin>();
 }
 
 RequestPtr ProtocolAdmin::extractRequestFromBuffer(BinaryQueue &bufferQueue) {

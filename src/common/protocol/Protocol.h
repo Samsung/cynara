@@ -33,16 +33,19 @@
 
 namespace Cynara {
 
+class Protocol;
+typedef std::shared_ptr<Protocol> ProtocolPtr;
+
 class Protocol : public RequestTaker, public ResponseTaker {
 public:
     Protocol() = default;
     virtual ~Protocol() = default;
 
+    virtual ProtocolPtr clone(void) = 0;
+
     virtual RequestPtr extractRequestFromBuffer(BinaryQueue &bufferQueue) = 0;
     virtual ResponsePtr extractResponseFromBuffer(BinaryQueue &bufferQueue) = 0;
 };
-
-typedef std::shared_ptr<Protocol> ProtocolPtr;
 
 } // namespace Cynara
 

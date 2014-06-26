@@ -32,6 +32,8 @@ public:
     ProtocolAdmin();
     virtual ~ProtocolAdmin();
 
+    virtual ProtocolPtr clone(void);
+
     virtual RequestPtr extractRequestFromBuffer(BinaryQueue &bufferQueue);
     virtual ResponsePtr extractResponseFromBuffer(BinaryQueue &bufferQueue);
 };

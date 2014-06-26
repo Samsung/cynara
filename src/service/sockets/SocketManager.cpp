@@ -71,8 +71,8 @@ void SocketManager::init(void) {
     const mode_t clientSocketUMask(0);
     const mode_t adminSocketUMask(0077);
 
-    createDomainSocket(ProtocolPtr(new ProtocolClient), clientSocketPath, clientSocketUMask);
-    createDomainSocket(ProtocolPtr(new ProtocolAdmin), adminSocketPath, adminSocketUMask);
+    createDomainSocket(std::make_shared<ProtocolClient>(), clientSocketPath, clientSocketUMask);
+    createDomainSocket(std::make_shared<ProtocolAdmin>(), adminSocketPath, adminSocketUMask);
     // todo create signal descriptor
     LOGI("SocketManger init done");
 }
@@ -197,9 +197,9 @@ void SocketManager::readyForAccept(int fd) {
     }
     LOGD("Accept on sock [%d]. New client socket opened [%d]", fd, client);
 
-    auto &description = createDescriptor(client);
-    description.setListen(false);
-    description.setProtocol(m_fds[fd].protocol());
+    auto &desc = createDescriptor(client);
+    desc.setListen(false);
+    desc.setProtocol(m_fds[fd].protocol()->clone());
     addReadSocket(client);
     LOGD("SocketManger readyForAccept on fd [%d] done", fd);
 }

@@ -21,6 +21,7 @@
  */
 
 #include <common.h>
+#include <memory>
 #include "ProtocolSignal.h"
 
 namespace Cynara {
@@ -29,6 +30,10 @@ ProtocolSignal::ProtocolSignal() {
 }
 
 ProtocolSignal::~ProtocolSignal() {
+}
+
+ProtocolPtr ProtocolSignal::clone(void) {
+    return std::make_shared<ProtocolSignal>();
 }
 
 RequestPtr ProtocolSignal::extractRequestFromBuffer(BinaryQueue &bufferQueue) {

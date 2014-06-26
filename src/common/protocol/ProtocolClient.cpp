@@ -21,6 +21,7 @@
  */
 
 #include <common.h>
+#include <memory>
 #include "ProtocolClient.h"
 
 namespace Cynara {
@@ -29,6 +30,10 @@ ProtocolClient::ProtocolClient() {
 }
 
 ProtocolClient::~ProtocolClient() {
+}
+
+ProtocolPtr ProtocolClient::clone(void) {
+    return std::make_shared<ProtocolClient>();
 }
 
 RequestPtr ProtocolClient::extractRequestFromBuffer(BinaryQueue &bufferQueue) {

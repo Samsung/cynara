@@ -32,6 +32,8 @@ public:
     ProtocolSignal();
     virtual ~ProtocolSignal();
 
+    virtual ProtocolPtr clone(void);
+
     virtual RequestPtr extractRequestFromBuffer(BinaryQueue &bufferQueue);
     virtual ResponsePtr extractResponseFromBuffer(BinaryQueue &bufferQueue);
 };

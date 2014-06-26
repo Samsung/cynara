@@ -23,13 +23,13 @@
 #include <new>
 #include <common.h>
 #include <cynara-client.h>
-#include <cynara-client-interface.h>
-#include <bootstrap/cynara-client-bootstrap.h>
+#include <api/ApiInterface.h>
+#include <logic/Logic.h>
 
 struct cynara {
-    CynaraClientInterface *impl;
+    Cynara::ApiInterface *impl;
 
-    cynara(CynaraClientInterface *_impl) : impl(_impl) {
+    cynara(Cynara::ApiInterface *_impl) : impl(_impl) {
     }
     ~cynara() {
         delete impl;
@@ -43,8 +43,8 @@ int cynara_initialize(cynara **pp_cynara, const cynara_configuration *p_conf UNU
         return cynara_api_result::CYNARA_API_INVALID_PARAM;
 
     try {
-        *pp_cynara = new cynara(new CynaraClientBootstrap);
-    } catch (std::bad_alloc &ex) {
+        *pp_cynara = new cynara(new Cynara::Logic);
+    } catch (const std::bad_alloc &ex) {
         return cynara_api_result::CYNARA_API_OUT_OF_MEMORY;
     }
 

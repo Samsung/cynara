@@ -14,30 +14,23 @@
  *  limitations under the License
  */
 /*
- * @file        cynara-client-bootstrap.cpp
+ * @file        Logic.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
- * @brief       This file contains bootstrap version of libcynara-client API implementation.
+ * @brief       This file contains implementation of Logic class - main libcynara-client class
  */
 
-#include <security-server.h>
-#include "cynara-client-bootstrap.h"
+#include <common.h>
 
-CynaraClientBootstrap :: CynaraClientBootstrap() {
-}
+#include "Logic.h"
 
-CynaraClientBootstrap :: ~CynaraClientBootstrap() {
-}
+namespace Cynara {
 
-cynara_api_result CynaraClientBootstrap :: check(const std::string &client,
-    const std::string &session UNUSED, const std::string &user UNUSED, const std::string &privilege)
+cynara_api_result Logic::check(const std::string &client UNUSED, const std::string &session UNUSED,
+                               const std::string &user UNUSED, const std::string &privilege UNUSED)
 {
-    int is_enabled = 0;
-
-    int ret = security_server_app_has_privilege(client.c_str(), APP_TYPE_WGT, privilege.c_str(),
-                                                &is_enabled);
-
-    if(ret == PC_OPERATION_SUCCESS && is_enabled)
-        return cynara_api_result::CYNARA_API_SUCCESS;
+    //todo - this is a stub
     return cynara_api_result::CYNARA_API_ACCESS_DENIED;
 }
+
+} // namespace Cynara

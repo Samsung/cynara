@@ -14,26 +14,29 @@
  *  limitations under the License
  */
 /*
- * @file        cynara-client-bootstrap.h
+ * @file        Logic.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
- * @brief       This file contains bootstrap version of libcynara-client API implementation.
+ * @brief       This file contains definition of Logic class - main libcynara-client class
  */
 
-#ifndef CYNARA_CLIENT_BOOTSTRAP_H
-#define CYNARA_CLIENT_BOOTSTRAP_H
+#ifndef SRC_CLIENT_LOGIC_LOGIC_H_
+#define SRC_CLIENT_LOGIC_LOGIC_H_
 
 #include <string>
-#include <common.h>
-#include <cynara-client.h>
-#include <cynara-client-interface.h>
+#include <api/ApiInterface.h>
 
-class CynaraClientBootstrap : public CynaraClientInterface {
+namespace Cynara {
+
+class Logic : public ApiInterface {
 public:
-    CynaraClientBootstrap();
-    virtual ~CynaraClientBootstrap();
+    Logic() = default;
+    virtual ~Logic() = default;
+
     virtual cynara_api_result check(const std::string &client, const std::string &session,
         const std::string &user, const std::string &privilege);
 };
 
-#endif /* CYNARA_CLIENT_BOOTSTRAP_H */
+} // namespace Cynara
+
+#endif /* SRC_CLIENT_LOGIC_LOGIC_H_ */

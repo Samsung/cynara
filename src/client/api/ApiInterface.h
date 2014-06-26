@@ -14,25 +14,29 @@
  *  limitations under the License
  */
 /*
- * @file        cynara-client-interface.h
+ * @file        ApiInterface.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
- * @brief       This file contains interface for libcynara-client API implementation.
+ * @brief       This file contains libcynara-client API interface definition.
  */
 
-
-#ifndef CYNARA_CLIENT_INTERFACE_H
-#define CYNARA_CLIENT_INTERFACE_H
+#ifndef SRC_CLIENT_API_APIINTERFACE_H_
+#define SRC_CLIENT_API_APIINTERFACE_H_
 
 #include <string>
 #include <cynara-client.h>
 
-class CynaraClientInterface {
+namespace Cynara {
+
+class ApiInterface {
 public:
-    virtual ~CynaraClientInterface() {
-    }
+    ApiInterface() = default;
+    virtual ~ApiInterface() = default;
+
     virtual cynara_api_result check(const std::string &client, const std::string &session,
         const std::string &user, const std::string &privilege) = 0;
 };
 
-#endif /* CYNARA_CLIENT_INTERFACE_H */
+} // namespace Cynara
+
+#endif /* SRC_CLIENT_API_APIINTERFACE_H_ */

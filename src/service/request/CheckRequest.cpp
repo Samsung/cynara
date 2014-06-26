@@ -27,7 +27,7 @@
 namespace Cynara {
 
 void CheckRequest::execute(RequestPtr self, RequestTaker &taker,
-                           const RequestContext &context) const {
+                           RequestContextPtr context) const {
     taker.execute(context, std::dynamic_pointer_cast<CheckRequest>(self));
 }
 

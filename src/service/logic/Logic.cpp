@@ -26,6 +26,7 @@
 
 #include <main/Cynara.h>
 #include <request/CheckRequest.h>
+#include <request/RequestContext.h>
 #include <response/CheckResponse.h>
 #include <storage/Storage.h>
 
@@ -38,14 +39,14 @@ Logic::Logic() {
 Logic::~Logic() {
 }
 
-void Logic::execute(const RequestContext &context, CheckRequestPtr request) {
+void Logic::execute(RequestContextPtr context, CheckRequestPtr request) {
     PolicyResult result(PredefinedPolicyType::DENY);
     if (check(context, request->key(), result)) {
-        context.returnResponse(CheckResponse(result));
+        context->returnResponse(context, CheckResponse(result));
     }
 }
 
-bool Logic::check(const RequestContext &context UNUSED, const PolicyKey &key,
+bool Logic::check(RequestContextPtr context UNUSED, const PolicyKey &key,
                   PolicyResult& result) {
     result = Cynara::getStorage()->checkPolicy(key);
 

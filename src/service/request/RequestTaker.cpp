@@ -20,13 +20,15 @@
  * @brief       This file implements RequestTaker class
  */
 
+#include <common.h>
+
 #include <exceptions/NotImplementedException.h>
 
 #include "RequestTaker.h"
 
 namespace Cynara {
 
-void RequestTaker::execute(const RequestContext &context UNUSED, CheckRequestPtr request UNUSED) {
+void RequestTaker::execute(RequestContextPtr context UNUSED, CheckRequestPtr request UNUSED) {
     throw NotImplementedException();
 }
 

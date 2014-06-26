@@ -29,6 +29,7 @@
 
 #include <protocol/Protocol.h>
 #include <request/Request.h>
+#include <response/pointers.h>
 
 namespace Cynara {
 
@@ -60,9 +61,7 @@ public:
         return m_protocol;
     }
 
-    ResponseTaker &responseTaker(void) {
-        return *m_protocol;
-    }
+    ResponseTakerPtr responseTaker(void) const;
 
     BinaryQueue &writeQueue(void) {
         return m_writeQueue;

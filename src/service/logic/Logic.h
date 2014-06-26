@@ -27,7 +27,6 @@
 #include <types/PolicyResult.h>
 
 #include <request/pointers.h>
-#include <request/RequestContext.h>
 #include <request/RequestTaker.h>
 
 namespace Cynara {
@@ -37,10 +36,10 @@ public:
     Logic();
     virtual ~Logic();
 
-    virtual void execute(const RequestContext &context, CheckRequestPtr request);
+    virtual void execute(RequestContextPtr context, CheckRequestPtr request);
 
 private:
-    bool check(const RequestContext &context, const PolicyKey &key, PolicyResult& result);
+    bool check(RequestContextPtr context, const PolicyKey &key, PolicyResult& result);
 
 };
 

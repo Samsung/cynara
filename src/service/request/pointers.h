@@ -27,11 +27,14 @@
 
 namespace Cynara {
 
+class CheckRequest;
+typedef std::shared_ptr<CheckRequest> CheckRequestPtr;
+
 class Request;
 typedef std::shared_ptr<Request> RequestPtr;
 
-class CheckRequest;
-typedef std::shared_ptr<CheckRequest> CheckRequestPtr;
+class RequestContext;
+typedef std::shared_ptr<RequestContext> RequestContextPtr;
 
 } // namespace Cynara
 

@@ -23,8 +23,12 @@
 #ifndef SRC_SERVICE_REQUEST_REQUESTCONTEXT_H_
 #define SRC_SERVICE_REQUEST_REQUESTCONTEXT_H_
 
+#include <memory>
+
 #include <common.h>
 
+#include <request/pointers.h>
+#include <response/pointers.h>
 #include <response/ResponseTaker.h>
 
 namespace Cynara {
@@ -32,17 +36,23 @@ namespace Cynara {
 class RequestContext {
 private:
     int m_desc;
-    ResponseTaker &m_responseTaker;
+    ResponseTakerWeakPtr m_responseTaker;
     BinaryQueue &m_responseQueue;
 
 public:
-    RequestContext(int desc, ResponseTaker &responseTaker, BinaryQueue &responseQueue)
+    RequestContext(int desc, ResponseTakerPtr responseTaker, BinaryQueue &responseQueue)
         : m_desc(desc), m_responseTaker(responseTaker), m_responseQueue(responseQueue) {
     }
 
     template <class T>
-    void returnResponse(T &&response) const {
-        m_responseTaker.appendResponseToBuffer(m_responseQueue, std::move(response));
+    void returnResponse(RequestContextPtr self, T &&response) const {
+        ResponseTakerPtr taker = m_responseTaker.lock();
+        if (taker)
+            taker->execute(self, std::move(response));
+    }
+
+    BinaryQueue &responseQueue(void) const {
+        return m_responseQueue;
     }
 };
 

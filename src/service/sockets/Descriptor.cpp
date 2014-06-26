@@ -31,6 +31,10 @@ bool Descriptor::hasDataToWrite(void) const {
     return !(m_writeQueue.empty() && m_writeBuffer.empty());
 }
 
+ResponseTakerPtr Descriptor::responseTaker(void) const {
+    return std::static_pointer_cast<ResponseTaker>(m_protocol);
+}
+
 void Descriptor::pushReadBuffer(const RawBuffer &readbuffer) {
     m_readQueue.appendCopy(readbuffer.data(), readbuffer.size());
 }

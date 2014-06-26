@@ -24,7 +24,6 @@
 #define SRC_SERVICE_REQUEST_REQUESTTAKER_H_
 
 #include <request/pointers.h>
-#include <request/RequestContext.h>
 
 namespace Cynara {
 
@@ -33,7 +32,7 @@ public:
     RequestTaker() = default;
     virtual ~RequestTaker() = default;
 
-    virtual void execute(const RequestContext &context, CheckRequestPtr request);
+    virtual void execute(RequestContextPtr context, CheckRequestPtr request);
 };
 
 } // namespace Cynara

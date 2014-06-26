@@ -27,7 +27,6 @@
 
 #include <request/pointers.h>
 #include <request/Request.h>
-#include <request/RequestContext.h>
 #include <request/RequestTaker.h>
 
 namespace Cynara {
@@ -46,7 +45,7 @@ public:
         return m_key;
     }
 
-    virtual void execute(RequestPtr self, RequestTaker &taker, const RequestContext &context) const;
+    virtual void execute(RequestPtr self, RequestTaker &taker, RequestContextPtr context) const;
 };
 
 } // namespace Cynara

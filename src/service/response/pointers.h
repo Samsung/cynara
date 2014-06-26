@@ -14,30 +14,23 @@
  *    limitations under the License.
  */
 /*
- * @file        ResponseTaker.h
+ * @file        pointers.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
- * @brief       This file defines ResponseTaker class
+ * @brief       This file defines response classes pointers
  */
 
-#ifndef SRC_SERVICE_RESPONSE_RESPONSETAKER_H_
-#define SRC_SERVICE_RESPONSE_RESPONSETAKER_H_
+#ifndef SRC_SERVICE_RESPONSE_POINTERS_H_
+#define SRC_SERVICE_RESPONSE_POINTERS_H_
 
-#include <common.h>
-
-#include <request/pointers.h>
-#include <response/CheckResponse.h>
+#include <memory>
 
 namespace Cynara {
 
-class ResponseTaker {
-public:
-    ResponseTaker() = default;
-    virtual ~ResponseTaker() = default;
-
-    virtual void execute(RequestContextPtr context, CheckResponse &&response);
-};
+class ResponseTaker;
+typedef std::shared_ptr<ResponseTaker> ResponseTakerPtr;
+typedef std::weak_ptr<ResponseTaker> ResponseTakerWeakPtr;
 
 } // namespace Cynara
 
-#endif /* SRC_SERVICE_RESPONSE_RESPONSETAKER_H_ */
+#endif /* SRC_SERVICE_RESPONSE_POINTERS_H_ */

@@ -43,11 +43,10 @@ public:
         : m_desc(desc), m_responseTaker(responseTaker), m_responseQueue(responseQueue) {
     }
 
-    template <class T>
-    void returnResponse(RequestContextPtr self, T &&response) const {
+    void returnResponse(RequestContextPtr self, ResponsePtr response) const {
         ResponseTakerPtr taker = m_responseTaker.lock();
         if (taker)
-            taker->execute(self, std::move(response));
+            response->execute(response, taker, self);
     }
 
     BinaryQueue &responseQueue(void) const {

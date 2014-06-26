@@ -28,7 +28,7 @@
 
 namespace Cynara {
 
-void ResponseTaker::execute(RequestContextPtr context UNUSED, CheckResponse &&response UNUSED) {
+void ResponseTaker::execute(RequestContextPtr context UNUSED, CheckResponsePtr response UNUSED) {
     throw NotImplementedException();
 }
 

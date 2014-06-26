@@ -33,7 +33,7 @@ public:
     ResponseTaker() = default;
     virtual ~ResponseTaker() = default;
 
-    virtual void execute(RequestContextPtr context, CheckResponse &&response);
+    virtual void execute(RequestContextPtr context, CheckResponsePtr response);
 };
 
 } // namespace Cynara

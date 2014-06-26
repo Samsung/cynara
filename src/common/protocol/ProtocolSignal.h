@@ -33,6 +33,7 @@ public:
     virtual ~ProtocolSignal();
 
     virtual RequestPtr extractRequestFromBuffer(BinaryQueue &bufferQueue);
+    virtual ResponsePtr extractResponseFromBuffer(BinaryQueue &bufferQueue);
 };
 
 } // namespace Cynara

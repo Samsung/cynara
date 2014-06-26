@@ -14,31 +14,21 @@
  *    limitations under the License.
  */
 /*
- * @file        ProtocolAdmin.cpp
+ * @file        CheckRequest.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
- * @brief       This file implements protocol class for administration
+ * @brief       This file implements check response class
  */
 
-#include <common.h>
-#include "ProtocolAdmin.h"
+#include <memory>
+
+#include "CheckResponse.h"
 
 namespace Cynara {
 
-ProtocolAdmin::ProtocolAdmin() {
-}
-
-ProtocolAdmin::~ProtocolAdmin() {
-}
-
-RequestPtr ProtocolAdmin::extractRequestFromBuffer(BinaryQueue &bufferQueue) {
-    TODO_USE_ME(bufferQueue);
-    return RequestPtr(nullptr);
-}
-
-ResponsePtr ProtocolAdmin::extractResponseFromBuffer(BinaryQueue &bufferQueue) {
-    TODO_USE_ME(bufferQueue);
-    return ResponsePtr(nullptr);
+void CheckResponse::execute(ResponsePtr self, ResponseTakerPtr taker,
+                            RequestContextPtr context) const {
+    taker->execute(context, std::dynamic_pointer_cast<CheckResponse>(self));
 }
 
 } // namespace Cynara

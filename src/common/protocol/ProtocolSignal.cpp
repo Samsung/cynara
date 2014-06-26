@@ -36,4 +36,9 @@ RequestPtr ProtocolSignal::extractRequestFromBuffer(BinaryQueue &bufferQueue) {
     return RequestPtr(nullptr);
 }
 
+ResponsePtr ProtocolSignal::extractResponseFromBuffer(BinaryQueue &bufferQueue) {
+    TODO_USE_ME(bufferQueue);
+    return ResponsePtr(nullptr);
+}
+
 } // namespace Cynara

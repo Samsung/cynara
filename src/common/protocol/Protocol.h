@@ -28,6 +28,7 @@
 #include <containers/BinaryQueue.h>
 #include <request/pointers.h>
 #include <request/RequestTaker.h>
+#include <response/pointers.h>
 #include <response/ResponseTaker.h>
 
 namespace Cynara {
@@ -38,6 +39,7 @@ public:
     virtual ~Protocol() = default;
 
     virtual RequestPtr extractRequestFromBuffer(BinaryQueue &bufferQueue) = 0;
+    virtual ResponsePtr extractResponseFromBuffer(BinaryQueue &bufferQueue) = 0;
 };
 
 typedef std::shared_ptr<Protocol> ProtocolPtr;

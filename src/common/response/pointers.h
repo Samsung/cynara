@@ -27,6 +27,12 @@
 
 namespace Cynara {
 
+class CheckResponse;
+typedef std::shared_ptr<CheckResponse> CheckResponsePtr;
+
+class Response;
+typedef std::shared_ptr<Response> ResponsePtr;
+
 class ResponseTaker;
 typedef std::shared_ptr<ResponseTaker> ResponseTakerPtr;
 typedef std::weak_ptr<ResponseTaker> ResponseTakerWeakPtr;

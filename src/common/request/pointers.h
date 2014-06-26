@@ -17,7 +17,7 @@
  * @file        pointers.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
- * @brief       This file defines request base class
+ * @brief       This file defines request classes pointers
  */
 
 #ifndef SRC_COMMON_REQUEST_POINTERS_H_

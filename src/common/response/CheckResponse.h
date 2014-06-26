@@ -25,13 +25,23 @@
 
 #include <types/PolicyResult.h>
 
+#include <request/pointers.h>
+#include <response/pointers.h>
+#include <response/Response.h>
+
 namespace Cynara {
 
-struct CheckResponse {
+class CheckResponse : public Response {
+public:
     const PolicyResult &m_resultRef;
 
     CheckResponse(const PolicyResult &result) : m_resultRef(result) {
     }
+
+    virtual ~CheckResponse() = default;
+
+    virtual void execute(ResponsePtr self, ResponseTakerPtr taker,
+                         RequestContextPtr context) const;
 };
 
 } // namespace Cynara

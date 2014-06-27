@@ -34,7 +34,7 @@ public:
     virtual ~BucketRecordCorruptedException(void) = default;
 
     BucketRecordCorruptedException(const std::string &line)
-        : m_line(line), m_lineNumber(0) {}
+        : m_lineNumber(0), m_line(line)  {}
 
     BucketRecordCorruptedException withLineNumber(const size_t &lineNumber) const {
         BucketRecordCorruptedException copy(*this);

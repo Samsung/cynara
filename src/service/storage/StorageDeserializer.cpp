@@ -60,7 +60,7 @@ PolicyCollection StorageDeserializer::loadPolicies(std::istream &is) {
 PolicyKey StorageDeserializer::parseKey(const std::string &line, std::size_t &beginToken) {
     std::array<std::string, 3> keyFeatures;
 
-    for(auto tokenNum = 0; tokenNum < keyFeatures.size(); ++tokenNum) {
+    for(std::size_t tokenNum = 0; tokenNum < keyFeatures.size(); ++tokenNum) {
         auto endToken = line.find(StorageSerializer::fieldSeparator(), beginToken);
         if (endToken != std::string::npos) {
             keyFeatures[tokenNum] = line.substr(beginToken, endToken - beginToken);

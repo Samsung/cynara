@@ -24,17 +24,24 @@
 #define SRC_CLIENT_LOGIC_LOGIC_H_
 
 #include <string>
+
 #include <api/ApiInterface.h>
+#include <sockets/SocketClient.h>
 
 namespace Cynara {
 
 class Logic : public ApiInterface {
+private:
+    SocketClientPtr m_socketClient;
+
+    void onDisconnected(void);
+
 public:
-    Logic() = default;
+    Logic();
     virtual ~Logic() = default;
 
     virtual cynara_api_result check(const std::string &client, const std::string &session,
-        const std::string &user, const std::string &privilege);
+        const std::string &user, const std::string &privilege) noexcept;
 };
 
 } // namespace Cynara

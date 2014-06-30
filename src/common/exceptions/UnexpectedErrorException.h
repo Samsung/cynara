@@ -42,6 +42,12 @@ public:
         stream << errorMsg << ">";
         m_whatMessage = stream.str();
     }
+    UnexpectedErrorException(const char *errorMsg) {
+        std::ostringstream stream;
+        stream << "UnexpectedErrorException with message <";
+        stream << errorMsg << ">";
+        m_whatMessage = stream.str();
+    }
 
     virtual ~UnexpectedErrorException() = default;
 

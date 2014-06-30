@@ -227,7 +227,7 @@ bool SocketManager::handleRead(int fd, const RawBuffer &readbuffer) {
             LOGD("request extracted");
 
             //build context
-            auto context = std::make_shared<RequestContext>(fd, desc.responseTaker(),
+            auto context = std::make_shared<RequestContext>(desc.responseTaker(),
                                                             desc.writeQueue());
             //pass request to request taker
             req->execute(req, requestTaker(), context);

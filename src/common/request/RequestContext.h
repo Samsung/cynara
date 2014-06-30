@@ -34,13 +34,12 @@ namespace Cynara {
 
 class RequestContext {
 private:
-    int m_desc;
     ResponseTakerWeakPtr m_responseTaker;
     BinaryQueue &m_responseQueue;
 
 public:
-    RequestContext(int desc, ResponseTakerPtr responseTaker, BinaryQueue &responseQueue)
-        : m_desc(desc), m_responseTaker(responseTaker), m_responseQueue(responseQueue) {
+    RequestContext(ResponseTakerPtr responseTaker, BinaryQueue &responseQueue)
+        : m_responseTaker(responseTaker), m_responseQueue(responseQueue) {
     }
 
     void returnResponse(RequestContextPtr self, ResponsePtr response) const {

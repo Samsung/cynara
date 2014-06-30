@@ -45,8 +45,7 @@ SocketClient::SocketClient() : m_socket(clientSocketPath),
 
 ResponsePtr SocketClient::askCynaraServer(RequestPtr request) {
     //pass request to protocol
-    RequestContextPtr context = std::make_shared<RequestContext>(-1, ResponseTakerPtr(),
-                                                                 m_writeQueue);
+    RequestContextPtr context = std::make_shared<RequestContext>(ResponseTakerPtr(), m_writeQueue);
     request->execute(request, m_protocol, context);
 
     //send request to cynara

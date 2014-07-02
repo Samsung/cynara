@@ -37,10 +37,10 @@ namespace Cynara {
 
 PolicyResult Storage::checkPolicy(const PolicyKey &key) {
     auto policies = m_backend.searchDefaultBucket(key);
-    return minimalPolicy(policies);
+    return minimalPolicy(policies, key);
 };
 
-PolicyResult Storage::minimalPolicy(const PolicyBucket &bucket) {
+PolicyResult Storage::minimalPolicy(const PolicyBucket &bucket, const PolicyKey &key) {
     bool hasMinimal = false;
     PolicyResult minimal = bucket.defaultPolicy();
 
@@ -63,9 +63,8 @@ PolicyResult Storage::minimalPolicy(const PolicyBucket &bucket) {
             return policyResult; // Do not expect lower value than DENY
             break;
         case PredefinedPolicyType::BUCKET: {
-                auto bucketResults = m_backend.searchBucket(policyResult.metadata(),
-                        policyRecord->key());
-                auto minimumOfBucket = minimalPolicy(bucketResults);
+                auto bucketResults = m_backend.searchBucket(policyResult.metadata(), key);
+                auto minimumOfBucket = minimalPolicy(bucketResults, key);
                 proposeMinimal(minimumOfBucket);
                 continue;
             }

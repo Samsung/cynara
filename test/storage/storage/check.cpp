@@ -119,3 +119,64 @@ TEST(storage, checkBucket) {
     defaultBucket.policyCollection().push_back(Policy::simpleWithKey(pk, PredefinedPolicyType::DENY));
     ASSERT_EQ(PredefinedPolicyType::DENY, storage.checkPolicy(pk).policyType());
 }
+
+// Catch a bug, where consecutive buckets were filtered with wildcard policies' keys
+// instead of original key being checked
+TEST(storage, checkBucketWildcard) {
+    using ::testing::Return;
+    using ::testing::ReturnPointee;
+
+    const PolicyBucketId additionalBucketId = "additional-bucket";
+    const PolicyKey defaultBucketKey = PolicyKey("c", "*", "p");
+    const PolicyKey checkKey = PolicyKey("c", "u1", "p");
+
+    PolicyBucket defaultBucket(PolicyCollection({
+        Policy::bucketWithKey(defaultBucketKey, additionalBucketId)
+    }));
+
+    FakeStorageBackend backend;
+    Cynara::Storage storage(backend);
+
+    EXPECT_CALL(backend, searchDefaultBucket(checkKey))
+        .WillRepeatedly(ReturnPointee(&defaultBucket));
+
+    EXPECT_CALL(backend, searchBucket(defaultPolicyBucketId, checkKey))
+        .WillRepeatedly(ReturnPointee(&defaultBucket));
+
+    // Check, if next bucket is filtered with original key
+    EXPECT_CALL(backend, searchBucket(additionalBucketId, checkKey))
+        .WillRepeatedly(Return(PolicyBucket()));    // additional bucket would yield no records
+
+    // Should return additional bucket's default policy
+    ASSERT_EQ(PredefinedPolicyType::DENY, storage.checkPolicy(checkKey));
+}
+
+TEST(storage, checkBucketWildcardOtherDefault) {
+    using ::testing::ReturnPointee;
+
+    const PolicyBucketId additionalBucketId = "additional-bucket";
+    const PolicyKey defaultBucketKey = PolicyKey("c", "*", "p");
+    const PolicyKey checkKey = PolicyKey("c", "u1", "p");
+
+    PolicyBucket defaultBucket(PolicyCollection({
+        Policy::bucketWithKey(defaultBucketKey, additionalBucketId)
+    }));
+
+    PolicyBucket additionalBucket(additionalBucketId, PredefinedPolicyType::ALLOW);
+
+    FakeStorageBackend backend;
+    Cynara::Storage storage(backend);
+
+    EXPECT_CALL(backend, searchDefaultBucket(checkKey))
+        .WillRepeatedly(ReturnPointee(&defaultBucket));
+
+    EXPECT_CALL(backend, searchBucket(defaultPolicyBucketId, checkKey))
+        .WillRepeatedly(ReturnPointee(&defaultBucket));
+
+    // Check, if next bucket is filtered with original key
+    EXPECT_CALL(backend, searchBucket(additionalBucketId, checkKey))
+        .WillRepeatedly(ReturnPointee(&additionalBucket));
+
+    // Should return additional bucket's default policy
+    ASSERT_EQ(PredefinedPolicyType::ALLOW, storage.checkPolicy(checkKey));
+}

@@ -55,7 +55,7 @@ public:
     void deleteBucket(const PolicyBucketId &bucketId);
 
 protected:
-    PolicyResult minimalPolicy(const PolicyBucket &bucket);
+    PolicyResult minimalPolicy(const PolicyBucket &bucket, const PolicyKey &key);
 
 private:
     StorageBackend &m_backend; // backend strategy

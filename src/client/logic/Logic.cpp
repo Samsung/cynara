@@ -32,10 +32,10 @@
 #include <request/pointers.h>
 #include <response/CheckResponse.h>
 #include <response/pointers.h>
+#include <sockets/SocketClient.h>
 #include <types/PolicyKey.h>
 #include <types/PolicyResult.h>
 
-#include <sockets/SocketClient.h>
 #include "Logic.h"
 
 namespace Cynara {

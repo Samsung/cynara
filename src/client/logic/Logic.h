@@ -25,8 +25,9 @@
 
 #include <string>
 
-#include <api/ApiInterface.h>
 #include <sockets/SocketClient.h>
+
+#include <api/ApiInterface.h>
 
 namespace Cynara {
 

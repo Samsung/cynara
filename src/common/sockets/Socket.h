@@ -21,12 +21,12 @@
  * @brief       This file contains definition of UNIX client socket class
  */
 
-#ifndef SRC_CLIENT_SOCKETS_SOCKET_H_
-#define SRC_CLIENT_SOCKETS_SOCKET_H_
+#ifndef SRC_COMMON_SOCKETS_SOCKET_H_
+#define SRC_COMMON_SOCKETS_SOCKET_H_
 
 #include <string>
 
-#include <common.h>
+#include <containers/BinaryQueue.h>
 
 namespace Cynara {
 
@@ -76,4 +76,4 @@ public:
 
 } // namespace Cynara
 
-#endif /* SRC_CLIENT_SOCKETS_SOCKET_H_ */
+#endif /* SRC_COMMON_SOCKETS_SOCKET_H_ */

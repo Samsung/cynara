@@ -24,8 +24,6 @@ SET(CYNARA_LIB_CYNARA_PATH ${CYNARA_PATH}/client)
 SET(LIB_CYNARA_SOURCES
     ${CYNARA_LIB_CYNARA_PATH}/api/client-api.cpp
     ${CYNARA_LIB_CYNARA_PATH}/logic/Logic.cpp
-    ${CYNARA_LIB_CYNARA_PATH}/sockets/Socket.cpp
-    ${CYNARA_LIB_CYNARA_PATH}/sockets/SocketClient.cpp
     )
 
 INCLUDE_DIRECTORIES(

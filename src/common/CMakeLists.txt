@@ -32,6 +32,8 @@ SET(COMMON_SOURCES
     ${COMMON_PATH}/request/RequestTaker.cpp
     ${COMMON_PATH}/response/CheckResponse.cpp
     ${COMMON_PATH}/response/ResponseTaker.cpp
+    ${COMMON_PATH}/sockets/Socket.cpp
+    ${COMMON_PATH}/sockets/SocketClient.cpp
     ${COMMON_PATH}/types/PolicyBucket.cpp
     ${COMMON_PATH}/types/PolicyKey.cpp
     )

@@ -20,17 +20,16 @@
  * @brief       This file contains definition of cynara's socket client
  */
 
-#ifndef SRC_CLIENT_SOCKETS_SOCKETCLIENT_H_
-#define SRC_CLIENT_SOCKETS_SOCKETCLIENT_H_
+#ifndef SRC_COMMON_SOCKETS_SOCKETCLIENT_H_
+#define SRC_COMMON_SOCKETS_SOCKETCLIENT_H_
 
 #include <memory>
 
-#include <common.h>
+#include <containers/BinaryQueue.h>
 #include <protocol/Protocol.h>
 #include <request/pointers.h>
 #include <response/pointers.h>
 #include <response/ResponseTaker.h>
-
 #include <sockets/Socket.h>
 
 namespace Cynara {
@@ -56,4 +55,4 @@ public:
 
 } // namespace Cynara
 
-#endif /* SRC_CLIENT_SOCKETS_SOCKETCLIENT_H_ */
+#endif /* SRC_COMMON_SOCKETS_SOCKETCLIENT_H_ */

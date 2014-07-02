@@ -29,7 +29,6 @@
 #include <request/Request.h>
 #include <request/RequestContext.h>
 #include <response/pointers.h>
-
 #include <sockets/Socket.h>
 
 #include "SocketClient.h"

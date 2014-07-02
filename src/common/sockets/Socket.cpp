@@ -31,6 +31,8 @@
 #include <sys/un.h>
 #include <unistd.h>
 
+#include <containers/BinaryQueue.h>
+#include <containers/RawBuffer.h>
 #include <exceptions/InitException.h>
 #include <exceptions/ServerConnectionErrorException.h>
 #include <exceptions/UnexpectedErrorException.h>

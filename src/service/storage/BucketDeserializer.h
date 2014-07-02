@@ -37,13 +37,17 @@ class BucketDeserializer {
 friend StorageDeserializer;
 
 public:
-    static PolicyCollection loadPolicies(std::istream &is);
+    BucketDeserializer(std::istream &inStream) : m_inStream(inStream) {}
+    PolicyCollection loadPolicies(void);
 
 protected:
     static PolicyKey parseKey(const std::string &line, std::size_t &beginToken);
     static PolicyType parsePolicyType(const std::string &line, std::size_t &beginToken);
     static PolicyResult::PolicyMetadata parseMetadata(const std::string &line,
                                                       std::size_t &beginToken);
+
+private:
+    std::istream &m_inStream;
 };
 
 } /* namespace Cynara */

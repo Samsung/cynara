@@ -59,11 +59,9 @@ void StorageDeserializer::loadBuckets(InMemoryStorageBackend::Buckets &buckets) 
         const auto &bucketId = bucketIter.first;
         auto &bucket = bucketIter.second;
 
-        auto inStream = m_bucketStreamOpener(bucketId);
-
-        if (inStream != nullptr && inStream->good()) {
-            auto policies = BucketDeserializer::loadPolicies(*inStream);
-            bucket.setPolicyCollection(policies);
+        auto bucketDeserializer = m_bucketStreamOpener(bucketId);
+        if (bucketDeserializer != nullptr) {
+            bucket.setPolicyCollection(bucketDeserializer->loadPolicies());
         } else {
             // TODO: Throw?
         }

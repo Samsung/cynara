@@ -52,12 +52,13 @@ public:
 
     void checkCorruptedData(const std::string &data, const std::string &corruptedLine,
             size_t corruptedLineNumber) {
-        std::istringstream ss(data);
-        EXPECT_THROW(BucketDeserializer::loadPolicies(ss), BucketRecordCorruptedException);
+        std::istringstream bucketStream(data);
+        BucketDeserializer deserializer(bucketStream);
+        EXPECT_THROW(deserializer.loadPolicies(), BucketRecordCorruptedException);
 
-        ss.seekg(0);
+        bucketStream.seekg(0);
         try {
-            BucketDeserializer::loadPolicies(ss);
+            deserializer.loadPolicies();
         } catch (const BucketRecordCorruptedException &ex) {
             ASSERT_EQ(corruptedLine, ex.line());
             ASSERT_EQ(corruptedLineNumber, ex.lineNumber());
@@ -68,18 +69,20 @@ public:
 TEST_F(BucketDeserializerFixture, load_empty) {
     using ::testing::IsEmpty;
 
-    std::istringstream ss;
+    std::istringstream bucketStream;
+    BucketDeserializer deserializer(bucketStream);
 
-    auto policies = BucketDeserializer::loadPolicies(ss);
+    auto policies = deserializer.loadPolicies();
     ASSERT_THAT(policies, IsEmpty());
 }
 
 TEST_F(BucketDeserializerFixture, load_1) {
     using ::testing::UnorderedElementsAre;
 
-    std::istringstream ss("c;u;p;0;meta");
+    std::istringstream bucketStream("c;u;p;0;meta");
+    BucketDeserializer deserializer(bucketStream);
 
-    auto policies = BucketDeserializer::loadPolicies(ss);
+    auto policies = deserializer.loadPolicies();
     auto expectedPolicy = createPolicy({ "c", "u", "p" }, { PredefinedPolicyType::DENY, "meta" });
 
     ASSERT_THAT(policies, UnorderedElementsAre(PolicyPtrEq(expectedPolicy)));
@@ -88,9 +91,10 @@ TEST_F(BucketDeserializerFixture, load_1) {
 TEST_F(BucketDeserializerFixture, load_1_allow) {
     using ::testing::UnorderedElementsAre;
 
-    std::istringstream ss("c;u;p;0xFFFF;meta");
+    std::istringstream bucketStream("c;u;p;0xFFFF;meta");
+    BucketDeserializer deserializer(bucketStream);
 
-    auto policies = BucketDeserializer::loadPolicies(ss);
+    auto policies = deserializer.loadPolicies();
     auto expectedPolicy = createPolicy({ "c", "u", "p" }, { PredefinedPolicyType::ALLOW, "meta" });
 
     ASSERT_THAT(policies, UnorderedElementsAre(PolicyPtrEq(expectedPolicy)));
@@ -99,9 +103,10 @@ TEST_F(BucketDeserializerFixture, load_1_allow) {
 TEST_F(BucketDeserializerFixture, load_1_no_meta_sep) {
     using ::testing::UnorderedElementsAre;
 
-    std::istringstream ss("c;u;p;0;");
+    std::istringstream bucketStream("c;u;p;0;");
+    BucketDeserializer deserializer(bucketStream);
 
-    auto policies = BucketDeserializer::loadPolicies(ss);
+    auto policies = deserializer.loadPolicies();
     auto expectedPolicy = createPolicy({ "c", "u", "p" }, { PredefinedPolicyType::DENY, "" });
 
     ASSERT_THAT(policies, UnorderedElementsAre(PolicyPtrEq(expectedPolicy)));
@@ -110,9 +115,10 @@ TEST_F(BucketDeserializerFixture, load_1_no_meta_sep) {
 TEST_F(BucketDeserializerFixture, load_1_no_meta_no_sep) {
     using ::testing::UnorderedElementsAre;
 
-    std::istringstream ss("c;u;p;0");
+    std::istringstream bucketStream("c;u;p;0");
+    BucketDeserializer deserializer(bucketStream);
 
-    auto policies = BucketDeserializer::loadPolicies(ss);
+    auto policies = deserializer.loadPolicies();
     auto expectedPolicy = createPolicy({ "c", "u", "p" }, { PredefinedPolicyType::DENY, "" });
 
     ASSERT_THAT(policies, UnorderedElementsAre(PolicyPtrEq(expectedPolicy)));
@@ -121,10 +127,11 @@ TEST_F(BucketDeserializerFixture, load_1_no_meta_no_sep) {
 TEST_F(BucketDeserializerFixture, load_2) {
     using ::testing::UnorderedElementsAre;
 
-    std::istringstream ss("c;u;p;0;meta\n"
-                          "c;u;p;0;meta\n");
+    std::istringstream bucketStream("c;u;p;0;meta\n"
+                                    "c;u;p;0;meta\n");
+    BucketDeserializer deserializer(bucketStream);
 
-    auto policies = BucketDeserializer::loadPolicies(ss);
+    auto policies = deserializer.loadPolicies();
     auto expectedPolicy = createPolicy({ "c", "u", "p" }, { PredefinedPolicyType::DENY, "meta" });
 
     ASSERT_THAT(policies, UnorderedElementsAre(PolicyPtrEq(expectedPolicy),
@@ -135,12 +142,13 @@ TEST_F(BucketDeserializerFixture, load_mixed) {
     using ::testing::UnorderedElementsAre;
     using ::testing::UnorderedElementsAreArray;
 
-    std::istringstream ss("c1;u1;p1;0;meta\n"
-                          "c2;u2;p2;0xFFFF;meta2\n"
-                          "c2;u2;p2;0xFFFF;\n"
-                          "c1;u1;p3;0xFFFE;bucket\n");
+    std::istringstream bucketStream("c1;u1;p1;0;meta\n"
+                                    "c2;u2;p2;0xFFFF;meta2\n"
+                                    "c2;u2;p2;0xFFFF;\n"
+                                    "c1;u1;p3;0xFFFE;bucket\n");
+    BucketDeserializer deserializer(bucketStream);
 
-    auto policies = BucketDeserializer::loadPolicies(ss);
+    auto policies = deserializer.loadPolicies();
     PolicyCollection expectedPolices = {
         createPolicy({ "c1", "u1", "p1" }, { PredefinedPolicyType::DENY, "meta" }),
         createPolicy({ "c2", "u2", "p2" }, { PredefinedPolicyType::ALLOW, "meta2" }),

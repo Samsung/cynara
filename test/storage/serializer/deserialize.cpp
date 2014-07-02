@@ -51,15 +51,27 @@ MATCHER_P(PolicyBucketIdPolicyEq, expected, "") {
 
 class FakeStreamForBucketId {
 public:
-    MOCK_METHOD1(streamForBucketId, std::shared_ptr<std::istream>(const std::string &));
+    MOCK_METHOD1(streamForBucketId, std::shared_ptr<Cynara::BucketDeserializer>(const std::string &));
+};
+
+class EmptyBucketDeserializer : public Cynara::BucketDeserializer {
+public:
+    EmptyBucketDeserializer() : Cynara::BucketDeserializer(m_emptyStream),
+        m_emptyStream("") {}
+private:
+    std::istringstream m_emptyStream;
 };
 
 class StorageDeserializerFixture : public ::testing::Test {
 public:
+    std::shared_ptr<Cynara::BucketDeserializer> emptyBucketStream() const {
+        return std::make_shared<EmptyBucketDeserializer>();
+    }
+
     Cynara::StorageDeserializer::BucketStreamOpener nullStreamOpener =
-            [] (const std::string &) -> std::shared_ptr<std::istream> {
-                return nullptr;
-            };
+        [this] (const std::string &) -> std::shared_ptr<Cynara::BucketDeserializer> {
+            return emptyBucketStream();
+        };
 };
 
 using namespace Cynara;
@@ -127,9 +139,10 @@ TEST_F(StorageDeserializerFixture, load_buckets_plus_policies) {
                                       std::placeholders::_1);
     StorageDeserializer deserializer(bucketsStream, streamOpenerFunc);
 
-    auto defaultBucketStream = std::make_shared<std::istringstream>("c;u;p;0;meta");
+    std::istringstream defaultBucketStream("c;u;p;0;meta");
+    auto bucketDeserializer = std::make_shared<BucketDeserializer>(defaultBucketStream);
     EXPECT_CALL(streamOpener, streamForBucketId(""))
-        .WillOnce(Return(defaultBucketStream));
+        .WillOnce(Return(bucketDeserializer));
 
     deserializer.loadBuckets(buckets);
 

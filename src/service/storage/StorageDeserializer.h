@@ -22,6 +22,7 @@
 #ifndef SRC_SERVICE_STORAGE_STORAGEDESERIALIZER_H_
 #define SRC_SERVICE_STORAGE_STORAGEDESERIALIZER_H_
 
+#include <service/storage/BucketDeserializer.h>
 #include <service/storage/InMemoryStorageBackend.h>
 
 #include <istream>
@@ -32,7 +33,7 @@ namespace Cynara {
 
 class StorageDeserializer {
 public:
-    typedef std::function<std::shared_ptr<std::istream>(const std::string &)> BucketStreamOpener;
+    typedef std::function<std::shared_ptr<BucketDeserializer>(const std::string &)> BucketStreamOpener;
     StorageDeserializer(std::istream &inStream, BucketStreamOpener m_bucketStreamOpener);
     void initBuckets(InMemoryStorageBackend::Buckets &buckets);
     void loadBuckets(InMemoryStorageBackend::Buckets &buckets);

@@ -29,6 +29,7 @@ SET(CYNARA_SOURCES_FOR_TESTS
     ${CYNARA_SRC}/common/types/PolicyBucket.cpp
     ${CYNARA_SRC}/service/storage/InMemoryStorageBackend.cpp
     ${CYNARA_SRC}/service/storage/BucketDeserializer.cpp
+    ${CYNARA_SRC}/service/storage/StorageDeserializer.cpp
     ${CYNARA_SRC}/service/storage/StorageSerializer.cpp
     ${CYNARA_SRC}/common/types/PolicyKey.cpp
     ${CYNARA_SRC}/common/types/PolicyType.cpp
@@ -44,6 +45,7 @@ SET(CYNARA_TESTS_SOURCES
     storage/inmemorystoragebackend/search.cpp
     storage/inmemorystoragebackend/buckets.cpp
     storage/serializer/bucket_load.cpp
+    storage/serializer/deserialize.cpp
     storage/serializer/dump.cpp
     common/types/policybucket.cpp
     helpers.cpp

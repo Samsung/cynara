@@ -31,7 +31,11 @@
 
 namespace Cynara {
 
+class StorageDeserializer;
+
 class BucketDeserializer {
+friend StorageDeserializer;
+
 public:
     static PolicyCollection loadPolicies(std::istream &is);
 

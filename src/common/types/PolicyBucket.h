@@ -22,8 +22,8 @@
                 entity name
  */
 
-#ifndef CYNARA_COMMON_TYPES_POLICYBUCKET_H
-#define CYNARA_COMMON_TYPES_POLICYBUCKET_H
+#ifndef SRC_COMMON_TYPES_POLICYBUCKET_H_
+#define SRC_COMMON_TYPES_POLICYBUCKET_H_
 
 #include "PolicyCollection.h"
 #include "PolicyKey.h"
@@ -46,6 +46,8 @@ class PolicyBucket {
 public:
 
     PolicyBucket() : m_defaultPolicy(PredefinedPolicyType::DENY) {}
+    PolicyBucket(const PolicyBucketId &id, const PolicyResult &defaultPolicy)
+        : m_defaultPolicy(defaultPolicy), m_id(id) {}
     PolicyBucket(const PolicyCollection &policies)
         : m_policyCollection(policies),
           m_defaultPolicy(PredefinedPolicyType::DENY) {}
@@ -77,7 +79,11 @@ public:
     void setDefaultPolicy(const PolicyResult &defaultPolicy) {
         m_defaultPolicy = defaultPolicy;
     }
+
+    void setPolicyCollection(const PolicyCollection &policies) {
+        m_policyCollection = policies;
+    }
 };
 
 } /* namespace Cynara */
-#endif /* CYNARA_COMMON_TYPES_POLICYBUCKET_H */
+#endif /* SRC_COMMON_TYPES_POLICYBUCKET_H_ */

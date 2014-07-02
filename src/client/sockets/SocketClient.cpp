@@ -25,7 +25,6 @@
 
 #include <log/log.h>
 #include <protocol/Protocol.h>
-#include <protocol/ProtocolClient.h>
 #include <request/pointers.h>
 #include <request/Request.h>
 #include <request/RequestContext.h>
@@ -37,10 +36,8 @@
 
 namespace Cynara {
 
-const std::string clientSocketPath("/run/cynara/cynara.socket");
-
-SocketClient::SocketClient() : m_socket(clientSocketPath),
-    m_protocol(std::make_shared<ProtocolClient>()) {
+SocketClient::SocketClient(const std::string &socketPath, ProtocolPtr protocol)
+        : m_socket(socketPath), m_protocol(protocol) {
 }
 
 ResponsePtr SocketClient::askCynaraServer(RequestPtr request) {

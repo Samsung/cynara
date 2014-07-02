@@ -26,6 +26,8 @@
 #include <exceptions/ServerConnectionErrorException.h>
 #include <exceptions/UnexpectedErrorException.h>
 #include <log/log.h>
+#include <protocol/Protocol.h>
+#include <protocol/ProtocolClient.h>
 #include <request/CheckRequest.h>
 #include <request/pointers.h>
 #include <response/CheckResponse.h>
@@ -38,8 +40,11 @@
 
 namespace Cynara {
 
+const std::string clientSocketPath("/run/cynara/cynara.socket");
+
 Logic::Logic() {
-    m_socketClient = std::make_shared<SocketClient>();
+    m_socketClient = std::make_shared<SocketClient>(clientSocketPath,
+                                                    std::make_shared<ProtocolClient>());
 }
 
 cynara_api_result Logic::check(const std::string &client, const std::string &session UNUSED,

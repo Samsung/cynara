@@ -46,7 +46,7 @@ private:
     BinaryQueue m_writeQueue;
 
 public:
-    SocketClient();
+    SocketClient(const std::string &socketPath, ProtocolPtr protocol);
     virtual ~SocketClient() = default;
 
     //returns pointer to response

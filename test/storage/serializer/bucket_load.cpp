@@ -25,7 +25,7 @@
 #include <gtest/gtest.h>
 
 #include <exceptions/BucketRecordCorruptedException.h>
-#include <service/storage/BucketDeserializer.h>
+#include <storage/BucketDeserializer.h>
 #include <types/Policy.h>
 
 #include "../../helpers.h"

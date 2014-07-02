@@ -23,8 +23,8 @@
 #ifndef HELPERS_H
 #define HELPERS_H
 
-#include "common/types/PolicyKey.h"
-#include "common/types/PolicyBucketId.h"
+#include "types/PolicyKey.h"
+#include "types/PolicyBucketId.h"
 
 namespace Cynara {
 namespace Helpers {

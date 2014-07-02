@@ -26,7 +26,7 @@
 #include "inmemeorystoragebackendfixture.h"
 #include "fakeinmemorystoragebackend.h"
 
-#include "common/types/PolicyBucket.h"
+#include "types/PolicyBucket.h"
 
 #include "../../helpers.h"
 

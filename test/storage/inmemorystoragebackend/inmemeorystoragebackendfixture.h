@@ -25,9 +25,9 @@
 
 #include "gmock/gmock.h"
 
-#include "common/types/PolicyBucket.h"
-#include "common/types/PolicyCollection.h"
-#include "service/storage/InMemoryStorageBackend.h"
+#include "types/PolicyBucket.h"
+#include "types/PolicyCollection.h"
+#include "storage/InMemoryStorageBackend.h"
 
 class InMemeoryStorageBackendFixture : public ::testing::Test {
 

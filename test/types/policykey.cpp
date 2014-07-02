@@ -27,7 +27,7 @@
 
 #include "../helpers.h"
 
-#include "common/types/PolicyKey.h"
+#include "types/PolicyKey.h"
 
 using namespace Cynara;
 

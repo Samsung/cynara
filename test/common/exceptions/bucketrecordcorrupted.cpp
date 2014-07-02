@@ -24,7 +24,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "common/exceptions/BucketRecordCorruptedException.h"
+#include "exceptions/BucketRecordCorruptedException.h"
 
 using namespace Cynara;
 

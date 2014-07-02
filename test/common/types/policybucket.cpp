@@ -23,9 +23,9 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "common/types/PolicyBucket.h"
-#include "common/types/PolicyKey.h"
-#include "common/types/PolicyCollection.h"
+#include "types/PolicyBucket.h"
+#include "types/PolicyKey.h"
+#include "types/PolicyCollection.h"
 
 #include "../../helpers.h"
 

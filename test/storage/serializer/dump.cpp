@@ -23,11 +23,11 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "service/storage/StorageSerializer.h"
-#include "common/types/PolicyBucket.h"
-#include "common/types/PolicyType.h"
-#include "common/types/PolicyKey.h"
-#include "common/types/Policy.h"
+#include "storage/StorageSerializer.h"
+#include "types/PolicyBucket.h"
+#include "types/PolicyType.h"
+#include "types/PolicyKey.h"
+#include "types/Policy.h"
 
 #include "../../helpers.h"
 

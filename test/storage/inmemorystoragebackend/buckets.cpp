@@ -25,8 +25,8 @@
 #include "inmemeorystoragebackendfixture.h"
 #include "fakeinmemorystoragebackend.h"
 
-#include "common/types/PolicyResult.h"
-#include "common/types/PolicyBucket.h"
+#include "types/PolicyResult.h"
+#include "types/PolicyBucket.h"
 
 using namespace Cynara;
 

@@ -14,15 +14,12 @@
 #
 # @file        CMakeLists.txt
 # @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
-# @brief       Temporary cmake for tests
+# @brief       Cmake for tests
 #
-
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
-PROJECT("cynara-tests")
 
 PKG_CHECK_MODULES(PKGS REQUIRED gmock_main)
 
-SET(CYNARA_SRC ${PROJECT_SOURCE_DIR}/../src)
+SET(CYNARA_SRC ${PROJECT_SOURCE_DIR}/src)
 
 SET(CYNARA_SOURCES_FOR_TESTS
     ${CYNARA_SRC}/service/storage/Storage.cpp
@@ -53,24 +50,17 @@ SET(CYNARA_TESTS_SOURCES
 
 INCLUDE_DIRECTORIES(
     ${PKGS_INCLUDE_DIRS}
-    ${CYNARA_SRC}
     ${CYNARA_SRC}/common
     ${CYNARA_SRC}/include
     ${CYNARA_SRC}/service
 )
 
-ADD_EXECUTABLE(cynara-tests
+ADD_EXECUTABLE(${TARGET_CYNARA_TESTS}
     ${CYNARA_SOURCES_FOR_TESTS}
     ${CYNARA_TESTS_SOURCES}
 )
 
-SET(CMAKE_CXX_FLAGS "-std=c++0x -O0 -g -gdwarf-2")
-
-FIND_PACKAGE(Threads)
-
-TARGET_LINK_LIBRARIES(cynara-tests
-    ${CMAKE_THREAD_LIBS_INIT}
+TARGET_LINK_LIBRARIES(${TARGET_CYNARA_TESTS}
     ${PKGS_LDFLAGS} ${PKGS_LIBRARIES}
 )
-
-INSTALL(TARGETS cynara-tests DESTINATION bin)
+INSTALL(TARGETS ${TARGET_CYNARA_TESTS} DESTINATION bin)

@@ -24,15 +24,15 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "common/types/PolicyType.h"
-#include "common/types/PolicyKey.h"
-#include "common/types/PolicyResult.h"
-#include "common/types/PolicyCollection.h"
-#include "common/types/pointers.h"
-#include "common/exceptions/DefaultBucketDeletionException.h"
-#include "common/exceptions/BucketAlreadyExistsException.h"
-#include "service/storage/Storage.h"
-#include "service/storage/StorageBackend.h"
+#include "types/PolicyType.h"
+#include "types/PolicyKey.h"
+#include "types/PolicyResult.h"
+#include "types/PolicyCollection.h"
+#include "types/pointers.h"
+#include "exceptions/DefaultBucketDeletionException.h"
+#include "exceptions/BucketAlreadyExistsException.h"
+#include "storage/Storage.h"
+#include "storage/StorageBackend.h"
 
 
 #include "fakestoragebackend.h"

@@ -23,7 +23,7 @@
 #ifndef FAKEINMEMORYSTORAGEBACKEND_H_
 #define FAKEINMEMORYSTORAGEBACKEND_H_
 
-#include "service/storage/InMemoryStorageBackend.h"
+#include "storage/InMemoryStorageBackend.h"
 
 class FakeInMemoryStorageBackend : public Cynara::InMemoryStorageBackend {
 public:

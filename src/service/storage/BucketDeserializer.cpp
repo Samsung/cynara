@@ -14,14 +14,14 @@
  *    limitations under the License.
  */
 /*
- * @file        StorageDeserializer.cpp
+ * @file        BucketDeserializer.cpp
  * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @version     1.0
- * @brief       Methods implementation of Cynara::StorageDeserializer
+ * @brief       Methods implementation of Cynara::BucketDeserializer
  */
 
 #include <exceptions/BucketRecordCorruptedException.h>
-#include <storage/StorageDeserializer.h>
+#include <storage/BucketDeserializer.h>
 #include <storage/StorageSerializer.h>
 #include <types/Policy.h>
 
@@ -31,7 +31,7 @@
 
 namespace Cynara {
 
-PolicyCollection StorageDeserializer::loadPolicies(std::istream &is) {
+PolicyCollection BucketDeserializer::loadPolicies(std::istream &is) {
     PolicyCollection policies;
 
     // TODO: Get someone smart to do error checking on stream
@@ -57,7 +57,7 @@ PolicyCollection StorageDeserializer::loadPolicies(std::istream &is) {
     return policies;
 }
 
-PolicyKey StorageDeserializer::parseKey(const std::string &line, std::size_t &beginToken) {
+PolicyKey BucketDeserializer::parseKey(const std::string &line, std::size_t &beginToken) {
     std::array<std::string, 3> keyFeatures;
 
     for(std::size_t tokenNum = 0; tokenNum < keyFeatures.size(); ++tokenNum) {
@@ -73,7 +73,7 @@ PolicyKey StorageDeserializer::parseKey(const std::string &line, std::size_t &be
     return PolicyKey(keyFeatures[0], keyFeatures[1], keyFeatures[2]);
 }
 
-PolicyType StorageDeserializer::parsePolicyType(const std::string &line, std::size_t &beginToken) {
+PolicyType BucketDeserializer::parsePolicyType(const std::string &line, std::size_t &beginToken) {
     PolicyType policyType;
     try {
         size_t newBegin = 0;
@@ -86,7 +86,7 @@ PolicyType StorageDeserializer::parsePolicyType(const std::string &line, std::si
     return policyType;
 }
 
-PolicyResult::PolicyMetadata StorageDeserializer::parseMetadata(const std::string &line,
+PolicyResult::PolicyMetadata BucketDeserializer::parseMetadata(const std::string &line,
                                                                 std::size_t &beginToken) {
     if (beginToken < line.size()) {
         auto ret = line.substr(beginToken + 1);

@@ -14,13 +14,13 @@
  *    limitations under the License.
  */
 /*
- * @file        StorageDeserializer.h
+ * @file        BucketDeserializer.h
  * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @version     1.0
- * @brief       Headers for Cynara::StorageDeserializer
+ * @brief       Headers for Cynara::BucketDeserializer
  */
-#ifndef SRC_SERVICE_STORAGE_STORAGEDESERIALIZER_H_
-#define SRC_SERVICE_STORAGE_STORAGEDESERIALIZER_H_
+#ifndef SRC_SERVICE_STORAGE_BUCKETDESERIALIZER_H_
+#define SRC_SERVICE_STORAGE_BUCKETDESERIALIZER_H_
 
 #include <types/PolicyCollection.h>
 #include <types/PolicyKey.h>
@@ -31,7 +31,7 @@
 
 namespace Cynara {
 
-class StorageDeserializer {
+class BucketDeserializer {
 public:
     static PolicyCollection loadPolicies(std::istream &is);
 
@@ -44,4 +44,4 @@ protected:
 
 } /* namespace Cynara */
 
-#endif /* SRC_SERVICE_STORAGE_STORAGEDESERIALIZER_H_ */
+#endif /* SRC_SERVICE_STORAGE_BUCKETDESERIALIZER_H_ */

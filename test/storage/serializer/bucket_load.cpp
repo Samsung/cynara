@@ -17,7 +17,7 @@
  * @file        load.cpp
  * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @version     1.0
- * @brief       Tests for Cynara::StorageDeserializer
+ * @brief       Tests for Cynara::BucketDeserializer
  */
 
 
@@ -25,7 +25,7 @@
 #include <gtest/gtest.h>
 
 #include <exceptions/BucketRecordCorruptedException.h>
-#include <service/storage/StorageDeserializer.h>
+#include <service/storage/BucketDeserializer.h>
 #include <types/Policy.h>
 
 #include "../../helpers.h"
@@ -42,9 +42,9 @@ MATCHER_P(PolicyPtrEq, policy, "") {
         == std::tie(arg->key(), arg->result());
 }
 
-class DeserializerFixture : public ::testing::Test {
+class BucketDeserializerFixture : public ::testing::Test {
 public:
-    virtual ~DeserializerFixture() = default;
+    virtual ~BucketDeserializerFixture() = default;
 
     PolicyPtr createPolicy(const PolicyKey &pk, const PolicyResult &pr) {
         return std::make_shared<Policy>(pk, pr);
@@ -53,11 +53,11 @@ public:
     void checkCorruptedData(const std::string &data, const std::string &corruptedLine,
             size_t corruptedLineNumber) {
         std::istringstream ss(data);
-        EXPECT_THROW(StorageDeserializer::loadPolicies(ss), BucketRecordCorruptedException);
+        EXPECT_THROW(BucketDeserializer::loadPolicies(ss), BucketRecordCorruptedException);
 
         ss.seekg(0);
         try {
-            StorageDeserializer::loadPolicies(ss);
+            BucketDeserializer::loadPolicies(ss);
         } catch (const BucketRecordCorruptedException &ex) {
             ASSERT_EQ(corruptedLine, ex.line());
             ASSERT_EQ(corruptedLineNumber, ex.lineNumber());
@@ -65,73 +65,73 @@ public:
     }
 };
 
-TEST_F(DeserializerFixture, load_empty) {
+TEST_F(BucketDeserializerFixture, load_empty) {
     using ::testing::IsEmpty;
 
     std::istringstream ss;
 
-    auto policies = StorageDeserializer::loadPolicies(ss);
+    auto policies = BucketDeserializer::loadPolicies(ss);
     ASSERT_THAT(policies, IsEmpty());
 }
 
-TEST_F(DeserializerFixture, load_1) {
+TEST_F(BucketDeserializerFixture, load_1) {
     using ::testing::UnorderedElementsAre;
 
     std::istringstream ss("c;u;p;0;meta");
 
-    auto policies = StorageDeserializer::loadPolicies(ss);
+    auto policies = BucketDeserializer::loadPolicies(ss);
     auto expectedPolicy = createPolicy({ "c", "u", "p" }, { PredefinedPolicyType::DENY, "meta" });
 
     ASSERT_THAT(policies, UnorderedElementsAre(PolicyPtrEq(expectedPolicy)));
 }
 
-TEST_F(DeserializerFixture, load_1_allow) {
+TEST_F(BucketDeserializerFixture, load_1_allow) {
     using ::testing::UnorderedElementsAre;
 
     std::istringstream ss("c;u;p;0xFFFF;meta");
 
-    auto policies = StorageDeserializer::loadPolicies(ss);
+    auto policies = BucketDeserializer::loadPolicies(ss);
     auto expectedPolicy = createPolicy({ "c", "u", "p" }, { PredefinedPolicyType::ALLOW, "meta" });
 
     ASSERT_THAT(policies, UnorderedElementsAre(PolicyPtrEq(expectedPolicy)));
 }
 
-TEST_F(DeserializerFixture, load_1_no_meta_sep) {
+TEST_F(BucketDeserializerFixture, load_1_no_meta_sep) {
     using ::testing::UnorderedElementsAre;
 
     std::istringstream ss("c;u;p;0;");
 
-    auto policies = StorageDeserializer::loadPolicies(ss);
+    auto policies = BucketDeserializer::loadPolicies(ss);
     auto expectedPolicy = createPolicy({ "c", "u", "p" }, { PredefinedPolicyType::DENY, "" });
 
     ASSERT_THAT(policies, UnorderedElementsAre(PolicyPtrEq(expectedPolicy)));
 }
 
-TEST_F(DeserializerFixture, load_1_no_meta_no_sep) {
+TEST_F(BucketDeserializerFixture, load_1_no_meta_no_sep) {
     using ::testing::UnorderedElementsAre;
 
     std::istringstream ss("c;u;p;0");
 
-    auto policies = StorageDeserializer::loadPolicies(ss);
+    auto policies = BucketDeserializer::loadPolicies(ss);
     auto expectedPolicy = createPolicy({ "c", "u", "p" }, { PredefinedPolicyType::DENY, "" });
 
     ASSERT_THAT(policies, UnorderedElementsAre(PolicyPtrEq(expectedPolicy)));
 }
 
-TEST_F(DeserializerFixture, load_2) {
+TEST_F(BucketDeserializerFixture, load_2) {
     using ::testing::UnorderedElementsAre;
 
     std::istringstream ss("c;u;p;0;meta\n"
                           "c;u;p;0;meta\n");
 
-    auto policies = StorageDeserializer::loadPolicies(ss);
+    auto policies = BucketDeserializer::loadPolicies(ss);
     auto expectedPolicy = createPolicy({ "c", "u", "p" }, { PredefinedPolicyType::DENY, "meta" });
 
     ASSERT_THAT(policies, UnorderedElementsAre(PolicyPtrEq(expectedPolicy),
             PolicyPtrEq(expectedPolicy)));
 }
 
-TEST_F(DeserializerFixture, load_mixed) {
+TEST_F(BucketDeserializerFixture, load_mixed) {
     using ::testing::UnorderedElementsAre;
     using ::testing::UnorderedElementsAreArray;
 
@@ -140,7 +140,7 @@ TEST_F(DeserializerFixture, load_mixed) {
                           "c2;u2;p2;0xFFFF;\n"
                           "c1;u1;p3;0xFFFE;bucket\n");
 
-    auto policies = StorageDeserializer::loadPolicies(ss);
+    auto policies = BucketDeserializer::loadPolicies(ss);
     PolicyCollection expectedPolices = {
         createPolicy({ "c1", "u1", "p1" }, { PredefinedPolicyType::DENY, "meta" }),
         createPolicy({ "c2", "u2", "p2" }, { PredefinedPolicyType::ALLOW, "meta2" }),
@@ -157,27 +157,27 @@ TEST_F(DeserializerFixture, load_mixed) {
     ));
 }
 
-TEST_F(DeserializerFixture, load_no_client) {
+TEST_F(BucketDeserializerFixture, load_no_client) {
     auto data = "u;p;0;meta";
     checkCorruptedData(data, data, 1);
 }
 
-TEST_F(DeserializerFixture, load_no_type) {
+TEST_F(BucketDeserializerFixture, load_no_type) {
     auto data = "c;u;p;meta";
     checkCorruptedData(data, data, 1);
 }
 
-TEST_F(DeserializerFixture, load_all_missing) {
+TEST_F(BucketDeserializerFixture, load_all_missing) {
     auto data = ";;;";
     checkCorruptedData(data, data, 1);
 }
 
-TEST_F(DeserializerFixture, load_invalid_type) {
+TEST_F(BucketDeserializerFixture, load_invalid_type) {
     auto data = "c;u;p;X";
     checkCorruptedData(data, data, 1);
 }
 
-TEST_F(DeserializerFixture, load_invalid_multiline) {
+TEST_F(BucketDeserializerFixture, load_invalid_multiline) {
     auto data = "c1;u1;p1;0;meta\n"
                 "c;u;p;X\n"
                 "c1;u1;p1;0;meta\n";

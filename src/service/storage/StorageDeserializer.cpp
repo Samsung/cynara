@@ -20,11 +20,11 @@
  * @brief       Implementation for Cynara::StorageDeserializer
  */
 
-#include <service/storage/StorageDeserializer.h>
+#include <storage/StorageDeserializer.h>
 
 #include <exceptions/BucketRecordCorruptedException.h>
-#include <service/storage/BucketDeserializer.h>
-#include <service/storage/StorageSerializer.h>
+#include <storage/BucketDeserializer.h>
+#include <storage/StorageSerializer.h>
 
 #include <iostream>
 #include <string>

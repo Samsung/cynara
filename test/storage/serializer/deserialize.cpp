@@ -24,8 +24,8 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <common/types/PolicyBucket.h>
-#include <service/storage/StorageDeserializer.h>
+#include <types/PolicyBucket.h>
+#include <storage/StorageDeserializer.h>
 
 #include <tuple>
 #include <memory>

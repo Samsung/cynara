@@ -22,8 +22,8 @@
 #ifndef SRC_SERVICE_STORAGE_STORAGEDESERIALIZER_H_
 #define SRC_SERVICE_STORAGE_STORAGEDESERIALIZER_H_
 
-#include <service/storage/BucketDeserializer.h>
-#include <service/storage/InMemoryStorageBackend.h>
+#include <storage/BucketDeserializer.h>
+#include <storage/InMemoryStorageBackend.h>
 
 #include <istream>
 #include <memory>

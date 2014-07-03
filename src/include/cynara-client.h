@@ -43,7 +43,10 @@ enum cynara_api_result
 	CYNARA_API_OUT_OF_MEMORY,
 
 /*! \brief   indicating the API's parameter is malformed */
-	CYNARA_API_INVALID_PARAM
+	CYNARA_API_INVALID_PARAM,
+
+/*! \brief   service not available */
+	CYNARA_API_SERVICE_NOT_AVAILABLE
 };
 /** @}*/
 

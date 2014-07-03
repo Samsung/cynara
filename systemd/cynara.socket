@@ -1,5 +1,5 @@
 [Socket]
-ListenStream=/run/cynara/cynara.socket
+ListenStream=/run/cynara/cynara.sock
 SocketMode=0777
 SmackLabelIPIn=@
 SmackLabelIPOut=@

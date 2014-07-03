@@ -22,103 +22,36 @@
  * @brief       Implementation of backtrace utility class.
  */
 
-#include "Backtrace.h"
-
 #include <cxxabi.h>
-#include <log/log.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
+#include <attributes/attributes.h>
+#include <log/log.h>
+
+#include "Backtrace.h"
+
 namespace Cynara {
 
 Backtrace &Backtrace::getInstance(void) {
-    static Backtrace m_instance(NULL);
+    static Backtrace m_instance;
     return m_instance;
 }
 
-Backtrace::Backtrace(bfd *abfd) :
-        m_bfd(abfd), m_found(false), m_pc(0), m_fileName(NULL),
+Backtrace::Backtrace() :
+        m_fileName(NULL),
         m_functionName(NULL), m_lineNumber(0) {
 }
 
 Backtrace::~Backtrace() {
-    if (m_bfd) {
-        bfd_close(m_bfd);
-        LOGD("Binary file closed.");
-    }
 }
 
-bool Backtrace::init(void) {
-    char exePath[BUFSIZ];
-    readlink("/proc/self/exe", exePath, BUFSIZ);
-
-    bfd_init();
-    m_bfd = bfd_openr(exePath, NULL);
-    if (m_bfd) {
-        m_bfd->flags |= BFD_DECOMPRESS;
-        if (bfd_check_format_matches(m_bfd, bfd_object, 0)) {
-            return true;
-        }
-        bfd_close(m_bfd);
-        m_bfd = NULL;
-        LOGE("Binary file check format failed.");
-    } else {
-        LOGE("Failed to open file: %s", exePath);
-    }
-
-    return false;
-}
-
-void Backtrace::findAddressInSection(bfd *abfd, asection *section, void *data) {
-    bfd_vma vma;
-    bfd_size_type size;
-
-    Backtrace *backtrace = static_cast<Backtrace*>(data);
-
-    if (backtrace->m_found) {
-        return;
-    }
-
-    if ((bfd_get_section_flags (abfd, section) & SEC_ALLOC) == 0) {
-        return;
-    }
-
-    vma = bfd_get_section_vma(abfd, section);
-    if (backtrace->m_pc < vma) {
-        return;
-    }
-
-    size = bfd_get_section_size(section);
-    if (backtrace->m_pc >= vma + size) {
-        return;
-    }
-
-    backtrace->m_found = bfd_find_nearest_line(abfd, section, NULL,
-            backtrace->m_pc - vma, &backtrace->m_fileName,
-            &backtrace->m_functionName, &backtrace->m_lineNumber);
-}
-
-void Backtrace::getSourceInfo(unw_word_t proc_address) {
-    char addr[64];
-
-    sprintf(addr, "0x%lx", static_cast<long unsigned int>(proc_address));
-    m_pc = bfd_scan_vma(addr, NULL, 16);
-    m_found = false;
-    bfd_map_over_sections(m_bfd, findAddressInSection, this);
-
-    if (m_found) {
-        while (true) {
-            m_found = bfd_find_inliner_info(m_bfd, &m_fileName, &m_functionName,
-                    &m_lineNumber);
-            if (!m_found)
-                break;
-        }
-    } else {
-        m_fileName = "??";
-        m_functionName = "??";
-        m_lineNumber = 0;
-    }
+void Backtrace::getSourceInfo(unw_word_t proc_address UNUSED) {
+    // TODO: extract filename and line number for symbol at given address
+    m_fileName = "??";
+    m_functionName = "??";
+    m_lineNumber = 0;
 }
 
 const std::string Backtrace::buildBacktrace(void) {
@@ -131,10 +64,6 @@ const std::string Backtrace::buildBacktrace(void) {
     unw_word_t offp;
     char *realname;
     int status;
-
-    if (m_bfd == NULL) {
-        init();
-    }
 
     unw_getcontext(&uc);
     // get rid of previous function: Backtrace::getBacktrace

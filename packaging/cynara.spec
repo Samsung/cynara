@@ -22,8 +22,6 @@ BuildRequires: pkgconfig(libsystemd-journal)
 %if %{?build_type} == "DEBUG"
 
 BuildRequires: pkgconfig(libunwind)
-BuildRequires: pkgconfig(zlib)
-BuildRequires: binutils-devel
 
 %endif
 

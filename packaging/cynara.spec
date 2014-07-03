@@ -8,7 +8,6 @@ Source0:    %{name}-%{version}.tar.gz
 Source1001:    cynara.manifest
 Source1002:    libcynara-client.manifest
 Source1003:    libcynara-admin.manifest
-Source1004:    cynara-tests.manifest
 BuildRequires: cmake
 BuildRequires: zip
 BuildRequires: pkgconfig(libsystemd-daemon)
@@ -74,21 +73,11 @@ Requires:   cynara = %{version}-%{release}
 %description -n cynara-devel
 service (devel version)
 
-#######################################################
-%package -n cynara-tests
-Summary:    Cynara tests
-BuildRequires: pkgconfig(gmock)
-
-%description -n cynara-tests
-cynara tests
-
-
 %prep
 %setup -q
 cp -a %{SOURCE1001} .
 cp -a %{SOURCE1002} .
 cp -a %{SOURCE1003} .
-cp -a %{SOURCE1004} .
 
 %build
 %if 0%{?sec_build_binary_debug_enable}
@@ -202,9 +191,5 @@ fi
 %files -n libcynara-admin-devel
 %defattr(-,root,root,-)
 %{_includedir}/cynara/cynara-admin.h
-%{_libdir}/pkgconfig/cynara-admin.pc
 %{_libdir}/libcynara-admin.so
-
-%files -n cynara-tests
-%manifest cynara-tests.manifest
-%attr(755,root,root) /usr/bin/cynara-tests
+%{_libdir}/pkgconfig/cynara-admin.pc

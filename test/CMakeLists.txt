@@ -17,9 +17,34 @@
 # @brief       Cmake for tests
 #
 
+############################# Check minimum CMake version #####################
+
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
+PROJECT("cynara-tests")
+
+############################# cmake packages ##################################
+
+INCLUDE(FindPkgConfig)
+
+############################# compiler flags ##################################
+
+SET(CMAKE_C_FLAGS_DEBUG        "-g -O0 -ggdb")
+SET(CMAKE_CXX_FLAGS_DEBUG      "-g -std=c++0x -O0 -ggdb -Wp,-U_FORTIFY_SOURCE")
+SET(CMAKE_C_FLAGS_RELEASE      "-g -O2")
+SET(CMAKE_CXX_FLAGS_RELEASE    "-g -std=c++0x -O2")
+
+# Set compiler warning flags
+ADD_DEFINITIONS("-Werror")                      # Make all warnings into errors.
+ADD_DEFINITIONS("-Wall")                        # Generate all warnings
+ADD_DEFINITIONS("-Wextra")                      # Generate even more extra warnings
+
+MESSAGE(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
+
+SET(TARGET_CYNARA_TESTS "cynara-tests")
+
 PKG_CHECK_MODULES(PKGS REQUIRED gmock_main)
 
-SET(CYNARA_SRC ${PROJECT_SOURCE_DIR}/src)
+SET(CYNARA_SRC ${PROJECT_SOURCE_DIR}/../src)
 
 SET(CYNARA_SOURCES_FOR_TESTS
     ${CYNARA_SRC}/service/storage/Storage.cpp

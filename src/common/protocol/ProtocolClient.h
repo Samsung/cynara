@@ -25,6 +25,7 @@
 
 #include <protocol/ProtocolFrameHeader.h>
 #include <request/pointers.h>
+#include <response/pointers.h>
 
 #include "Protocol.h"
 
@@ -44,6 +45,7 @@ public:
 
 private:
     RequestPtr deserializeCheckRequest(ProtocolFrameHeader &frame);
+    ResponsePtr deserializeCheckResponse(ProtocolFrameHeader &frame);
 };
 
 } // namespace Cynara

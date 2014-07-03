@@ -35,7 +35,8 @@ class CheckResponse : public Response {
 public:
     const PolicyResult &m_resultRef;
 
-    CheckResponse(const PolicyResult &result) : m_resultRef(result) {
+    CheckResponse(const PolicyResult &result, ProtocolFrameSequenceNumber sequenceNumber) :
+        Response(sequenceNumber), m_resultRef(result) {
     }
 
     virtual ~CheckResponse() = default;

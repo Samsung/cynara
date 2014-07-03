@@ -49,9 +49,11 @@ ProtocolPtr ProtocolClient::clone(void) {
 
 RequestPtr ProtocolClient::deserializeCheckRequest(ProtocolFrameHeader &frame) {
     std::string clientId, userId, privilegeId;
+
     ProtocolDeserialization::deserialize(frame, clientId);
     ProtocolDeserialization::deserialize(frame, userId);
     ProtocolDeserialization::deserialize(frame, privilegeId);
+
     return std::make_shared<CheckRequest>(PolicyKey(clientId, userId, privilegeId),
             frame.sequenceNumber());
 }
@@ -76,9 +78,34 @@ RequestPtr ProtocolClient::extractRequestFromBuffer(BinaryQueue &bufferQueue) {
     return nullptr;
 }
 
+ResponsePtr ProtocolClient::deserializeCheckResponse(ProtocolFrameHeader &frame) {
+    PolicyType result;
+    PolicyResult::PolicyMetadata additionalInfo;
+
+    ProtocolDeserialization::deserialize(frame, result);
+    ProtocolDeserialization::deserialize(frame, additionalInfo);
+
+    return std::make_shared<CheckResponse>(PolicyResult(result, additionalInfo), frame.sequenceNumber());
+}
+
 ResponsePtr ProtocolClient::extractResponseFromBuffer(BinaryQueue &bufferQueue) {
-    TODO_USE_ME(bufferQueue);
-    return ResponsePtr(nullptr);
+    ProtocolFrameSerializer::deserializeHeader(m_frameHeader, bufferQueue);
+
+    if (m_frameHeader.isFrameComplete()) {
+        ProtocolOpCode requestId;
+
+        m_frameHeader.resetState();
+        ProtocolDeserialization::deserialize(m_frameHeader, requestId);
+        switch (requestId) {
+        case OpCheckPolicy:
+            return deserializeCheckResponse(m_frameHeader);
+        default:
+            throw InvalidProtocolException(InvalidProtocolException::WrongOpCode);
+            break;
+        }
+    }
+
+    return nullptr;
 }
 
 void ProtocolClient::execute(RequestContextPtr context, CheckRequestPtr request) {

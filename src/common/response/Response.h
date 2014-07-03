@@ -25,16 +25,25 @@
 
 #include <response/pointers.h>
 #include <response/ResponseTaker.h>
+#include <types/ProtocolFields.h>
 
 namespace Cynara {
 
 class Response {
 public:
-    Response() = default;
+    Response(ProtocolFrameSequenceNumber sequenceNumber) : m_sequenceNumber(sequenceNumber) {
+    };
     virtual ~Response() = default;
 
     virtual void execute(ResponsePtr self, ResponseTakerPtr taker,
                          RequestContextPtr context) const = 0;
+
+    ProtocolFrameSequenceNumber sequenceNumber(void) const {
+        return m_sequenceNumber;
+    }
+
+private:
+    ProtocolFrameSequenceNumber m_sequenceNumber;
 };
 
 } // namespace Cynara

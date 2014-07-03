@@ -42,7 +42,7 @@ Logic::~Logic() {
 void Logic::execute(RequestContextPtr context, CheckRequestPtr request) {
     PolicyResult result(PredefinedPolicyType::DENY);
     if (check(context, request->key(), result)) {
-        context->returnResponse(context, std::make_shared<CheckResponse>(result));
+        context->returnResponse(context, std::make_shared<CheckResponse>(result, request->sequenceNumber()));
     }
 }
 

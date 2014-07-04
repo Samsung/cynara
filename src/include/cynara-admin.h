@@ -49,10 +49,10 @@ extern "C" {
 #endif
 
 //todo comment
-const char *CYNARA_ADMIN_WILDCARD = "*";
+#define CYNARA_ADMIN_WILDCARD "*";
 
 //todo comment
-const char *CYNARA_ADMIN_DEFAULT_BUCKET = "";
+#define CYNARA_ADMIN_DEFAULT_BUCKET "";
 
 //todo comments
 #define CYNARA_ADMIN_DELETE -1
@@ -131,7 +131,7 @@ int cynara_admin_initialize(struct cynara_admin **pp_cynara_admin);
  *
  * \brief Release cynara-admin library.
  */
-int cynara_admin_finish(cynara_admin *p_cynara_admin);
+int cynara_admin_finish(struct cynara_admin *p_cynara_admin);
 
 /**
  * \par Description:
@@ -177,13 +177,14 @@ int cynara_admin_finish(cynara_admin *p_cynara_admin);
  * going to be fixed along with introduction of transactions in future releases.
  *
  * \param[in] p_cynara_admin cynara admin structure.
- * \param[in] policies NULL terminated array of policy structures
+ * \param[in] policies NULL terminated array of pointers to policy structures.
  *
  * \return CYNARA_ADMIN_API_SUCCESS on success, or error code otherwise.
  *
  * \brief Insert, update or delete policies in cynara database.
  */
-int cynara_admin_set_policies(cynara_admin *p_cynara_admin, const cynara_admin_policy *policies);
+int cynara_admin_set_policies(struct cynara_admin *p_cynara_admin,
+                              const cynara_admin_policy *const *policies);
 
 /**
  * \par Description:
@@ -217,15 +218,20 @@ int cynara_admin_set_policies(cynara_admin *p_cynara_admin, const cynara_admin_p
  * Default bucket identified with CYNARA_ADMIN_DEFAULT_BUCKET exists always. Its default policy
  * is preset to DENY (can be altered, however). Default bucket cannot be removed.
  *
+ * Extra parameter will be used to pass additional data to cynara extensions to build more complex
+ * policies, such as ALLOW but for 5 minutes only, or ALLOW if user confirms.
+ *
  * \param[in] p_cynara_admin cynara admin structure.
  * \param[in] bucket bucket name
  * \param[in] operation type of operation (default policy or CYNARA_ADMIN_DELETE)
+ * \param[in] extra additional data for default policy (will be available with cynara extensions)
  *
  * \return CYNARA_ADMIN_API_SUCCESS on success, or error code otherwise.
  *
  * \brief Add, remove or update buckets in cynara database.
  */
-int cynara_admin_set_bucket(cynara_admin *p_cynara_admin, const char *bucket, int operation);
+int cynara_admin_set_bucket(struct cynara_admin *p_cynara_admin, const char *bucket, int operation,
+                            const char *extra);
 
 #ifdef __cplusplus
 }

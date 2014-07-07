@@ -47,30 +47,36 @@ Logic::Logic() {
                                                     std::make_shared<ProtocolClient>());
 }
 
+ProtocolFrameSequenceNumber generateSequenceNumber(void) {
+    static ProtocolFrameSequenceNumber sequenceNumber = 0;
+    return ++sequenceNumber;
+}
+
 cynara_api_result Logic::check(const std::string &client, const std::string &session UNUSED,
                                const std::string &user, const std::string &privilege) noexcept
 {
-    //todo Handle session parameter.
+    PolicyKey key(client, user, privilege);
+
     //todo Check if answer can be get from cache. Update cache.
+    //todo m_cache->check(session, key);
+
+    ProtocolFrameSequenceNumber sequenceNumber = generateSequenceNumber();
 
     //Ask cynara service
-    PolicyResult result(PredefinedPolicyType::DENY);
+    CheckResponsePtr checkResponse;
     try {
-        // todo handle sequence number correctly
-        ProtocolFrameSequenceNumber sequenceNumber = 0;
-        RequestPtr request = std::make_shared<CheckRequest>(PolicyKey(client, user, privilege), sequenceNumber);
+        RequestPtr request = std::make_shared<CheckRequest>(key, sequenceNumber);
         ResponsePtr response = m_socketClient->askCynaraServer(request);
         if (!response) {
             LOGW("Disconnected by cynara server.");
             onDisconnected();
             return cynara_api_result::CYNARA_API_SERVICE_NOT_AVAILABLE;
         }
-        CheckResponsePtr checkResponse = std::dynamic_pointer_cast<CheckResponse>(response);
+        checkResponse = std::dynamic_pointer_cast<CheckResponse>(response);
         if (!checkResponse) {
             LOGC("Critical error. Casting Response to CheckResponse failed.");
             throw UnexpectedErrorException("Error casting Response to CheckResponse");
         }
-        result = checkResponse->m_resultRef;
     } catch (const ServerConnectionErrorException &ex) {
         LOGE("Cynara service not available.");
         onDisconnected();
@@ -80,6 +86,7 @@ cynara_api_result Logic::check(const std::string &client, const std::string &ses
         return cynara_api_result::CYNARA_API_ACCESS_DENIED;
     }
 
+    PolicyResult result = checkResponse->m_resultRef;
     //todo Interprete result.
     //todo Update cache.
 

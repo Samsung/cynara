@@ -14,27 +14,43 @@
  *    limitations under the License.
  */
 /*
- * @file        RequestTaker.cpp
- * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @file        SignalRequest.h
  * @author      Adam Malinowski <a.malinowsk2@partner.samsung.com>
  * @version     1.0
- * @brief       This file implements RequestTaker class
+ * @brief       This file defines signal request class
  */
 
-#include <attributes/attributes.h>
-#include <exceptions/NotImplementedException.h>
-#include <request/RequestContext.h>
+#ifndef SRC_COMMON_REQUEST_SIGNALREQUEST_H_
+#define SRC_COMMON_REQUEST_SIGNALREQUEST_H_
 
-#include "RequestTaker.h"
+#include <sys/signalfd.h>
+
+#include <request/pointers.h>
+#include <request/Request.h>
 
 namespace Cynara {
 
-void RequestTaker::execute(RequestContextPtr context UNUSED, CheckRequestPtr request UNUSED) {
-    throw NotImplementedException();
-}
+class SignalRequest : public Request {
+private:
+    struct signalfd_siginfo m_sigInfo;
 
-void RequestTaker::execute(RequestContextPtr context UNUSED, SignalRequestPtr request UNUSED) {
-    throw NotImplementedException();
-}
+public:
+    SignalRequest(struct signalfd_siginfo sigInfo) : Request(0), m_sigInfo(sigInfo) {
+    }
+
+    virtual ~SignalRequest() = default;
+
+    virtual void execute(RequestPtr self, RequestTakerPtr taker, RequestContextPtr context) const;
+
+    uint32_t signalNumber(void) {
+        return m_sigInfo.ssi_signo;
+    }
+
+    struct signalfd_siginfo &sigInfo(void) {
+        return m_sigInfo;
+    }
+};
 
 } // namespace Cynara
+
+#endif /* SRC_COMMON_REQUEST_SIGNALREQUEST_H_ */

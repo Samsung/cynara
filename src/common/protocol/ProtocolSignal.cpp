@@ -16,12 +16,18 @@
 /*
  * @file        ProtocolSignal.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @author      Adam Malinowski <a.malinowsk2@partner.samsung.com>
  * @version     1.0
  * @brief       This file implements protocol class for signals
  */
 
-#include <common.h>
 #include <memory>
+#include <sys/signalfd.h>
+
+#include <common.h>
+#include <exceptions/NotImplementedException.h>
+#include <request/SignalRequest.h>
+
 #include "ProtocolSignal.h"
 
 namespace Cynara {
@@ -32,18 +38,26 @@ ProtocolSignal::ProtocolSignal() {
 ProtocolSignal::~ProtocolSignal() {
 }
 
+void ProtocolSignal::execute(RequestContextPtr context UNUSED, SignalRequestPtr request UNUSED) {
+    throw NotImplementedException();
+}
+
 ProtocolPtr ProtocolSignal::clone(void) {
     return std::make_shared<ProtocolSignal>();
 }
 
 RequestPtr ProtocolSignal::extractRequestFromBuffer(BinaryQueue &bufferQueue) {
-    TODO_USE_ME(bufferQueue);
-    return RequestPtr(nullptr);
+    if (bufferQueue.size() >= sizeof(struct signalfd_siginfo)) {
+        struct signalfd_siginfo sigInfo;
+        bufferQueue.flattenConsume(&sigInfo, sizeof(sigInfo));
+        return std::make_shared<SignalRequest>(sigInfo);
+    }
+
+    return nullptr;
 }
 
-ResponsePtr ProtocolSignal::extractResponseFromBuffer(BinaryQueue &bufferQueue) {
-    TODO_USE_ME(bufferQueue);
-    return ResponsePtr(nullptr);
+ResponsePtr ProtocolSignal::extractResponseFromBuffer(BinaryQueue &bufferQueue UNUSED) {
+    throw NotImplementedException();
 }
 
 } // namespace Cynara

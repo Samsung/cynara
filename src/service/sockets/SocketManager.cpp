@@ -16,6 +16,7 @@
 /*
  * @file        SocketManager.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @author      Adam Malinowski <a.malinowsk2@partner.samsung.com>
  * @version     1.0
  * @brief       This file implements socket layer manager for cynara
  */
@@ -23,7 +24,9 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <memory>
+#include <signal.h>
 #include <sys/select.h>
+#include <sys/signalfd.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -73,7 +76,7 @@ void SocketManager::init(void) {
 
     createDomainSocket(std::make_shared<ProtocolClient>(), clientSocketPath, clientSocketUMask);
     createDomainSocket(std::make_shared<ProtocolAdmin>(), adminSocketPath, adminSocketUMask);
-    // todo create signal descriptor
+    createSignalSocket(std::make_shared<ProtocolSignal>());
     LOGI("SocketManger init done");
 }
 
@@ -325,6 +328,33 @@ int SocketManager::getSocketFromSystemD(const std::string &path) {
     }
     LOGI("No useable sockets were passed by systemd.");
     return -1;
+}
+
+void SocketManager::createSignalSocket(ProtocolPtr protocol) {
+    sigset_t mask;
+
+    // Maybe someone will find useful some kind of registering signals with callbacks
+    // but for now I'm making it as simple as possible.
+    sigemptyset(&mask);
+    sigaddset(&mask, SIGTERM); // systemd terminates service sending this signal
+
+    if (sigprocmask(SIG_BLOCK, &mask, NULL) == -1) {
+        LOGE("sigprocmask failed: <%s>", strerror(errno));
+        return;
+    }
+
+    int fd = signalfd(-1, &mask, SFD_NONBLOCK);
+    if (fd < 0) {
+        LOGE("Creating signal file descriptor failed: <%s>", strerror(errno));
+        return;
+    }
+
+    auto &desc = createDescriptor(fd);
+    desc.setListen(false);
+    desc.setProtocol(protocol);
+    addReadSocket(fd);
+
+    LOGD("Signal socket: [%d] added.", fd);
 }
 
 Descriptor &SocketManager::createDescriptor(int fd) {

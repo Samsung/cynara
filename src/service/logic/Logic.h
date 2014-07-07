@@ -51,6 +51,7 @@ public:
     }
 
     virtual void execute(RequestContextPtr context, CheckRequestPtr request);
+    virtual void execute(RequestContextPtr context, SignalRequestPtr request);
 
 private:
     StoragePtr m_storage;

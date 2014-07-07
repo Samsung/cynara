@@ -78,6 +78,7 @@ private:
     void createDomainSocket(ProtocolPtr protocol, const std::string &path, mode_t mask);
     int createDomainSocketHelp(const std::string &path, mode_t mask);
     int getSocketFromSystemD(const std::string &path);
+    void createSignalSocket(ProtocolPtr protocol);
 
     Descriptor &createDescriptor(int fd);
 

@@ -23,6 +23,8 @@
 #ifndef SRC_COMMON_PROTOCOL_PROTOCOLSIGNAL_H_
 #define SRC_COMMON_PROTOCOL_PROTOCOLSIGNAL_H_
 
+#include <request/pointers.h>
+
 #include "Protocol.h"
 
 namespace Cynara {
@@ -36,6 +38,8 @@ public:
 
     virtual RequestPtr extractRequestFromBuffer(BinaryQueue &bufferQueue);
     virtual ResponsePtr extractResponseFromBuffer(BinaryQueue &bufferQueue);
+
+    virtual void execute(RequestContextPtr context, SignalRequestPtr request);
 };
 
 } // namespace Cynara

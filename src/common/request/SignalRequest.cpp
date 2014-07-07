@@ -14,28 +14,21 @@
  *    limitations under the License.
  */
 /*
- * @file        RequestTaker.h
- * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @file        SignalRequest.cpp
+ * @author      Adam Malinowski <a.malinowsk2@partner.samsung.com>
  * @version     1.0
- * @brief       This file defines RequestTaker class
+ * @brief       This file implements signal request class
  */
 
-#ifndef SRC_COMMON_REQUEST_REQUESTTAKER_H_
-#define SRC_COMMON_REQUEST_REQUESTTAKER_H_
+#include <memory>
 
-#include <request/pointers.h>
+#include "SignalRequest.h"
 
 namespace Cynara {
 
-class RequestTaker {
-public:
-    RequestTaker() = default;
-    virtual ~RequestTaker() = default;
-
-    virtual void execute(RequestContextPtr context, CheckRequestPtr request);
-    virtual void execute(RequestContextPtr context, SignalRequestPtr request);
-};
+void SignalRequest::execute(RequestPtr self, RequestTakerPtr taker,
+                            RequestContextPtr context) const {
+    taker->execute(context, std::dynamic_pointer_cast<SignalRequest>(self));
+}
 
 } // namespace Cynara
-
-#endif /* SRC_COMMON_REQUEST_REQUESTTAKER_H_ */

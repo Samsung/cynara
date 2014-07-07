@@ -33,6 +33,7 @@ SET(COMMON_SOURCES
     ${COMMON_PATH}/protocol/ProtocolSignal.cpp
     ${COMMON_PATH}/request/CheckRequest.cpp
     ${COMMON_PATH}/request/RequestTaker.cpp
+    ${COMMON_PATH}/request/SignalRequest.cpp
     ${COMMON_PATH}/response/CheckResponse.cpp
     ${COMMON_PATH}/response/ResponseTaker.cpp
     ${COMMON_PATH}/sockets/Socket.cpp

@@ -36,6 +36,7 @@
 #include <types/PolicyKey.h>
 #include <types/PolicyResult.h>
 
+#include <cache/NoCache.h>
 #include "Logic.h"
 
 namespace Cynara {
@@ -45,6 +46,7 @@ const std::string clientSocketPath("/run/cynara/cynara.socket");
 Logic::Logic() {
     m_socketClient = std::make_shared<SocketClient>(clientSocketPath,
                                                     std::make_shared<ProtocolClient>());
+    m_cache = std::make_shared<NoCache>();
 }
 
 ProtocolFrameSequenceNumber generateSequenceNumber(void) {
@@ -57,8 +59,9 @@ cynara_api_result Logic::check(const std::string &client, const std::string &ses
 {
     PolicyKey key(client, user, privilege);
 
-    //todo Check if answer can be get from cache. Update cache.
-    //todo m_cache->check(session, key);
+    auto cacheResponse = m_cache->check(session, key);
+    if(cacheResponse != cynara_api_result::CYNARA_API_SERVICE_NOT_AVAILABLE)
+        return cacheResponse;
 
     ProtocolFrameSequenceNumber sequenceNumber = generateSequenceNumber();
 
@@ -86,20 +89,11 @@ cynara_api_result Logic::check(const std::string &client, const std::string &ses
         return cynara_api_result::CYNARA_API_ACCESS_DENIED;
     }
 
-    PolicyResult result = checkResponse->m_resultRef;
-    //todo Interprete result.
-    //todo Update cache.
-
-    //todo return result after more detailed interpretation.
-    if (result.policyType() == PredefinedPolicyType::ALLOW)
-        return cynara_api_result::CYNARA_API_SUCCESS;
-    else
-        return cynara_api_result::CYNARA_API_ACCESS_DENIED;
+    return m_cache->updateAndCheck(session, key, checkResponse->m_resultRef);
 }
 
 void Logic::onDisconnected(void) {
-    //todo run special actions when disconnected from cynara service
-    //     like cleaning cache
+    m_cache->clear();
 }
 
 } // namespace Cynara

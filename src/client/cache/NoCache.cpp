@@ -14,39 +14,26 @@
  *  limitations under the License
  */
 /*
- * @file        Logic.h
+ * @file        NoCache.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
- * @brief       This file contains definition of Logic class - main libcynara-client class
+ * @brief       This file contains implementation of NoCache class - stub for no-cache version
  */
 
-#ifndef SRC_CLIENT_LOGIC_LOGIC_H_
-#define SRC_CLIENT_LOGIC_LOGIC_H_
+#include <common.h>
+#include <types/PolicyType.h>
 
-#include <string>
-
-#include <sockets/SocketClient.h>
-
-#include <api/ApiInterface.h>
-#include <cache/CacheInterface.h>
+#include "NoCache.h"
 
 namespace Cynara {
 
-class Logic : public ApiInterface {
-private:
-    SocketClientPtr m_socketClient;
-    CacheInterfacePtr m_cache;
-
-    void onDisconnected(void);
-
-public:
-    Logic();
-    virtual ~Logic() = default;
-
-    virtual cynara_api_result check(const std::string &client, const std::string &session,
-        const std::string &user, const std::string &privilege) noexcept;
-};
+cynara_api_result NoCache::updateAndCheck(const std::string &session UNUSED,
+                                          const PolicyKey &key UNUSED,
+                                          const PolicyResult &result) {
+    if (result.policyType() == PredefinedPolicyType::ALLOW)
+        return cynara_api_result::CYNARA_API_SUCCESS;
+    else
+        return cynara_api_result::CYNARA_API_ACCESS_DENIED;
+}
 
 } // namespace Cynara
-
-#endif /* SRC_CLIENT_LOGIC_LOGIC_H_ */

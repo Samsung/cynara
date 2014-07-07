@@ -23,6 +23,7 @@ SET(CYNARA_LIB_CYNARA_PATH ${CYNARA_PATH}/client)
 
 SET(LIB_CYNARA_SOURCES
     ${CYNARA_LIB_CYNARA_PATH}/api/client-api.cpp
+    ${CYNARA_LIB_CYNARA_PATH}/cache/NoCache.cpp
     ${CYNARA_LIB_CYNARA_PATH}/logic/Logic.cpp
     )
 

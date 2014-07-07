@@ -14,39 +14,39 @@
  *  limitations under the License
  */
 /*
- * @file        Logic.h
+ * @file        CacheInterface.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
- * @brief       This file contains definition of Logic class - main libcynara-client class
+ * @brief       This file contains cache interface definition.
  */
 
-#ifndef SRC_CLIENT_LOGIC_LOGIC_H_
-#define SRC_CLIENT_LOGIC_LOGIC_H_
+#ifndef SRC_CLIENT_CACHE_CACHEINTERFACE_H_
+#define SRC_CLIENT_CACHE_CACHEINTERFACE_H_
 
+#include <memory>
 #include <string>
 
-#include <sockets/SocketClient.h>
+#include <types/PolicyKey.h>
+#include <types/PolicyResult.h>
 
-#include <api/ApiInterface.h>
-#include <cache/CacheInterface.h>
+#include <cynara-client.h>
 
 namespace Cynara {
 
-class Logic : public ApiInterface {
-private:
-    SocketClientPtr m_socketClient;
-    CacheInterfacePtr m_cache;
+class CacheInterface;
+typedef std::shared_ptr<CacheInterface> CacheInterfacePtr;
 
-    void onDisconnected(void);
-
+class CacheInterface {
 public:
-    Logic();
-    virtual ~Logic() = default;
+    CacheInterface() = default;
+    virtual ~CacheInterface() = default;
 
-    virtual cynara_api_result check(const std::string &client, const std::string &session,
-        const std::string &user, const std::string &privilege) noexcept;
+    virtual cynara_api_result check(const std::string &session, const PolicyKey &key) = 0;
+    virtual cynara_api_result updateAndCheck(const std::string &session, const PolicyKey &key,
+                                             const PolicyResult &result) = 0;
+    virtual void clear(void) = 0;
 };
 
 } // namespace Cynara
 
-#endif /* SRC_CLIENT_LOGIC_LOGIC_H_ */
+#endif /* SRC_CLIENT_CACHE_CACHEINTERFACE_H_ */

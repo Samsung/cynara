@@ -56,12 +56,21 @@ void Cynara::init(void) {
 }
 
 void Cynara::run(void) {
+    if (!m_socketManager) {
+        throw InitException();
+    }
+
     m_socketManager->run();
 }
 
 void Cynara::finalize(void) {
-    m_logic->unbindAll();
-    m_socketManager->unbindAll();
+    if (m_logic) {
+        m_logic->unbindAll();
+    }
+
+    if (m_socketManager) {
+        m_socketManager->unbindAll();
+    }
 
     m_logic.reset();
     m_socketManager.reset();

@@ -132,7 +132,7 @@ bool Socket::connect(void) {
 
     if (m_socketPath.length() >= sizeof(clientAddr.sun_path)) {
         close();
-        LOGE("Error: socket path <%s> is too long [%zu]. Max len is [%u]", m_socketPath.c_str(),
+        LOGE("Error: socket path <%s> is too long [%zu]. Max len is [%zu]", m_socketPath.c_str(),
              m_socketPath.length(), sizeof(clientAddr.sun_path));
         throw InitException();
     }

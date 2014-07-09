@@ -161,7 +161,7 @@ int cynara_admin_finish(struct cynara_admin *p_cynara_admin);
  * In case of CYNARA_ADMIN_BUCKET, a bucket-pointing policy is updated or inserted into cynara
  * database.
  * In case of CYNARA_ADMIN_DELETE, a policy is removed from cynara database.
- * One call of cynara_admin_insert_policies can manage many different policies in different buckets.
+ * One call of cynara_admin_set_policies can manage many different policies in different buckets.
  *
  * However, considered buckets must exist before referring to them in policies.
  *

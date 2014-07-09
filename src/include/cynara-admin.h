@@ -49,10 +49,10 @@ extern "C" {
 #endif
 
 //todo comment
-#define CYNARA_ADMIN_WILDCARD "*";
+#define CYNARA_ADMIN_WILDCARD "*"
 
 //todo comment
-#define CYNARA_ADMIN_DEFAULT_BUCKET "";
+#define CYNARA_ADMIN_DEFAULT_BUCKET ""
 
 //todo comments
 #define CYNARA_ADMIN_DELETE -1

@@ -44,27 +44,33 @@
 using namespace Cynara;
 
 TEST(storage, addBucket) {
+    using ::testing::Return;
+
     FakeStorageBackend backend;
     Cynara::Storage storage(backend);
 
     PolicyBucketId bucketId = "test-bucket";
     PolicyResult defaultPolicy(PredefinedPolicyType::DENY);
 
+    EXPECT_CALL(backend, hasBucket(bucketId)).WillOnce(Return(false));
     EXPECT_CALL(backend, createBucket(bucketId, defaultPolicy));
 
-    storage.createBucket(bucketId, defaultPolicy);
+    storage.addOrUpdateBucket(bucketId, defaultPolicy);
 }
 
-// Cannot add bucket with default bucket's name
-TEST(storage, addDefaultBucket) {
+TEST(storage, updateBucket) {
+    using ::testing::Return;
+
     FakeStorageBackend backend;
     Cynara::Storage storage(backend);
+
+    PolicyBucketId bucketId = "test-bucket";
     PolicyResult defaultPolicy(PredefinedPolicyType::DENY);
 
-    ASSERT_THROW(
-        storage.createBucket(defaultPolicyBucketId, defaultPolicy),
-        BucketAlreadyExistsException
-    );
+    EXPECT_CALL(backend, hasBucket(bucketId)).WillOnce(Return(true));
+    EXPECT_CALL(backend, updateBucket(bucketId, defaultPolicy));
+
+    storage.addOrUpdateBucket(bucketId, defaultPolicy);
 }
 
 // Cannot delete default bucket

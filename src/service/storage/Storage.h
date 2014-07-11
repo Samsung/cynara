@@ -50,7 +50,7 @@ public:
     PolicyResult checkPolicy(const PolicyKey &key);
 
     void insertPolicies(const std::vector<PolicyPolicyBucket> &policies);
-    void createBucket(const PolicyBucketId &newBucketId, const PolicyResult &defaultBucketPolicy);
+    void addOrUpdateBucket(const PolicyBucketId &bucketId, const PolicyResult &defaultBucketPolicy);
     void deletePolicies(const std::vector<PolicyKeyBucket> &policies);
     void deleteBucket(const PolicyBucketId &bucketId);
 

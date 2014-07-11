@@ -93,14 +93,12 @@ void Storage::insertPolicies(const std::vector<PolicyPolicyBucket> &policies) {
     }
 }
 
-void Storage::createBucket(const PolicyBucketId &newBucketId, const PolicyResult &defaultBucketPolicy) {
-    // TODO: Check if bucket already exists
-
-    if (newBucketId == defaultPolicyBucketId) {
-        throw BucketAlreadyExistsException(newBucketId);
+void Storage::addOrUpdateBucket(const PolicyBucketId &bucketId, const PolicyResult &defaultBucketPolicy) {
+    if (m_backend.hasBucket(bucketId)) {
+        m_backend.updateBucket(bucketId, defaultBucketPolicy);
+    } else {
+        m_backend.createBucket(bucketId, defaultBucketPolicy);
     }
-
-    m_backend.createBucket(newBucketId, defaultBucketPolicy);
 }
 
 void Storage::deleteBucket(const PolicyBucketId &bucketId) {

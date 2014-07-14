@@ -134,4 +134,18 @@ void ProtocolClient::execute(RequestContextPtr context, CheckRequestPtr request)
     ProtocolFrameSerializer::finishSerialization(frame, context->responseQueue());
 }
 
+void ProtocolClient::execute(RequestContextPtr context, CheckResponsePtr response) {
+    ProtocolFramePtr frame = ProtocolFrameSerializer::startSerialization(response->sequenceNumber());
+
+    LOGD("Serializing CheckResponse: op [%d], policyType [%d], metadata <%s>",
+         (int)OpCheckPolicy, (int)response->m_resultRef.policyType(),
+         response->m_resultRef.metadata().c_str());
+
+    ProtocolSerialization::serialize(*frame, OpCheckPolicy);
+    ProtocolSerialization::serialize(*frame, response->m_resultRef.policyType());
+    ProtocolSerialization::serialize(*frame, response->m_resultRef.metadata());
+
+    ProtocolFrameSerializer::finishSerialization(frame, context->responseQueue());
+}
+
 } // namespace Cynara

@@ -42,6 +42,7 @@ public:
     virtual ResponsePtr extractResponseFromBuffer(BinaryQueue &bufferQueue);
 
     virtual void execute(RequestContextPtr context, CheckRequestPtr request);
+    virtual void execute(RequestContextPtr context, CheckResponsePtr response);
 
 private:
     RequestPtr deserializeCheckRequest(ProtocolFrameHeader &frame);

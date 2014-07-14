@@ -23,6 +23,7 @@
 #ifndef SRC_SERVICE_STORAGE_STORAGESERIALIZER_H_
 #define SRC_SERVICE_STORAGE_STORAGESERIALIZER_H_
 
+#include "InMemoryStorageBackend.h"
 #include "types/PolicyBucketId.h"
 #include "types/PolicyCollection.h"
 #include "types/PolicyResult.h"
@@ -37,12 +38,19 @@ class PolicyKey;
 class StorageSerializer {
 
 public:
+    typedef std::function<std::shared_ptr<StorageSerializer>(const PolicyBucketId &)>
+            BucketStreamOpener;
+
     StorageSerializer(std::ostream &os);
-    void dump(const PolicyBucket &bucket);
+    virtual ~StorageSerializer() = default;
+
+    virtual void dump(const InMemoryStorageBackend::Buckets &buckets,
+                      BucketStreamOpener streamOpener);
+    virtual void dump(const PolicyBucket &bucket);
 
 protected:
     template<typename Arg1, typename... Args>
-    inline void dumpFields(const Arg1 arg1, const Args&... args) {
+    inline void dumpFields(const Arg1 &arg1, const Args&... args) {
         dump(arg1);
         if (sizeof...(Args) > 0) {
             outStream() << fieldSeparator();

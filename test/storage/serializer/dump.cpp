@@ -17,7 +17,7 @@
  * @file        dump.cpp
  * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @version     1.0
- * @brief       Test for dumping feature of Cynara::Serializer
+ * @brief       Tests for dumping feature of Cynara::StorageSerializer
  */
 
 #include <gtest/gtest.h>
@@ -49,7 +49,6 @@ TEST(serializer_dump, dump_bucket) {
     PolicyKey pk1 = Helpers::generatePolicyKey("1");
     PolicyKey pk2 = Helpers::generatePolicyKey("2");
 
-
     PolicyBucket bucket = {{ Policy::simpleWithKey(pk1, PredefinedPolicyType::ALLOW),
                              Policy::simpleWithKey(pk2, PredefinedPolicyType::DENY) }};
 
@@ -57,9 +56,14 @@ TEST(serializer_dump, dump_bucket) {
     StorageSerializer serializer(outputStream);
     serializer.dump(bucket);
 
+    // TODO: Cynara::PolicyCollection is a vector, but in future version this may change
+    // and so, we should not expect the exact order of records in serialized stream
+    // See: StorageSerializerFixture::dump_buckets in serialize.cpp
     std::stringstream expected;
-    expected << pk1.toString() << ";" << PredefinedPolicyType::ALLOW << ";" << "\n"
-             << pk2.toString() << ";" << PredefinedPolicyType::DENY << ";" << "\n";
+    expected
+        << std::hex << std::uppercase
+        << pk1.toString() << ";" << "0x" << PredefinedPolicyType::ALLOW << ";" << "\n"
+        << pk2.toString() << ";" << "0x" << PredefinedPolicyType::DENY << ";" << "\n";
 
     ASSERT_EQ(expected.str(), outputStream.str());
 }
@@ -78,10 +82,15 @@ TEST(serializer_dump, dump_bucket_bucket) {
     StorageSerializer serializer(outputStream);
     serializer.dump(bucket);
 
+    // TODO: Cynara::PolicyCollection is a vector, but in future version this may change
+    // and so, we should not expect the exact order of records in serialized stream
+    // See: StorageSerializerFixture::dump_buckets in serialize.cpp
     std::stringstream expected;
-    expected << pk1.toString() << ";" << PredefinedPolicyType::BUCKET << ";" << bucketId << "\n"
-             << pk2.toString() << ";" << PredefinedPolicyType::DENY << ";" << "\n"
-             << pk3.toString() << ";" << PredefinedPolicyType::BUCKET << ";" << bucketId << "\n";
+    expected
+        << std::hex << std::uppercase
+        << pk1.toString() << ";" << "0x" << PredefinedPolicyType::BUCKET << ";" << bucketId << "\n"
+        << pk2.toString() << ";" << "0x" << PredefinedPolicyType::DENY << ";" << "\n"
+        << pk3.toString() << ";" << "0x" << PredefinedPolicyType::BUCKET << ";" << bucketId << "\n";
 
     ASSERT_EQ(expected.str(), outputStream.str());
 }

@@ -50,14 +50,14 @@ public:
         return copy;
     }
 
-    virtual const char* what(void) const noexcept {
+    virtual const std::string message(void) const {
         if (m_whatMsg.empty()) {
             m_whatMsg = "Bucket record corrupted at"
                 + formatedFilename()
                 + formatedLineNumber()
                 + ": <" + slicedLine() + ">";
         }
-        return m_whatMsg.c_str();
+        return m_whatMsg;
     }
 
 protected:

@@ -23,13 +23,26 @@
 #define SRC_COMMON_EXCEPTIONS_EXCEPTION_H_
 
 #include <exception>
+#include <log/Backtrace.h>
 
 namespace Cynara {
 
 class Exception : public std::exception {
 public:
-    Exception() = default;
+    Exception() {
+        m_backtrace = Backtrace::getBacktrace();
+    }
+
     virtual ~Exception() = default;
+
+    virtual const char *what(void) const noexcept {
+        return (message() + " From: " + m_backtrace).c_str();
+    }
+
+    virtual const std::string message(void) const = 0;
+
+private:
+    std::string m_backtrace;
 };
 
 } /* namespace Cynara */

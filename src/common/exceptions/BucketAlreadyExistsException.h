@@ -36,6 +36,10 @@ public:
     BucketAlreadyExistsException(const PolicyBucketId &bucketId) : m_bucketId(bucketId) {}
     virtual ~BucketAlreadyExistsException() = default;
 
+    virtual const std::string message(void) const {
+        return "BucketAlreadyExistsException";
+    }
+
 private:
     PolicyBucketId m_bucketId;
 

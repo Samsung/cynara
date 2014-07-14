@@ -36,6 +36,10 @@ public:
     BucketNotExistsException(const PolicyBucketId &bucketId) : m_bucketId(bucketId) {}
     virtual ~BucketNotExistsException() = default;
 
+    virtual const std::string message(void) const {
+        return "BucketNotExistsException";
+    }
+
 private:
     PolicyBucketId m_bucketId;
 

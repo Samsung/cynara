@@ -33,7 +33,7 @@ class ServerConnectionErrorException : public Exception {
 public:
     ServerConnectionErrorException() = default;
     virtual ~ServerConnectionErrorException() = default;
-    virtual const char* what() const noexcept {
+    virtual const std::string message(void) const {
         return "ServerConnectionError";
     }
 };

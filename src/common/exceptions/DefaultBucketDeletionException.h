@@ -33,6 +33,10 @@ class DefaultBucketDeletionException : public Exception {
 public:
     DefaultBucketDeletionException() = default;
     virtual ~DefaultBucketDeletionException() = default;
+
+    virtual const std::string message(void) const {
+        return "DefaultBucketDeletionException";
+    }
 };
 
 } /* namespace Cynara */

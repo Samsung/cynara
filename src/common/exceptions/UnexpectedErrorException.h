@@ -51,8 +51,8 @@ public:
 
     virtual ~UnexpectedErrorException() = default;
 
-    virtual const char* what() const noexcept {
-        return m_whatMessage.c_str();
+    virtual const std::string message(void) const {
+        return m_whatMessage;
     }
 };
 

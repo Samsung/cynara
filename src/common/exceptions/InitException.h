@@ -33,6 +33,10 @@ class InitException : public Exception {
 public:
     InitException() = default;
     virtual ~InitException() = default;
+
+    virtual const std::string message(void) const {
+        return "InitException";
+    }
 };
 
 } /* namespace Cynara */

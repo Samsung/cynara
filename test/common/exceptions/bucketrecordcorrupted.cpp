@@ -29,48 +29,63 @@
 using namespace Cynara;
 
 TEST(BucketRecordCorruptedException, line) {
+    using ::testing::StartsWith;
+
     BucketRecordCorruptedException ex("line");
     auto expected = "Bucket record corrupted at line: <line>";
-    ASSERT_STREQ(expected, ex.what());
+
+    ASSERT_THAT(ex.what(), StartsWith(expected));
     ASSERT_EQ("line", ex.line());
     ASSERT_EQ("", ex.filename());
     ASSERT_EQ(0, ex.lineNumber());
 }
 
 TEST(BucketRecordCorruptedException, line_lineno) {
+    using ::testing::StartsWith;
+
     auto ex = BucketRecordCorruptedException("line").withLineNumber(10);
     auto expected = "Bucket record corrupted at line 10: <line>";
-    ASSERT_STREQ(expected, ex.what());
+
+    ASSERT_THAT(ex.what(), StartsWith(expected));
     ASSERT_EQ("line", ex.line());
     ASSERT_EQ("", ex.filename());
     ASSERT_EQ(10, ex.lineNumber());
 }
 
 TEST(BucketRecordCorruptedException, line_lineno_filename) {
+    using ::testing::StartsWith;
+
     auto ex = BucketRecordCorruptedException("line").withLineNumber(10).withFilename("bucket.bkt");
     auto expected = "Bucket record corrupted at bucket.bkt:10: <line>";
-    ASSERT_STREQ(expected, ex.what());
+
+    ASSERT_THAT(ex.what(), StartsWith(expected));
     ASSERT_EQ("line", ex.line());
     ASSERT_EQ("bucket.bkt", ex.filename());
     ASSERT_EQ(10, ex.lineNumber());
 }
 
 TEST(BucketRecordCorruptedException, line_filename) {
+    using ::testing::StartsWith;
+
     auto ex = BucketRecordCorruptedException("line").withFilename("bucket.bkt");
     auto expected = "Bucket record corrupted at bucket.bkt: <line>";
-    ASSERT_STREQ(expected, ex.what());
+
+    ASSERT_THAT(ex.what(), StartsWith(expected));
     ASSERT_EQ("line", ex.line());
     ASSERT_EQ("bucket.bkt", ex.filename());
     ASSERT_EQ(0, ex.lineNumber());
 }
 
 TEST(BucketRecordCorruptedException, line_sliced) {
+    using ::testing::StartsWith;
+
     std::string line = "A very long line placed here just to check,"
                        " if slicing works as expected (83 chars)";
     auto ex = BucketRecordCorruptedException(line);
     auto expected = "Bucket record corrupted at line:"
             " <A very long line placed here just to check, if sli...>";
-    ASSERT_STREQ(expected, ex.what());
+
+    ASSERT_THAT(ex.what(), StartsWith(expected));
     ASSERT_EQ(line, ex.line());
     ASSERT_EQ("", ex.filename());
     ASSERT_EQ(0, ex.lineNumber());

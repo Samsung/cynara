@@ -44,8 +44,8 @@ public:
 
     virtual ~NullPointerException() = default;
 
-    virtual const char* what() const noexcept {
-        return m_whatMsg.c_str();
+    virtual const std::string message(void) const {
+        return m_whatMsg;
     }
 };
 

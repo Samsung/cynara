@@ -80,6 +80,10 @@ cynara_api_result Logic::check(const std::string &client, const std::string &ses
             LOGC("Critical error. Casting Response to CheckResponse failed.");
             throw UnexpectedErrorException("Error casting Response to CheckResponse");
         }
+
+        LOGD("checkResponse: policyType = %d, metadata = %s",
+             (int)checkResponse->m_resultRef.policyType(),
+             checkResponse->m_resultRef.metadata().c_str());
     } catch (const ServerConnectionErrorException &ex) {
         LOGE("Cynara service not available.");
         onDisconnected();

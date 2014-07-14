@@ -26,6 +26,7 @@
 
 #include <exceptions/InvalidProtocolException.h>
 #include <exceptions/OutOfDataException.h>
+#include <log/log.h>
 #include <protocol/ProtocolFrameSerializer.h>
 #include <protocol/ProtocolOpCode.h>
 #include <protocol/ProtocolSerialization.h>
@@ -54,6 +55,9 @@ RequestPtr ProtocolClient::deserializeCheckRequest(ProtocolFrameHeader &frame) {
     ProtocolDeserialization::deserialize(frame, userId);
     ProtocolDeserialization::deserialize(frame, privilegeId);
 
+    LOGD("Deserialized CheckRequest: client = %s, user = %s, privilege = %s",
+         clientId.c_str(), userId.c_str(), privilegeId.c_str());
+
     return std::make_shared<CheckRequest>(PolicyKey(clientId, userId, privilegeId),
             frame.sequenceNumber());
 }
@@ -62,11 +66,12 @@ RequestPtr ProtocolClient::extractRequestFromBuffer(BinaryQueue &bufferQueue) {
     ProtocolFrameSerializer::deserializeHeader(m_frameHeader, bufferQueue);
 
     if (m_frameHeader.isFrameComplete()) {
-        ProtocolOpCode requestId;
+        ProtocolOpCode opCode;
 
         m_frameHeader.resetState();
-        ProtocolDeserialization::deserialize(m_frameHeader, requestId);
-        switch (requestId) {
+        ProtocolDeserialization::deserialize(m_frameHeader, opCode);
+        LOGD("Deserialized opCode = %d", (int)opCode);
+        switch (opCode) {
         case OpCheckPolicy:
             return deserializeCheckRequest(m_frameHeader);
         default:
@@ -85,18 +90,24 @@ ResponsePtr ProtocolClient::deserializeCheckResponse(ProtocolFrameHeader &frame)
     ProtocolDeserialization::deserialize(frame, result);
     ProtocolDeserialization::deserialize(frame, additionalInfo);
 
-    return std::make_shared<CheckResponse>(PolicyResult(result, additionalInfo), frame.sequenceNumber());
+    const PolicyResult policyResult(result, additionalInfo);
+
+    LOGD("Deserialized CheckResponse: result = %d, metadata = %s",
+         (int)policyResult.policyType(), policyResult.metadata().c_str());
+
+    return std::make_shared<CheckResponse>(policyResult, frame.sequenceNumber());
 }
 
 ResponsePtr ProtocolClient::extractResponseFromBuffer(BinaryQueue &bufferQueue) {
     ProtocolFrameSerializer::deserializeHeader(m_frameHeader, bufferQueue);
 
     if (m_frameHeader.isFrameComplete()) {
-        ProtocolOpCode requestId;
+        ProtocolOpCode opCode;
 
         m_frameHeader.resetState();
-        ProtocolDeserialization::deserialize(m_frameHeader, requestId);
-        switch (requestId) {
+        ProtocolDeserialization::deserialize(m_frameHeader, opCode);
+        LOGD("Deserialized opCode = %d", (int)opCode);
+        switch (opCode) {
         case OpCheckPolicy:
             return deserializeCheckResponse(m_frameHeader);
         default:
@@ -110,6 +121,10 @@ ResponsePtr ProtocolClient::extractResponseFromBuffer(BinaryQueue &bufferQueue) 
 
 void ProtocolClient::execute(RequestContextPtr context, CheckRequestPtr request) {
     ProtocolFramePtr frame = ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
+
+    LOGD("Serializing CheckRequest: client = %s, user = %s, privilege = %s",
+         request->key().client().value().c_str(),
+         request->key().user().value().c_str(), request->key().privilege().value().c_str());
 
     ProtocolSerialization::serialize(*frame, OpCheckPolicy);
     ProtocolSerialization::serialize(*frame, request->key().client().value());

@@ -24,6 +24,7 @@
 
 #include <exceptions/InvalidProtocolException.h>
 #include <exceptions/OutOfDataException.h>
+#include <log/log.h>
 
 #include "ProtocolFrameSerializer.h"
 
@@ -36,17 +37,25 @@ void ProtocolFrameSerializer::deserializeHeader(ProtocolFrameHeader &frameHeader
             return;
         }
 
+        LOGD("Deserializing frameHeader");
+
         frameHeader.setHeaderContent(BinaryQueuePtr(&data, [=] (BinaryQueue *) {}));
 
         ProtocolFrameSignature signature;
         ProtocolDeserialization::deserialize(frameHeader, frameHeader.m_signature.length(),
                 signature);
+
+        LOGD("Deserialized signature = %s", signature.c_str());
+
         if (ProtocolFrameHeader::m_signature != signature) {
             throw InvalidProtocolException(InvalidProtocolException::InvalidSignature);
         }
 
         ProtocolDeserialization::deserialize(frameHeader, frameHeader.m_frameLength);
         ProtocolDeserialization::deserialize(frameHeader, frameHeader.m_sequenceNumber);
+
+        LOGD("Deserialized frameLength = %d, sequenceNumber = %d",
+             (int)frameHeader.m_frameLength, (int)frameHeader.m_sequenceNumber);
 
         frameHeader.setHeaderComplete();
     }
@@ -57,6 +66,8 @@ void ProtocolFrameSerializer::deserializeHeader(ProtocolFrameHeader &frameHeader
 }
 
 ProtocolFramePtr ProtocolFrameSerializer::startSerialization(ProtocolFrameSequenceNumber sequenceNumber) {
+    LOGD("Serialization started");
+
     BinaryQueuePtr headerQueue = std::make_shared<BinaryQueue>();
     BinaryQueuePtr bodyQueue = std::make_shared<BinaryQueue>();
     ProtocolFrameHeaderPtr header = std::make_shared<ProtocolFrameHeader>(headerQueue);
@@ -70,6 +81,10 @@ void ProtocolFrameSerializer::finishSerialization(ProtocolFramePtr frame, Binary
     ProtocolSerialization::serializeNoSize(frameHeader, ProtocolFrameHeader::m_signature);
     ProtocolSerialization::serialize(frameHeader, frameHeader.m_frameLength);
     ProtocolSerialization::serialize(frameHeader, frameHeader.m_sequenceNumber);
+
+    LOGD("Serialize frameHeader: signature = %s, frameLength = %d, sequenceNumber = %d",
+         ProtocolFrameHeader::m_signature.c_str(), (int)frameHeader.m_frameLength,
+         (int)frameHeader.m_sequenceNumber);
 
     data.appendMoveFrom(frameHeader.headerContent());
     data.appendMoveFrom(frame->bodyContent());

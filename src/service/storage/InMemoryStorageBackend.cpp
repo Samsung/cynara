@@ -65,6 +65,10 @@ void InMemoryStorageBackend::deleteBucket(const PolicyBucketId &bucketId) {
     }
 }
 
+bool InMemoryStorageBackend::hasBucket(const PolicyBucketId &bucketId) {
+    return buckets().find(bucketId) != buckets().end();
+}
+
 void InMemoryStorageBackend::deletePolicy(const PolicyBucketId &bucketId, const PolicyKey &key) {
     try {
         // TODO: Move the erase code to PolicyCollection maybe?

@@ -45,6 +45,7 @@ public:
 
     virtual void createBucket(const PolicyBucketId &bucketId, const PolicyResult &defaultPolicy) = 0;
     virtual void deleteBucket(const PolicyBucketId &bucketId) = 0;
+    virtual bool hasBucket(const PolicyBucketId &bucketId) = 0;
 
     virtual void deletePolicy(const PolicyBucketId &bucketId, const PolicyKey &key) = 0;
     virtual void deleteLinking(const PolicyBucketId &bucket) = 0;

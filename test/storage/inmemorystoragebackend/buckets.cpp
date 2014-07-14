@@ -30,13 +30,13 @@
 
 using namespace Cynara;
 
-TEST_F(InMemeoryStorageBackendFixture, addBucket) {
+TEST_F(InMemeoryStorageBackendFixture, createBucket) {
     using ::testing::ReturnRef;
     using ::testing::IsEmpty;
 
     FakeInMemoryStorageBackend backend;
     EXPECT_CALL(backend, buckets())
-        .WillOnce(ReturnRef(m_buckets));
+        .WillRepeatedly(ReturnRef(m_buckets));
 
     PolicyResult defaultPolicy(PredefinedPolicyType::ALLOW);
     PolicyBucketId bucketId = "new-bucket";
@@ -55,7 +55,7 @@ TEST_F(InMemeoryStorageBackendFixture, deleteBucket) {
 
     FakeInMemoryStorageBackend backend;
     EXPECT_CALL(backend, buckets())
-        .WillOnce(ReturnRef(m_buckets));
+        .WillRepeatedly(ReturnRef(m_buckets));
 
     PolicyBucketId bucketId = "delete-bucket";
     m_buckets.insert({ bucketId, PolicyBucket() });
@@ -65,12 +65,27 @@ TEST_F(InMemeoryStorageBackendFixture, deleteBucket) {
     ASSERT_THAT(m_buckets, IsEmpty());
 }
 
+TEST_F(InMemeoryStorageBackendFixture, hasBucket) {
+    using ::testing::ReturnRef;
+    using ::testing::IsEmpty;
+
+    FakeInMemoryStorageBackend backend;
+    EXPECT_CALL(backend, buckets())
+        .WillRepeatedly(ReturnRef(m_buckets));
+
+    PolicyBucketId bucketId = "bucket";
+    m_buckets.insert({ bucketId, PolicyBucket() });
+
+    ASSERT_TRUE(backend.hasBucket(bucketId));
+    ASSERT_FALSE(backend.hasBucket("non-existent"));
+}
+
 TEST_F(InMemeoryStorageBackendFixture, deleteNonexistentBucket) {
     using ::testing::ReturnRef;
 
     FakeInMemoryStorageBackend backend;
     EXPECT_CALL(backend, buckets())
-        .WillOnce(ReturnRef(m_buckets));
+        .WillRepeatedly(ReturnRef(m_buckets));
 
     EXPECT_THROW(backend.deleteBucket("non-existent"), BucketNotExistsException);
 }

@@ -21,7 +21,11 @@
  */
 
 #include <new>
+
 #include <common.h>
+
+#include <log/log.h>
+
 #include <cynara-client.h>
 #include <api/ApiInterface.h>
 #include <logic/Logic.h>
@@ -47,6 +51,9 @@ int cynara_initialize(cynara **pp_cynara, const cynara_configuration *p_conf UNU
     } catch (const std::bad_alloc &ex) {
         return cynara_api_result::CYNARA_API_OUT_OF_MEMORY;
     }
+
+    init_log();
+    LOGD("Cynara client initialized");
 
     return cynara_api_result::CYNARA_API_SUCCESS;
 }

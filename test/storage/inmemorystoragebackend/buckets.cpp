@@ -48,6 +48,32 @@ TEST_F(InMemeoryStorageBackendFixture, createBucket) {
     ASSERT_THAT(m_buckets.at(bucketId).policyCollection(), IsEmpty());
 }
 
+TEST_F(InMemeoryStorageBackendFixture, updateBucket) {
+    using ::testing::ReturnRef;
+
+    FakeInMemoryStorageBackend backend;
+    EXPECT_CALL(backend, buckets())
+        .WillRepeatedly(ReturnRef(m_buckets));
+
+    PolicyBucketId bucketId = "bucket";
+    auto &bucket = this->createBucket(bucketId);
+    bucket.setDefaultPolicy(PredefinedPolicyType::ALLOW);
+
+    backend.updateBucket(bucketId, PredefinedPolicyType::DENY);
+
+    ASSERT_EQ(PredefinedPolicyType::DENY, bucket.defaultPolicy());
+}
+
+TEST_F(InMemeoryStorageBackendFixture, updateNonexistentBucket) {
+    using ::testing::ReturnRef;
+
+    FakeInMemoryStorageBackend backend;
+    EXPECT_CALL(backend, buckets())
+        .WillRepeatedly(ReturnRef(m_buckets));
+
+    EXPECT_THROW(backend.updateBucket("non-existent", PredefinedPolicyType::ALLOW),
+                 BucketNotExistsException);
+}
 
 TEST_F(InMemeoryStorageBackendFixture, deleteBucket) {
     using ::testing::ReturnRef;

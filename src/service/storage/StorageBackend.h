@@ -44,6 +44,7 @@ public:
     virtual void insertPolicy(const PolicyBucketId &bucket, PolicyPtr policy) = 0;
 
     virtual void createBucket(const PolicyBucketId &bucketId, const PolicyResult &defaultPolicy) = 0;
+    virtual void updateBucket(const PolicyBucketId &bucketId, const PolicyResult &defaultPolicy) = 0;
     virtual void deleteBucket(const PolicyBucketId &bucketId) = 0;
     virtual bool hasBucket(const PolicyBucketId &bucketId) = 0;
 

@@ -76,6 +76,7 @@ public:
         return m_policyCollection;
     }
 
+    // TODO: Consider StorageBackend to be only one to alter this property
     void setDefaultPolicy(const PolicyResult &defaultPolicy) {
         m_defaultPolicy = defaultPolicy;
     }

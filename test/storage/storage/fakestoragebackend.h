@@ -29,7 +29,10 @@ class FakeStorageBackend : public StorageBackend {
 public:
     MOCK_METHOD1(searchDefaultBucket, PolicyBucket(const PolicyKey &key));
     MOCK_METHOD2(searchBucket, PolicyBucket(const PolicyBucketId &bucket, const PolicyKey &key));
-    MOCK_METHOD2(createBucket, void(const PolicyBucketId &bucketId, const PolicyResult &defaultPolicy));
+    MOCK_METHOD2(createBucket, void(const PolicyBucketId &bucketId,
+                                    const PolicyResult &defaultPolicy));
+    MOCK_METHOD2(updateBucket, void(const PolicyBucketId &bucketId,
+                                    const PolicyResult &defaultPolicy));
     MOCK_METHOD1(deleteBucket, void(const PolicyBucketId &bucketId));
     MOCK_METHOD1(hasBucket, bool(const PolicyBucketId &bucketId));
     MOCK_METHOD2(deletePolicy, void(const PolicyBucketId &bucketId, const PolicyKey &key));

@@ -58,6 +58,16 @@ void InMemoryStorageBackend::createBucket(const PolicyBucketId &bucketId,
     buckets().insert({ bucketId, newBucket });
 }
 
+void InMemoryStorageBackend::updateBucket(const PolicyBucketId &bucketId,
+                                          const PolicyResult &defaultPolicy) {
+    try {
+        auto &bucket = buckets().at(bucketId);
+        bucket.setDefaultPolicy(defaultPolicy);
+    } catch (const std::out_of_range &) {
+        throw BucketNotExistsException(bucketId);
+    }
+}
+
 void InMemoryStorageBackend::deleteBucket(const PolicyBucketId &bucketId) {
     auto bucketErased = buckets().erase(bucketId);
     if (bucketErased == 0) {

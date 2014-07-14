@@ -79,6 +79,7 @@ const std::string Backtrace::buildBacktrace(void) {
         snprintf(btstr, sizeof(btstr), "ip = %lx, sp = %lx, %s, %s:%d\n",
                 (long) ip, (long) sp, realname ? realname : proc_name,
                 m_fileName, m_lineNumber);
+        free(realname);
         backtrace += btstr;
     }
 

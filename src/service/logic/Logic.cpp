@@ -80,7 +80,6 @@ bool Logic::check(RequestContextPtr context UNUSED, const PolicyKey &key,
 
     //in case no proper plugin is found
     throw PluginNotFoundException(result);
-    return false;
 }
 
 } // namespace Cynara

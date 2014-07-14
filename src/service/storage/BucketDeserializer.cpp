@@ -22,6 +22,7 @@
 
 #include <exceptions/BucketRecordCorruptedException.h>
 #include <storage/BucketDeserializer.h>
+#include <storage/StorageDeserializer.h>
 #include <storage/StorageSerializer.h>
 #include <types/Policy.h>
 
@@ -45,8 +46,8 @@ PolicyCollection BucketDeserializer::loadPolicies(void) {
         try {
             std::size_t beginToken = 0;
             auto policyKey = parseKey(line, beginToken);
-            auto policyType = parsePolicyType(line, beginToken);
-            auto metadata = parseMetadata(line, beginToken);
+            auto policyType = StorageDeserializer::parsePolicyType(line, beginToken);
+            auto metadata = StorageDeserializer::parseMetadata(line, beginToken);
             PolicyResult policyResult(policyType, metadata);
             policies.push_back(std::make_shared<Policy>(policyKey, policyResult));
         } catch (const BucketRecordCorruptedException &ex) {
@@ -71,30 +72,6 @@ PolicyKey BucketDeserializer::parseKey(const std::string &line, std::size_t &beg
     }
 
     return PolicyKey(keyFeatures[0], keyFeatures[1], keyFeatures[2]);
-}
-
-PolicyType BucketDeserializer::parsePolicyType(const std::string &line, std::size_t &beginToken) {
-    PolicyType policyType;
-    try {
-        size_t newBegin = 0;
-        policyType = std::stoi(line.substr(beginToken), &newBegin, 16);
-        beginToken += newBegin;
-    } catch(...) {
-        throw BucketRecordCorruptedException(line);
-    }
-
-    return policyType;
-}
-
-PolicyResult::PolicyMetadata BucketDeserializer::parseMetadata(const std::string &line,
-                                                                std::size_t &beginToken) {
-    if (beginToken < line.size()) {
-        auto ret = line.substr(beginToken + 1);
-        beginToken = line.size();
-        return ret;
-    }
-
-    return std::string();
 }
 
 } /* namespace Cynara */

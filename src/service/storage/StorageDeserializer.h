@@ -38,8 +38,10 @@ public:
     void initBuckets(InMemoryStorageBackend::Buckets &buckets);
     void loadBuckets(InMemoryStorageBackend::Buckets &buckets);
 
-protected:
     static PolicyBucketId parseBucketId(const std::string &line, std::size_t &beginToken);
+    static PolicyType parsePolicyType(const std::string &line, std::size_t &beginToken);
+    static PolicyResult::PolicyMetadata parseMetadata(const std::string &line,
+                                                      std::size_t &beginToken);
 
 private:
     std::istream &m_inStream;

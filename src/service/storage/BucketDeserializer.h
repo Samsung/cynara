@@ -31,10 +31,7 @@
 
 namespace Cynara {
 
-class StorageDeserializer;
-
 class BucketDeserializer {
-friend StorageDeserializer;
 
 public:
     BucketDeserializer(std::istream &inStream) : m_inStream(inStream) {}
@@ -42,9 +39,6 @@ public:
 
 protected:
     static PolicyKey parseKey(const std::string &line, std::size_t &beginToken);
-    static PolicyType parsePolicyType(const std::string &line, std::size_t &beginToken);
-    static PolicyResult::PolicyMetadata parseMetadata(const std::string &line,
-                                                      std::size_t &beginToken);
 
 private:
     std::istream &m_inStream;

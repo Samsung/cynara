@@ -49,6 +49,9 @@ extern "C" {
 #endif
 
 //todo comment
+struct cynara_admin;
+
+//todo comment
 #define CYNARA_ADMIN_WILDCARD "*"
 
 //todo comment

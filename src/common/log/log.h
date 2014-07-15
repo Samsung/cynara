@@ -25,15 +25,21 @@
 #ifndef CYNARA_COMMON_LOG_H
 #define CYNARA_COMMON_LOG_H
 
+#ifndef CYNARA_NO_LOGS
 #include <systemd/sd-journal.h>
+#endif
 
 extern int __log_level;
 
-#define __LOG(LEVEL, ...) \
-    do { \
-        if(LEVEL <= __log_level) \
-            sd_journal_print(LEVEL, __VA_ARGS__); \
-    } while (0)
+#ifndef CYNARA_NO_LOGS
+    #define __LOG(LEVEL, ...) \
+        do { \
+            if(LEVEL <= __log_level) \
+                sd_journal_print(LEVEL, __VA_ARGS__); \
+        } while (0)
+#else
+    #define __LOG(LEVEL, ...)
+#endif
 
 #define LEGM(...)  __LOG(LOG_EMERG, __VA_ARGS__)   /* system is unusable */
 #define LOGA(...)  __LOG(LOG_ALERT, __VA_ARGS__)   /* action must be taken immediately */

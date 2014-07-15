@@ -37,6 +37,7 @@ SET(CMAKE_CXX_FLAGS_RELEASE    "-g -std=c++0x -O2")
 ADD_DEFINITIONS("-Werror")                      # Make all warnings into errors.
 ADD_DEFINITIONS("-Wall")                        # Generate all warnings
 ADD_DEFINITIONS("-Wextra")                      # Generate even more extra warnings
+ADD_DEFINITIONS("-DCYNARA_NO_LOGS")             # Disable building logs
 
 MESSAGE(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 

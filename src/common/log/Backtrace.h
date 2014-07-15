@@ -25,15 +25,17 @@
 #ifndef SRC_COMMON_LOG_BACKTRACE_H_
 #define SRC_COMMON_LOG_BACKTRACE_H_
 
+#ifndef CYNARA_NO_LOGS
 #define UNW_LOCAL_ONLY
 #include <libunwind.h>
+#endif
 #include <string>
 
 namespace Cynara {
 
 class Backtrace {
 public:
-#ifdef BUILD_TYPE_DEBUG
+#if defined(BUILD_TYPE_DEBUG) && !defined(CYNARA_NO_LOGS)
     static const std::string getBacktrace(void);
 #else
     static const std::string getBacktrace(void) {
@@ -51,7 +53,9 @@ private:
     void operator=(Backtrace const &) = delete;
 
     const std::string buildBacktrace(void);
+#ifndef CYNARA_NO_LOGS
     void getSourceInfo(unw_word_t proc_address);
+#endif
 
 private:
     const char *m_fileName;

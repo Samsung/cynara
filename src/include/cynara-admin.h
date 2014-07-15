@@ -62,14 +62,14 @@ extern "C" {
 
 //todo comments
 struct cynara_admin_policy {
-    const char *bucket;
+    char *bucket;
 
-    const char *client;
-    const char *user;
-    const char *privilege;
+    char *client;
+    char *user;
+    char *privilege;
 
     int result;
-    const char *result_extra;
+    char *result_extra;
 };
 
 /**

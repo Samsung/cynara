@@ -24,6 +24,7 @@
 #include <ios>
 #include <iostream>
 
+#include <exceptions/BucketSerializationException.h>
 #include "types/PolicyBucket.h"
 #include "types/PolicyCollection.h"
 
@@ -54,7 +55,7 @@ void StorageSerializer::dump(const InMemoryStorageBackend::Buckets &buckets,
         if (bucketSerializer != nullptr) {
             bucketSerializer->dump(bucket);
         } else {
-            // TODO: Throw?
+            throw BucketSerializationException(bucketId);
         }
     }
 }

@@ -29,6 +29,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <exceptions/BucketSerializationException.h>
 #include <storage/InMemoryStorageBackend.h>
 #include <storage/StorageSerializer.h>
 #include <types/PolicyBucketId.h>
@@ -113,4 +114,25 @@ TEST_F(StorageSerializerFixture, dump_buckets) {
                                                   std::istream_iterator<std::string>());
 
     ASSERT_THAT(actualRecords, UnorderedElementsAreArray(expectedRecords));
+}
+
+TEST_F(StorageSerializerFixture, dump_buckets_io_error) {
+    using ::testing::_;
+    using ::testing::Return;
+
+    buckets = {
+        { "bucket1", PolicyBucket("bucket1", PredefinedPolicyType::DENY) },
+    };
+
+    std::stringstream outStream;
+    StorageSerializer dbSerializer(outStream);
+
+    // Make sure stream was opened for each bucket
+    EXPECT_CALL(fakeStreamOpener, streamForBucketId(_))
+        .Times(buckets.size()).WillRepeatedly(Return(nullptr));
+
+    ASSERT_THROW(
+        dbSerializer.dump(buckets, fakeStreamOpener.streamOpener()),
+        BucketSerializationException
+    );
 }

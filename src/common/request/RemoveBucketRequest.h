@@ -14,31 +14,41 @@
  *    limitations under the License.
  */
 /*
- * @file        RequestTaker.h
+ * @file        RemoveBucketRequest.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
- * @brief       This file defines RequestTaker class
+ * @brief       This file defines request class for bucket removal
  */
 
-#ifndef SRC_COMMON_REQUEST_REQUESTTAKER_H_
-#define SRC_COMMON_REQUEST_REQUESTTAKER_H_
+#ifndef SRC_COMMON_REQUEST_REMOVEBUCKETREQUEST_H_
+#define SRC_COMMON_REQUEST_REMOVEBUCKETREQUEST_H_
+
+#include <types/PolicyBucketId.h>
 
 #include <request/pointers.h>
+#include <request/Request.h>
+#include <request/RequestTaker.h>
 
 namespace Cynara {
 
-class RequestTaker {
-public:
-    RequestTaker() = default;
-    virtual ~RequestTaker() = default;
+class RemoveBucketRequest : public Request {
+private:
+    PolicyBucketId m_bucketId;
 
-    virtual void execute(RequestContextPtr context, CheckRequestPtr request);
-    virtual void execute(RequestContextPtr context, InsertOrUpdateBucketRequestPtr request);
-    virtual void execute(RequestContextPtr context, RemoveBucketRequestPtr request);
-    virtual void execute(RequestContextPtr context, SetPoliciesRequestPtr request);
-    virtual void execute(RequestContextPtr context, SignalRequestPtr request);
+public:
+    RemoveBucketRequest(const PolicyBucketId &bucketId, ProtocolFrameSequenceNumber sequenceNumber)
+        : Request(sequenceNumber), m_bucketId(bucketId) {
+    }
+
+    virtual ~RemoveBucketRequest() = default;
+
+    const PolicyBucketId &bucketId(void) const {
+        return m_bucketId;
+    }
+
+    virtual void execute(RequestPtr self, RequestTakerPtr taker, RequestContextPtr context) const;
 };
 
 } // namespace Cynara
 
-#endif /* SRC_COMMON_REQUEST_REQUESTTAKER_H_ */
+#endif /* SRC_COMMON_REQUEST_REMOVEBUCKETREQUEST_H_ */

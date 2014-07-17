@@ -14,31 +14,21 @@
  *    limitations under the License.
  */
 /*
- * @file        RequestTaker.h
+ * @file        RemoveBucketRequest.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
- * @brief       This file defines RequestTaker class
+ * @brief       This file implements request class for bucket removal
  */
 
-#ifndef SRC_COMMON_REQUEST_REQUESTTAKER_H_
-#define SRC_COMMON_REQUEST_REQUESTTAKER_H_
+#include <memory>
 
-#include <request/pointers.h>
+#include "RemoveBucketRequest.h"
 
 namespace Cynara {
 
-class RequestTaker {
-public:
-    RequestTaker() = default;
-    virtual ~RequestTaker() = default;
-
-    virtual void execute(RequestContextPtr context, CheckRequestPtr request);
-    virtual void execute(RequestContextPtr context, InsertOrUpdateBucketRequestPtr request);
-    virtual void execute(RequestContextPtr context, RemoveBucketRequestPtr request);
-    virtual void execute(RequestContextPtr context, SetPoliciesRequestPtr request);
-    virtual void execute(RequestContextPtr context, SignalRequestPtr request);
-};
+void RemoveBucketRequest::execute(RequestPtr self, RequestTakerPtr taker,
+                                  RequestContextPtr context) const {
+    taker->execute(context, std::dynamic_pointer_cast<RemoveBucketRequest>(self));
+}
 
 } // namespace Cynara
-
-#endif /* SRC_COMMON_REQUEST_REQUESTTAKER_H_ */

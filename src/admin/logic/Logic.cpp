@@ -23,9 +23,18 @@
 #include <memory>
 
 #include <common.h>
+#include <exceptions/ServerConnectionErrorException.h>
+#include <log/log.h>
 #include <protocol/Protocol.h>
 #include <protocol/ProtocolAdmin.h>
+#include <request/InsertOrUpdateBucketRequest.h>
+#include <request/pointers.h>
+#include <request/RemoveBucketRequest.h>
+#include <request/SetPoliciesRequest.h>
+#include <response/CodeResponse.h>
+#include <response/pointers.h>
 #include <sockets/SocketClient.h>
+#include <types/ProtocolFields.h>
 
 #include "Logic.h"
 
@@ -43,21 +52,65 @@ ProtocolFrameSequenceNumber generateSequenceNumber(void) {
     return ++sequenceNumber;
 }
 
-int Logic::setPolicies(const std::map<PolicyBucketId, std::vector<Policy>> &insertOrUpdate UNUSED,
-                const std::map<PolicyBucketId, std::vector<PolicyKey>> &remove UNUSED) noexcept {
-//todo this is only a stub
-    return CYNARA_ADMIN_API_SUCCESS;
+template<typename T, typename... Args>
+int Logic::askCynaraAndInterpreteCodeResponse(Args... args) {
+    ProtocolFrameSequenceNumber sequenceNumber = generateSequenceNumber();
+
+    //Ask cynara service
+    CodeResponsePtr codeResponse;
+    try {
+        RequestPtr request = std::make_shared<T>(args..., sequenceNumber);
+        ResponsePtr response = m_socketClient->askCynaraServer(request);
+        if (!response) {
+            LOGW("Disconnected by cynara server.");
+            return CYNARA_ADMIN_API_SERVICE_NOT_AVAILABLE;
+        }
+        codeResponse = std::dynamic_pointer_cast<CodeResponse>(response);
+        if (!codeResponse) {
+            LOGC("Critical error. Casting Response to CodeResponse failed.");
+            return CYNARA_ADMIN_API_UNEXPECTED_CLIENT_ERROR;
+        }
+
+        LOGD("codeResponse: code = %d", static_cast<int>(codeResponse->m_code));
+        switch (codeResponse->m_code) {
+            case CodeResponse::Code::OK:
+                LOGI("Policies set successfully.");
+                return CYNARA_ADMIN_API_SUCCESS;
+            case CodeResponse::Code::NOT_ALLOWED:
+                LOGE("Cynara service answered: Operation not allowed.");
+                return CYNARA_ADMIN_API_OPERATION_NOT_ALLOWED;
+            case CodeResponse::Code::NO_BUCKET:
+                LOGE("Trying to use unexisting bucket.");
+                return CYNARA_ADMIN_API_BUCKET_NOT_FOUND;
+            default:
+                LOGE("Unexpected response code from server: %d",
+                     static_cast<int>(codeResponse->m_code));
+                return CYNARA_ADMIN_API_UNEXPECTED_CLIENT_ERROR;
+        }
+    } catch (const ServerConnectionErrorException &ex) {
+        LOGE("Cynara service not available.");
+        return CYNARA_ADMIN_API_SERVICE_NOT_AVAILABLE;
+    } catch (const std::bad_alloc &ex) {
+        LOGE("Cynara admin client out of memory.");
+        return CYNARA_ADMIN_API_OUT_OF_MEMORY;
+    } catch (const std::exception &ex) {
+        LOGE("Unexpected client error: %s", ex.what());
+        return CYNARA_ADMIN_API_UNEXPECTED_CLIENT_ERROR;
+    }
 }
 
-int Logic::insertOrUpdateBucket(const PolicyBucketId &bucket UNUSED,
-                                const PolicyResult &policyResult UNUSED) noexcept {
-//todo this is only a stub
-    return CYNARA_ADMIN_API_SUCCESS;
+int Logic::setPolicies(const std::map<PolicyBucketId, std::vector<Policy>> &insertOrUpdate,
+                const std::map<PolicyBucketId, std::vector<PolicyKey>> &remove) noexcept {
+    return askCynaraAndInterpreteCodeResponse<SetPoliciesRequest>(insertOrUpdate, remove);
 }
 
-int Logic::removeBucket(const PolicyBucketId &bucket UNUSED) noexcept {
-//todo this is only a stub
-    return CYNARA_ADMIN_API_SUCCESS;
+int Logic::insertOrUpdateBucket(const PolicyBucketId &bucket,
+                                const PolicyResult &policyResult) noexcept {
+    return askCynaraAndInterpreteCodeResponse<InsertOrUpdateBucketRequest>(bucket, policyResult);
+}
+
+int Logic::removeBucket(const PolicyBucketId &bucket) noexcept {
+    return askCynaraAndInterpreteCodeResponse<RemoveBucketRequest>(bucket);
 }
 
 } // namespace Cynara

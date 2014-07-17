@@ -20,17 +20,16 @@
  * @brief       Tests for Cynara::StorageDeserializer
  */
 
+#include <istream>
+#include <memory>
+#include <tuple>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <exceptions/BucketDeserializationException.h>
 #include <types/PolicyBucket.h>
 #include <storage/StorageDeserializer.h>
-
-#include <tuple>
-#include <memory>
-#include <istream>
-
 
 // TODO: Move to .h, because it's used also in bucket_load.cpp
 MATCHER_P(PolicyPtrEq, policy, "") {
@@ -113,13 +112,16 @@ TEST_F(StorageDeserializerFixture, init_more) {
 TEST_F(StorageDeserializerFixture, init_overwrite) {
     using ::testing::UnorderedElementsAre;
 
-    std::istringstream ss(";0");
+    std::istringstream ss(";0x0");
     StorageDeserializer deserializer(ss, nullStreamOpener);
 
     InMemoryStorageBackend::Buckets buckets;
+    // Default bucket has ALLOW policy as default
     buckets.insert({ "", PolicyBucket("fakeId", PredefinedPolicyType::ALLOW) });
+
     deserializer.initBuckets(buckets);
 
+    // Check, if default bucket has now DENY as default policy, which would be read from stream
     ASSERT_THAT(buckets, UnorderedElementsAre(
         COMPARE_BUCKETS("", PolicyBucket("", PredefinedPolicyType::DENY))
     ));
@@ -146,7 +148,7 @@ TEST_F(StorageDeserializerFixture, load_buckets_plus_policies) {
 
     deserializer.loadBuckets(buckets);
 
-    // Check if our bucket is still there
+    // Check if pre-inserted bucket is still there
     ASSERT_THAT(buckets, UnorderedElementsAre(
         COMPARE_BUCKETS("", PolicyBucket("", PredefinedPolicyType::DENY))
     ));
@@ -179,13 +181,35 @@ TEST_F(StorageDeserializerFixture, load_buckets) {
 
     // Check, if streamOpener was called for each bucket
     EXPECT_CALL(streamOpener, streamForBucketId(""))
-        .WillOnce(Return(nullptr));
+        .WillOnce(Return(emptyBucketStream()));
 
     EXPECT_CALL(streamOpener, streamForBucketId("bucket1"))
-        .WillOnce(Return(nullptr));
+        .WillOnce(Return(emptyBucketStream()));
 
     EXPECT_CALL(streamOpener, streamForBucketId("bucket2"))
-        .WillOnce(Return(nullptr));
+        .WillOnce(Return(emptyBucketStream()));
 
     deserializer.loadBuckets(buckets);
+}
+
+TEST_F(StorageDeserializerFixture, load_buckets_io_error) {
+    using ::testing::_;
+    using ::testing::Return;
+    using ::testing::UnorderedElementsAre;
+
+    // Pre-insert some buckets
+    InMemoryStorageBackend::Buckets buckets;
+    buckets.insert({ "", PolicyBucket("", PredefinedPolicyType::DENY) });
+
+    std::istringstream bucketsStream; // Won't be used; buckets are pre-inserted above
+    FakeStreamForBucketId streamOpener;
+    auto streamOpenerFunc = std::bind(&FakeStreamForBucketId::streamForBucketId, &streamOpener,
+                                      std::placeholders::_1);
+    StorageDeserializer deserializer(bucketsStream, streamOpenerFunc);
+
+    // Check, if streamOpener was called for each bucket
+    EXPECT_CALL(streamOpener, streamForBucketId(""))
+        .WillOnce(Return(nullptr));
+
+    ASSERT_THROW(deserializer.loadBuckets(buckets), BucketDeserializationException);
 }

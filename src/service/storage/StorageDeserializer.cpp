@@ -20,14 +20,15 @@
  * @brief       Implementation for Cynara::StorageDeserializer
  */
 
-#include <storage/StorageDeserializer.h>
+#include <iostream>
+#include <string>
 
+#include <exceptions/BucketDeserializationException.h>
 #include <exceptions/BucketRecordCorruptedException.h>
 #include <storage/BucketDeserializer.h>
 #include <storage/StorageSerializer.h>
 
-#include <iostream>
-#include <string>
+#include <storage/StorageDeserializer.h>
 
 namespace Cynara {
 
@@ -63,7 +64,7 @@ void StorageDeserializer::loadBuckets(InMemoryStorageBackend::Buckets &buckets) 
         if (bucketDeserializer != nullptr) {
             bucket.setPolicyCollection(bucketDeserializer->loadPolicies());
         } else {
-            // TODO: Throw?
+            throw BucketDeserializationException(bucketId);
         }
     }
 }

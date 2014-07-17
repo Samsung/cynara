@@ -121,4 +121,8 @@ void Storage::deletePolicies(const std::map<PolicyBucketId, std::vector<PolicyKe
     }
 }
 
+void Storage::load(void) {
+    m_backend.load();
+}
+
 } // namespace Cynara

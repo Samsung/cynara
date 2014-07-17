@@ -23,17 +23,8 @@
  * @brief       Main Cynara daemon file
  */
 
-//#include <errno.h>
 #include <exception>
-//#include <fcntl.h>
-//#include <signal.h>
-//#include <stdio.h>
 #include <stdlib.h>
-//#include <string.h>
-//#include <sys/prctl.h>
-//#include <sys/stat.h>
-//#include <sys/types.h>
-//#include <unistd.h>
 
 #include <systemd/sd-journal.h>
 #include <systemd/sd-daemon.h>

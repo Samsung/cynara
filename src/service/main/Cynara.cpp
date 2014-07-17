@@ -23,6 +23,7 @@
 #include <memory>
 #include <stddef.h>
 
+#include <log/log.h>
 #include <exceptions/InitException.h>
 
 #include <logic/Logic.h>
@@ -43,16 +44,31 @@ Cynara::~Cynara() {
     finalize();
 }
 
+const std::string Cynara::storageDir(void) const {
+    std::string dir("/var/lib/cynara/db/");
+
+#ifdef CYNARA_DB_PATH
+    dir = CYNARA_DB_PATH;
+#else
+    LOGW("Cynara compiled without CYNARA_DB_PATH flag. Using default database directory.");
+#endif
+
+    LOGI("Cynara database path = <%s>", dir.c_str());
+    return dir;
+}
+
 void Cynara::init(void) {
     m_logic = std::make_shared<Logic>();
     m_socketManager = std::make_shared<SocketManager>();
-    m_storageBackend = std::make_shared<InMemoryStorageBackend>();
+    m_storageBackend = std::make_shared<InMemoryStorageBackend>(storageDir());
     m_storage = std::make_shared<Storage>(*m_storageBackend);
 
     m_logic->bindStorage(m_storage);
     m_logic->bindSocketManager(m_socketManager);
 
     m_socketManager->bindLogic(m_logic);
+
+    m_storage->load();
 }
 
 void Cynara::run(void) {

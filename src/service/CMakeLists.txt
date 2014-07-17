@@ -24,8 +24,11 @@ SET(CYNARA_SOURCES
     ${CYNARA_SERVICE_PATH}/main/main.cpp
     ${CYNARA_SERVICE_PATH}/sockets/Descriptor.cpp
     ${CYNARA_SERVICE_PATH}/sockets/SocketManager.cpp
+    ${CYNARA_SERVICE_PATH}/storage/BucketDeserializer.cpp
     ${CYNARA_SERVICE_PATH}/storage/InMemoryStorageBackend.cpp
     ${CYNARA_SERVICE_PATH}/storage/Storage.cpp
+    ${CYNARA_SERVICE_PATH}/storage/StorageDeserializer.cpp
+    ${CYNARA_SERVICE_PATH}/storage/StorageSerializer.cpp
     )
 
 SET_SOURCE_FILES_PROPERTIES(

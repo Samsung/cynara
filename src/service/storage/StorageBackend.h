@@ -50,6 +50,8 @@ public:
 
     virtual void deletePolicy(const PolicyBucketId &bucketId, const PolicyKey &key) = 0;
     virtual void deleteLinking(const PolicyBucketId &bucket) = 0;
+
+    virtual void load(void) = 0;
 };
 
 } /* namespace Cynara */

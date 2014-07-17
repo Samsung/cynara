@@ -17,6 +17,8 @@ BuildRequires: pkgconfig(libsystemd-journal)
 %global user_name %{name}
 %global group_name %{name}
 
+%global db_path %{_localstatedir}/%{name}/db/
+
 %global build_type %{?build_type:%build_type}%{!?build_type:RELEASE}
 
 %if %{?build_type} == "DEBUG"
@@ -84,6 +86,7 @@ export CXXFLAGS="$CXXFLAGS -DTIZEN_DEBUG_ENABLE"
 export FFLAGS="$FFLAGS -DTIZEN_DEBUG_ENABLE"
 %endif
 
+export CXXFLAGS="$CXXFLAGS -DCYNARA_DB_PATH=\\\"%{db_path}\\\""
 export LDFLAGS+="-Wl,--rpath=%{_libdir}"
 
 %cmake . -DVERSION=%{version} \

@@ -37,8 +37,12 @@ PolicyBucket InMemoryStorageBackend::searchDefaultBucket(const PolicyKey &key) {
 
 PolicyBucket InMemoryStorageBackend::searchBucket(const PolicyBucketId &bucketId,
                                                   const PolicyKey &key) {
-    const auto &bucket = this->buckets().at(bucketId);
-    return bucket.filtered(key);
+    try {
+        const auto &bucket = this->buckets().at(bucketId);
+        return bucket.filtered(key);
+    } catch (const std::out_of_range &) {
+        throw BucketNotExistsException(bucketId);
+    }
 }
 
 void InMemoryStorageBackend::insertPolicy(const PolicyBucketId &bucketId, PolicyPtr policy) {

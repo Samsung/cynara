@@ -32,7 +32,10 @@
 #include <protocol/ProtocolSerialization.h>
 #include <request/CheckRequest.h>
 #include <request/RequestContext.h>
+#include <response/CheckResponse.h>
 #include <types/PolicyKey.h>
+#include <types/PolicyResult.h>
+#include <types/PolicyType.h>
 
 #include "ProtocolClient.h"
 

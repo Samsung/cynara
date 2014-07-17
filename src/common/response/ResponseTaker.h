@@ -24,7 +24,7 @@
 #define SRC_COMMON_RESPONSE_RESPONSETAKER_H_
 
 #include <request/pointers.h>
-#include <response/CheckResponse.h>
+#include <response/pointers.h>
 
 namespace Cynara {
 

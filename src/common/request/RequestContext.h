@@ -28,6 +28,7 @@
 #include <containers/BinaryQueue.h>
 #include <request/pointers.h>
 #include <response/pointers.h>
+#include <response/Response.h>
 #include <response/ResponseTaker.h>
 
 namespace Cynara {

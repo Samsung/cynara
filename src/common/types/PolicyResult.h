@@ -34,6 +34,7 @@ public:
     typedef std::string PolicyMetadata;
 
 public:
+    PolicyResult() : m_type(PredefinedPolicyType::DENY) {}
     PolicyResult(const PolicyType &policyType) : m_type(policyType) {}
     PolicyResult(const PolicyType &policyType, const PolicyMetadata &metadata)
         : m_type(policyType), m_metadata(metadata) {}

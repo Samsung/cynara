@@ -32,4 +32,8 @@ void ResponseTaker::execute(RequestContextPtr context UNUSED, CheckResponsePtr r
     throw NotImplementedException();
 }
 
+void ResponseTaker::execute(RequestContextPtr context UNUSED, CodeResponsePtr response UNUSED) {
+    throw NotImplementedException();
+}
+
 } // namespace Cynara

@@ -14,32 +14,21 @@
  *    limitations under the License.
  */
 /*
- * @file        pointers.h
+ * @file        CodeResponse.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
- * @brief       This file defines response classes pointers
+ * @brief       This file implements class for responding to a request with a code
  */
-
-#ifndef SRC_COMMON_RESPONSE_POINTERS_H_
-#define SRC_COMMON_RESPONSE_POINTERS_H_
 
 #include <memory>
 
+#include "CodeResponse.h"
+
 namespace Cynara {
 
-class CheckResponse;
-typedef std::shared_ptr<CheckResponse> CheckResponsePtr;
-
-class CodeResponse;
-typedef std::shared_ptr<CodeResponse> CodeResponsePtr;
-
-class Response;
-typedef std::shared_ptr<Response> ResponsePtr;
-
-class ResponseTaker;
-typedef std::shared_ptr<ResponseTaker> ResponseTakerPtr;
-typedef std::weak_ptr<ResponseTaker> ResponseTakerWeakPtr;
+void CodeResponse::execute(ResponsePtr self, ResponseTakerPtr taker,
+                           RequestContextPtr context) const {
+    taker->execute(context, std::dynamic_pointer_cast<CodeResponse>(self));
+}
 
 } // namespace Cynara
-
-#endif /* SRC_COMMON_RESPONSE_POINTERS_H_ */

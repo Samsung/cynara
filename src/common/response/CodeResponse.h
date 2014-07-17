@@ -14,32 +14,41 @@
  *    limitations under the License.
  */
 /*
- * @file        pointers.h
+ * @file        CodeResponse.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
- * @brief       This file defines response classes pointers
+ * @brief       This file defines class for responding to a request with a code
  */
 
-#ifndef SRC_COMMON_RESPONSE_POINTERS_H_
-#define SRC_COMMON_RESPONSE_POINTERS_H_
+#ifndef SRC_COMMON_RESPONSE_CODERESPONSE_H_
+#define SRC_COMMON_RESPONSE_CODERESPONSE_H_
 
-#include <memory>
+#include <request/pointers.h>
+#include <response/pointers.h>
+#include <response/Response.h>
 
 namespace Cynara {
 
-class CheckResponse;
-typedef std::shared_ptr<CheckResponse> CheckResponsePtr;
+class CodeResponse : public Response {
+public:
+    enum Code {
+        OK,
+        NO_BUCKET,
+        NOT_ALLOWED
+    };
 
-class CodeResponse;
-typedef std::shared_ptr<CodeResponse> CodeResponsePtr;
+    const Code m_code;
 
-class Response;
-typedef std::shared_ptr<Response> ResponsePtr;
+    CodeResponse(Code code, ProtocolFrameSequenceNumber sequenceNumber) :
+        Response(sequenceNumber), m_code(code) {
+    }
 
-class ResponseTaker;
-typedef std::shared_ptr<ResponseTaker> ResponseTakerPtr;
-typedef std::weak_ptr<ResponseTaker> ResponseTakerWeakPtr;
+    virtual ~CodeResponse() = default;
+
+    virtual void execute(ResponsePtr self, ResponseTakerPtr taker,
+                         RequestContextPtr context) const;
+};
 
 } // namespace Cynara
 
-#endif /* SRC_COMMON_RESPONSE_POINTERS_H_ */
+#endif /* SRC_COMMON_RESPONSE_CODERESPONSE_H_ */

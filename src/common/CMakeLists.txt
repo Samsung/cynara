@@ -38,6 +38,7 @@ SET(COMMON_SOURCES
     ${COMMON_PATH}/request/SetPoliciesRequest.cpp
     ${COMMON_PATH}/request/SignalRequest.cpp
     ${COMMON_PATH}/response/CheckResponse.cpp
+    ${COMMON_PATH}/response/CodeResponse.cpp
     ${COMMON_PATH}/response/ResponseTaker.cpp
     ${COMMON_PATH}/sockets/Socket.cpp
     ${COMMON_PATH}/sockets/SocketClient.cpp

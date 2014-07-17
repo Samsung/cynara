@@ -34,36 +34,80 @@
 /*! \brief   indicating the result of the one specific API is successful or access is allowed */
 #define CYNARA_ADMIN_API_SUCCESS 0
 
-/*! \brief   indicating system is running out of memory state */
+/*! \brief   indicating client process is running out of memory */
 #define CYNARA_ADMIN_API_OUT_OF_MEMORY -1
 
 /*! \brief   indicating the API's parameter is malformed */
 #define CYNARA_ADMIN_API_INVALID_PARAM -2
 
-/*! \brief   service not available */
+/*! \brief   service not available (cannot connect to cynara service) */
 #define CYNARA_ADMIN_API_SERVICE_NOT_AVAILABLE -3
+
+/*! \brief   unexpected error in client library */
+#define CYNARA_ADMIN_API_UNEXPECTED_CLIENT_ERROR -4
+
+/*! \brief   cynara service does not allow to perform requested operation */
+#define CYNARA_ADMIN_API_OPERATION_NOT_ALLOWED -5
+
+/*! \brief   cynara service hasn't found requested bucket */
+#define CYNARA_ADMIN_API_BUCKET_NOT_FOUND -6
 /** @}*/
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-//todo comment
+/**
+ * \name cynara_admin
+ * forward declaration of structure allowing initialization of library
+ * and usage of all libcynara-admin API functions
+ */
 struct cynara_admin;
 
-//todo comment
+/**
+ * \name Wildcard
+ * definition of WILDCARD, that can replace client, user or privilege name.
+ * WILDCARD matches any string during check procedure from libcynara-client.
+ */
 #define CYNARA_ADMIN_WILDCARD "*"
 
-//todo comment
+/**
+ * \name Name of Default Bucket
+ * definition of name for default bucket - the one that check starts in.
+ * default bucket cannot be removed, although its default policy
+ * (which originaly is set to DENY) can be changed.
+ */
 #define CYNARA_ADMIN_DEFAULT_BUCKET ""
 
-//todo comments
-#define CYNARA_ADMIN_DELETE -1
-#define CYNARA_ADMIN_DENY 0
-#define CYNARA_ADMIN_ALLOW 1
-#define CYNARA_ADMIN_BUCKET 2
+/**
+ * \name Operation Codes
+ * operation codes that define action type to be taken in below defined functions
+ * they are used mosty to define policy result
+ * @{
+ */
 
-//todo comments
+/*! \brief   a policy or bucket should be removed */
+#define CYNARA_ADMIN_DELETE -1
+
+/*! \brief   set policy result or bucket's default policy to DENY */
+#define CYNARA_ADMIN_DENY 0
+
+/*! \brief   set policy result or bucket's default policy to ALLOW */
+#define CYNARA_ADMIN_ALLOW 1
+
+/*! \brief   set policy to point into another bucket */
+#define CYNARA_ADMIN_BUCKET 2
+/** @}*/
+
+/**
+ * \name cynara_admin_policy
+ * defines single policy
+ * bucket - is the name of bucket, in which policy is placed
+ * client, user, privilege - defines policy key
+ * result - defines result of policy
+ * result_extra - not always used, may contain some additional result data
+ *                like e.g. name of bucket in case result == CYNARA_ADMIN_BUCKET
+ */
 struct cynara_admin_policy {
     char *bucket;
 

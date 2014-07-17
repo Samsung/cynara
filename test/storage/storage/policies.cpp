@@ -36,8 +36,10 @@
 #include "fakestoragebackend.h"
 #include "../../helpers.h"
 
+#include <map>
 #include <memory>
 #include <tuple>
+#include <vector>
 
 using namespace Cynara;
 
@@ -50,19 +52,19 @@ TEST(storage, deletePolicies) {
 
     auto pk1 = Helpers::generatePolicyKey("1");
     auto pk2 = Helpers::generatePolicyKey("2");
-    PolicyBucketId bucketId1 = "bucket";
+    PolicyBucketId bucketId1 = "bucket-1";
     PolicyBucketId bucketId2 = "bucket-2";
-
 
     EXPECT_CALL(backend, deletePolicy(bucketId1, pk1));
     EXPECT_CALL(backend, deletePolicy(bucketId2, pk1));
     EXPECT_CALL(backend, deletePolicy(bucketId1, pk2));
 
-    storage.deletePolicies({
-        std::make_tuple(pk1, bucketId1),
-        std::make_tuple(pk1, bucketId2),
-        std::make_tuple(pk2, bucketId1),
-    });
+    std::map<PolicyBucketId, std::vector<PolicyKey>> policies;
+    policies[bucketId1].push_back(pk1);
+    policies[bucketId2].push_back(pk1);
+    policies[bucketId1].push_back(pk2);
+
+    storage.deletePolicies(policies);
 }
 
 // TODO: isn't it the same test as storage.deleteBucket?
@@ -81,27 +83,27 @@ TEST(storage, deleteBucketWithLinkedPolicies) {
 
 TEST(storage, insertPolicies) {
     using ::testing::Return;
+    using ::testing::_;
     FakeStorageBackend backend;
     Cynara::Storage storage(backend);
 
     PolicyBucketId testBucket1 = "test-bucket-1";
     PolicyBucketId testBucket2 = "test-bucket-2";
 
-    std::vector<Storage::PolicyPolicyBucket> policiesToInsert = {
-        std::make_tuple(Policy::simpleWithKey(Helpers::generatePolicyKey("1"), PredefinedPolicyType::ALLOW), testBucket1),
-        std::make_tuple(Policy::simpleWithKey(Helpers::generatePolicyKey("2"), PredefinedPolicyType::DENY), testBucket1),
-        std::make_tuple(Policy::simpleWithKey(Helpers::generatePolicyKey("3"), PredefinedPolicyType::DENY), testBucket1),
-        std::make_tuple(Policy::simpleWithKey(Helpers::generatePolicyKey("4"), PredefinedPolicyType::ALLOW), testBucket2),
-        std::make_tuple(Policy::simpleWithKey(Helpers::generatePolicyKey("5"), PredefinedPolicyType::ALLOW), testBucket2),
-    };
+    std::map<PolicyBucketId, std::vector<Policy>> policiesToInsert;
+    policiesToInsert[testBucket1].push_back(Policy(Helpers::generatePolicyKey("1"), PredefinedPolicyType::ALLOW));
+    policiesToInsert[testBucket1].push_back(Policy(Helpers::generatePolicyKey("2"), PredefinedPolicyType::DENY));
+    policiesToInsert[testBucket1].push_back(Policy(Helpers::generatePolicyKey("3"), PredefinedPolicyType::DENY));
+    policiesToInsert[testBucket2].push_back(Policy(Helpers::generatePolicyKey("4"), PredefinedPolicyType::ALLOW));
+    policiesToInsert[testBucket2].push_back(Policy(Helpers::generatePolicyKey("5"), PredefinedPolicyType::ALLOW));
 
-    for (const auto &policy : policiesToInsert) {
-        PolicyBucketId bucketId;
-        PolicyPtr policyPtr;
-        std::tie(policyPtr, bucketId) = policy;
-        EXPECT_CALL(backend, searchBucket(bucketId, policyPtr->key()))
-            .WillOnce(Return(PolicyBucket()));
-        EXPECT_CALL(backend, insertPolicy(bucketId, policyPtr));
+    for (const auto &bucket : policiesToInsert) {
+        const PolicyBucketId &bucketId = bucket.first;
+        for (const auto &policy : bucket.second) {
+            EXPECT_CALL(backend, searchBucket(bucketId, policy.key()))
+                .WillOnce(Return(PolicyBucket()));
+            EXPECT_CALL(backend, insertPolicy(bucketId, _));
+        }
     }
 
     storage.insertPolicies(policiesToInsert);
@@ -109,31 +111,29 @@ TEST(storage, insertPolicies) {
 
 TEST(storage, updatePolicies) {
     using ::testing::Return;
+    using ::testing::_;
     FakeStorageBackend backend;
     Cynara::Storage storage(backend);
 
     PolicyBucketId testBucket1 = "test-bucket-1";
     PolicyBucketId testBucket2 = "test-bucket-2";
 
-    std::vector<Storage::PolicyPolicyBucket> policiesToInsert = {
-        std::make_tuple(Policy::simpleWithKey(Helpers::generatePolicyKey("1"), PredefinedPolicyType::ALLOW), testBucket1),
-        std::make_tuple(Policy::simpleWithKey(Helpers::generatePolicyKey("2"), PredefinedPolicyType::DENY), testBucket1),
-        std::make_tuple(Policy::simpleWithKey(Helpers::generatePolicyKey("3"), PredefinedPolicyType::DENY), testBucket1),
-        std::make_tuple(Policy::simpleWithKey(Helpers::generatePolicyKey("4"), PredefinedPolicyType::ALLOW), testBucket2),
-        std::make_tuple(Policy::simpleWithKey(Helpers::generatePolicyKey("5"), PredefinedPolicyType::ALLOW), testBucket2),
-    };
+    std::map<PolicyBucketId, std::vector<Policy>> policiesToInsert;
+    policiesToInsert[testBucket1].push_back(Policy(Helpers::generatePolicyKey("1"), PredefinedPolicyType::ALLOW));
+    policiesToInsert[testBucket1].push_back(Policy(Helpers::generatePolicyKey("2"), PredefinedPolicyType::DENY));
+    policiesToInsert[testBucket1].push_back(Policy(Helpers::generatePolicyKey("3"), PredefinedPolicyType::DENY));
+    policiesToInsert[testBucket2].push_back(Policy(Helpers::generatePolicyKey("4"), PredefinedPolicyType::ALLOW));
+    policiesToInsert[testBucket2].push_back(Policy(Helpers::generatePolicyKey("5"), PredefinedPolicyType::ALLOW));
 
+    storage.insertPolicies(policiesToInsert);
 
-    PolicyCollection pc({std::get<0>(policiesToInsert.at(0))});
-
-    for (const auto &policy : policiesToInsert) {
-        PolicyBucketId bucketId;
-        PolicyPtr policyPtr;
-        std::tie(policyPtr, bucketId) = policy;
-        EXPECT_CALL(backend, searchBucket(bucketId, policyPtr->key()))
-            .WillOnce(Return(PolicyBucket(PolicyCollection({std::get<0>(policy)}))));
-        EXPECT_CALL(backend, deletePolicy(bucketId, policyPtr->key()));
-        EXPECT_CALL(backend, insertPolicy(bucketId, policyPtr));
+    for (const auto &bucket : policiesToInsert) {
+        const PolicyBucketId &bucketId = bucket.first;
+        for (const auto &policy : bucket.second) {
+            EXPECT_CALL(backend, searchBucket(bucketId, policy.key()));
+            EXPECT_CALL(backend, deletePolicy(bucketId, policy.key()));
+            EXPECT_CALL(backend, insertPolicy(bucketId, _));
+        }
     }
 
     storage.insertPolicies(policiesToInsert);

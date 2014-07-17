@@ -42,18 +42,9 @@ class PolicyBucket;
 class Storage
 {
 public:
-    // TODO: These tuples are ugly -- refactorize
-//todo to be removed, after tests get updated
-    typedef std::tuple<PolicyPtr, PolicyBucketId> PolicyPolicyBucket;
-    typedef std::tuple<PolicyKey, PolicyBucketId> PolicyKeyBucket;
-
     Storage(StorageBackend &backend) : m_backend(backend) {}
 
     PolicyResult checkPolicy(const PolicyKey &key);
-
-//todo below to functions should be removed, after tests get updated
-    void insertPolicies(const std::vector<PolicyPolicyBucket> &policies);
-    void deletePolicies(const std::vector<PolicyKeyBucket> &policies);
 
     void insertPolicies(const std::map<PolicyBucketId, std::vector<Policy>> &policies);
     void deletePolicies(const std::map<PolicyBucketId, std::vector<PolicyKey>> &policies);

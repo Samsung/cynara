@@ -79,20 +79,6 @@ PolicyResult Storage::minimalPolicy(const PolicyBucket &bucket, const PolicyKey 
     return minimal;
 }
 
-//todo to be removed, after tests get updated
-void Storage::insertPolicies(const std::vector<PolicyPolicyBucket> &policies) {
-    for (const auto &policyTuple : policies) {
-        PolicyBucketId bucketId;
-        PolicyPtr policyPtr;
-        std::tie(policyPtr, bucketId) = policyTuple;
-        auto existingPolicies = m_backend.searchBucket(bucketId, policyPtr->key());
-        for (auto existingPolicy : existingPolicies.policyCollection()) {
-            m_backend.deletePolicy(bucketId, existingPolicy->key());
-        }
-        m_backend.insertPolicy(bucketId, policyPtr);
-    }
-}
-
 void Storage::insertPolicies(const std::map<PolicyBucketId, std::vector<Policy>> &policies) {
     for (const auto &bucket : policies) {
         const PolicyBucketId &bucketId = bucket.first;
@@ -124,13 +110,6 @@ void Storage::deleteBucket(const PolicyBucketId &bucketId) {
 
     m_backend.deleteLinking(bucketId);
     m_backend.deleteBucket(bucketId);
-}
-
-//todo to be removed, after tests get updated
-void Storage::deletePolicies(const std::vector<PolicyKeyBucket> &policies) {
-    for (const auto &policy : policies) {
-        m_backend.deletePolicy(std::get<1>(policy), std::get<0>(policy));
-    }
 }
 
 void Storage::deletePolicies(const std::map<PolicyBucketId, std::vector<PolicyKey>> &policies) {

@@ -38,6 +38,13 @@ private:
 public:
     Logic();
     virtual ~Logic() = default;
+
+    virtual int setPolicies(const std::map<PolicyBucketId, std::vector<Policy>> &insertOrUpdate,
+                    const std::map<PolicyBucketId, std::vector<PolicyKey>> &remove) noexcept;
+    virtual int insertOrUpdateBucket(const PolicyBucketId &bucket, const PolicyResult &policyResult)
+                    noexcept;
+    virtual int removeBucket(const PolicyBucketId &bucket) noexcept;
+
 };
 
 } // namespace Cynara

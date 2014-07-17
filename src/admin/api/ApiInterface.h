@@ -23,7 +23,14 @@
 #ifndef SRC_ADMIN_API_APIINTERFACE_H_
 #define SRC_ADMIN_API_APIINTERFACE_H_
 
+#include <map>
 #include <string>
+#include <vector>
+
+#include <types/Policy.h>
+#include <types/PolicyBucketId.h>
+#include <types/PolicyKey.h>
+#include <types/PolicyResult.h>
 
 #include <cynara-admin.h>
 
@@ -33,6 +40,12 @@ class ApiInterface {
 public:
     ApiInterface() = default;
     virtual ~ApiInterface() = default;
+
+    virtual int setPolicies(const std::map<PolicyBucketId, std::vector<Policy>> &insertOrUpdate,
+                    const std::map<PolicyBucketId, std::vector<PolicyKey>> &remove) noexcept = 0;
+    virtual int insertOrUpdateBucket(const PolicyBucketId &bucket, const PolicyResult &policyResult)
+                    noexcept = 0;
+    virtual int removeBucket(const PolicyBucketId &bucket) noexcept = 0;
 };
 
 } // namespace Cynara

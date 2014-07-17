@@ -22,6 +22,7 @@
 
 #include <memory>
 
+#include <common.h>
 #include <protocol/Protocol.h>
 #include <protocol/ProtocolAdmin.h>
 #include <sockets/SocketClient.h>
@@ -35,6 +36,28 @@ const std::string adminSocketPath("/run/cynara/cynara-admin.socket");
 Logic::Logic() {
     m_socketClient = std::make_shared<SocketClient>(adminSocketPath,
                                                     std::make_shared<ProtocolAdmin>());
+}
+
+ProtocolFrameSequenceNumber generateSequenceNumber(void) {
+    static ProtocolFrameSequenceNumber sequenceNumber = 0;
+    return ++sequenceNumber;
+}
+
+int Logic::setPolicies(const std::map<PolicyBucketId, std::vector<Policy>> &insertOrUpdate UNUSED,
+                const std::map<PolicyBucketId, std::vector<PolicyKey>> &remove UNUSED) noexcept {
+//todo this is only a stub
+    return CYNARA_ADMIN_API_SUCCESS;
+}
+
+int Logic::insertOrUpdateBucket(const PolicyBucketId &bucket UNUSED,
+                                const PolicyResult &policyResult UNUSED) noexcept {
+//todo this is only a stub
+    return CYNARA_ADMIN_API_SUCCESS;
+}
+
+int Logic::removeBucket(const PolicyBucketId &bucket UNUSED) noexcept {
+//todo this is only a stub
+    return CYNARA_ADMIN_API_SUCCESS;
 }
 
 } // namespace Cynara

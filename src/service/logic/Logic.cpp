@@ -23,13 +23,19 @@
 #include <log/log.h>
 #include <common.h>
 #include <exceptions/PluginNotFoundException.h>
+#include <exceptions/BucketNotExistsException.h>
+#include <exceptions/DefaultBucketDeletionException.h>
 #include <signal.h>
 
 #include <main/Cynara.h>
 #include <request/CheckRequest.h>
+#include <request/InsertOrUpdateBucketRequest.h>
+#include <request/RemoveBucketRequest.h>
 #include <request/RequestContext.h>
+#include <request/SetPoliciesRequest.h>
 #include <request/SignalRequest.h>
 #include <response/CheckResponse.h>
+#include <response/CodeResponse.h>
 #include <storage/Storage.h>
 
 #include <sockets/SocketManager.h>
@@ -57,7 +63,8 @@ void Logic::execute(RequestContextPtr context UNUSED, SignalRequestPtr request) 
 void Logic::execute(RequestContextPtr context, CheckRequestPtr request) {
     PolicyResult result(PredefinedPolicyType::DENY);
     if (check(context, request->key(), result)) {
-        context->returnResponse(context, std::make_shared<CheckResponse>(result, request->sequenceNumber()));
+        context->returnResponse(context, std::make_shared<CheckResponse>(result,
+                                request->sequenceNumber()));
     }
 }
 
@@ -80,6 +87,40 @@ bool Logic::check(RequestContextPtr context UNUSED, const PolicyKey &key,
 
     //in case no proper plugin is found
     throw PluginNotFoundException(result);
+}
+
+void Logic::execute(RequestContextPtr context, InsertOrUpdateBucketRequestPtr request) {
+    m_storage->addOrUpdateBucket(request->bucketId(), request->result());
+//todo add saving to database
+    context->returnResponse(context, std::make_shared<CodeResponse>(CodeResponse::Code::OK,
+                            request->sequenceNumber()));
+}
+
+void Logic::execute(RequestContextPtr context, RemoveBucketRequestPtr request) {
+    auto code = CodeResponse::Code::OK;
+    try {
+        m_storage->deleteBucket(request->bucketId());
+//todo add saving to database
+    } catch (const BucketNotExistsException &ex) {
+        code = CodeResponse::Code::NO_BUCKET;
+    } catch (const DefaultBucketDeletionException &ex) {
+        code = CodeResponse::Code::NOT_ALLOWED;
+    }
+    context->returnResponse(context, std::make_shared<CodeResponse>(code,
+                            request->sequenceNumber()));
+}
+
+void Logic::execute(RequestContextPtr context, SetPoliciesRequestPtr request) {
+    auto code = CodeResponse::Code::OK;
+    try {
+        m_storage->insertPolicies(request->policiesToBeInsertedOrUpdated());
+        m_storage->deletePolicies(request->policiesToBeRemoved());
+//todo add saving to database
+    } catch (const BucketNotExistsException &ex) {
+        code = CodeResponse::Code::NO_BUCKET;
+    }
+    context->returnResponse(context, std::make_shared<CodeResponse>(code,
+                            request->sequenceNumber()));
 }
 
 } // namespace Cynara

@@ -24,14 +24,15 @@
 #ifndef CYNARA_SERVICE_STORAGE_STORAGE_H
 #define CYNARA_SERVICE_STORAGE_STORAGE_H
 
+#include <map>
+#include <memory>
+#include <tuple>
+#include <vector>
+
 #include "types/pointers.h"
 #include "types/PolicyBucketId.h"
 #include "types/PolicyResult.h"
 #include "types/PolicyKey.h"
-
-#include <memory>
-#include <vector>
-#include <tuple>
 
 namespace Cynara {
 
@@ -42,6 +43,7 @@ class Storage
 {
 public:
     // TODO: These tuples are ugly -- refactorize
+//todo to be removed, after tests get updated
     typedef std::tuple<PolicyPtr, PolicyBucketId> PolicyPolicyBucket;
     typedef std::tuple<PolicyKey, PolicyBucketId> PolicyKeyBucket;
 
@@ -49,9 +51,14 @@ public:
 
     PolicyResult checkPolicy(const PolicyKey &key);
 
+//todo below to functions should be removed, after tests get updated
     void insertPolicies(const std::vector<PolicyPolicyBucket> &policies);
-    void addOrUpdateBucket(const PolicyBucketId &bucketId, const PolicyResult &defaultBucketPolicy);
     void deletePolicies(const std::vector<PolicyKeyBucket> &policies);
+
+    void insertPolicies(const std::map<PolicyBucketId, std::vector<Policy>> &policies);
+    void deletePolicies(const std::map<PolicyBucketId, std::vector<PolicyKey>> &policies);
+
+    void addOrUpdateBucket(const PolicyBucketId &bucketId, const PolicyResult &defaultBucketPolicy);
     void deleteBucket(const PolicyBucketId &bucketId);
 
 protected:

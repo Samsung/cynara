@@ -20,15 +20,20 @@
  * @brief       Methods implementation of Cynara::BucketDeserializer
  */
 
-#include <exceptions/BucketRecordCorruptedException.h>
-#include <storage/BucketDeserializer.h>
-#include <storage/StorageDeserializer.h>
-#include <storage/StorageSerializer.h>
-#include <types/Policy.h>
-
-#include <iostream>
+#include <array>
 #include <memory>
 #include <string>
+#include <vector>
+
+#include <exceptions/BucketRecordCorruptedException.h>
+#include <types/PolicyCollection.h>
+#include <types/PolicyResult.h>
+#include <types/PolicyType.h>
+
+#include <storage/StorageDeserializer.h>
+#include <storage/StorageSerializer.h>
+
+#include "BucketDeserializer.h"
 
 namespace Cynara {
 
@@ -36,7 +41,7 @@ PolicyCollection BucketDeserializer::loadPolicies(void) {
     PolicyCollection policies;
 
     // TODO: Get someone smart to do error checking on stream
-    for(std::size_t lineNum = 1; !m_inStream.eof(); ++lineNum) {
+    for (std::size_t lineNum = 1; !m_inStream.eof(); ++lineNum) {
         std::string line;
         std::getline(m_inStream, line, StorageSerializer::recordSeparator());
 
@@ -61,7 +66,7 @@ PolicyCollection BucketDeserializer::loadPolicies(void) {
 PolicyKey BucketDeserializer::parseKey(const std::string &line, std::size_t &beginToken) {
     std::array<std::string, 3> keyFeatures;
 
-    for(std::size_t tokenNum = 0; tokenNum < keyFeatures.size(); ++tokenNum) {
+    for (std::size_t tokenNum = 0; tokenNum < keyFeatures.size(); ++tokenNum) {
         auto endToken = line.find(StorageSerializer::fieldSeparator(), beginToken);
         if (endToken != std::string::npos) {
             keyFeatures[tokenNum] = line.substr(beginToken, endToken - beginToken);

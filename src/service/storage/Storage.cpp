@@ -21,16 +21,19 @@
  * @brief       This file implements policy rules storage procedures
  */
 
-#include "Storage.h"
-#include "StorageBackend.h"
-#include "types/pointers.h"
-#include "types/PolicyType.h"
-#include "exceptions/NotImplementedException.h"
-#include "exceptions/DefaultBucketDeletionException.h"
-
-#include <iostream>
 #include <memory>
+#include <vector>
 
+#include "exceptions/DefaultBucketDeletionException.h"
+#include <types/pointers.h>
+#include <types/Policy.h>
+#include <types/PolicyBucket.h>
+#include <types/PolicyBucketId.h>
+#include <types/PolicyCollection.h>
+#include <types/PolicyResult.h>
+#include <types/PolicyType.h>
+
+#include "Storage.h"
 
 namespace Cynara {
 
@@ -58,19 +61,17 @@ PolicyResult Storage::minimalPolicy(const PolicyBucket &bucket, const PolicyKey 
         const auto &policyResult = policyRecord->result();
 
         switch (policyResult.policyType()) {
-        case PredefinedPolicyType::DENY:
-            return policyResult; // Do not expect lower value than DENY
-            break;
-        case PredefinedPolicyType::BUCKET: {
-                auto bucketResults = m_backend.searchBucket(policyResult.metadata(), key);
-                auto minimumOfBucket = minimalPolicy(bucketResults, key);
-                proposeMinimal(minimumOfBucket);
-                continue;
-            }
-            break;
-        case PredefinedPolicyType::ALLOW:
-        default:
-            break;
+            case PredefinedPolicyType::DENY:
+                return policyResult; // Do not expect lower value than DENY
+            case PredefinedPolicyType::BUCKET: {
+                    auto bucketResults = m_backend.searchBucket(policyResult.metadata(), key);
+                    auto minimumOfBucket = minimalPolicy(bucketResults, key);
+                    proposeMinimal(minimumOfBucket);
+                    continue;
+                }
+            case PredefinedPolicyType::ALLOW:
+            default:
+                break;
         }
 
         proposeMinimal(policyResult);
@@ -123,6 +124,10 @@ void Storage::deletePolicies(const std::map<PolicyBucketId, std::vector<PolicyKe
 
 void Storage::load(void) {
     m_backend.load();
+}
+
+void Storage::save(void) {
+    m_backend.save();
 }
 
 } // namespace Cynara

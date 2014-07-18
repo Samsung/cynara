@@ -21,24 +21,22 @@
  * @brief       This file is the implementation file of log system
  */
 
-#ifndef CYNARA_SERVICE_STORAGE_STORAGE_H
-#define CYNARA_SERVICE_STORAGE_STORAGE_H
+#ifndef SRC_SERVICE_STORAGE_STORAGE_H_
+#define SRC_SERVICE_STORAGE_STORAGE_H_
 
 #include <map>
-#include <memory>
 #include <string>
-#include <tuple>
 #include <vector>
 
-#include "types/pointers.h"
-#include "types/PolicyBucketId.h"
-#include "types/PolicyResult.h"
-#include "types/PolicyKey.h"
+#include <types/Policy.h>
+#include <types/PolicyBucket.h>
+#include <types/PolicyBucketId.h>
+#include <types/PolicyKey.h>
+#include <types/PolicyResult.h>
+
+#include <storage/StorageBackend.h>
 
 namespace Cynara {
-
-class StorageBackend;
-class PolicyBucket;
 
 class Storage
 {
@@ -54,6 +52,7 @@ public:
     void deleteBucket(const PolicyBucketId &bucketId);
 
     void load(void);
+    void save(void);
 
 protected:
     PolicyResult minimalPolicy(const PolicyBucket &bucket, const PolicyKey &key);
@@ -64,4 +63,4 @@ private:
 
 } // namespace Cynara
 
-#endif /* CYNARA_SERVICE_STORAGE_STORAGE_H */
+#endif /* SRC_SERVICE_STORAGE_STORAGE_H_ */

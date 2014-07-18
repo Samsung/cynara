@@ -20,15 +20,18 @@
  * @brief       Implementation for Cynara::StorageDeserializer
  */
 
-#include <iostream>
+#include <istream>
 #include <string>
 
 #include <exceptions/BucketDeserializationException.h>
 #include <exceptions/BucketRecordCorruptedException.h>
+#include <types/PolicyType.h>
+
 #include <storage/BucketDeserializer.h>
+#include <storage/Buckets.h>
 #include <storage/StorageSerializer.h>
 
-#include <storage/StorageDeserializer.h>
+#include "StorageDeserializer.h"
 
 namespace Cynara {
 
@@ -36,10 +39,10 @@ StorageDeserializer::StorageDeserializer(std::istream &inStream,
                                          BucketStreamOpener bucketStreamOpener)
         : m_inStream(inStream), m_bucketStreamOpener(bucketStreamOpener) {}
 
-void StorageDeserializer::initBuckets(InMemoryStorageBackend::Buckets &buckets) {
+void StorageDeserializer::initBuckets(Buckets &buckets) {
     buckets.clear();
 
-    for(std::size_t lineNum = 1; !m_inStream.eof(); ++lineNum) {
+    for (std::size_t lineNum = 1; !m_inStream.eof(); ++lineNum) {
         std::string line;
         std::getline(m_inStream, line, StorageSerializer::recordSeparator());
 
@@ -55,7 +58,7 @@ void StorageDeserializer::initBuckets(InMemoryStorageBackend::Buckets &buckets) 
     }
 }
 
-void StorageDeserializer::loadBuckets(InMemoryStorageBackend::Buckets &buckets) {
+void StorageDeserializer::loadBuckets(Buckets &buckets) {
     for (auto &bucketIter : buckets) {
         const auto &bucketId = bucketIter.first;
         auto &bucket = bucketIter.second;
@@ -88,7 +91,7 @@ PolicyType StorageDeserializer::parsePolicyType(const std::string &line, std::si
         std::size_t newBegin = 0;
         policyType = std::stoi(line.substr(beginToken), &newBegin, 16);
         beginToken += newBegin;
-    } catch(...) {
+    } catch (...) {
         throw BucketRecordCorruptedException(line);
     }
 

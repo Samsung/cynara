@@ -20,19 +20,18 @@
  * @brief       Headers for StorageBackend base class
  */
 
-#ifndef STORAGEBACKEND_H_
-#define STORAGEBACKEND_H_
+#ifndef SRC_SERVICE_STORAGE_STORAGEBACKEND_H_
+#define SRC_SERVICE_STORAGE_STORAGEBACKEND_H_
 
+#include <string>
 
-#include "types/pointers.h"
-#include "types/PolicyBucket.h"
-#include "types/PolicyBucketId.h"
-
-#include <memory>
+#include <types/pointers.h>
+#include <types/PolicyBucket.h>
+#include <types/PolicyKey.h>
+#include <types/PolicyBucketId.h>
+#include <types/PolicyResult.h>
 
 namespace Cynara {
-
-class PolicyKey;
 
 class StorageBackend {
 public:
@@ -43,8 +42,10 @@ public:
 
     virtual void insertPolicy(const PolicyBucketId &bucket, PolicyPtr policy) = 0;
 
-    virtual void createBucket(const PolicyBucketId &bucketId, const PolicyResult &defaultPolicy) = 0;
-    virtual void updateBucket(const PolicyBucketId &bucketId, const PolicyResult &defaultPolicy) = 0;
+    virtual void createBucket(const PolicyBucketId &bucketId,
+                              const PolicyResult &defaultPolicy) = 0;
+    virtual void updateBucket(const PolicyBucketId &bucketId,
+                              const PolicyResult &defaultPolicy) = 0;
     virtual void deleteBucket(const PolicyBucketId &bucketId) = 0;
     virtual bool hasBucket(const PolicyBucketId &bucketId) = 0;
 
@@ -52,7 +53,9 @@ public:
     virtual void deleteLinking(const PolicyBucketId &bucket) = 0;
 
     virtual void load(void) = 0;
+    virtual void save(void) = 0;
 };
 
 } /* namespace Cynara */
-#endif /* STORAGEBACKEND_H_ */
+
+#endif /* SRC_SERVICE_STORAGE_STORAGEBACKEND_H_ */

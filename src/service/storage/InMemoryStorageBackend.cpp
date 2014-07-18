@@ -20,21 +20,34 @@
  * @brief       Implementation of InMemoryStorageBackend
  */
 
+#include <errno.h>
 #include <fstream>
 #include <functional>
+#include <string>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unordered_map>
+#include <vector>
 
 #include <log/log.h>
+#include <exceptions/BucketNotExistsException.h>
+#include <exceptions/CannotCreateFileException.h>
 #include <exceptions/FileNotFoundException.h>
+#include <exceptions/UnexpectedErrorException.h>
+#include <types/PolicyBucket.h>
+#include <types/PolicyResult.h>
+#include <types/PolicyType.h>
+
 #include <storage/BucketDeserializer.h>
 #include <storage/StorageDeserializer.h>
-#include <types/PolicyBucketId.h>
+#include <storage/StorageSerializer.h>
 
 #include "InMemoryStorageBackend.h"
 
 namespace Cynara {
 
 void InMemoryStorageBackend::load(void) {
-    std::string indexFilename = m_dbPath + "buckets";
+    std::string indexFilename = m_dbPath + m_indexFileName;
 
     try {
         std::ifstream indexStream;
@@ -49,10 +62,31 @@ void InMemoryStorageBackend::load(void) {
         LOGE("Reading cynara database failed.");
     }
 
-    if(!hasBucket(defaultPolicyBucketId)) {
+    if (!hasBucket(defaultPolicyBucketId)) {
             LOGN("Creating defaultBucket.");
             this->buckets().insert({ defaultPolicyBucketId, PolicyBucket() });
     }
+}
+
+void InMemoryStorageBackend::save(void) {
+
+    //create directory
+    int ret = mkdir(m_dbPath.c_str(), S_IRWXU);
+    if (ret < 0) {
+        int err = errno;
+        if (err != EEXIST) {
+            LOGE("Cannot create directory <%s>. Error [%d] : <%s>.",
+                 m_dbPath.c_str(), err, strerror(err));
+            throw UnexpectedErrorException(err, strerror(err));
+        }
+    }
+
+    std::ofstream indexStream;
+    openDumpFileStream(indexStream, m_dbPath + m_indexFileName);
+
+    StorageSerializer storageSerializer(indexStream);
+    storageSerializer.dump(buckets(), std::bind(&InMemoryStorageBackend::bucketDumpStreamOpener,
+                           this, std::placeholders::_1));
 }
 
 PolicyBucket InMemoryStorageBackend::searchDefaultBucket(const PolicyKey &key) {
@@ -116,7 +150,7 @@ void InMemoryStorageBackend::deletePolicy(const PolicyBucketId &bucketId, const 
                 [key](PolicyPtr policy) -> bool {
                     return policy->key() == key;
             }), policies.end());
-    } catch(const std::out_of_range &) {
+    } catch (const std::out_of_range &) {
         throw BucketNotExistsException(bucketId);
     }
 }
@@ -133,7 +167,7 @@ void InMemoryStorageBackend::deleteLinking(const PolicyBucketId &bucketId) {
         return false;
     };
 
-    for(auto &bucketIter : buckets()) {
+    for (auto &bucketIter : buckets()) {
         // TODO: Move the erase code to PolicyCollection maybe?
         auto &bucket = bucketIter.second;
         auto &policies = bucket.policyCollection();
@@ -151,6 +185,16 @@ void InMemoryStorageBackend::openFileStream(std::ifstream &stream, const std::st
         throw FileNotFoundException(filename);
 }
 
+void InMemoryStorageBackend::openDumpFileStream(std::ofstream &stream,
+                                                const std::string &filename) {
+    stream.open(filename, std::ofstream::out | std::ofstream::trunc);
+
+    if (!stream.is_open()) {
+        throw CannotCreateFileException(filename);
+        return;
+    }
+}
+
 std::shared_ptr<BucketDeserializer> InMemoryStorageBackend::bucketStreamOpener(
         const PolicyBucketId &bucketId) {
     std::string bucketFilename = m_dbPath + "_" + bucketId;
@@ -161,6 +205,15 @@ std::shared_ptr<BucketDeserializer> InMemoryStorageBackend::bucketStreamOpener(
     } catch (const FileNotFoundException &) {
         return nullptr;
     }
+}
+
+std::shared_ptr<StorageSerializer> InMemoryStorageBackend::bucketDumpStreamOpener(
+        const PolicyBucketId &bucketId) {
+    std::string bucketFilename = m_dbPath + "_" + bucketId;
+    std::ofstream bucketStream;
+
+    openDumpFileStream(bucketStream, bucketFilename);
+    return std::make_shared<StorageSerializer>(bucketStream);
 }
 
 } /* namespace Cynara */

@@ -20,13 +20,15 @@
  * @brief       Implementation of Cynara::StorageSerializer methods
  */
 
-#include <algorithm>
 #include <ios>
-#include <iostream>
+#include <ostream>
 
 #include <exceptions/BucketSerializationException.h>
-#include "types/PolicyBucket.h"
-#include "types/PolicyCollection.h"
+#include <types/Policy.h>
+#include <types/PolicyBucket.h>
+#include <types/PolicyBucketId.h>
+#include <types/PolicyCollection.h>
+#include <types/PolicyType.h>
 
 #include "StorageSerializer.h"
 
@@ -37,7 +39,7 @@ char StorageSerializer::m_recordSeparator = '\n';
 
 StorageSerializer::StorageSerializer(std::ostream &os) : m_outStream(os) {}
 
-void StorageSerializer::dump(const InMemoryStorageBackend::Buckets &buckets,
+void StorageSerializer::dump(const Buckets &buckets,
                              BucketStreamOpener streamOpener) {
 
     for (const auto bucketIter : buckets) {

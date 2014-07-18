@@ -22,21 +22,27 @@
 #ifndef SRC_SERVICE_STORAGE_STORAGEDESERIALIZER_H_
 #define SRC_SERVICE_STORAGE_STORAGEDESERIALIZER_H_
 
-#include <storage/BucketDeserializer.h>
-#include <storage/InMemoryStorageBackend.h>
-
+#include <functional>
 #include <istream>
 #include <memory>
-#include <functional>
+#include <string>
+
+#include <types/PolicyBucketId.h>
+#include <types/PolicyResult.h>
+#include <types/PolicyType.h>
+
+#include <storage/BucketDeserializer.h>
+#include <storage/Buckets.h>
 
 namespace Cynara {
 
 class StorageDeserializer {
 public:
-    typedef std::function<std::shared_ptr<BucketDeserializer>(const std::string &)> BucketStreamOpener;
+    typedef std::function<std::shared_ptr<BucketDeserializer>(const std::string &)>
+                BucketStreamOpener;
     StorageDeserializer(std::istream &inStream, BucketStreamOpener m_bucketStreamOpener);
-    void initBuckets(InMemoryStorageBackend::Buckets &buckets);
-    void loadBuckets(InMemoryStorageBackend::Buckets &buckets);
+    void initBuckets(Buckets &buckets);
+    void loadBuckets(Buckets &buckets);
 
     static PolicyBucketId parseBucketId(const std::string &line, std::size_t &beginToken);
     static PolicyType parsePolicyType(const std::string &line, std::size_t &beginToken);

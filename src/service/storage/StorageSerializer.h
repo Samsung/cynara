@@ -23,17 +23,20 @@
 #ifndef SRC_SERVICE_STORAGE_STORAGESERIALIZER_H_
 #define SRC_SERVICE_STORAGE_STORAGESERIALIZER_H_
 
-#include "InMemoryStorageBackend.h"
-#include "types/PolicyBucketId.h"
-#include "types/PolicyCollection.h"
-#include "types/PolicyResult.h"
-
+#include <functional>
+#include <memory>
 #include <ostream>
 
-namespace Cynara {
+#include <types/PolicyBucket.h>
+#include <types/PolicyBucketId.h>
+#include <types/PolicyCollection.h>
+#include <types/PolicyKey.h>
+#include <types/PolicyResult.h>
+#include <types/PolicyType.h>
 
-class PolicyBucket;
-class PolicyKey;
+#include <storage/Buckets.h>
+
+namespace Cynara {
 
 class StorageSerializer {
 
@@ -44,7 +47,7 @@ public:
     StorageSerializer(std::ostream &os);
     virtual ~StorageSerializer() = default;
 
-    virtual void dump(const InMemoryStorageBackend::Buckets &buckets,
+    virtual void dump(const Buckets &buckets,
                       BucketStreamOpener streamOpener);
     virtual void dump(const PolicyBucket &bucket);
 

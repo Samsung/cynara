@@ -20,34 +20,34 @@
  * @brief       Headers for InMemoryStorageBackend
  */
 
-#ifndef INMEMORYSTORAGEBACKEND_H_
-#define INMEMORYSTORAGEBACKEND_H_
+#ifndef SRC_SERVICE_STORAGE_INMEMORYSTORAGEBACKEND_H_
+#define SRC_SERVICE_STORAGE_INMEMORYSTORAGEBACKEND_H_
 
-#include <algorithm>
 #include <fstream>
-#include <functional>
-#include <iostream>
-#include <unordered_map>
+#include <memory>
+#include <string>
 
-#include <exceptions/BucketNotExistsException.h>
-#include <exceptions/NotImplementedException.h>
+#include <types/pointers.h>
+#include <types/PolicyBucket.h>
+#include <types/PolicyBucketId.h>
+#include <types/PolicyKey.h>
+#include <types/PolicyResult.h>
+
 #include <storage/BucketDeserializer.h>
-#include <types/Policy.h>
-
-#include "StorageBackend.h"
+#include <storage/Buckets.h>
+#include <storage/StorageBackend.h>
+#include <storage/StorageSerializer.h>
 
 namespace Cynara {
 
 class InMemoryStorageBackend : public StorageBackend {
 public:
-    typedef std::unordered_map<PolicyBucketId, PolicyBucket> Buckets;
-
     InMemoryStorageBackend(const std::string &path) : m_dbPath(path) {
     }
-
     virtual ~InMemoryStorageBackend() = default;
 
     virtual void load(void);
+    virtual void save(void);
 
     virtual PolicyBucket searchDefaultBucket(const PolicyKey &key);
     virtual PolicyBucket searchBucket(const PolicyBucketId &bucketId, const PolicyKey &key);
@@ -63,15 +63,20 @@ protected:
     void openFileStream(std::ifstream &stream, const std::string &filename);
     std::shared_ptr<BucketDeserializer> bucketStreamOpener(const PolicyBucketId &bucketId);
 
+    void openDumpFileStream(std::ofstream &stream, const std::string &filename);
+    std::shared_ptr<StorageSerializer> bucketDumpStreamOpener(const PolicyBucketId &bucketId);
+
 private:
     std::string m_dbPath;
     Buckets m_buckets;
+    const std::string m_indexFileName = "buckets";
 
 protected:
-    virtual Buckets &buckets() {
+    virtual Buckets &buckets(void) {
         return m_buckets;
     }
 };
 
 } /* namespace Cynara */
-#endif /* INMEMORYSTORAGEBACKEND_H_ */
+
+#endif /* SRC_SERVICE_STORAGE_INMEMORYSTORAGEBACKEND_H_ */

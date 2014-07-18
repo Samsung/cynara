@@ -17,7 +17,7 @@ BuildRequires: pkgconfig(libsystemd-journal)
 %global user_name %{name}
 %global group_name %{name}
 
-%global db_path %{_localstatedir}/%{name}/db/
+%global state_path %{_localstatedir}/%{name}/
 
 %global build_type %{?build_type:%build_type}%{!?build_type:RELEASE}
 
@@ -86,7 +86,7 @@ export CXXFLAGS="$CXXFLAGS -DTIZEN_DEBUG_ENABLE"
 export FFLAGS="$FFLAGS -DTIZEN_DEBUG_ENABLE"
 %endif
 
-export CXXFLAGS="$CXXFLAGS -DCYNARA_DB_PATH=\\\"%{db_path}\\\""
+export CXXFLAGS="$CXXFLAGS -DCYNARA_DB_PATH=\\\"%{state_path}\\\""
 export LDFLAGS+="-Wl,--rpath=%{_libdir}"
 
 %cmake . -DVERSION=%{version} \
@@ -100,6 +100,7 @@ rm -rf %{buildroot}
 %make_install
 
 mkdir -p %{buildroot}/usr/lib/systemd/system/sockets.target.wants
+mkdir -p %{buildroot}/%{state_path}
 ln -s ../cynara.socket %{buildroot}/usr/lib/systemd/system/sockets.target.wants/cynara.socket
 ln -s ../cynara-admin.socket %{buildroot}/usr/lib/systemd/system/sockets.target.wants/cynara-admin.socket
 
@@ -170,6 +171,7 @@ fi
 %attr(-,root,root) /usr/lib/systemd/system/cynara.socket
 %attr(-,root,root) /usr/lib/systemd/system/sockets.target.wants/cynara-admin.socket
 %attr(-,root,root) /usr/lib/systemd/system/cynara-admin.socket
+%dir %attr(700,cynara,cynara) %{state_path}
 
 %files -n libcynara-client
 %manifest libcynara-client.manifest

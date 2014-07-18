@@ -45,15 +45,16 @@ Cynara::~Cynara() {
 }
 
 const std::string Cynara::storageDir(void) const {
-    std::string dir("/var/lib/cynara/db/");
+    std::string dir("/var/lib/cynara/");
 
-#ifdef CYNARA_DB_PATH
-    dir = CYNARA_DB_PATH;
+#ifdef CYNARA_STATE_PATH
+    dir = CYNARA_STATE_PATH;
 #else
-    LOGW("Cynara compiled without CYNARA_DB_PATH flag. Using default database directory.");
+    LOGW("Cynara compiled without CYNARA_STATE_PATH flag. Using default database directory.");
 #endif
 
-    LOGI("Cynara database path = <%s>", dir.c_str());
+    dir += "db/";
+    LOGI("Cynara database path <%s>", dir.c_str());
     return dir;
 }
 

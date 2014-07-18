@@ -36,11 +36,10 @@ enum ProtocolOpCode : uint8_t {
     /** Opcodes 1 - 19 are reserved for future use */
 
     /** Admin operations */
-    OpInsertPolicy = 20,
-    OpDeletePolicy,
-    OpListPolicies,
-    OpBeginTransaction,
-    OpEndTransaction
+    OpInsertOrUpdateBucket = 20,
+    OpRemoveBucket,
+    OpSetPolicies,
+    OpCodeResponse
 };
 
 } /* namespace Cynara */

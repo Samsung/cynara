@@ -16,6 +16,7 @@
 /*
  * @file        ProtocolAdmin.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @author      Adam Malinowski <a.malinowsk2@partner.samsung.com>
  * @version     1.0
  * @brief       This file defines protocol class for administration
  */
@@ -36,6 +37,19 @@ public:
 
     virtual RequestPtr extractRequestFromBuffer(BinaryQueue &bufferQueue);
     virtual ResponsePtr extractResponseFromBuffer(BinaryQueue &bufferQueue);
+
+    virtual void execute(RequestContextPtr context, InsertOrUpdateBucketRequestPtr request);
+    virtual void execute(RequestContextPtr context, RemoveBucketRequestPtr request);
+    virtual void execute(RequestContextPtr context, SetPoliciesRequestPtr request);
+
+    virtual void execute(RequestContextPtr context, CodeResponsePtr response);
+
+private:
+    RequestPtr deserializeInsertOrUpdateBucketRequest(ProtocolFrameHeader &frame);
+    RequestPtr deserializeRemoveBucketRequest(ProtocolFrameHeader &frame);
+    RequestPtr deserializeSetPoliciesRequest(ProtocolFrameHeader &frame);
+
+    ResponsePtr deserializeCodeResponse(ProtocolFrameHeader &frame);
 };
 
 } // namespace Cynara

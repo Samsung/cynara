@@ -29,7 +29,6 @@
 #include "types/PolicyCollection.h"
 #include "types/pointers.h"
 #include "exceptions/DefaultBucketDeletionException.h"
-#include "exceptions/BucketAlreadyExistsException.h"
 #include "storage/Storage.h"
 #include "storage/StorageBackend.h"
 

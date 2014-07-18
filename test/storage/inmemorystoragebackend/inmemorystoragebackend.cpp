@@ -28,7 +28,6 @@
 #include "types/PolicyResult.h"
 #include "types/PolicyCollection.h"
 #include "exceptions/DefaultBucketDeletionException.h"
-#include "exceptions/BucketAlreadyExistsException.h"
 #include "exceptions/BucketNotExistsException.h"
 #include "storage/StorageBackend.h"
 #include "storage/InMemoryStorageBackend.h"

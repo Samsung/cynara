@@ -26,7 +26,6 @@
 #include "types/pointers.h"
 #include "types/PolicyType.h"
 #include "exceptions/NotImplementedException.h"
-#include "exceptions/BucketAlreadyExistsException.h"
 #include "exceptions/DefaultBucketDeletionException.h"
 
 #include <iostream>

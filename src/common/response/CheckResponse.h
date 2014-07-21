@@ -33,7 +33,7 @@ namespace Cynara {
 
 class CheckResponse : public Response {
 public:
-    const PolicyResult &m_resultRef;
+    const PolicyResult m_resultRef;
 
     CheckResponse(const PolicyResult &result, ProtocolFrameSequenceNumber sequenceNumber) :
         Response(sequenceNumber), m_resultRef(result) {

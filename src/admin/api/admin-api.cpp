@@ -93,27 +93,28 @@ int cynara_admin_set_policies(struct cynara_admin *p_cynara_admin,
     });
 
     try {
-        for (auto i = policies[0]; i; i++) {
-            if(!i->bucket || !i->client || !i->user || !i->privilege)
+        for (auto i = policies; *i; i++) {
+            if(!(*i)->bucket || !(*i)->client || !(*i)->user || !(*i)->privilege)
                 return CYNARA_ADMIN_API_INVALID_PARAM;
 
-            switch (i->result) {
+            switch ((*i)->result) {
                 case CYNARA_ADMIN_DELETE:
-                    remove[i->bucket].push_back(key(i));
+                    remove[(*i)->bucket].push_back(key(*i));
                     break;
                 case CYNARA_ADMIN_DENY:
-                    insertOrUpdate[i->bucket].push_back(Cynara::Policy(key(i),
+                    insertOrUpdate[(*i)->bucket].push_back(Cynara::Policy(key(*i),
                                                         Cynara::PredefinedPolicyType::DENY));
                     break;
                 case CYNARA_ADMIN_ALLOW:
-                    insertOrUpdate[i->bucket].push_back(Cynara::Policy(key(i),
+                    insertOrUpdate[(*i)->bucket].push_back(Cynara::Policy(key(*i),
                                                         Cynara::PredefinedPolicyType::ALLOW));
                     break;
                 case CYNARA_ADMIN_BUCKET:
-                    insertOrUpdate[i->bucket].push_back(Cynara::Policy(key(i),
+                    insertOrUpdate[(*i)->bucket].push_back(Cynara::Policy(key(*i),
                                                         Cynara::PolicyResult(
                                                         Cynara::PredefinedPolicyType::BUCKET,
-                                                        i->result_extra ? i->result_extra : "")));
+                                                        (*i)->result_extra ? (*i)->result_extra
+                                                        : "")));
                     break;
                 default:
                     return CYNARA_ADMIN_API_INVALID_PARAM;

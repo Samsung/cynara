@@ -91,7 +91,8 @@ bool Logic::check(RequestContextPtr context UNUSED, const PolicyKey &key,
 
 void Logic::execute(RequestContextPtr context, InsertOrUpdateBucketRequestPtr request) {
     m_storage->addOrUpdateBucket(request->bucketId(), request->result());
-//todo add saving to database
+    m_storage->save();
+
     context->returnResponse(context, std::make_shared<CodeResponse>(CodeResponse::Code::OK,
                             request->sequenceNumber()));
 }
@@ -100,7 +101,7 @@ void Logic::execute(RequestContextPtr context, RemoveBucketRequestPtr request) {
     auto code = CodeResponse::Code::OK;
     try {
         m_storage->deleteBucket(request->bucketId());
-//todo add saving to database
+        m_storage->save();
     } catch (const BucketNotExistsException &ex) {
         code = CodeResponse::Code::NO_BUCKET;
     } catch (const DefaultBucketDeletionException &ex) {
@@ -115,7 +116,7 @@ void Logic::execute(RequestContextPtr context, SetPoliciesRequestPtr request) {
     try {
         m_storage->insertPolicies(request->policiesToBeInsertedOrUpdated());
         m_storage->deletePolicies(request->policiesToBeRemoved());
-//todo add saving to database
+        m_storage->save();
     } catch (const BucketNotExistsException &ex) {
         code = CodeResponse::Code::NO_BUCKET;
     }

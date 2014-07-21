@@ -125,6 +125,8 @@ if [ $1 = 1 ]; then
     systemctl enable %{name}.service
 fi
 
+chsmack -a System %{state_path}
+
 systemctl restart %{name}.service
 
 /sbin/ldconfig

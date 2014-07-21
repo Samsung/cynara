@@ -1,5 +1,5 @@
 <manifest>
 	<request>
-		<domain name="_" />
+		<domain name="System" />
 	</request>
 </manifest>

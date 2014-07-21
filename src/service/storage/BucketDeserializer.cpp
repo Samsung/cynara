@@ -41,9 +41,9 @@ PolicyCollection BucketDeserializer::loadPolicies(void) {
     PolicyCollection policies;
 
     // TODO: Get someone smart to do error checking on stream
-    for (std::size_t lineNum = 1; !m_inStream.eof(); ++lineNum) {
+    for (std::size_t lineNum = 1; !m_inStream->eof(); ++lineNum) {
         std::string line;
-        std::getline(m_inStream, line, StorageSerializer::recordSeparator());
+        std::getline(*m_inStream, line, StorageSerializer::recordSeparator());
 
         if (line.empty())
             break;

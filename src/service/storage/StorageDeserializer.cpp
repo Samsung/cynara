@@ -21,6 +21,7 @@
  */
 
 #include <istream>
+#include <memory>
 #include <string>
 
 #include <exceptions/BucketDeserializationException.h>
@@ -35,16 +36,17 @@
 
 namespace Cynara {
 
-StorageDeserializer::StorageDeserializer(std::istream &inStream,
+StorageDeserializer::StorageDeserializer(std::shared_ptr<std::ifstream> inStream,
                                          BucketStreamOpener bucketStreamOpener)
-        : m_inStream(inStream), m_bucketStreamOpener(bucketStreamOpener) {}
+        : m_inStream(inStream), m_bucketStreamOpener(bucketStreamOpener) {
+}
 
 void StorageDeserializer::initBuckets(Buckets &buckets) {
     buckets.clear();
 
-    for (std::size_t lineNum = 1; !m_inStream.eof(); ++lineNum) {
+    for (std::size_t lineNum = 1; !m_inStream->eof(); ++lineNum) {
         std::string line;
-        std::getline(m_inStream, line, StorageSerializer::recordSeparator());
+        std::getline(*m_inStream, line, StorageSerializer::recordSeparator());
 
         if (line.empty())
             break;

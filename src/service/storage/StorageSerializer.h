@@ -24,8 +24,8 @@
 #define SRC_SERVICE_STORAGE_STORAGESERIALIZER_H_
 
 #include <functional>
+#include <fstream>
 #include <memory>
-#include <ostream>
 
 #include <types/PolicyBucket.h>
 #include <types/PolicyBucketId.h>
@@ -44,7 +44,7 @@ public:
     typedef std::function<std::shared_ptr<StorageSerializer>(const PolicyBucketId &)>
             BucketStreamOpener;
 
-    StorageSerializer(std::ostream &os);
+    StorageSerializer(std::shared_ptr<std::ofstream> os);
     virtual ~StorageSerializer() = default;
 
     virtual void dump(const Buckets &buckets,
@@ -56,13 +56,13 @@ protected:
     inline void dumpFields(const Arg1 &arg1, const Args&... args) {
         dump(arg1);
         if (sizeof...(Args) > 0) {
-            outStream() << fieldSeparator();
+            *m_outStream << fieldSeparator();
         }
         dumpFields(args...);
     }
 
     inline void dumpFields(void) {
-        outStream() << recordSeparator();
+        *m_outStream << recordSeparator();
     }
 
     void dump(const PolicyKey &key);
@@ -70,13 +70,8 @@ protected:
     void dump(const PolicyResult::PolicyMetadata &metadata);
     void dump(const PolicyCollection::value_type &policy);
 
-protected:
-    std::ostream &outStream(void) {
-        return m_outStream;
-    }
-
 private:
-    std::ostream &m_outStream;
+    std::shared_ptr<std::ofstream> m_outStream;
 
     static char m_fieldSeparator;
     static char m_recordSeparator;

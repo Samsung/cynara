@@ -23,6 +23,7 @@
 #include <errno.h>
 #include <fstream>
 #include <functional>
+#include <memory>
 #include <string>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -50,7 +51,7 @@ void InMemoryStorageBackend::load(void) {
     std::string indexFilename = m_dbPath + m_indexFileName;
 
     try {
-        std::ifstream indexStream;
+        std::shared_ptr<std::ifstream> indexStream = std::make_shared<std::ifstream>();
         openFileStream(indexStream, indexFilename);
 
         StorageDeserializer storageDeserializer(indexStream,
@@ -81,7 +82,7 @@ void InMemoryStorageBackend::save(void) {
         }
     }
 
-    std::ofstream indexStream;
+    std::shared_ptr<std::ofstream> indexStream = std::make_shared<std::ofstream>();
     openDumpFileStream(indexStream, m_dbPath + m_indexFileName);
 
     StorageSerializer storageSerializer(indexStream);
@@ -176,20 +177,21 @@ void InMemoryStorageBackend::deleteLinking(const PolicyBucketId &bucketId) {
     }
 }
 
-void InMemoryStorageBackend::openFileStream(std::ifstream &stream, const std::string &filename) {
+void InMemoryStorageBackend::openFileStream(std::shared_ptr<std::ifstream> stream,
+                                            const std::string &filename) {
     // TODO: Consider adding exceptions to streams and handling them:
     // stream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-    stream.open(filename);
+    stream->open(filename);
 
-    if (!stream.is_open())
+    if (!stream->is_open())
         throw FileNotFoundException(filename);
 }
 
-void InMemoryStorageBackend::openDumpFileStream(std::ofstream &stream,
+void InMemoryStorageBackend::openDumpFileStream(std::shared_ptr<std::ofstream> stream,
                                                 const std::string &filename) {
-    stream.open(filename, std::ofstream::out | std::ofstream::trunc);
+    stream->open(filename, std::ofstream::out | std::ofstream::trunc);
 
-    if (!stream.is_open()) {
+    if (!stream->is_open()) {
         throw CannotCreateFileException(filename);
         return;
     }
@@ -198,7 +200,7 @@ void InMemoryStorageBackend::openDumpFileStream(std::ofstream &stream,
 std::shared_ptr<BucketDeserializer> InMemoryStorageBackend::bucketStreamOpener(
         const PolicyBucketId &bucketId) {
     std::string bucketFilename = m_dbPath + "_" + bucketId;
-    std::ifstream bucketStream;
+    std::shared_ptr<std::ifstream> bucketStream = std::make_shared<std::ifstream>();
     try {
         openFileStream(bucketStream, bucketFilename);
         return std::make_shared<BucketDeserializer>(bucketStream);
@@ -210,7 +212,7 @@ std::shared_ptr<BucketDeserializer> InMemoryStorageBackend::bucketStreamOpener(
 std::shared_ptr<StorageSerializer> InMemoryStorageBackend::bucketDumpStreamOpener(
         const PolicyBucketId &bucketId) {
     std::string bucketFilename = m_dbPath + "_" + bucketId;
-    std::ofstream bucketStream;
+    std::shared_ptr<std::ofstream> bucketStream = std::make_shared<std::ofstream>();
 
     openDumpFileStream(bucketStream, bucketFilename);
     return std::make_shared<StorageSerializer>(bucketStream);

@@ -23,7 +23,7 @@
 #define SRC_SERVICE_STORAGE_STORAGEDESERIALIZER_H_
 
 #include <functional>
-#include <istream>
+#include <fstream>
 #include <memory>
 #include <string>
 
@@ -40,7 +40,8 @@ class StorageDeserializer {
 public:
     typedef std::function<std::shared_ptr<BucketDeserializer>(const std::string &)>
                 BucketStreamOpener;
-    StorageDeserializer(std::istream &inStream, BucketStreamOpener m_bucketStreamOpener);
+    StorageDeserializer(std::shared_ptr<std::ifstream> inStream,
+                        BucketStreamOpener m_bucketStreamOpener);
     void initBuckets(Buckets &buckets);
     void loadBuckets(Buckets &buckets);
 
@@ -50,7 +51,7 @@ public:
                                                       std::size_t &beginToken);
 
 private:
-    std::istream &m_inStream;
+    std::shared_ptr<std::ifstream> m_inStream;
     BucketStreamOpener m_bucketStreamOpener;
 };
 

@@ -22,7 +22,8 @@
 #ifndef SRC_SERVICE_STORAGE_BUCKETDESERIALIZER_H_
 #define SRC_SERVICE_STORAGE_BUCKETDESERIALIZER_H_
 
-#include <istream>
+#include <fstream>
+#include <memory>
 #include <string>
 
 #include <types/PolicyCollection.h>
@@ -33,14 +34,16 @@ namespace Cynara {
 class BucketDeserializer {
 
 public:
-    BucketDeserializer(std::istream &inStream) : m_inStream(inStream) {}
+    BucketDeserializer(std::shared_ptr<std::ifstream> inStream) : m_inStream(inStream) {
+    }
+
     PolicyCollection loadPolicies(void);
 
 protected:
     static PolicyKey parseKey(const std::string &line, std::size_t &beginToken);
 
 private:
-    std::istream &m_inStream;
+    std::shared_ptr<std::ifstream> m_inStream;
 };
 
 } /* namespace Cynara */

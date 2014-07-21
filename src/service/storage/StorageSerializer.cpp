@@ -20,8 +20,9 @@
  * @brief       Implementation of Cynara::StorageSerializer methods
  */
 
+#include <fstream>
+#include <memory>
 #include <ios>
-#include <ostream>
 
 #include <exceptions/BucketSerializationException.h>
 #include <types/Policy.h>
@@ -37,7 +38,8 @@ namespace Cynara {
 char StorageSerializer::m_fieldSeparator = ';';
 char StorageSerializer::m_recordSeparator = '\n';
 
-StorageSerializer::StorageSerializer(std::ostream &os) : m_outStream(os) {}
+StorageSerializer::StorageSerializer(std::shared_ptr<std::ofstream> os) : m_outStream(os) {
+}
 
 void StorageSerializer::dump(const Buckets &buckets,
                              BucketStreamOpener streamOpener) {
@@ -72,17 +74,17 @@ void StorageSerializer::dump(const PolicyBucket& bucket) {
 }
 
 void StorageSerializer::dump(const PolicyKey &key) {
-    outStream() << key.toString();
+    *m_outStream << key.toString();
 }
 
 void StorageSerializer::dump(const PolicyType &policyType) {
-    auto oldFormat = m_outStream.flags();
-    outStream() << "0x" << std::uppercase <<  std::hex << policyType;
-    m_outStream.flags(oldFormat);
+    auto oldFormat = m_outStream->flags();
+    *m_outStream << "0x" << std::uppercase <<  std::hex << policyType;
+    m_outStream->flags(oldFormat);
 }
 
 void StorageSerializer::dump(const PolicyResult::PolicyMetadata &metadata) {
-    outStream() << metadata;
+    *m_outStream << metadata;
 }
 
 void StorageSerializer::dump(const PolicyCollection::value_type &policy) {

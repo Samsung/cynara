@@ -60,10 +60,10 @@ public:
     virtual void deleteLinking(const PolicyBucketId &bucketId);
 
 protected:
-    void openFileStream(std::ifstream &stream, const std::string &filename);
+    void openFileStream(std::shared_ptr<std::ifstream> stream, const std::string &filename);
     std::shared_ptr<BucketDeserializer> bucketStreamOpener(const PolicyBucketId &bucketId);
 
-    void openDumpFileStream(std::ofstream &stream, const std::string &filename);
+    void openDumpFileStream(std::shared_ptr<std::ofstream> stream, const std::string &filename);
     std::shared_ptr<StorageSerializer> bucketDumpStreamOpener(const PolicyBucketId &bucketId);
 
 private:

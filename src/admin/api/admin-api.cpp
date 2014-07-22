@@ -110,11 +110,12 @@ int cynara_admin_set_policies(struct cynara_admin *p_cynara_admin,
                                                         Cynara::PredefinedPolicyType::ALLOW));
                     break;
                 case CYNARA_ADMIN_BUCKET:
+                    if (!(*i)->result_extra)
+                        return CYNARA_ADMIN_API_INVALID_PARAM;
                     insertOrUpdate[(*i)->bucket].push_back(Cynara::Policy(key(*i),
                                                         Cynara::PolicyResult(
                                                         Cynara::PredefinedPolicyType::BUCKET,
-                                                        (*i)->result_extra ? (*i)->result_extra
-                                                        : "")));
+                                                        (*i)->result_extra)));
                     break;
                 default:
                     return CYNARA_ADMIN_API_INVALID_PARAM;

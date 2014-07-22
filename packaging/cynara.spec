@@ -8,6 +8,7 @@ Source0:    %{name}-%{version}.tar.gz
 Source1001:    cynara.manifest
 Source1002:    libcynara-client.manifest
 Source1003:    libcynara-admin.manifest
+Requires:      default-ac-domains
 BuildRequires: cmake
 BuildRequires: zip
 BuildRequires: pkgconfig(libsystemd-daemon)

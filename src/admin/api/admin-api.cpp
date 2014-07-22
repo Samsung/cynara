@@ -26,6 +26,7 @@
 #include <vector>
 
 #include <common.h>
+#include <log/log.h>
 #include <types/Policy.h>
 #include <types/PolicyBucketId.h>
 #include <types/PolicyKey.h>
@@ -57,6 +58,10 @@ int cynara_admin_initialize(struct cynara_admin **pp_cynara_admin) {
     } catch (const std::bad_alloc &ex) {
         return CYNARA_ADMIN_API_OUT_OF_MEMORY;
     }
+
+    init_log();
+
+    LOGD("Cynara admin initialized");
 
     return CYNARA_ADMIN_API_SUCCESS;
 }

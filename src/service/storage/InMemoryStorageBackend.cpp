@@ -52,7 +52,7 @@ void InMemoryStorageBackend::load(void) {
     std::string indexFilename = m_dbPath + m_indexFileName;
 
     try {
-        std::shared_ptr<std::ifstream> indexStream = std::make_shared<std::ifstream>();
+        auto indexStream = std::make_shared<std::ifstream>();
         openFileStream(indexStream, indexFilename);
 
         StorageDeserializer storageDeserializer(indexStream,
@@ -83,7 +83,7 @@ void InMemoryStorageBackend::save(void) {
         }
     }
 
-    std::shared_ptr<std::ofstream> indexStream = std::make_shared<std::ofstream>();
+    auto indexStream = std::make_shared<std::ofstream>();
     openDumpFileStream(indexStream, m_dbPath + m_indexFileName);
 
     StorageSerializer storageSerializer(indexStream);
@@ -200,7 +200,7 @@ void InMemoryStorageBackend::openDumpFileStream(std::shared_ptr<std::ofstream> s
 std::shared_ptr<BucketDeserializer> InMemoryStorageBackend::bucketStreamOpener(
         const PolicyBucketId &bucketId) {
     std::string bucketFilename = m_dbPath + "_" + bucketId;
-    std::shared_ptr<std::ifstream> bucketStream = std::make_shared<std::ifstream>();
+    auto bucketStream = std::make_shared<std::ifstream>();
     try {
         openFileStream(bucketStream, bucketFilename);
         return std::make_shared<BucketDeserializer>(bucketStream);
@@ -212,7 +212,7 @@ std::shared_ptr<BucketDeserializer> InMemoryStorageBackend::bucketStreamOpener(
 std::shared_ptr<StorageSerializer> InMemoryStorageBackend::bucketDumpStreamOpener(
         const PolicyBucketId &bucketId) {
     std::string bucketFilename = m_dbPath + "_" + bucketId;
-    std::shared_ptr<std::ofstream> bucketStream = std::make_shared<std::ofstream>();
+    auto bucketStream = std::make_shared<std::ofstream>();
 
     openDumpFileStream(bucketStream, bucketFilename);
     return std::make_shared<StorageSerializer>(bucketStream);

@@ -45,8 +45,8 @@ public:
 
     PolicyResult checkPolicy(const PolicyKey &key);
 
-    void insertPolicies(const std::map<PolicyBucketId, std::vector<Policy>> &policies);
-    void deletePolicies(const std::map<PolicyBucketId, std::vector<PolicyKey>> &policies);
+    void insertPolicies(const std::map<PolicyBucketId, std::vector<Policy>> &policiesByBucketId);
+    void deletePolicies(const std::map<PolicyBucketId, std::vector<PolicyKey>> &keysByBucketId);
 
     void addOrUpdateBucket(const PolicyBucketId &bucketId, const PolicyResult &defaultBucketPolicy);
     void deleteBucket(const PolicyBucketId &bucketId);

@@ -36,7 +36,7 @@
 
 namespace Cynara {
 
-StorageDeserializer::StorageDeserializer(std::shared_ptr<std::ifstream> inStream,
+StorageDeserializer::StorageDeserializer(std::shared_ptr<std::istream> inStream,
                                          BucketStreamOpener bucketStreamOpener)
         : m_inStream(inStream), m_bucketStreamOpener(bucketStreamOpener) {
 }

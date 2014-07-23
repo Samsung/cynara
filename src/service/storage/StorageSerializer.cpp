@@ -38,7 +38,7 @@ namespace Cynara {
 char StorageSerializer::m_fieldSeparator = ';';
 char StorageSerializer::m_recordSeparator = '\n';
 
-StorageSerializer::StorageSerializer(std::shared_ptr<std::ofstream> os) : m_outStream(os) {
+StorageSerializer::StorageSerializer(std::shared_ptr<std::ostream> os) : m_outStream(os) {
 }
 
 void StorageSerializer::dump(const Buckets &buckets,

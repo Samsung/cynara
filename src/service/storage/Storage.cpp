@@ -80,16 +80,16 @@ PolicyResult Storage::minimalPolicy(const PolicyBucket &bucket, const PolicyKey 
     return minimal;
 }
 
-void Storage::insertPolicies(const std::map<PolicyBucketId, std::vector<Policy>> &policies) {
-    for (const auto &bucket : policies) {
-        const PolicyBucketId &bucketId = bucket.first;
-        for (const auto &policy : bucket.second) {
-                PolicyPtr policyPtr = std::make_shared<Policy>(policy);
-                auto existingPolicies = m_backend.searchBucket(bucketId, policyPtr->key());
-                for (auto existingPolicy : existingPolicies.policyCollection()) {
-                        m_backend.deletePolicy(bucketId, existingPolicy->key());
-                }
-                m_backend.insertPolicy(bucketId, policyPtr);
+void Storage::insertPolicies(const std::map<PolicyBucketId, std::vector<Policy>> &policiesByBucketId) {
+    for (const auto &group : policiesByBucketId) {
+        const PolicyBucketId &bucketId = group.first;
+        const auto &policies = group.second;
+        for (const auto &policy : policies) {
+            auto existingPolicies = m_backend.searchBucket(bucketId, policy.key());
+            for (auto existingPolicy : existingPolicies.policyCollection()) {
+                m_backend.deletePolicy(bucketId, existingPolicy->key());
+            }
+            m_backend.insertPolicy(bucketId, std::make_shared<Policy>(policy));
         }
     }
 }
@@ -113,8 +113,8 @@ void Storage::deleteBucket(const PolicyBucketId &bucketId) {
     m_backend.deleteBucket(bucketId);
 }
 
-void Storage::deletePolicies(const std::map<PolicyBucketId, std::vector<PolicyKey>> &policies) {
-    for (const auto &bucket : policies) {
+void Storage::deletePolicies(const std::map<PolicyBucketId, std::vector<PolicyKey>> &keysByBucketId) {
+    for (const auto &bucket : keysByBucketId) {
         const PolicyBucketId &bucketId = bucket.first;
         for (const auto &policyKey : bucket.second) {
             m_backend.deletePolicy(bucketId, policyKey);

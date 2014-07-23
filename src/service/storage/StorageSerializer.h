@@ -44,7 +44,7 @@ public:
     typedef std::function<std::shared_ptr<StorageSerializer>(const PolicyBucketId &)>
             BucketStreamOpener;
 
-    StorageSerializer(std::shared_ptr<std::ofstream> os);
+    StorageSerializer(std::shared_ptr<std::ostream> os);
     virtual ~StorageSerializer() = default;
 
     virtual void dump(const Buckets &buckets,
@@ -71,7 +71,7 @@ protected:
     void dump(const PolicyCollection::value_type &policy);
 
 private:
-    std::shared_ptr<std::ofstream> m_outStream;
+    std::shared_ptr<std::ostream> m_outStream;
 
     static char m_fieldSeparator;
     static char m_recordSeparator;

@@ -34,7 +34,7 @@ namespace Cynara {
 class BucketDeserializer {
 
 public:
-    BucketDeserializer(std::shared_ptr<std::ifstream> inStream) : m_inStream(inStream) {
+    BucketDeserializer(std::shared_ptr<std::istream> inStream) : m_inStream(inStream) {
     }
 
     PolicyCollection loadPolicies(void);
@@ -43,7 +43,7 @@ protected:
     static PolicyKey parseKey(const std::string &line, std::size_t &beginToken);
 
 private:
-    std::shared_ptr<std::ifstream> m_inStream;
+    std::shared_ptr<std::istream> m_inStream;
 };
 
 } /* namespace Cynara */

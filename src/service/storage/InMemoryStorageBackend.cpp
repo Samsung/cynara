@@ -25,6 +25,7 @@
 #include <functional>
 #include <memory>
 #include <string>
+#include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unordered_map>

@@ -73,8 +73,8 @@ void StorageSerializer::dump(const PolicyBucket& bucket) {
     }
 }
 
-void StorageSerializer::dump(const PolicyKey &key) {
-    *m_outStream << key.toString();
+void StorageSerializer::dump(const PolicyKeyFeature &keyFeature) {
+    *m_outStream << keyFeature.toString();
 }
 
 void StorageSerializer::dump(const PolicyType &policyType) {
@@ -91,7 +91,7 @@ void StorageSerializer::dump(const PolicyCollection::value_type &policy) {
     const auto &key = policy->key();
     const auto &result = policy->result();
 
-    dumpFields(key, result.policyType(), result.metadata());
+    dumpFields(key.client(), key.user(), key.privilege(), result.policyType(), result.metadata());
 }
 
 } /* namespace Cynara */

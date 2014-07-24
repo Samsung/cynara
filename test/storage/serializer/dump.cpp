@@ -35,6 +35,16 @@
 
 using namespace Cynara;
 
+static std::string expectedPolicyKey(const PolicyKey &key) {
+    return key.client().toString() + ";" + key.user().toString() + ";" + key.privilege().toString();
+}
+
+static std::string expectedPolicyType(const PolicyType &type) {
+    std::ostringstream oss;
+    oss << std::hex << std::uppercase << "0x" << type;
+    return oss.str();
+}
+
 TEST(serializer_dump, dump_empty_bucket) {
     std::ostringstream oss;
     PolicyBucket bucket;
@@ -61,9 +71,8 @@ TEST(serializer_dump, dump_bucket) {
     // See: StorageSerializerFixture::dump_buckets in serialize.cpp
     std::stringstream expected;
     expected
-        << std::hex << std::uppercase
-        << pk1.toString() << ";" << "0x" << PredefinedPolicyType::ALLOW << ";" << "\n"
-        << pk2.toString() << ";" << "0x" << PredefinedPolicyType::DENY << ";" << "\n";
+        << expectedPolicyKey(pk1) << ";" << expectedPolicyType(PredefinedPolicyType::ALLOW) << ";" << "\n"
+        << expectedPolicyKey(pk2) << ";" << expectedPolicyType(PredefinedPolicyType::DENY) << ";" << "\n";
 
     ASSERT_EQ(expected.str(), outputStream.str());
 }
@@ -87,10 +96,9 @@ TEST(serializer_dump, dump_bucket_bucket) {
     // See: StorageSerializerFixture::dump_buckets in serialize.cpp
     std::stringstream expected;
     expected
-        << std::hex << std::uppercase
-        << pk1.toString() << ";" << "0x" << PredefinedPolicyType::BUCKET << ";" << bucketId << "\n"
-        << pk2.toString() << ";" << "0x" << PredefinedPolicyType::DENY << ";" << "\n"
-        << pk3.toString() << ";" << "0x" << PredefinedPolicyType::BUCKET << ";" << bucketId << "\n";
+        << expectedPolicyKey(pk1) << ";" << expectedPolicyType(PredefinedPolicyType::BUCKET) << ";" << bucketId << "\n"
+        << expectedPolicyKey(pk2) << ";" << expectedPolicyType(PredefinedPolicyType::DENY) << ";" << "\n"
+        << expectedPolicyKey(pk3) << ";" << expectedPolicyType(PredefinedPolicyType::BUCKET) << ";" << bucketId << "\n";
 
     ASSERT_EQ(expected.str(), outputStream.str());
 }

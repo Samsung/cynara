@@ -37,7 +37,7 @@
 
 using namespace Cynara;
 
-MATCHER_P(PolicyPtrEq, policy, "") {
+MATCHER_P(PolicyAtPtrEq, policy, "") {
     return std::tie(policy->key(), policy->result())
         == std::tie(arg->key(), arg->result());
 }
@@ -85,7 +85,7 @@ TEST_F(BucketDeserializerFixture, load_1) {
     auto policies = deserializer.loadPolicies();
     auto expectedPolicy = createPolicy({ "c", "u", "p" }, { PredefinedPolicyType::DENY, "meta" });
 
-    ASSERT_THAT(policies, UnorderedElementsAre(PolicyPtrEq(expectedPolicy)));
+    ASSERT_THAT(policies, UnorderedElementsAre(PolicyAtPtrEq(expectedPolicy)));
 }
 
 TEST_F(BucketDeserializerFixture, load_1_allow) {
@@ -97,7 +97,7 @@ TEST_F(BucketDeserializerFixture, load_1_allow) {
     auto policies = deserializer.loadPolicies();
     auto expectedPolicy = createPolicy({ "c", "u", "p" }, { PredefinedPolicyType::ALLOW, "meta" });
 
-    ASSERT_THAT(policies, UnorderedElementsAre(PolicyPtrEq(expectedPolicy)));
+    ASSERT_THAT(policies, UnorderedElementsAre(PolicyAtPtrEq(expectedPolicy)));
 }
 
 TEST_F(BucketDeserializerFixture, load_1_no_meta_sep) {
@@ -109,7 +109,7 @@ TEST_F(BucketDeserializerFixture, load_1_no_meta_sep) {
     auto policies = deserializer.loadPolicies();
     auto expectedPolicy = createPolicy({ "c", "u", "p" }, { PredefinedPolicyType::DENY, "" });
 
-    ASSERT_THAT(policies, UnorderedElementsAre(PolicyPtrEq(expectedPolicy)));
+    ASSERT_THAT(policies, UnorderedElementsAre(PolicyAtPtrEq(expectedPolicy)));
 }
 
 TEST_F(BucketDeserializerFixture, load_1_no_meta_no_sep) {
@@ -121,7 +121,7 @@ TEST_F(BucketDeserializerFixture, load_1_no_meta_no_sep) {
     auto policies = deserializer.loadPolicies();
     auto expectedPolicy = createPolicy({ "c", "u", "p" }, { PredefinedPolicyType::DENY, "" });
 
-    ASSERT_THAT(policies, UnorderedElementsAre(PolicyPtrEq(expectedPolicy)));
+    ASSERT_THAT(policies, UnorderedElementsAre(PolicyAtPtrEq(expectedPolicy)));
 }
 
 TEST_F(BucketDeserializerFixture, load_2) {
@@ -134,8 +134,8 @@ TEST_F(BucketDeserializerFixture, load_2) {
     auto policies = deserializer.loadPolicies();
     auto expectedPolicy = createPolicy({ "c", "u", "p" }, { PredefinedPolicyType::DENY, "meta" });
 
-    ASSERT_THAT(policies, UnorderedElementsAre(PolicyPtrEq(expectedPolicy),
-            PolicyPtrEq(expectedPolicy)));
+    ASSERT_THAT(policies, UnorderedElementsAre(PolicyAtPtrEq(expectedPolicy),
+            PolicyAtPtrEq(expectedPolicy)));
 }
 
 TEST_F(BucketDeserializerFixture, load_mixed) {
@@ -158,10 +158,10 @@ TEST_F(BucketDeserializerFixture, load_mixed) {
 
     // How to do it more elegantly?
     ASSERT_THAT(policies, UnorderedElementsAre(
-        PolicyPtrEq(expectedPolices.at(0)),
-        PolicyPtrEq(expectedPolices.at(1)),
-        PolicyPtrEq(expectedPolices.at(2)),
-        PolicyPtrEq(expectedPolices.at(3))
+        PolicyAtPtrEq(expectedPolices.at(0)),
+        PolicyAtPtrEq(expectedPolices.at(1)),
+        PolicyAtPtrEq(expectedPolices.at(2)),
+        PolicyAtPtrEq(expectedPolices.at(3))
     ));
 }
 

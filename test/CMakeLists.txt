@@ -70,6 +70,7 @@ SET(CYNARA_TESTS_SOURCES
     storage/serializer/bucket_load.cpp
     storage/serializer/deserialize.cpp
     storage/serializer/dump.cpp
+    storage/serializer/dump_load.cpp
     storage/serializer/serialize.cpp
     common/types/policybucket.cpp
     helpers.cpp

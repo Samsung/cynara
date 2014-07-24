@@ -65,7 +65,7 @@ protected:
         *m_outStream << recordSeparator();
     }
 
-    void dump(const PolicyKey &key);
+    void dump(const PolicyKeyFeature &keyFeature);
     void dump(const PolicyType &policyType);
     void dump(const PolicyResult::PolicyMetadata &metadata);
     void dump(const PolicyCollection::value_type &policy);

@@ -193,7 +193,6 @@ void InMemoryStorageBackend::openDumpFileStream(std::shared_ptr<std::ofstream> s
 
     if (!stream->is_open()) {
         throw CannotCreateFileException(filename);
-        return;
     }
 }
 

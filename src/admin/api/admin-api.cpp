@@ -121,7 +121,7 @@ int cynara_admin_set_policies(struct cynara_admin *p_cynara_admin,
                     return CYNARA_ADMIN_API_INVALID_PARAM;
             }
         }
-    } catch (std::bad_alloc ex) {
+    } catch (const std::bad_alloc &ex) {
         return CYNARA_ADMIN_API_OUT_OF_MEMORY;
     }
 
@@ -139,7 +139,7 @@ int cynara_admin_set_bucket(struct cynara_admin *p_cynara_admin, const char *buc
     std::string extraStr;
     try {
          extraStr = extra ? extra : "";
-    } catch (std::bad_alloc ex) {
+    } catch (const std::bad_alloc &ex) {
         return CYNARA_ADMIN_API_OUT_OF_MEMORY;
     }
     switch (operation) {

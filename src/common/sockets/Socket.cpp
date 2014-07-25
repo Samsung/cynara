@@ -143,9 +143,8 @@ bool Socket::connect(void) {
 
     int retval = TEMP_FAILURE_RETRY(::connect(m_sock, (struct sockaddr*)&clientAddr,
                                             SUN_LEN(&clientAddr)));
-    int err = 0;
     if (retval == -1) {
-        err = errno;
+        int err = errno;
         if (err == EINPROGRESS) {
             if (!waitForSocket(POLLOUT)) {
                 return false;
@@ -165,7 +164,6 @@ bool Socket::connect(void) {
 }
 
 bool Socket::sendToServer(BinaryQueue &queue) {
-    ssize_t done = 0;
     bool retry = false;
 
     RawBuffer buffer(queue.size());
@@ -178,7 +176,7 @@ bool Socket::sendToServer(BinaryQueue &queue) {
         }
 
         retry = false;
-        done = 0;
+        ssize_t done = 0;
         while ((buffer.size() - done) > 0) {
             if (! waitForSocket(POLLOUT)) {
                 LOGE("Error in poll(POLLOUT)");

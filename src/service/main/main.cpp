@@ -34,8 +34,6 @@
 #include "Cynara.h"
 
 int main(int argc UNUSED, char **argv UNUSED) {
-    int ret;
-
     init_log();
 
     try {
@@ -44,7 +42,7 @@ int main(int argc UNUSED, char **argv UNUSED) {
         cynara.init();
         LOGI("Cynara service is started");
 
-        ret = sd_notify(0, "READY=1");
+        int ret = sd_notify(0, "READY=1");
         if (ret == 0) {
             LOGW("Cynara was not configured to notify its status");
         } else if (ret < 0) {

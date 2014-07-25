@@ -36,13 +36,17 @@ public:
     virtual ~Exception() = default;
 
     virtual const char *what(void) const noexcept {
-        return (message() + " From: " + m_backtrace).c_str();
+        if(m_whatMessage.empty()) {
+            m_whatMessage = message() + " From: " + m_backtrace;
+        }
+        return m_whatMessage.c_str();
     }
 
     virtual const std::string message(void) const = 0;
 
 private:
     std::string m_backtrace;
+    mutable std::string m_whatMessage;
 };
 
 } /* namespace Cynara */

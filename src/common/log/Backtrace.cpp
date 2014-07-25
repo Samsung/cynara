@@ -62,7 +62,6 @@ const std::string Backtrace::buildBacktrace(void) {
     char proc_name[BUFSIZ];
     char btstr[BUFSIZ];
     unw_word_t offp;
-    char *realname;
     int status;
 
     unw_getcontext(&uc);
@@ -73,11 +72,11 @@ const std::string Backtrace::buildBacktrace(void) {
         unw_get_reg(&cursor, UNW_REG_IP, &ip);
         unw_get_reg(&cursor, UNW_REG_SP, &sp);
         unw_get_proc_name(&cursor, proc_name, sizeof(proc_name), &offp);
-        realname = abi::__cxa_demangle(proc_name, 0, 0, &status);
+        char *realname = abi::__cxa_demangle(proc_name, 0, 0, &status);
         getSourceInfo(ip);
 
-        snprintf(btstr, sizeof(btstr), "ip = %lx, sp = %lx, %s, %s:%d\n",
-                (long) ip, (long) sp, realname ? realname : proc_name,
+        snprintf(btstr, sizeof(btstr), "ip = %p, sp = %p, %s, %s:%u\n",
+                ip, sp, realname ? realname : proc_name,
                 m_fileName, m_lineNumber);
         free(realname);
         backtrace += btstr;

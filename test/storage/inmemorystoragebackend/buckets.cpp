@@ -20,13 +20,15 @@
  * @brief       Tests of buckets in InMemeoryStorageBackend
  */
 
-#include "gmock/gmock.h"
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
 
-#include "inmemeorystoragebackendfixture.h"
+#include <exceptions/BucketNotExistsException.h>
+#include <types/PolicyBucket.h>
+#include <types/PolicyResult.h>
+
 #include "fakeinmemorystoragebackend.h"
-
-#include "types/PolicyResult.h"
-#include "types/PolicyBucket.h"
+#include "inmemeorystoragebackendfixture.h"
 
 using namespace Cynara;
 

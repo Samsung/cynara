@@ -28,14 +28,9 @@
 #include <gtest/gtest.h>
 
 #include <exceptions/BucketDeserializationException.h>
-#include <types/PolicyBucket.h>
+#include <storage/Buckets.h>
 #include <storage/StorageDeserializer.h>
-
-// TODO: Move to .h, because it's used also in bucket_load.cpp
-MATCHER_P(PolicyPtrEq, policy, "") {
-    return std::tie(policy->key(), policy->result())
-        == std::tie(arg->key(), arg->result());
-}
+#include <types/PolicyBucket.h>
 
 MATCHER_P(PolicyBucketIdPolicyEq, expected, "") {
     auto bucket1 = expected.second;
@@ -50,15 +45,14 @@ MATCHER_P(PolicyBucketIdPolicyEq, expected, "") {
 
 class FakeStreamForBucketId {
 public:
-    MOCK_METHOD1(streamForBucketId, std::shared_ptr<Cynara::BucketDeserializer>(const std::string &));
+    MOCK_METHOD1(streamForBucketId,
+                 std::shared_ptr<Cynara::BucketDeserializer>(const std::string &));
 };
 
 class EmptyBucketDeserializer : public Cynara::BucketDeserializer {
 public:
-    EmptyBucketDeserializer() : Cynara::BucketDeserializer(m_emptyStream),
-        m_emptyStream("") {}
-private:
-    std::istringstream m_emptyStream;
+    EmptyBucketDeserializer()
+        : Cynara::BucketDeserializer(std::make_shared<std::istringstream>("")) {}
 };
 
 class StorageDeserializerFixture : public ::testing::Test {
@@ -78,10 +72,10 @@ using namespace Cynara;
 TEST_F(StorageDeserializerFixture, init_default_only) {
     using ::testing::UnorderedElementsAre;
 
-    std::istringstream ss(";0");
+    auto ss = std::make_shared<std::istringstream>(";0");
     StorageDeserializer deserializer(ss, nullStreamOpener);
 
-    InMemoryStorageBackend::Buckets buckets;
+    Buckets buckets;
     deserializer.initBuckets(buckets);
 
     ASSERT_THAT(buckets, UnorderedElementsAre(
@@ -92,12 +86,12 @@ TEST_F(StorageDeserializerFixture, init_default_only) {
 TEST_F(StorageDeserializerFixture, init_more) {
     using ::testing::UnorderedElementsAre;
 
-    std::istringstream ss(";0\n"
-                          "bucket2;0\n"
-                          "bucket3;0xFFFE;bucket2\n");
+    auto ss = std::make_shared<std::istringstream>(";0\n"
+                                                   "bucket2;0\n"
+                                                   "bucket3;0xFFFE;bucket2\n");
 
     StorageDeserializer deserializer(ss, nullStreamOpener);
-    InMemoryStorageBackend::Buckets buckets;
+    Buckets buckets;
     deserializer.initBuckets(buckets);
 
     ASSERT_THAT(buckets, UnorderedElementsAre(
@@ -112,10 +106,10 @@ TEST_F(StorageDeserializerFixture, init_more) {
 TEST_F(StorageDeserializerFixture, init_overwrite) {
     using ::testing::UnorderedElementsAre;
 
-    std::istringstream ss(";0x0");
+    auto ss = std::make_shared<std::istringstream>(";0x0");
     StorageDeserializer deserializer(ss, nullStreamOpener);
 
-    InMemoryStorageBackend::Buckets buckets;
+    Buckets buckets;
     // Default bucket has ALLOW policy as default
     buckets.insert({ "", PolicyBucket("fakeId", PredefinedPolicyType::ALLOW) });
 
@@ -128,20 +122,19 @@ TEST_F(StorageDeserializerFixture, init_overwrite) {
 }
 
 TEST_F(StorageDeserializerFixture, load_buckets_plus_policies) {
-    using ::testing::_;
+    using ::testing::Pointee;
     using ::testing::Return;
     using ::testing::UnorderedElementsAre;
 
-    InMemoryStorageBackend::Buckets buckets;
+    Buckets buckets;
     buckets.insert({ "", PolicyBucket("", PredefinedPolicyType::DENY) });
 
-    std::istringstream bucketsStream; // Won't be used; buckets are pre-inserted above
     FakeStreamForBucketId streamOpener;
     auto streamOpenerFunc = std::bind(&FakeStreamForBucketId::streamForBucketId, &streamOpener,
                                       std::placeholders::_1);
-    StorageDeserializer deserializer(bucketsStream, streamOpenerFunc);
+    StorageDeserializer deserializer(nullptr, streamOpenerFunc);
 
-    std::istringstream defaultBucketStream("c;u;p;0;meta");
+    auto defaultBucketStream = std::make_shared<std::istringstream>("c;u;p;0;meta");
     auto bucketDeserializer = std::make_shared<BucketDeserializer>(defaultBucketStream);
     EXPECT_CALL(streamOpener, streamForBucketId(""))
         .WillOnce(Return(bucketDeserializer));
@@ -153,31 +146,25 @@ TEST_F(StorageDeserializerFixture, load_buckets_plus_policies) {
         COMPARE_BUCKETS("", PolicyBucket("", PredefinedPolicyType::DENY))
     ));
 
-    auto expectedPolicy = std::make_shared<Policy>(PolicyKey("c", "u", "p"),
-                                      PolicyResult(PredefinedPolicyType::DENY, "meta"));
-
     // Check policy was inserted into bucket
     ASSERT_THAT(buckets.at("").policyCollection(), UnorderedElementsAre(
-       PolicyPtrEq(expectedPolicy)
+       Pointee(Policy(PolicyKey("c", "u", "p"), PolicyResult(PredefinedPolicyType::DENY, "meta")))
    ));
 }
 
 TEST_F(StorageDeserializerFixture, load_buckets) {
-    using ::testing::_;
     using ::testing::Return;
-    using ::testing::UnorderedElementsAre;
 
     // Pre-insert some buckets
-    InMemoryStorageBackend::Buckets buckets;
+    Buckets buckets;
     buckets.insert({ "", PolicyBucket("", PredefinedPolicyType::DENY) });
     buckets.insert({ "bucket1", PolicyBucket("bucket1", PredefinedPolicyType::DENY) });
     buckets.insert({ "bucket2", PolicyBucket("bucket2", PredefinedPolicyType::DENY) });
 
-    std::istringstream bucketsStream; // Won't be used; buckets are pre-inserted above
     FakeStreamForBucketId streamOpener;
     auto streamOpenerFunc = std::bind(&FakeStreamForBucketId::streamForBucketId, &streamOpener,
                                       std::placeholders::_1);
-    StorageDeserializer deserializer(bucketsStream, streamOpenerFunc);
+    StorageDeserializer deserializer(nullptr, streamOpenerFunc);
 
     // Check, if streamOpener was called for each bucket
     EXPECT_CALL(streamOpener, streamForBucketId(""))
@@ -193,19 +180,16 @@ TEST_F(StorageDeserializerFixture, load_buckets) {
 }
 
 TEST_F(StorageDeserializerFixture, load_buckets_io_error) {
-    using ::testing::_;
     using ::testing::Return;
-    using ::testing::UnorderedElementsAre;
 
     // Pre-insert some buckets
-    InMemoryStorageBackend::Buckets buckets;
+    Buckets buckets;
     buckets.insert({ "", PolicyBucket("", PredefinedPolicyType::DENY) });
 
-    std::istringstream bucketsStream; // Won't be used; buckets are pre-inserted above
     FakeStreamForBucketId streamOpener;
     auto streamOpenerFunc = std::bind(&FakeStreamForBucketId::streamForBucketId, &streamOpener,
                                       std::placeholders::_1);
-    StorageDeserializer deserializer(bucketsStream, streamOpenerFunc);
+    StorageDeserializer deserializer(nullptr, streamOpenerFunc);
 
     // Check, if streamOpener was called for each bucket
     EXPECT_CALL(streamOpener, streamForBucketId(""))

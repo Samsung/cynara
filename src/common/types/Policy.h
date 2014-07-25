@@ -32,6 +32,7 @@
 #include "types/PolicyBucketId.h"
 
 #include <memory>
+#include <tuple>
 
 namespace Cynara {
 
@@ -48,6 +49,10 @@ public:
     static PolicyPtr bucketWithKey(const PolicyKey &key, const PolicyBucketId &bucketId) {
         auto result = PolicyResult(PredefinedPolicyType::BUCKET, bucketId);
         return std::make_shared<Policy>(key, result);
+    }
+
+    bool operator==(const Policy &other) const {
+        return std::tie(m_key, m_result) == std::tie(other.m_key, other.m_result);
     }
 
 private:

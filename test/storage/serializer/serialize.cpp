@@ -30,6 +30,7 @@
 #include <gtest/gtest.h>
 
 #include <exceptions/BucketSerializationException.h>
+#include <storage/Buckets.h>
 #include <storage/InMemoryStorageBackend.h>
 #include <storage/StorageSerializer.h>
 #include <types/PolicyBucketId.h>
@@ -47,16 +48,17 @@ public:
 // Fake StorageSerializer for Cynara::PolicyBucket
 class FakeStorageSerializer : public Cynara::StorageSerializer {
 public:
-    FakeStorageSerializer() : Cynara::StorageSerializer(outStream) {}
+    FakeStorageSerializer() : Cynara::StorageSerializer(outStream),
+                              outStream(new std::ostringstream()) {}
     MOCK_METHOD1(dump, void(const Cynara::PolicyBucket &bucket));
-    std::ostringstream outStream;
+    std::shared_ptr<std::ostringstream> outStream;
 };
 
 class StorageSerializerFixture : public ::testing::Test {
 public:
     virtual ~StorageSerializerFixture() = default;
 
-    Cynara::InMemoryStorageBackend::Buckets buckets;
+    Cynara::Buckets buckets;
     FakeStreamForBucketId fakeStreamOpener;
 };
 
@@ -65,12 +67,12 @@ using namespace Cynara;
 // Be sure no calls to streamForBucketId() are made
 // and output stream is not touched
 TEST_F(StorageSerializerFixture, dump_buckets_empty) {
-    std::ostringstream outStream;
+    auto outStream = std::make_shared<std::ostringstream>();
     StorageSerializer serializer(outStream);
-    serializer.dump(InMemoryStorageBackend::Buckets(), fakeStreamOpener.streamOpener());
+    serializer.dump(Buckets(), fakeStreamOpener.streamOpener());
 
     // Stream should be empty
-    ASSERT_EQ(0, outStream.tellp());
+    ASSERT_EQ(0, outStream->tellp());
 }
 
 TEST_F(StorageSerializerFixture, dump_buckets) {
@@ -89,7 +91,7 @@ TEST_F(StorageSerializerFixture, dump_buckets) {
             PolicyBucket("bucket3", PolicyResult(PredefinedPolicyType::BUCKET, "bucket2")) }
     };
 
-    std::stringstream outStream;
+    auto outStream = std::make_shared<std::stringstream>();
     StorageSerializer dbSerializer(outStream);
 
     // Make sure stream was opened for each bucket
@@ -110,7 +112,7 @@ TEST_F(StorageSerializerFixture, dump_buckets) {
     };
 
     // Split stream into records
-    auto actualRecords = std::vector<std::string>(std::istream_iterator<std::string>(outStream),
+    auto actualRecords = std::vector<std::string>(std::istream_iterator<std::string>(*outStream),
                                                   std::istream_iterator<std::string>());
 
     ASSERT_THAT(actualRecords, UnorderedElementsAreArray(expectedRecords));
@@ -124,7 +126,7 @@ TEST_F(StorageSerializerFixture, dump_buckets_io_error) {
         { "bucket1", PolicyBucket("bucket1", PredefinedPolicyType::DENY) },
     };
 
-    std::stringstream outStream;
+    auto outStream = std::make_shared<std::stringstream>();
     StorageSerializer dbSerializer(outStream);
 
     // Make sure stream was opened for each bucket

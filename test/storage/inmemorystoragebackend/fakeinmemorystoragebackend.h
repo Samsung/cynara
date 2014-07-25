@@ -23,11 +23,13 @@
 #ifndef FAKEINMEMORYSTORAGEBACKEND_H_
 #define FAKEINMEMORYSTORAGEBACKEND_H_
 
-#include "storage/InMemoryStorageBackend.h"
+#include <storage/Buckets.h>
+#include <storage/InMemoryStorageBackend.h>
 
 class FakeInMemoryStorageBackend : public Cynara::InMemoryStorageBackend {
 public:
-    MOCK_METHOD0(buckets, Cynara::InMemoryStorageBackend::Buckets&());
+    using Cynara::InMemoryStorageBackend::InMemoryStorageBackend;
+    MOCK_METHOD0(buckets, Cynara::Buckets&());
 };
 
 

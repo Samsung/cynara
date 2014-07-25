@@ -27,6 +27,8 @@ using namespace Cynara;
 
 class FakeStorageBackend : public StorageBackend {
 public:
+    MOCK_METHOD0(load, void(void));
+    MOCK_METHOD0(save, void(void));
     MOCK_METHOD1(searchDefaultBucket, PolicyBucket(const PolicyKey &key));
     MOCK_METHOD2(searchBucket, PolicyBucket(const PolicyBucketId &bucket, const PolicyKey &key));
     MOCK_METHOD2(createBucket, void(const PolicyBucketId &bucketId,

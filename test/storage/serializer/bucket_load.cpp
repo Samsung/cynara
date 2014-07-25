@@ -20,6 +20,10 @@
  * @brief       Tests for Cynara::BucketDeserializer
  */
 
+#include <memory>
+#include <sstream>
+#include <tuple>
+#include <vector>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -29,11 +33,6 @@
 #include <types/Policy.h>
 
 #include "../../helpers.h"
-
-#include <memory>
-#include <sstream>
-#include <tuple>
-#include <vector>
 
 using namespace Cynara;
 
@@ -52,11 +51,11 @@ public:
 
     void checkCorruptedData(const std::string &data, const std::string &corruptedLine,
             size_t corruptedLineNumber) {
-        std::istringstream bucketStream(data);
+        auto bucketStream = std::make_shared<std::istringstream>(data);
         BucketDeserializer deserializer(bucketStream);
         EXPECT_THROW(deserializer.loadPolicies(), BucketRecordCorruptedException);
 
-        bucketStream.seekg(0);
+        bucketStream->seekg(0);
         try {
             deserializer.loadPolicies();
         } catch (const BucketRecordCorruptedException &ex) {
@@ -69,7 +68,7 @@ public:
 TEST_F(BucketDeserializerFixture, load_empty) {
     using ::testing::IsEmpty;
 
-    std::istringstream bucketStream;
+    auto bucketStream = std::make_shared<std::istringstream>();
     BucketDeserializer deserializer(bucketStream);
 
     auto policies = deserializer.loadPolicies();
@@ -79,7 +78,7 @@ TEST_F(BucketDeserializerFixture, load_empty) {
 TEST_F(BucketDeserializerFixture, load_1) {
     using ::testing::UnorderedElementsAre;
 
-    std::istringstream bucketStream("c;u;p;0;meta");
+    auto bucketStream = std::make_shared<std::istringstream>("c;u;p;0;meta");
     BucketDeserializer deserializer(bucketStream);
 
     auto policies = deserializer.loadPolicies();
@@ -91,7 +90,7 @@ TEST_F(BucketDeserializerFixture, load_1) {
 TEST_F(BucketDeserializerFixture, load_1_allow) {
     using ::testing::UnorderedElementsAre;
 
-    std::istringstream bucketStream("c;u;p;0xFFFF;meta");
+    auto bucketStream = std::make_shared<std::istringstream>("c;u;p;0xFFFF;meta");
     BucketDeserializer deserializer(bucketStream);
 
     auto policies = deserializer.loadPolicies();
@@ -103,7 +102,7 @@ TEST_F(BucketDeserializerFixture, load_1_allow) {
 TEST_F(BucketDeserializerFixture, load_1_no_meta_sep) {
     using ::testing::UnorderedElementsAre;
 
-    std::istringstream bucketStream("c;u;p;0;");
+    auto bucketStream = std::make_shared<std::istringstream>("c;u;p;0;");
     BucketDeserializer deserializer(bucketStream);
 
     auto policies = deserializer.loadPolicies();
@@ -115,7 +114,7 @@ TEST_F(BucketDeserializerFixture, load_1_no_meta_sep) {
 TEST_F(BucketDeserializerFixture, load_1_no_meta_no_sep) {
     using ::testing::UnorderedElementsAre;
 
-    std::istringstream bucketStream("c;u;p;0");
+    auto bucketStream = std::make_shared<std::istringstream>("c;u;p;0");
     BucketDeserializer deserializer(bucketStream);
 
     auto policies = deserializer.loadPolicies();
@@ -127,8 +126,8 @@ TEST_F(BucketDeserializerFixture, load_1_no_meta_no_sep) {
 TEST_F(BucketDeserializerFixture, load_2) {
     using ::testing::UnorderedElementsAre;
 
-    std::istringstream bucketStream("c;u;p;0;meta\n"
-                                    "c;u;p;0;meta\n");
+    auto bucketStream = std::make_shared<std::istringstream>("c;u;p;0;meta\n"
+                                                             "c;u;p;0;meta\n");
     BucketDeserializer deserializer(bucketStream);
 
     auto policies = deserializer.loadPolicies();
@@ -142,10 +141,10 @@ TEST_F(BucketDeserializerFixture, load_mixed) {
     using ::testing::UnorderedElementsAre;
     using ::testing::UnorderedElementsAreArray;
 
-    std::istringstream bucketStream("c1;u1;p1;0;meta\n"
-                                    "c2;u2;p2;0xFFFF;meta2\n"
-                                    "c2;u2;p2;0xFFFF;\n"
-                                    "c1;u1;p3;0xFFFE;bucket\n");
+    auto bucketStream = std::make_shared<std::istringstream>("c1;u1;p1;0;meta\n"
+                                                             "c2;u2;p2;0xFFFF;meta2\n"
+                                                             "c2;u2;p2;0xFFFF;\n"
+                                                             "c1;u1;p3;0xFFFE;bucket\n");
     BucketDeserializer deserializer(bucketStream);
 
     auto policies = deserializer.loadPolicies();

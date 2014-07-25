@@ -23,16 +23,17 @@
 #ifndef INMEMEORYSTORAGEBACKENDFIXTURE_H_
 #define INMEMEORYSTORAGEBACKENDFIXTURE_H_
 
-#include "gmock/gmock.h"
+#include <gmock/gmock.h>
 
-#include "types/PolicyBucket.h"
-#include "types/PolicyCollection.h"
-#include "storage/InMemoryStorageBackend.h"
+#include <types/PolicyBucket.h>
+#include <types/PolicyCollection.h>
+#include <storage/Buckets.h>
+#include <storage/InMemoryStorageBackend.h>
 
 class InMemeoryStorageBackendFixture : public ::testing::Test {
 
 protected:
-    Cynara::InMemoryStorageBackend::Buckets::mapped_type &
+    Cynara::Buckets::mapped_type &
     createBucket(const Cynara::PolicyBucketId &bucketId) {
         auto bucket = Cynara::PolicyBucket();
         return m_buckets.insert({ bucketId, bucket }).first->second;
@@ -46,7 +47,7 @@ protected:
     virtual ~InMemeoryStorageBackendFixture() {}
 
     // TODO: consider defaulting accessor with ON_CALL
-    Cynara::InMemoryStorageBackend::Buckets m_buckets;
+    Cynara::Buckets m_buckets;
 };
 
 

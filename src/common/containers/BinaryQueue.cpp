@@ -248,26 +248,4 @@ BinaryQueue::Bucket::~Bucket() {
     deleter(buffer, size, param);
 }
 
-BinaryQueue::BucketVisitor::~BucketVisitor() {
-}
-
-BinaryQueue::BucketVisitorCall::BucketVisitorCall(BucketVisitor *visitor) :
-    m_visitor(visitor) {
-}
-
-BinaryQueue::BucketVisitorCall::~BucketVisitorCall() {
-}
-
-void BinaryQueue::BucketVisitorCall::operator()(Bucket *bucket) const {
-    m_visitor->onVisitBucket(bucket->ptr, bucket->left);
-}
-
-void BinaryQueue::visitBuckets(BucketVisitor *visitor) const {
-    if(visitor == nullptr)
-        throw NullPointerException("visitor");
-
-    // Visit all buckets
-    std::for_each(m_buckets.begin(), m_buckets.end(), BucketVisitorCall(visitor));
-}
-
 } // namespace Cynara

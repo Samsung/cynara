@@ -48,24 +48,6 @@ class BinaryQueue
                                   size_t bufferSize,
                                   void *userParam);
 
-    class BucketVisitor
-    {
-      public:
-        /**
-         * Destructor
-         */
-        virtual ~BucketVisitor();
-
-        /**
-         * Visit bucket
-         *
-         * @return none
-         * @param[in] buffer Constant pointer to bucket data buffer
-         * @param[in] bufferSize Number of bytes in bucket
-         */
-        virtual void onVisitBucket(const void *buffer, size_t bufferSize) = 0;
-    };
-
   private:
     struct Bucket
     {
@@ -95,18 +77,6 @@ class BinaryQueue
     size_t m_size;
 
     static void deleteBucket(Bucket *bucket);
-
-    class BucketVisitorCall
-    {
-      private:
-        BucketVisitor *m_visitor;
-
-      public:
-        BucketVisitorCall(BucketVisitor *visitor);
-        virtual ~BucketVisitorCall();
-
-        void operator()(Bucket *bucket) const;
-    };
 
   public:
     /**
@@ -269,16 +239,6 @@ class BinaryQueue
      *            is larger than available bytes in binary queue
      */
     void flattenConsume(void *buffer, size_t bufferSize);
-
-    /**
-     * Visit each buffer with data using visitor object
-     *
-     * @return none
-     * @param[in] visitor Pointer to bucket visitor
-     * @see BinaryQueue::BucketVisitor
-     * @exception Cynara::NullPointerException visitor is nullptr
-     */
-    void visitBuckets(BucketVisitor *visitor) const;
 };
 
 } // namespace Cynara

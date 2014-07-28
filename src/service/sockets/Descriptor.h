@@ -57,7 +57,7 @@ public:
 
     bool hasDataToWrite(void) const;
 
-    ProtocolPtr protocol(void) {
+    const ProtocolPtr protocol(void) const {
         return m_protocol;
     }
 

@@ -44,7 +44,7 @@ Cynara::~Cynara() {
     finalize();
 }
 
-const std::string Cynara::storageDir(void) const {
+const std::string Cynara::storageDir(void) {
     std::string dir("/var/lib/cynara/");
 
 #ifdef CYNARA_STATE_PATH

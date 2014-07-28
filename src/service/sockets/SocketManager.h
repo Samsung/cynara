@@ -76,8 +76,8 @@ private:
     bool handleRead(int fd, const RawBuffer &readbuffer);
 
     void createDomainSocket(ProtocolPtr protocol, const std::string &path, mode_t mask);
-    int createDomainSocketHelp(const std::string &path, mode_t mask);
-    int getSocketFromSystemD(const std::string &path);
+    static int createDomainSocketHelp(const std::string &path, mode_t mask);
+    static int getSocketFromSystemD(const std::string &path);
     void createSignalSocket(ProtocolPtr protocol);
 
     Descriptor &createDescriptor(int fd);

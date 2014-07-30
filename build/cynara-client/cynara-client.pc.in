@@ -6,6 +6,6 @@ includedir=${prefix}/include
 Name: cynara-client
 Description: cynara-client package
 Version: 0.0.1
-Requires: security-server
+Requires:
 Libs: -L${libdir} -lcynara-client
 Cflags: -I${includedir}/cynara

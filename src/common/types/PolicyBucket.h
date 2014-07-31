@@ -25,17 +25,17 @@
 #ifndef SRC_COMMON_TYPES_POLICYBUCKET_H_
 #define SRC_COMMON_TYPES_POLICYBUCKET_H_
 
-#include "PolicyCollection.h"
-#include "PolicyKey.h"
-#include "Policy.h"
-#include "exceptions/NotImplementedException.h"
-#include "types/pointers.h"
-#include "types/PolicyType.h"
-#include "PolicyBucketId.h"
-
-#include <string>
-#include <memory>
 #include <algorithm>
+#include <memory>
+#include <string>
+
+#include <exceptions/NotImplementedException.h>
+#include <types/pointers.h>
+#include <types/Policy.h>
+#include <types/PolicyBucketId.h>
+#include <types/PolicyCollection.h>
+#include <types/PolicyKey.h>
+#include <types/PolicyType.h>
 
 namespace Cynara {
 
@@ -45,44 +45,59 @@ const PolicyBucketId defaultPolicyBucketId("");
 class PolicyBucket {
 public:
 
+    typedef PolicyCollection::value_type value_type;
+    typedef const_policy_iterator const_iterator;
+
     PolicyBucket() : m_defaultPolicy(PredefinedPolicyType::DENY) {}
     PolicyBucket(const PolicyBucketId &id, const PolicyResult &defaultPolicy)
         : m_defaultPolicy(defaultPolicy), m_id(id) {}
     PolicyBucket(const PolicyCollection &policies)
-        : m_policyCollection(policies),
+        : m_policyCollection(makePolicyMap(policies)),
           m_defaultPolicy(PredefinedPolicyType::DENY) {}
 
     PolicyBucket filtered(const PolicyKey &key) const;
+    void insertPolicy(PolicyPtr policy);
+    void deletePolicy(const PolicyKey &key);
+
+    // TODO: Try to change interface, so this method is not needed
+    void deletePolicy(std::function<bool(PolicyPtr)> predicate);
+
+    static PolicyMap makePolicyMap(const PolicyCollection &policies);
 
 private:
-    PolicyCollection m_policyCollection;
+    PolicyMap m_policyCollection;
     PolicyResult m_defaultPolicy;
     PolicyBucketId m_id;
 
 public:
-    const PolicyResult &defaultPolicy() const {
+
+    const_policy_iterator begin(void) const {
+        return const_policy_iterator(m_policyCollection.begin());
+    }
+
+    const_policy_iterator end(void) const {
+        return const_policy_iterator(m_policyCollection.end());
+    }
+
+    PolicyMap::size_type size(void) const noexcept {
+        return m_policyCollection.size();
+    }
+
+    bool empty(void) const noexcept {
+        return m_policyCollection.empty();
+    }
+
+    const PolicyResult &defaultPolicy(void) const {
         return m_defaultPolicy;
     }
 
-    const PolicyBucketId &id() const {
+    const PolicyBucketId &id(void) const {
         return m_id;
-    }
-
-    PolicyCollection &policyCollection() {
-        return m_policyCollection;
-    }
-
-    const PolicyCollection &policyCollection() const {
-        return m_policyCollection;
     }
 
     // TODO: Consider StorageBackend to be only one to alter this property
     void setDefaultPolicy(const PolicyResult &defaultPolicy) {
         m_defaultPolicy = defaultPolicy;
-    }
-
-    void setPolicyCollection(const PolicyCollection &policies) {
-        m_policyCollection = policies;
     }
 };
 

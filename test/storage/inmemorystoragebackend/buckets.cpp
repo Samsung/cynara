@@ -47,7 +47,7 @@ TEST_F(InMemeoryStorageBackendFixture, createBucket) {
     ASSERT_EQ(1, m_buckets.size());
     ASSERT_NE(m_buckets.end(), m_buckets.find(bucketId));
     ASSERT_EQ(defaultPolicy, m_buckets.at(bucketId).defaultPolicy());
-    ASSERT_THAT(m_buckets.at(bucketId).policyCollection(), IsEmpty());
+    ASSERT_THAT(m_buckets.at(bucketId), IsEmpty());
 }
 
 TEST_F(InMemeoryStorageBackendFixture, updateBucket) {

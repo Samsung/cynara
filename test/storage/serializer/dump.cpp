@@ -58,54 +58,59 @@ TEST(serializer_dump, dump_empty_bucket) {
 }
 
 TEST(serializer_dump, dump_bucket) {
+    using ::testing::UnorderedElementsAreArray;
+    using PredefinedPolicyType::ALLOW;
+    using PredefinedPolicyType::DENY;
+
     PolicyKey pk1 = Helpers::generatePolicyKey("1");
     PolicyKey pk2 = Helpers::generatePolicyKey("2");
 
-    PolicyBucket bucket = {{ Policy::simpleWithKey(pk1, PredefinedPolicyType::ALLOW),
-                             Policy::simpleWithKey(pk2, PredefinedPolicyType::DENY) }};
+    PolicyBucket bucket = {{ Policy::simpleWithKey(pk1, ALLOW),
+                             Policy::simpleWithKey(pk2, DENY) }};
 
-    auto outputStream = std::make_shared<std::ostringstream>();
-    StorageSerializer serializer(outputStream);
+    auto outStream = std::make_shared<std::stringstream>();
+    StorageSerializer serializer(outStream);
     serializer.dump(bucket);
 
-    // TODO: Cynara::PolicyCollection is a vector, but in future version this may change
-    // and so, we should not expect the exact order of records in serialized stream
-    // See: StorageSerializerFixture::dump_buckets in serialize.cpp
-    std::stringstream expected;
-    expected
-        << expectedPolicyKey(pk1) << ";" << expectedPolicyType(PredefinedPolicyType::ALLOW)<< ";"
-        << std::endl
-        << expectedPolicyKey(pk2) << ";" << expectedPolicyType(PredefinedPolicyType::DENY) << ";"
-        << std::endl;
+    // Split stream into records
+    auto actualRecords = std::vector<std::string>(std::istream_iterator<std::string>(*outStream),
+                                                  std::istream_iterator<std::string>());
 
-    ASSERT_EQ(expected.str(), outputStream->str());
+    std::vector<std::string> expectedRecords = {
+        expectedPolicyKey(pk1) + ";" + expectedPolicyType(ALLOW) + ";",
+        expectedPolicyKey(pk2) + ";" + expectedPolicyType(DENY) + ";"
+    };
+
+    ASSERT_THAT(actualRecords, UnorderedElementsAreArray(expectedRecords));
 }
 
 TEST(serializer_dump, dump_bucket_bucket) {
+    using ::testing::UnorderedElementsAreArray;
+    using PredefinedPolicyType::BUCKET;
+    using PredefinedPolicyType::DENY;
+
     PolicyKey pk1 = Helpers::generatePolicyKey("1");
     PolicyKey pk2 = Helpers::generatePolicyKey("2");
     PolicyKey pk3 = Helpers::generatePolicyKey("3");
     PolicyBucketId bucketId = Helpers::generateBucketId();
 
     PolicyBucket bucket = {{ Policy::bucketWithKey(pk1, bucketId),
-                             Policy::simpleWithKey(pk2, PredefinedPolicyType::DENY),
+                             Policy::simpleWithKey(pk2, DENY),
                              Policy::bucketWithKey(pk3, bucketId) }};
 
-    auto outputStream = std::make_shared<std::ostringstream>();
-    StorageSerializer serializer(outputStream);
+    auto outStream = std::make_shared<std::stringstream>();
+    StorageSerializer serializer(outStream);
     serializer.dump(bucket);
 
-    // TODO: Cynara::PolicyCollection is a vector, but in future version this may change
-    // and so, we should not expect the exact order of records in serialized stream
-    // See: StorageSerializerFixture::dump_buckets in serialize.cpp
-    std::stringstream expected;
-    expected
-        << expectedPolicyKey(pk1) << ";" << expectedPolicyType(PredefinedPolicyType::BUCKET) << ";"
-        << bucketId << std::endl
-        << expectedPolicyKey(pk2) << ";" << expectedPolicyType(PredefinedPolicyType::DENY) << ";"
-        << std::endl
-        << expectedPolicyKey(pk3) << ";" << expectedPolicyType(PredefinedPolicyType::BUCKET) << ";"
-        << bucketId << std::endl;
+    // Split stream into records
+    auto actualRecords = std::vector<std::string>(std::istream_iterator<std::string>(*outStream),
+                                                  std::istream_iterator<std::string>());
 
-    ASSERT_EQ(expected.str(), outputStream->str());
+    std::vector<std::string> expectedRecords = {
+        expectedPolicyKey(pk1) + ";" + expectedPolicyType(BUCKET) + ";" + bucketId,
+        expectedPolicyKey(pk2) + ";" + expectedPolicyType(DENY) + ";",
+        expectedPolicyKey(pk3) + ";" + expectedPolicyType(BUCKET) + ";" + bucketId
+    };
+
+    ASSERT_THAT(actualRecords, UnorderedElementsAreArray(expectedRecords));
 }

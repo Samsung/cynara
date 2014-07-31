@@ -107,51 +107,6 @@ TEST(storage, insertPolicies) {
         const auto &policies = group.second;
 
         for (const auto &policy : policies) {
-            EXPECT_CALL(backend, searchBucket(bucketId, policy.key()))
-                .WillOnce(Return(PolicyBucket()));
-            EXPECT_CALL(backend, insertPolicy(bucketId, Pointee(policy)));
-        }
-    }
-
-    storage.insertPolicies(policiesToInsert);
-}
-
-TEST(storage, updatePolicies) {
-    using ::testing::Pointee;
-    using ::testing::Return;
-    FakeStorageBackend backend;
-    Storage storage(backend);
-
-    PolicyBucketId testBucket1 = "test-bucket-1";
-    PolicyBucketId testBucket2 = "test-bucket-2";
-
-    typedef std::pair<PolicyBucketId, std::vector<Policy>> BucketPolicyPair;
-
-    auto createPolicy = [] (const std::string &keySuffix, const PolicyType &type) -> Policy {
-        return Policy(Helpers::generatePolicyKey(keySuffix), type);
-    };
-
-    std::map<PolicyBucketId, std::vector<Policy>> policiesToInsert = {
-        BucketPolicyPair(testBucket1, {
-            createPolicy("1", PredefinedPolicyType::ALLOW),
-            createPolicy("2", PredefinedPolicyType::DENY),
-            createPolicy("3", PredefinedPolicyType::DENY)
-        }),
-        BucketPolicyPair(testBucket2, {
-            createPolicy("4", PredefinedPolicyType::ALLOW),
-            createPolicy("5", PredefinedPolicyType::ALLOW)
-        })
-    };
-
-    for (const auto &group : policiesToInsert) {
-        const auto &bucketId = group.first;
-        const auto &policies = group.second;
-
-        for (const auto &policy : policies) {
-            PolicyBucket searchResult(PolicyCollection { std::make_shared<Policy>(policy) });
-            EXPECT_CALL(backend, searchBucket(bucketId, policy.key()))
-                .WillOnce(Return(searchResult));
-            EXPECT_CALL(backend, deletePolicy(bucketId, policy.key()));
             EXPECT_CALL(backend, insertPolicy(bucketId, Pointee(policy)));
         }
     }

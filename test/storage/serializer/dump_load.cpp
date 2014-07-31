@@ -59,7 +59,8 @@ TEST(dump_load, bucket) {
 
     BucketDeserializer deserializer(ioStream);
     const auto loadedPolicies = deserializer.loadPolicies();
-    const auto &expectedPolicies = bucket.policyCollection();
+    PolicyCollection expectedPolicies;
+    std::copy(bucket.begin(), bucket.end(), std::back_inserter(expectedPolicies));
 
     ASSERT_THAT(loadedPolicies, UnorderedElementsAre(
         PolicyAtPtrEq(expectedPolicies.at(0)),

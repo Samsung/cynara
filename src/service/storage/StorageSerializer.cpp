@@ -65,9 +65,7 @@ void StorageSerializer::dump(const Buckets &buckets,
 }
 
 void StorageSerializer::dump(const PolicyBucket& bucket) {
-    const auto &policies = bucket.policyCollection();
-
-    for (auto it = std::begin(policies); it != std::end(policies); ++it) {
+    for (auto it = std::begin(bucket); it != std::end(bucket); ++it) {
         const auto &policy = *it;
         dump(policy);
     }

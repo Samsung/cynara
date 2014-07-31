@@ -20,17 +20,17 @@
  * @brief       Tests of InMemeoryStorageBackend
  */
 
-#include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include <gtest/gtest.h>
 
-#include "types/PolicyType.h"
-#include "types/PolicyKey.h"
-#include "types/PolicyResult.h"
-#include "types/PolicyCollection.h"
 #include "exceptions/DefaultBucketDeletionException.h"
 #include "exceptions/BucketNotExistsException.h"
-#include "storage/StorageBackend.h"
 #include "storage/InMemoryStorageBackend.h"
+#include "storage/StorageBackend.h"
+#include "types/PolicyCollection.h"
+#include "types/PolicyKey.h"
+#include "types/PolicyResult.h"
+#include "types/PolicyType.h"
 
 #include "../../helpers.h"
 #include "fakeinmemorystoragebackend.h"
@@ -54,6 +54,7 @@ TEST_F(InMemeoryStorageBackendFixture, defaultPolicyIsDeny) {
     ASSERT_EQ(PredefinedPolicyType::DENY, defaultPolicy.policyType());
 }
 
+// TODO: Refactorize this test to be shorter and clearer
 TEST_F(InMemeoryStorageBackendFixture, deleteLinking) {
     using ::testing::ReturnRef;
     using ::testing::IsEmpty;
@@ -102,17 +103,17 @@ TEST_F(InMemeoryStorageBackendFixture, deleteLinking) {
     // Should delete 1st and 2nd policy from 1st bucket
     backend.deleteLinking(testBucket2);
 
-    ASSERT_THAT(m_buckets.at(testBucket1).policyCollection(),
+    ASSERT_THAT(m_buckets.at(testBucket1),
             UnorderedElementsAre(policiesToStay.at(0)));
-    ASSERT_THAT(m_buckets.at(testBucket2).policyCollection(),
+    ASSERT_THAT(m_buckets.at(testBucket2),
             UnorderedElementsAre(policiesToStay.at(1), policiesToStay.at(2)));
-    ASSERT_THAT(m_buckets.at(testBucket3).policyCollection(), IsEmpty());
+    ASSERT_THAT(m_buckets.at(testBucket3), IsEmpty());
 }
 
 TEST_F(InMemeoryStorageBackendFixture, insertPolicy) {
     using ::testing::ReturnRef;
-    using ::testing::IsEmpty;
     using ::testing::UnorderedElementsAre;
+    using PredefinedPolicyType::ALLOW;
 
     FakeInMemoryStorageBackend backend;
     EXPECT_CALL(backend, buckets())
@@ -121,16 +122,14 @@ TEST_F(InMemeoryStorageBackendFixture, insertPolicy) {
     PolicyBucketId bucketId = "test-bucket";
     createBucket(bucketId);
 
-    auto policyToAdd = Policy::simpleWithKey(Helpers::generatePolicyKey(), PredefinedPolicyType::ALLOW);
+    auto policyToAdd = Policy::simpleWithKey(Helpers::generatePolicyKey(), ALLOW);
     backend.insertPolicy(bucketId, policyToAdd);
 
-    ASSERT_THAT(m_buckets.at(bucketId).policyCollection(), UnorderedElementsAre(policyToAdd));
+    ASSERT_THAT(m_buckets.at(bucketId), UnorderedElementsAre(policyToAdd));
 }
 
 TEST_F(InMemeoryStorageBackendFixture, insertPolicyToNonexistentBucket) {
     using ::testing::ReturnRef;
-    using ::testing::IsEmpty;
-    using ::testing::UnorderedElementsAre;
 
     FakeInMemoryStorageBackend backend;
     EXPECT_CALL(backend, buckets())
@@ -143,7 +142,9 @@ TEST_F(InMemeoryStorageBackendFixture, deletePolicy) {
     using ::testing::ReturnRef;
     using ::testing::IsEmpty;
     using ::testing::UnorderedElementsAre;
+    using ::testing::UnorderedElementsAreArray;
     using ::testing::ContainerEq;
+    using PredefinedPolicyType::ALLOW;
 
     FakeInMemoryStorageBackend backend;
     EXPECT_CALL(backend, buckets())
@@ -152,12 +153,12 @@ TEST_F(InMemeoryStorageBackendFixture, deletePolicy) {
     PolicyBucketId bucketId = "test-bucket";
     createBucket(bucketId);
 
-    auto policyToDelete = Policy::simpleWithKey(Helpers::generatePolicyKey(), PredefinedPolicyType::ALLOW);
+    auto policyToDelete = Policy::simpleWithKey(Helpers::generatePolicyKey(), ALLOW);
 
     PolicyCollection otherPolicies = {
-        Policy::simpleWithKey(Helpers::generatePolicyKey("other-policy-1"), PredefinedPolicyType::ALLOW),
-        Policy::simpleWithKey(Helpers::generatePolicyKey("other-policy-2"), PredefinedPolicyType::ALLOW),
-        Policy::simpleWithKey(Helpers::generatePolicyKey("other-policy-3"), PredefinedPolicyType::ALLOW),
+        Policy::simpleWithKey(Helpers::generatePolicyKey("other-policy-1"), ALLOW),
+        Policy::simpleWithKey(Helpers::generatePolicyKey("other-policy-2"), ALLOW),
+        Policy::simpleWithKey(Helpers::generatePolicyKey("other-policy-3"), ALLOW),
     };
 
     addToBucket(bucketId, {
@@ -170,7 +171,7 @@ TEST_F(InMemeoryStorageBackendFixture, deletePolicy) {
     backend.deletePolicy(bucketId, policyToDelete->key());
 
     // Check if only policyToDelete has been deleted
-    EXPECT_THAT(m_buckets.at(bucketId).policyCollection(), ContainerEq(otherPolicies));
+    EXPECT_THAT(m_buckets.at(bucketId), UnorderedElementsAreArray(otherPolicies));
 }
 
 TEST_F(InMemeoryStorageBackendFixture, deletePolicyFromNonexistentBucket) {
@@ -182,5 +183,6 @@ TEST_F(InMemeoryStorageBackendFixture, deletePolicyFromNonexistentBucket) {
     EXPECT_CALL(backend, buckets())
         .WillOnce(ReturnRef(m_buckets));
 
-    EXPECT_THROW(backend.deletePolicy("non-existent", Helpers::generatePolicyKey()), BucketNotExistsException);
+    EXPECT_THROW(backend.deletePolicy("non-existent", Helpers::generatePolicyKey()),
+                 BucketNotExistsException);
 }

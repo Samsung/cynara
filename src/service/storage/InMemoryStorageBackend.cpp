@@ -108,8 +108,7 @@ PolicyBucket InMemoryStorageBackend::searchBucket(const PolicyBucketId &bucketId
 void InMemoryStorageBackend::insertPolicy(const PolicyBucketId &bucketId, PolicyPtr policy) {
     try {
         auto &bucket = buckets().at(bucketId);
-        auto &policies = bucket.policyCollection();
-        policies.push_back(policy);
+        bucket.insertPolicy(policy);
     } catch (const std::out_of_range &) {
         throw BucketNotExistsException(bucketId);
     }
@@ -147,11 +146,7 @@ void InMemoryStorageBackend::deletePolicy(const PolicyBucketId &bucketId, const 
     try {
         // TODO: Move the erase code to PolicyCollection maybe?
         auto &bucket = buckets().at(bucketId);
-        auto &policies = bucket.policyCollection();
-        policies.erase(remove_if(policies.begin(), policies.end(),
-                [key](PolicyPtr policy) -> bool {
-                    return policy->key() == key;
-            }), policies.end());
+        bucket.deletePolicy(key);
     } catch (const std::out_of_range &) {
         throw BucketNotExistsException(bucketId);
     }
@@ -170,11 +165,8 @@ void InMemoryStorageBackend::deleteLinking(const PolicyBucketId &bucketId) {
     };
 
     for (auto &bucketIter : buckets()) {
-        // TODO: Move the erase code to PolicyCollection maybe?
         auto &bucket = bucketIter.second;
-        auto &policies = bucket.policyCollection();
-        policies.erase(remove_if(policies.begin(), policies.end(), bucketIdMatches),
-                policies.end());
+        bucket.deletePolicy(bucketIdMatches);
     }
 }
 

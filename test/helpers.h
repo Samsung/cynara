@@ -23,16 +23,30 @@
 #ifndef HELPERS_H
 #define HELPERS_H
 
+#include <vector>
+
 #include "types/PolicyKey.h"
 #include "types/PolicyBucketId.h"
 
 namespace Cynara {
+
 namespace Helpers {
 
 PolicyKey generatePolicyKey(const PolicyKeyFeature::ValueType &sufix = "");
 PolicyBucketId generateBucketId(const PolicyBucketId &sufix = "");
 
+template <class Collection>
+Collection pickFromCollection(const Collection &original, const std::vector<unsigned> &idx) {
+    Collection filtered;
+    filtered.reserve(idx.size());
+    for (const auto &i : idx) {
+        filtered.push_back(original.at(i));
+    }
+    return filtered;
+}
+
 } // namespace Helpers
+
 } // namespace Cynara
 
 #endif // HELPERS_H

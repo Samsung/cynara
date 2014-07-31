@@ -39,9 +39,17 @@ protected:
         return m_buckets.insert({ bucketId, bucket }).first->second;
     }
 
+    Cynara::Buckets::mapped_type &
+    createBucket(const Cynara::PolicyBucketId &bucketId, const Cynara::PolicyCollection &policies) {
+        auto bucket = Cynara::PolicyBucket(policies);
+        return m_buckets.insert({ bucketId, bucket }).first->second;
+    }
+
     void addToBucket(Cynara::PolicyBucketId bucketId, const Cynara::PolicyCollection &policies) {
-        std::copy(policies.begin(), policies.end(),
-                std::back_inserter(m_buckets[bucketId].policyCollection()));
+        // TODO: Consider altering PolicyMap directly
+        for (const auto &policy : policies) {
+            m_buckets[bucketId].insertPolicy(policy);
+        }
     }
 
     virtual ~InMemeoryStorageBackendFixture() {}

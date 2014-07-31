@@ -67,7 +67,10 @@ void StorageDeserializer::loadBuckets(Buckets &buckets) {
 
         auto bucketDeserializer = m_bucketStreamOpener(bucketId);
         if (bucketDeserializer != nullptr) {
-            bucket.setPolicyCollection(bucketDeserializer->loadPolicies());
+            const auto policies = bucketDeserializer->loadPolicies();
+            for (const auto policy : policies) {
+                bucket.insertPolicy(policy);
+            }
         } else {
             throw BucketDeserializationException(bucketId);
         }

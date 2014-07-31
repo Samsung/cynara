@@ -147,7 +147,7 @@ TEST_F(StorageDeserializerFixture, load_buckets_plus_policies) {
     ));
 
     // Check policy was inserted into bucket
-    ASSERT_THAT(buckets.at("").policyCollection(), UnorderedElementsAre(
+    ASSERT_THAT(buckets.at(""), UnorderedElementsAre(
        Pointee(Policy(PolicyKey("c", "u", "p"), PolicyResult(PredefinedPolicyType::DENY, "meta")))
    ));
 }

@@ -20,6 +20,10 @@
  * @brief       Implementation of Cynara::PolicyBucket methods
  */
 
+#include <sstream>
+
+#include <types/PolicyCollection.h>
+#include <types/PolicyKeyHelpers.h>
 
 #include "PolicyBucket.h"
 
@@ -28,14 +32,49 @@ namespace Cynara {
 PolicyBucket PolicyBucket::filtered(const PolicyKey &key) const {
     PolicyBucket result;
 
-    const auto &policies = policyCollection();
-    std::copy_if(policies.begin(), policies.end(), std::back_inserter(result.policyCollection()),
-        [=] (PolicyCollection::value_type policy) {
-            return policy->key() == key;
-    });
+    const auto &policies = m_policyCollection;
+    const auto variants = PolicyKeyHelpers::keyVariants(key);
+
+    for (const auto &variant : variants) {
+        const auto policyIter = policies.find(variant);
+        if (policyIter != policies.end()) {
+            result.m_policyCollection[policyIter->first] = policyIter->second;
+        }
+    }
 
     // Inherit original policy
     result.setDefaultPolicy(defaultPolicy());
+    return result;
+}
+
+void PolicyBucket::insertPolicy(PolicyPtr policy) {
+    const auto gluedKey = PolicyKeyHelpers::glueKey(policy->key());
+    m_policyCollection[gluedKey] = policy;
+}
+
+void PolicyBucket::deletePolicy(const PolicyKey &key) {
+    const auto gluedKey = PolicyKeyHelpers::glueKey(key);
+    m_policyCollection.erase(gluedKey);
+}
+
+void PolicyBucket::deletePolicy(std::function<bool(PolicyPtr)> predicate) {
+    auto &policies = m_policyCollection;
+
+    for (auto iter = policies.begin(); iter != policies.end(); ) {
+        if (predicate(iter->second)) {
+            policies.erase(iter++);
+        } else {
+            ++iter;
+        }
+    }
+}
+
+PolicyMap PolicyBucket::makePolicyMap(const PolicyCollection &policies) {
+    PolicyMap result;
+    for (const auto &policy : policies) {
+        const auto gluedKey = PolicyKeyHelpers::glueKey(policy->key());
+        result[gluedKey] = policy;
+    }
     return result;
 }
 

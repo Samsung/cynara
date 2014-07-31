@@ -73,11 +73,11 @@ TEST(storage, checkSimple) {
     ASSERT_EQ(PredefinedPolicyType::DENY, storage.checkPolicy(pk).policyType());
 
     // Add ALLOW to default bucket -- return ALLOW
-    bucket.policyCollection().push_back(Policy::simpleWithKey(pk, PredefinedPolicyType::ALLOW));
+    bucket.insertPolicy(Policy::simpleWithKey(pk, PredefinedPolicyType::ALLOW));
     ASSERT_EQ(PredefinedPolicyType::ALLOW, storage.checkPolicy(pk).policyType());
 
     // Add DENY to default bucket -- return DENY
-    bucket.policyCollection().push_back(Policy::simpleWithKey(pk, PredefinedPolicyType::DENY));
+    bucket.insertPolicy(Policy::simpleWithKey(pk, PredefinedPolicyType::DENY));
     ASSERT_EQ(PredefinedPolicyType::DENY, storage.checkPolicy(pk).policyType());
 }
 
@@ -111,11 +111,11 @@ TEST(storage, checkBucket) {
     ASSERT_EQ(PredefinedPolicyType::DENY, storage.checkPolicy(pk).policyType());
 
     // Add ALLOW to bucket, so return ALLOW
-    additionalBucket.policyCollection().push_back(Policy::simpleWithKey(pk, PredefinedPolicyType::ALLOW));
+    additionalBucket.insertPolicy(Policy::simpleWithKey(pk, PredefinedPolicyType::ALLOW));
     ASSERT_EQ(PredefinedPolicyType::ALLOW, storage.checkPolicy(pk).policyType());
 
     // Add DENY to default bucket -- return DENY, even though ALLOW in other bucket
-    defaultBucket.policyCollection().push_back(Policy::simpleWithKey(pk, PredefinedPolicyType::DENY));
+    defaultBucket.insertPolicy(Policy::simpleWithKey(pk, PredefinedPolicyType::DENY));
     ASSERT_EQ(PredefinedPolicyType::DENY, storage.checkPolicy(pk).policyType());
 }
 

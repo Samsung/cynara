@@ -46,8 +46,6 @@ PolicyResult Storage::minimalPolicy(const PolicyBucket &bucket, const PolicyKey 
     bool hasMinimal = false;
     PolicyResult minimal = bucket.defaultPolicy();
 
-    const auto &policies = bucket.policyCollection();
-
     auto proposeMinimal = [&minimal, &hasMinimal](const PolicyResult &candidate) {
         if (hasMinimal == false) {
             minimal = candidate;
@@ -57,8 +55,8 @@ PolicyResult Storage::minimalPolicy(const PolicyBucket &bucket, const PolicyKey 
         hasMinimal = true;
     };
 
-    for (const auto &policyRecord : policies) {
-        const auto &policyResult = policyRecord->result();
+    for (const auto policy : bucket) {
+        const auto &policyResult = policy->result();
 
         switch (policyResult.policyType()) {
             case PredefinedPolicyType::DENY:
@@ -85,10 +83,6 @@ void Storage::insertPolicies(const std::map<PolicyBucketId, std::vector<Policy>>
         const PolicyBucketId &bucketId = group.first;
         const auto &policies = group.second;
         for (const auto &policy : policies) {
-            auto existingPolicies = m_backend.searchBucket(bucketId, policy.key());
-            for (auto existingPolicy : existingPolicies.policyCollection()) {
-                m_backend.deletePolicy(bucketId, existingPolicy->key());
-            }
             m_backend.insertPolicy(bucketId, std::make_shared<Policy>(policy));
         }
     }

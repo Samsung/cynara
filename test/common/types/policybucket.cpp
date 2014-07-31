@@ -20,17 +20,18 @@
  * @brief       Tests for Cynara::PolicyBucket
  */
 
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
-
-#include "types/PolicyBucket.h"
-#include "types/PolicyKey.h"
-#include "types/PolicyCollection.h"
-
-#include "../../helpers.h"
-
 #include <algorithm>
 #include <tuple>
+#include <vector>
+
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
+
+#include "types/PolicyBucket.h"
+#include "types/PolicyCollection.h"
+#include "types/PolicyKey.h"
+
+#include "../../helpers.h"
 
 using namespace Cynara;
 
@@ -56,45 +57,23 @@ protected:
         Policy::simpleWithKey(PolicyKey("*", "*", "p1"), PredefinedPolicyType::ALLOW),
         Policy::simpleWithKey(PolicyKey("*", "*", "*"), PredefinedPolicyType::ALLOW)
     };
-
-    PolicyCollection filterHelper(const PolicyCollection &original,
-            std::function<bool(const PolicyCollection::value_type &)> pred) {
-        PolicyCollection filtered(original.size());
-        auto endIt = std::copy_if(std::begin(original), std::end(original),
-            std::begin(filtered), pred);
-        filtered.resize(std::distance(std::begin(filtered), endIt));
-        return filtered;
-    }
-
-    PolicyCollection filterHelper(const PolicyCollection &original, std::vector<unsigned> idx) {
-        PolicyCollection filtered;
-        filtered.reserve(idx.size());
-        for (const auto &i : idx) {
-            filtered.push_back(original.at(i));
-        }
-        return filtered;
-    }
 };
 
 TEST_F(PolicyBucketFixture, filtered) {
-    using ::testing::UnorderedElementsAreArray;
     using ::testing::UnorderedElementsAre;
-    using ::testing::IsEmpty;
 
     PolicyBucket bucket(pkPolicies);
     bucket.setDefaultPolicy(PredefinedPolicyType::DENY);
     auto filtered = bucket.filtered(pk1);
 
     // Elements match
-    ASSERT_THAT(filtered.policyCollection(), UnorderedElementsAre(pkPolicies.at(0)));
+    ASSERT_THAT(filtered, UnorderedElementsAre(pkPolicies.at(0)));
 
     // default policy matches
     ASSERT_EQ(PredefinedPolicyType::DENY, filtered.defaultPolicy());
 }
 
 TEST_F(PolicyBucketFixture, filtered_other) {
-    using ::testing::UnorderedElementsAreArray;
-    using ::testing::UnorderedElementsAre;
     using ::testing::IsEmpty;
 
     PolicyBucket bucket(pkPolicies);
@@ -102,7 +81,7 @@ TEST_F(PolicyBucketFixture, filtered_other) {
     auto filtered = bucket.filtered(otherPk);
 
     // No policies should be found
-    ASSERT_THAT(filtered.policyCollection(), IsEmpty());
+    ASSERT_THAT(filtered, IsEmpty());
 
     // default policy should be preserved
     ASSERT_EQ(PredefinedPolicyType::DENY, filtered.defaultPolicy());
@@ -112,45 +91,45 @@ TEST_F(PolicyBucketFixture, filtered_wildcard_1) {
     using ::testing::UnorderedElementsAreArray;
 
     // Leave policies with given client, given user and any privilege
-    auto policiesToStay = filterHelper(wildcardPolicies, { 0, 1, 3 });
+    auto policiesToStay = Helpers::pickFromCollection(wildcardPolicies, { 0, 1, 3 });
 
     PolicyBucket bucket(wildcardPolicies);
     auto filtered = bucket.filtered(PolicyKey("c1", "u1", "p2"));
-    ASSERT_THAT(filtered.policyCollection(), UnorderedElementsAreArray(policiesToStay));
+    ASSERT_THAT(filtered, UnorderedElementsAreArray(policiesToStay));
 }
 
 TEST_F(PolicyBucketFixture, filtered_wildcard_2) {
     using ::testing::UnorderedElementsAreArray;
 
     // Leave policies with given client, given user and any privilege
-    auto policiesToStay = filterHelper(wildcardPolicies, std::vector<unsigned>{ 2, 3 });
+    auto policiesToStay = Helpers::pickFromCollection(wildcardPolicies, { 2, 3 });
 
     PolicyBucket bucket(wildcardPolicies);
     auto filtered = bucket.filtered(PolicyKey("cccc", "u1", "p1"));
 
-    ASSERT_THAT(filtered.policyCollection(), UnorderedElementsAreArray(policiesToStay));
+    ASSERT_THAT(filtered, UnorderedElementsAreArray(policiesToStay));
 }
 
 TEST_F(PolicyBucketFixture, filtered_wildcard_3) {
     using ::testing::UnorderedElementsAreArray;
 
     // Leave policies with given client, given user and any privilege
-    auto policiesToStay = filterHelper(wildcardPolicies, std::vector<unsigned>{ 0, 3 });
+    auto policiesToStay = Helpers::pickFromCollection(wildcardPolicies, { 0, 3 });
 
     PolicyBucket bucket(wildcardPolicies);
     auto filtered = bucket.filtered(PolicyKey("c1", "u1", "pppp"));
-    ASSERT_THAT(filtered.policyCollection(), UnorderedElementsAreArray(policiesToStay));
+    ASSERT_THAT(filtered, UnorderedElementsAreArray(policiesToStay));
 }
 
 TEST_F(PolicyBucketFixture, filtered_wildcard_4) {
     using ::testing::UnorderedElementsAreArray;
 
     // Leave policies with given client, given user and any privilege
-    auto policiesToStay = filterHelper(wildcardPolicies, std::vector<unsigned>{ 3 });
+    auto policiesToStay = Helpers::pickFromCollection(wildcardPolicies, { 3 });
 
     PolicyBucket bucket(wildcardPolicies);
     auto filtered = bucket.filtered(PolicyKey("cccc", "uuuu", "pppp"));
-    ASSERT_THAT(filtered.policyCollection(), UnorderedElementsAreArray(policiesToStay));
+    ASSERT_THAT(filtered, UnorderedElementsAreArray(policiesToStay));
 }
 
 TEST_F(PolicyBucketFixture, filtered_wildcard_none) {
@@ -158,5 +137,5 @@ TEST_F(PolicyBucketFixture, filtered_wildcard_none) {
 
     PolicyBucket bucket({ wildcardPolicies.begin(), wildcardPolicies.begin() + 3 });
     auto filtered = bucket.filtered(PolicyKey("cccc", "uuuu", "pppp"));
-    ASSERT_THAT(filtered.policyCollection(), IsEmpty());
+    ASSERT_THAT(filtered, IsEmpty());
 }

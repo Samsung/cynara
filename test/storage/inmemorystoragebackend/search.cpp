@@ -20,52 +20,46 @@
  * @brief       Tests of search in InMemeoryStorageBackend
  */
 
+#include <memory>
+
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-
-#include "inmemeorystoragebackendfixture.h"
-#include "fakeinmemorystoragebackend.h"
 
 #include "types/PolicyBucket.h"
 
 #include "../../helpers.h"
-
-#include <memory>
+#include "fakeinmemorystoragebackend.h"
+#include "inmemeorystoragebackendfixture.h"
 
 using namespace Cynara;
 
 TEST_F(InMemeoryStorageBackendFixture, searchDefault) {
     using ::testing::ReturnRef;
-    using ::testing::UnorderedElementsAre;
+    using ::testing::UnorderedElementsAreArray;
     using ::testing::IsEmpty;
 
     auto pk1 = Helpers::generatePolicyKey("1");
     auto pk2 = Helpers::generatePolicyKey("2");
+    auto pk3 = PolicyKey(PolicyKeyFeature::createWildcard(), pk1.user(), pk1.privilege());
     auto otherPk = Helpers::generatePolicyKey("-");
 
-    const auto &defaultBucket = createBucket(defaultPolicyBucketId);
-
-    addToBucket(defaultPolicyBucketId, {
+    PolicyCollection policies = {
        Policy::simpleWithKey(pk1, PredefinedPolicyType::ALLOW),
        Policy::simpleWithKey(pk2, PredefinedPolicyType::DENY),
-       Policy::simpleWithKey(pk1, PredefinedPolicyType::DENY),
-    });
+       Policy::simpleWithKey(pk3, PredefinedPolicyType::DENY),
+    };
+
+    createBucket(defaultPolicyBucketId, policies);
 
     // Just override buckets() accessor
     FakeInMemoryStorageBackend backend;
     EXPECT_CALL(backend, buckets())
         .WillRepeatedly(ReturnRef(m_buckets));
 
-    auto searchDefaultBucket = [&backend](const PolicyKey &key) -> PolicyCollection {
-        return backend.searchDefaultBucket(key).policyCollection();
-    };
+    auto policiesToStay1 = Helpers::pickFromCollection(policies, { 0, 2 });
+    auto policiesToStay2 = Helpers::pickFromCollection(policies, { 1 });
 
-    auto defaultPolicyAt = [&defaultBucket] (PolicyCollection::size_type idx) {
-        return defaultBucket.policyCollection().at(idx);
-    };
-
-    ASSERT_THAT(searchDefaultBucket(pk1),
-            UnorderedElementsAre(defaultPolicyAt(0),defaultPolicyAt(2)));
-    ASSERT_THAT(searchDefaultBucket(pk2), UnorderedElementsAre(defaultPolicyAt(1)));
-    ASSERT_THAT(searchDefaultBucket(otherPk), IsEmpty());
+    ASSERT_THAT(backend.searchDefaultBucket(pk1), UnorderedElementsAreArray(policiesToStay1));
+    ASSERT_THAT(backend.searchDefaultBucket(pk2), UnorderedElementsAreArray(policiesToStay2));
+    ASSERT_THAT(backend.searchDefaultBucket(otherPk), IsEmpty());
 }

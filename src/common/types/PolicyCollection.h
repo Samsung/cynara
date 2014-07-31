@@ -21,17 +21,31 @@
  * @brief       This file defines a collection of policies
  */
 
-#ifndef CYNARA_COMMON_TYPES_POLICYCOLLECTION_H
-#define CYNARA_COMMON_TYPES_POLICYCOLLECTION_H
+#ifndef SRC_COMMON_TYPES_POLICYCOLLECTION_H_
+#define SRC_COMMON_TYPES_POLICYCOLLECTION_H_
+
+#include <unordered_map>
+#include <vector>
 
 #include "types/pointers.h"
-
-#include <vector>
 
 namespace Cynara {
 
 typedef std::vector<PolicyPtr> PolicyCollection;
+typedef std::unordered_map<std::string, PolicyPtr> PolicyMap;
+
+class const_policy_iterator : public PolicyMap::const_iterator
+{
+  public:
+    const_policy_iterator() : PolicyMap::const_iterator() {};
+    const_policy_iterator(const PolicyMap::const_iterator &other)
+        : PolicyMap::const_iterator(other) {};
+
+    PolicyPtr operator*(void) {
+        return PolicyMap::const_iterator::operator*().second;
+    }
+};
 
 } // namespace Cynara
 
-#endif /* CYNARA_COMMON_TYPES_POLICYCOLLECTION_H     */
+#endif /* SRC_COMMON_TYPES_POLICYCOLLECTION_H_     */

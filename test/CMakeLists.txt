@@ -50,6 +50,7 @@ SET(CYNARA_SRC ${PROJECT_SOURCE_DIR}/../src)
 SET(CYNARA_SOURCES_FOR_TESTS
     ${CYNARA_SRC}/service/storage/Storage.cpp
     ${CYNARA_SRC}/common/types/PolicyBucket.cpp
+    ${CYNARA_SRC}/common/types/PolicyKeyHelpers.cpp
     ${CYNARA_SRC}/service/storage/InMemoryStorageBackend.cpp
     ${CYNARA_SRC}/service/storage/BucketDeserializer.cpp
     ${CYNARA_SRC}/service/storage/StorageDeserializer.cpp

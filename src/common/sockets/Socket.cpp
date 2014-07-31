@@ -203,7 +203,7 @@ bool Socket::sendToServer(BinaryQueue &queue) {
     return true;
 }
 
-bool Socket::receiveFromServer(BinaryQueue &queue)
+bool Socket::waitAndReceiveFromServer(BinaryQueue &queue)
 {
     if (!waitForSocket(POLLIN)) {
         LOGE("Error in poll(POLLIN)");
@@ -215,6 +215,30 @@ bool Socket::receiveFromServer(BinaryQueue &queue)
 
     if (size == -1) {
         int err = errno;
+        LOGE("'read' function error [%d] : <%s>", err, strerror(err));
+        throw UnexpectedErrorException(err, strerror(err));
+    }
+
+    if (size == 0) {
+        LOGW("read return 0 / Connection closed by server.");
+        return false;
+    }
+    queue.appendCopy(readBuffer.data(), size);
+
+    return true;
+}
+
+bool Socket::receiveFromServer(BinaryQueue &queue)
+{
+    RawBuffer readBuffer(BUFSIZ);
+    ssize_t size = TEMP_FAILURE_RETRY(read(m_sock, readBuffer.data(), BUFSIZ));
+
+    if (size == -1) {
+        int err = errno;
+        if (err == EAGAIN) {
+            LOGD("is connected, but no data available");
+            return true;
+        }
         LOGE("'read' function error [%d] : <%s>", err, strerror(err));
         throw UnexpectedErrorException(err, strerror(err));
     }

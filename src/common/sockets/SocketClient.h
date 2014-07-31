@@ -51,6 +51,8 @@ public:
     //returns pointer to response
     //        or nullptr when connection to cynara service is lost
     ResponsePtr askCynaraServer(RequestPtr request);
+
+    bool isConnected(void);
 };
 
 } // namespace Cynara

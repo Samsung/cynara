@@ -52,7 +52,7 @@ ResponsePtr SocketClient::askCynaraServer(RequestPtr request) {
 
     // receive response from cynara
     while (true) {
-        if (!m_socket.receiveFromServer(m_readQueue)) {
+        if (!m_socket.waitAndReceiveFromServer(m_readQueue)) {
             LOGW("Error receiving response from Cynara. Service not available.");
             return nullptr;
         }
@@ -61,6 +61,10 @@ ResponsePtr SocketClient::askCynaraServer(RequestPtr request) {
             return response;
         }
     }
+}
+
+bool SocketClient::isConnected(void) {
+    return m_socket.isConnected() && m_socket.receiveFromServer(m_readQueue);
 }
 
 } // namespace Cynara

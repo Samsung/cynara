@@ -38,10 +38,8 @@ namespace Cynara {
 const std::string clientSocketPath("/run/cynara/cynara.socket");
 
 Logic::Logic() {
-    m_cache = std::make_shared<CapacityCache>(
-                 std::make_shared<PolicyGetter>(
-                    std::make_shared<SocketClient>(clientSocketPath,
-                       std::make_shared<ProtocolClient>())));
+    m_socket = std::make_shared<SocketClient>(clientSocketPath, std::make_shared<ProtocolClient>());
+    m_cache = std::make_shared<CapacityCache>(std::make_shared<PolicyGetter>(m_socket));
     auto naiveInterpreter = std::make_shared<NaiveInterpreter>();
     m_cache->registerPlugin(PredefinedPolicyType::ALLOW, naiveInterpreter);
     m_cache->registerPlugin(PredefinedPolicyType::DENY, naiveInterpreter);
@@ -52,6 +50,9 @@ int Logic::check(const std::string &client, const std::string &session, const st
                  const std::string &privilege) noexcept
 {
     PolicyKey key(client, user, privilege);
+
+    if (!m_socket->isConnected())
+        onDisconnected();
 
     auto ret = m_cache->get(session, key);
     if (ret == CYNARA_API_SERVICE_NOT_AVAILABLE)

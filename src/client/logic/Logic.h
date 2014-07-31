@@ -25,6 +25,8 @@
 
 #include <string>
 
+#include <sockets/SocketClient.h>
+
 #include <api/ApiInterface.h>
 #include <cache/CacheInterface.h>
 
@@ -33,6 +35,7 @@ namespace Cynara {
 class Logic : public ApiInterface {
 private:
     PluginCachePtr m_cache;
+    SocketClientPtr m_socket;
 
     void onDisconnected(void);
 

@@ -71,6 +71,11 @@ public:
     //returns false                             if connection was lost
     //throws ServerConnectionErrorException     if cannot connect server (or timeout)
     //throws other exceptions                   in critical situations
+    bool waitAndReceiveFromServer(BinaryQueue &queue);
+
+    //returns true                              if data was successfully read from server
+    //returns false                             if connection was lost
+    //throws other exceptions                   in critical situations
     bool receiveFromServer(BinaryQueue &queue);
 };
 

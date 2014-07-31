@@ -37,6 +37,7 @@ class Descriptor {
 private:
     bool m_listen;
     bool m_used;
+    bool m_client;
 
     BinaryQueue m_readQueue;
     BinaryQueue m_writeQueue;
@@ -53,6 +54,10 @@ public:
 
     bool isUsed(void) const {
         return m_used;
+    }
+
+    bool isClient(void) const {
+        return m_client;
     }
 
     bool hasDataToWrite(void) const;
@@ -77,6 +82,10 @@ public:
 
     void setUsed(bool used) {
         m_used = used;
+    }
+
+    void setClient(bool client) {
+        m_client = client;
     }
 
     void pushReadBuffer(const RawBuffer &readbuffer);

@@ -54,6 +54,8 @@ public:
         m_logic.reset();
     }
 
+    void disconnectAllClients(void);
+
 private:
     LogicPtr m_logic;
 
@@ -75,12 +77,13 @@ private:
     void closeSocket(int fd);
     bool handleRead(int fd, const RawBuffer &readbuffer);
 
-    void createDomainSocket(ProtocolPtr protocol, const std::string &path, mode_t mask);
+    void createDomainSocket(ProtocolPtr protocol, const std::string &path, mode_t mask,
+                            bool client);
     static int createDomainSocketHelp(const std::string &path, mode_t mask);
     static int getSocketFromSystemD(const std::string &path);
     void createSignalSocket(ProtocolPtr protocol);
 
-    Descriptor &createDescriptor(int fd);
+    Descriptor &createDescriptor(int fd, bool client);
 
     void addReadSocket(int fd);
     void removeReadSocket(int fd);

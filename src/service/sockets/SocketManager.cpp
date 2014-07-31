@@ -74,8 +74,9 @@ void SocketManager::init(void) {
     const mode_t clientSocketUMask(0);
     const mode_t adminSocketUMask(0077);
 
-    createDomainSocket(std::make_shared<ProtocolClient>(), clientSocketPath, clientSocketUMask);
-    createDomainSocket(std::make_shared<ProtocolAdmin>(), adminSocketPath, adminSocketUMask);
+    createDomainSocket(std::make_shared<ProtocolClient>(), clientSocketPath, clientSocketUMask,
+                       true);
+    createDomainSocket(std::make_shared<ProtocolAdmin>(), adminSocketPath, adminSocketUMask, false);
     createSignalSocket(std::make_shared<ProtocolSignal>());
     LOGI("SocketManger init done");
 }
@@ -192,18 +193,18 @@ void SocketManager::readyForAccept(int fd) {
     LOGD("SocketManger readyForAccept on fd [%d] start", fd);
     struct sockaddr_un clientAddr;
     unsigned int clientLen = sizeof(clientAddr);
-    int client = accept4(fd, (struct sockaddr*) &clientAddr, &clientLen, SOCK_NONBLOCK);
-    if (client == -1) {
+    int clientFd = accept4(fd, (struct sockaddr*) &clientAddr, &clientLen, SOCK_NONBLOCK);
+    if (clientFd == -1) {
         int err = errno;
         LOGW("Error in accept on socket [%d]: <%s>", fd, strerror(err));
         return;
     }
-    LOGD("Accept on sock [%d]. New client socket opened [%d]", fd, client);
+    LOGD("Accept on sock [%d]. New client socket opened [%d]", fd, clientFd);
 
-    auto &desc = createDescriptor(client);
+    auto &desc = createDescriptor(clientFd, m_fds[fd].isClient());
     desc.setListen(false);
     desc.setProtocol(m_fds[fd].protocol()->clone());
-    addReadSocket(client);
+    addReadSocket(clientFd);
     LOGD("SocketManger readyForAccept on fd [%d] done", fd);
 }
 
@@ -243,12 +244,13 @@ bool SocketManager::handleRead(int fd, const RawBuffer &readbuffer) {
     return true;
 }
 
-void SocketManager::createDomainSocket(ProtocolPtr protocol, const std::string &path, mode_t mask) {
+void SocketManager::createDomainSocket(ProtocolPtr protocol, const std::string &path, mode_t mask,
+                                       bool client) {
     int fd = getSocketFromSystemD(path);
     if (fd == -1)
         fd = createDomainSocketHelp(path, mask);
 
-    auto &desc = createDescriptor(fd);
+    auto &desc = createDescriptor(fd, client);
     desc.setListen(true);
     desc.setProtocol(protocol);
     addReadSocket(fd);
@@ -349,7 +351,7 @@ void SocketManager::createSignalSocket(ProtocolPtr protocol) {
         return;
     }
 
-    auto &desc = createDescriptor(fd);
+    auto &desc = createDescriptor(fd, false);
     desc.setListen(false);
     desc.setProtocol(protocol);
     addReadSocket(fd);
@@ -357,7 +359,7 @@ void SocketManager::createSignalSocket(ProtocolPtr protocol) {
     LOGD("Signal socket: [%d] added.", fd);
 }
 
-Descriptor &SocketManager::createDescriptor(int fd) {
+Descriptor &SocketManager::createDescriptor(int fd, bool client) {
     if (fd > m_maxDesc) {
         m_maxDesc = fd;
         if (fd >= static_cast<int>(m_fds.size()))
@@ -365,6 +367,7 @@ Descriptor &SocketManager::createDescriptor(int fd) {
     }
     auto &desc = m_fds[fd];
     desc.setUsed(true);
+    desc.setClient(client);
     return desc;
 }
 
@@ -386,6 +389,14 @@ void SocketManager::removeWriteSocket(int fd) {
 
 RequestTakerPtr SocketManager::requestTaker(void) {
     return std::static_pointer_cast<RequestTaker>(m_logic);
+}
+
+void SocketManager::disconnectAllClients(void) {
+    for(int i = 0; i <= m_maxDesc; ++i) {
+        auto &desc = m_fds[i];
+        if(desc.isUsed() && desc.isClient() && !desc.isListen())
+            closeSocket(i);
+    }
 }
 
 } // namespace Cynara

@@ -24,7 +24,7 @@
 
 namespace Cynara {
 
-Descriptor::Descriptor() : m_listen(false), m_used(false), m_protocol(nullptr) {
+Descriptor::Descriptor() : m_listen(false), m_used(false), m_client(false), m_protocol(nullptr) {
 }
 
 bool Descriptor::hasDataToWrite(void) const {
@@ -56,6 +56,7 @@ RawBuffer &Descriptor::prepareWriteBuffer(void) {
 void Descriptor::clear(void) {
     m_listen = false;
     m_used = false;
+    m_client = false;
     m_readQueue.clear();
     m_writeQueue.clear();
     m_writeBuffer.clear();

@@ -25,7 +25,6 @@
 #include <common.h>
 
 #include <log/log.h>
-#include <system/signals.h>
 
 #include <cynara-client.h>
 #include <api/ApiInterface.h>
@@ -54,8 +53,6 @@ int cynara_initialize(cynara **pp_cynara, const cynara_configuration *p_conf UNU
     }
 
     init_log();
-
-    ignore_sigpipe();
 
     LOGD("Cynara client initialized");
 

@@ -27,7 +27,6 @@
 
 #include <common.h>
 #include <log/log.h>
-#include <system/signals.h>
 #include <types/Policy.h>
 #include <types/PolicyBucketId.h>
 #include <types/PolicyKey.h>
@@ -61,8 +60,6 @@ int cynara_admin_initialize(struct cynara_admin **pp_cynara_admin) {
     }
 
     init_log();
-
-    ignore_sigpipe();
 
     LOGD("Cynara admin initialized");
 

@@ -182,8 +182,8 @@ bool Socket::sendToServer(BinaryQueue &queue) {
                 LOGE("Error in poll(POLLOUT)");
                 throw ServerConnectionErrorException();
             }
-            ssize_t t = TEMP_FAILURE_RETRY(write(m_sock, buffer.data() + done,
-                                           buffer.size() - done));
+            ssize_t t = TEMP_FAILURE_RETRY(send(m_sock, buffer.data() + done,
+                                           buffer.size() - done, MSG_NOSIGNAL));
             if (t == -1) {
                 int err = errno;
                 if (err == EPIPE) {

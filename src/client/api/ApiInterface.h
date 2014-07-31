@@ -33,8 +33,8 @@ public:
     ApiInterface() = default;
     virtual ~ApiInterface() = default;
 
-    virtual cynara_api_result check(const std::string &client, const std::string &session,
-        const std::string &user, const std::string &privilege) = 0;
+    virtual int check(const std::string &client, const std::string &session,
+                      const std::string &user, const std::string &privilege) = 0;
 };
 
 } // namespace Cynara

@@ -48,13 +48,13 @@ Logic::Logic() {
     m_cache->registerPlugin(PredefinedPolicyType::BUCKET, naiveInterpreter);
 }
 
-cynara_api_result Logic::check(const std::string &client, const std::string &session,
-                               const std::string &user, const std::string &privilege) noexcept
+int Logic::check(const std::string &client, const std::string &session, const std::string &user,
+                 const std::string &privilege) noexcept
 {
     PolicyKey key(client, user, privilege);
 
     auto ret = m_cache->get(session, key);
-    if (ret == cynara_api_result::CYNARA_API_SERVICE_NOT_AVAILABLE)
+    if (ret == CYNARA_API_SERVICE_NOT_AVAILABLE)
         onDisconnected();
     return ret;
 }

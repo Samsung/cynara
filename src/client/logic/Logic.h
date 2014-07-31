@@ -40,8 +40,8 @@ public:
     Logic();
     virtual ~Logic() = default;
 
-    virtual cynara_api_result check(const std::string &client, const std::string &session,
-        const std::string &user, const std::string &privilege) noexcept;
+    virtual int check(const std::string &client, const std::string &session,
+                      const std::string &user, const std::string &privilege) noexcept;
 };
 
 } // namespace Cynara

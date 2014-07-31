@@ -45,12 +45,12 @@ CYNARA_API
 int cynara_initialize(cynara **pp_cynara, const cynara_configuration *p_conf UNUSED)
 {
     if (!pp_cynara)
-        return cynara_api_result::CYNARA_API_INVALID_PARAM;
+        return CYNARA_API_INVALID_PARAM;
 
     try {
         *pp_cynara = new cynara(new Cynara::Logic);
     } catch (const std::bad_alloc &ex) {
-        return cynara_api_result::CYNARA_API_OUT_OF_MEMORY;
+        return CYNARA_API_OUT_OF_MEMORY;
     }
 
     init_log();
@@ -59,7 +59,7 @@ int cynara_initialize(cynara **pp_cynara, const cynara_configuration *p_conf UNU
 
     LOGD("Cynara client initialized");
 
-    return cynara_api_result::CYNARA_API_SUCCESS;
+    return CYNARA_API_SUCCESS;
 }
 
 CYNARA_API
@@ -67,7 +67,7 @@ int cynara_finish(cynara *p_cynara)
 {
     delete p_cynara;
 
-    return cynara_api_result::CYNARA_API_SUCCESS;
+    return CYNARA_API_SUCCESS;
 }
 
 CYNARA_API
@@ -75,9 +75,9 @@ int cynara_check(cynara *p_cynara, const char *client, const char *client_sessio
     const char *privilege)
 {
     if(!p_cynara || !p_cynara->impl)
-        return cynara_api_result::CYNARA_API_INVALID_PARAM;
+        return CYNARA_API_INVALID_PARAM;
     if(!client || !client_session || !user || !privilege)
-        return cynara_api_result::CYNARA_API_INVALID_PARAM;
+        return CYNARA_API_INVALID_PARAM;
 
     return p_cynara->impl->check(client, client_session, user, privilege);
 }

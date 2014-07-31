@@ -28,7 +28,7 @@
 
 namespace Cynara {
 
-cynara_api_result CapacityCache::get(const std::string &session, const PolicyKey &key) {
+int CapacityCache::get(const std::string &session, const PolicyKey &key) {
     //This can be very time heavy. This part is welcomed to be optimized.
     if (session != m_session) {
         LOGD("Session changed from %s to %s.", m_session.c_str(), session.c_str());
@@ -54,7 +54,7 @@ cynara_api_result CapacityCache::get(const std::string &session, const PolicyKey
         if (pluginIt == m_plugins.end()) {
             LOGE("No plugin registered for given PolicyType : %" PRIu16,
                     resultIt->second.first.policyType());
-            return cynara_api_result::CYNARA_API_ACCESS_DENIED;
+            return CYNARA_API_ACCESS_DENIED;
         }
 
         //Is it still usable?
@@ -100,10 +100,10 @@ void CapacityCache::evict(void) {
     m_keyValue.erase(value_it);
 }
 
-cynara_api_result CapacityCache::update(const PolicyKey &key) {
-    cynara_api_result ret;
+int CapacityCache::update(const PolicyKey &key) {
+    int ret;
     PolicyResult result;
-    if ((ret = m_getter->requestResult(key, result)) != cynara_api_result::CYNARA_API_SUCCESS) {
+    if ((ret = m_getter->requestResult(key, result)) != CYNARA_API_SUCCESS) {
         LOGE("Error fetching new entry.");
         return ret;
     }
@@ -114,7 +114,7 @@ cynara_api_result CapacityCache::update(const PolicyKey &key) {
     if (pluginIt == m_plugins.end()) {
         LOGE("No registered plugin for given PolicyType: %" PRIu16,
                 result.policyType());
-        return cynara_api_result::CYNARA_API_ACCESS_DENIED;
+        return CYNARA_API_ACCESS_DENIED;
     }
     auto plugin = pluginIt->second;
 

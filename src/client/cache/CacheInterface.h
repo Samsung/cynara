@@ -46,7 +46,7 @@ typedef std::shared_ptr<ResultGetterInterface> ResultGetterInterfacePtr;
 
 class ResultGetterInterface {
 public:
-    virtual cynara_api_result requestResult(const PolicyKey &key, PolicyResult &result) noexcept = 0;
+    virtual int requestResult(const PolicyKey &key, PolicyResult &result) noexcept = 0;
     virtual ~ResultGetterInterface() = default;
 };
 
@@ -54,7 +54,7 @@ class InterpreterInterface {
 public:
     virtual bool isCacheable(const PolicyResult &result) noexcept = 0;
     virtual bool isUsable(const PolicyResult &result) noexcept = 0;
-    virtual cynara_api_result toResult(const PolicyResult &result) noexcept = 0;
+    virtual int toResult(const PolicyResult &result) noexcept = 0;
 
     virtual ~InterpreterInterface() = default;
 };
@@ -62,13 +62,16 @@ public:
 class PluginCache {
 public:
     PluginCache(ResultGetterInterfacePtr getter) : m_getter(getter) {}
-    virtual cynara_api_result get(const std::string &session, const PolicyKey &key) = 0;
+    virtual int get(const std::string &session, const PolicyKey &key) = 0;
+
     void registerPlugin(const PolicyType policyType, InterpreterInterfacePtr plugin) {
         m_plugins[policyType] = plugin;
     }
+
     virtual void clear(void) {
         m_plugins.clear();
     }
+
     virtual ~PluginCache() = default;
 
 protected:

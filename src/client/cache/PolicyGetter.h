@@ -34,7 +34,7 @@ namespace Cynara {
 class PolicyGetter : public ResultGetterInterface {
 public:
     PolicyGetter(const SocketClientPtr &socketClient) : m_socketClient(socketClient) {}
-    cynara_api_result requestResult(const PolicyKey &key, PolicyResult &result) noexcept;
+    int requestResult(const PolicyKey &key, PolicyResult &result) noexcept;
 
 private:
     ProtocolFrameSequenceNumber generateSequenceNumber(void) {

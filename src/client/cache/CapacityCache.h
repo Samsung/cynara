@@ -39,8 +39,7 @@ public:
         PluginCache(getter),
         m_capacity(capacity) {}
 
-    cynara_api_result get(const std::string &session,
-                          const PolicyKey &key);
+    int get(const std::string &session, const PolicyKey &key);
     void clear(void);
 
 private:
@@ -51,7 +50,7 @@ private:
 
     static std::string keyToString(const PolicyKey &key);
     void evict(void);
-    cynara_api_result update(const PolicyKey &key);
+    int update(const PolicyKey &key);
 
     std::size_t m_capacity;
     std::string m_session;

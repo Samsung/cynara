@@ -31,23 +31,20 @@
  * @{
 */
 
-enum cynara_api_result
-{
 /*! \brief   indicating the result of the one specific API is successful or access is allowed */
-	CYNARA_API_SUCCESS,
+#define CYNARA_API_SUCCESS 0
 
 /*! \brief   indicating that access that was checked is denied */
-	CYNARA_API_ACCESS_DENIED,
+#define CYNARA_API_ACCESS_DENIED -1
 
 /*! \brief   indicating system is running out of memory state */
-	CYNARA_API_OUT_OF_MEMORY,
+#define CYNARA_API_OUT_OF_MEMORY -2
 
 /*! \brief   indicating the API's parameter is malformed */
-	CYNARA_API_INVALID_PARAM,
+#define CYNARA_API_INVALID_PARAM -3
 
 /*! \brief   service not available */
-	CYNARA_API_SERVICE_NOT_AVAILABLE
-};
+#define CYNARA_API_SERVICE_NOT_AVAILABLE -4
 /** @}*/
 
 #ifdef __cplusplus

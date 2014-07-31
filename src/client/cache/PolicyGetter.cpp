@@ -33,7 +33,7 @@
 
 namespace Cynara {
 
-cynara_api_result PolicyGetter::requestResult(const PolicyKey &key, PolicyResult &result) noexcept {
+int PolicyGetter::requestResult(const PolicyKey &key, PolicyResult &result) noexcept {
     ProtocolFrameSequenceNumber sequenceNumber = generateSequenceNumber();
 
     //Ask cynara service
@@ -43,12 +43,12 @@ cynara_api_result PolicyGetter::requestResult(const PolicyKey &key, PolicyResult
         ResponsePtr response = m_socketClient->askCynaraServer(request);
         if (!response) {
             LOGW("Disconnected by cynara server.");
-            return cynara_api_result::CYNARA_API_SERVICE_NOT_AVAILABLE;
+            return CYNARA_API_SERVICE_NOT_AVAILABLE;
         }
         checkResponse = std::dynamic_pointer_cast<CheckResponse>(response);
         if (!checkResponse) {
             LOGC("Critical error. Casting Response to CheckResponse failed.");
-            return cynara_api_result::CYNARA_API_ACCESS_DENIED;
+            return CYNARA_API_ACCESS_DENIED;
         }
 
         LOGD("checkResponse: policyType = %" PRIu16 ", metadata = %s",
@@ -56,11 +56,11 @@ cynara_api_result PolicyGetter::requestResult(const PolicyKey &key, PolicyResult
              checkResponse->m_resultRef.metadata().c_str());
     } catch (const ServerConnectionErrorException &ex) {
         LOGE("Cynara service not available.");
-        return cynara_api_result::CYNARA_API_SERVICE_NOT_AVAILABLE;
+        return CYNARA_API_SERVICE_NOT_AVAILABLE;
     }
 
     result = checkResponse->m_resultRef;
-    return cynara_api_result::CYNARA_API_SUCCESS;
+    return CYNARA_API_SUCCESS;
 }
 
 } // namespace Cynara

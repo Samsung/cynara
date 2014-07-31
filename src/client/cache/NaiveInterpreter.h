@@ -34,11 +34,11 @@ class NaiveInterpreter : public InterpreterInterface {
     bool isCacheable(const PolicyResult &result UNUSED) noexcept {
         return true;
     }
-    cynara_api_result toResult(const PolicyResult &result) noexcept {
+    int toResult(const PolicyResult &result) noexcept {
         if (result.policyType() == PredefinedPolicyType::ALLOW)
-            return cynara_api_result::CYNARA_API_SUCCESS;
+            return CYNARA_API_SUCCESS;
         else
-            return cynara_api_result::CYNARA_API_ACCESS_DENIED;
+            return CYNARA_API_ACCESS_DENIED;
     }
 };
 

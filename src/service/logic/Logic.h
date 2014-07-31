@@ -62,6 +62,7 @@ private:
 
     bool check(RequestContextPtr context, const PolicyKey &key, PolicyResult& result);
 
+    void onPoliciesChanged(void);
 };
 
 } // namespace Cynara

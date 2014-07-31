@@ -91,7 +91,7 @@ bool Logic::check(RequestContextPtr context UNUSED, const PolicyKey &key,
 
 void Logic::execute(RequestContextPtr context, InsertOrUpdateBucketRequestPtr request) {
     m_storage->addOrUpdateBucket(request->bucketId(), request->result());
-    m_storage->save();
+    onPoliciesChanged();
 
     context->returnResponse(context, std::make_shared<CodeResponse>(CodeResponse::Code::OK,
                             request->sequenceNumber()));
@@ -101,7 +101,7 @@ void Logic::execute(RequestContextPtr context, RemoveBucketRequestPtr request) {
     auto code = CodeResponse::Code::OK;
     try {
         m_storage->deleteBucket(request->bucketId());
-        m_storage->save();
+        onPoliciesChanged();
     } catch (const BucketNotExistsException &ex) {
         code = CodeResponse::Code::NO_BUCKET;
     } catch (const DefaultBucketDeletionException &ex) {
@@ -116,12 +116,18 @@ void Logic::execute(RequestContextPtr context, SetPoliciesRequestPtr request) {
     try {
         m_storage->insertPolicies(request->policiesToBeInsertedOrUpdated());
         m_storage->deletePolicies(request->policiesToBeRemoved());
-        m_storage->save();
+        onPoliciesChanged();
     } catch (const BucketNotExistsException &ex) {
         code = CodeResponse::Code::NO_BUCKET;
     }
     context->returnResponse(context, std::make_shared<CodeResponse>(code,
                             request->sequenceNumber()));
+}
+
+void Logic::onPoliciesChanged(void) {
+    m_storage->save();
+    m_socketManager->disconnectAllClients();
+    //todo remove all saved contexts (if there will be any saved contexts)
 }
 
 } // namespace Cynara

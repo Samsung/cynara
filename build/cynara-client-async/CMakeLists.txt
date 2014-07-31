@@ -13,40 +13,13 @@
 #    limitations under the License.
 #
 # @file        CMakeLists.txt
-# @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+# @author      Marcin Niesluchowski <m.niesluchow@samsung.com>
 #
 
-SET(COMMON_DEPS
-    libsystemd-daemon
-    libsystemd-journal
+CONFIGURE_FILE(cynara-client-async.pc.in cynara-client-async.pc @ONLY)
+
+INSTALL(FILES
+    ${CMAKE_BINARY_DIR}/build/cynara-client-async/cynara-client-async.pc
+    DESTINATION
+    ${LIB_INSTALL_DIR}/pkgconfig
     )
-
-IF (CMAKE_BUILD_TYPE MATCHES "DEBUG")
-SET(COMMON_DEPS
-    ${COMMON_DEPS}
-    libunwind
-    )
-ENDIF (CMAKE_BUILD_TYPE MATCHES "DEBUG")
-
-PKG_CHECK_MODULES(CYNARA_DEP
-    REQUIRED
-    ${COMMON_DEPS}
-    )
-
-INCLUDE_DIRECTORIES(SYSTEM
-    ${CYNARA_DEP_INCLUDE_DIRS}
-    )
-
-SET(CYNARA_PATH ${PROJECT_SOURCE_DIR}/src)
-
-INCLUDE_DIRECTORIES(
-    ${CYNARA_PATH}/include
-    ${CYNARA_PATH}/common
-    )
-
-ADD_SUBDIRECTORY(include)
-ADD_SUBDIRECTORY(common)
-ADD_SUBDIRECTORY(client)
-ADD_SUBDIRECTORY(client-async)
-ADD_SUBDIRECTORY(admin)
-ADD_SUBDIRECTORY(service)

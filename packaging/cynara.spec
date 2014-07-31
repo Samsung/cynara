@@ -7,8 +7,9 @@ License:    Apache-2.0
 Source0:    %{name}-%{version}.tar.gz
 Source1001:    cynara.manifest
 Source1002:    libcynara-client.manifest
-Source1003:    libcynara-admin.manifest
-Source1004:    cynara-tests.manifest
+Source1003:    libcynara-client-async.manifest
+Source1004:    libcynara-admin.manifest
+Source1005:    cynara-tests.manifest
 Requires:      default-ac-domains
 BuildRequires: cmake
 BuildRequires: zip
@@ -30,7 +31,7 @@ BuildRequires: pkgconfig(libunwind)
 %endif
 
 %description
-service, client libraries (libcynara-client, libcynara-admin)
+service and client libraries (libcynara-client, libcynara-client-async, libcynara-admin)
 and tests (cynara-tests)
 
 #######################################################
@@ -49,6 +50,23 @@ Requires:   libcynara-client = %{version}-%{release}
 
 %description -n libcynara-client-devel
 client library (devel) for checking policies
+
+#######################################################
+%package -n libcynara-client-async
+Summary:    Cynara - asynchronous client library
+Requires:   cynara = %{version}-%{release}
+Requires(post): /sbin/ldconfig
+Requires(postun): /sbin/ldconfig
+
+%description -n libcynara-client-async
+asynchronous client library for checking policies
+
+%package -n libcynara-client-async-devel
+Summary:    Cynara - asynchronous client library (devel)
+Requires:   libcynara-client-async = %{version}-%{release}
+
+%description -n libcynara-client-async-devel
+asynchronous client library (devel) for checking policies
 
 #######################################################
 %package -n libcynara-admin
@@ -90,6 +108,7 @@ cp -a %{SOURCE1001} .
 cp -a %{SOURCE1002} .
 cp -a %{SOURCE1003} .
 cp -a %{SOURCE1004} .
+cp -a %{SOURCE1005} .
 
 %build
 %if 0%{?sec_build_binary_debug_enable}
@@ -163,6 +182,10 @@ fi
 
 %postun -n libcynara-client -p /sbin/ldconfig
 
+%post -n libcynara-client-async -p /sbin/ldconfig
+
+%postun -n libcynara-client-async -p /sbin/ldconfig
+
 %post -n libcynara-admin -p /sbin/ldconfig
 
 %postun -n libcynara-admin -p /sbin/ldconfig
@@ -170,6 +193,10 @@ fi
 %post -n libcynara-client-devel -p /sbin/ldconfig
 
 %postun -n libcynara-client-devel -p /sbin/ldconfig
+
+%post -n libcynara-client-async-devel -p /sbin/ldconfig
+
+%postun -n libcynara-client-async-devel -p /sbin/ldconfig
 
 %post -n libcynara-admin-devel -p /sbin/ldconfig
 
@@ -199,6 +226,18 @@ fi
 %{_includedir}/cynara/cynara-client.h
 %{_libdir}/pkgconfig/cynara-client.pc
 %{_libdir}/libcynara-client.so
+
+%files -n libcynara-client-async
+%manifest libcynara-client-async.manifest
+%license LICENSE
+%defattr(-,root,root,-)
+%{_libdir}/libcynara-client-async.so.*
+
+%files -n libcynara-client-async-devel
+%defattr(-,root,root,-)
+%{_includedir}/cynara/cynara-client-async.h
+%{_libdir}/pkgconfig/cynara-client-async.pc
+%{_libdir}/libcynara-client-async.so
 
 %files -n libcynara-admin
 %manifest libcynara-admin.manifest

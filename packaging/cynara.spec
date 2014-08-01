@@ -8,6 +8,7 @@ Source0:    %{name}-%{version}.tar.gz
 Source1001:    cynara.manifest
 Source1002:    libcynara-client.manifest
 Source1003:    libcynara-admin.manifest
+Source1004:    cynara-tests.manifest
 Requires:      default-ac-domains
 BuildRequires: cmake
 BuildRequires: zip
@@ -29,7 +30,8 @@ BuildRequires: pkgconfig(libunwind)
 %endif
 
 %description
-service and client libraries (libcynara-client, libcynara-admin)
+service, client libraries (libcynara-client, libcynara-admin)
+and tests (cynara-tests)
 
 #######################################################
 %package -n libcynara-client
@@ -66,6 +68,15 @@ Requires:   libcynara-admin = %{version}-%{release}
 admin client library (devel) for setting, listing and removing policies
 
 #######################################################
+%package -n cynara-tests
+Summary:    Cynara - cynara test binaries
+BuildRequires: pkgconfig(gmock)
+
+%description -n cynara-tests
+Cynara tests
+
+#######################################################
+
 %package -n cynara-devel
 Summary:    Cynara service (devel)
 Requires:   cynara = %{version}-%{release}
@@ -78,6 +89,7 @@ service (devel version)
 cp -a %{SOURCE1001} .
 cp -a %{SOURCE1002} .
 cp -a %{SOURCE1003} .
+cp -a %{SOURCE1004} .
 
 %build
 %if 0%{?sec_build_binary_debug_enable}
@@ -199,3 +211,7 @@ fi
 %{_includedir}/cynara/cynara-admin.h
 %{_libdir}/libcynara-admin.so
 %{_libdir}/pkgconfig/cynara-admin.pc
+
+%files -n cynara-tests
+%manifest cynara-tests.manifest
+%attr(755,root,root) /usr/bin/cynara-tests

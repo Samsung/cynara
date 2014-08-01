@@ -28,6 +28,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <exceptions/BucketNotExistsException.h>
 #include <storage/Storage.h>
 #include <storage/StorageBackend.h>
 #include <types/pointers.h>
@@ -78,6 +79,10 @@ TEST(storage, deleteBucketWithLinkedPolicies) {
 TEST(storage, insertPolicies) {
     using ::testing::Pointee;
     using ::testing::Return;
+    using PredefinedPolicyType::ALLOW;
+    using PredefinedPolicyType::BUCKET;
+    using PredefinedPolicyType::DENY;
+
     FakeStorageBackend backend;
     Storage storage(backend);
 
@@ -86,21 +91,23 @@ TEST(storage, insertPolicies) {
 
     typedef std::pair<PolicyBucketId, std::vector<Policy>> BucketPolicyPair;
 
-    auto createPolicy = [] (const std::string &keySuffix, const PolicyType &type) -> Policy {
-        return Policy(Helpers::generatePolicyKey(keySuffix), type);
+    auto createPolicy = [] (const std::string &keySuffix, const PolicyResult &result) -> Policy {
+        return Policy(Helpers::generatePolicyKey(keySuffix), result);
     };
 
     std::map<PolicyBucketId, std::vector<Policy>> policiesToInsert = {
         BucketPolicyPair(testBucket1, {
-            createPolicy("1", PredefinedPolicyType::ALLOW),
-            createPolicy("2", PredefinedPolicyType::DENY),
-            createPolicy("3", PredefinedPolicyType::DENY)
+            createPolicy("1", ALLOW),
+            createPolicy("2", DENY),
+            createPolicy("3", DENY)
         }),
         BucketPolicyPair(testBucket2, {
-            createPolicy("4", PredefinedPolicyType::ALLOW),
+            createPolicy("4", { BUCKET, testBucket1 }),
             createPolicy("5", PredefinedPolicyType::ALLOW)
         })
     };
+
+    EXPECT_CALL(backend, hasBucket(testBucket1)).WillOnce(Return(true));
 
     for (const auto &group : policiesToInsert) {
         const auto &bucketId = group.first;
@@ -112,4 +119,31 @@ TEST(storage, insertPolicies) {
     }
 
     storage.insertPolicies(policiesToInsert);
+}
+
+TEST(storage, insertPointingToNonexistentBucket) {
+    using ::testing::Pointee;
+    using ::testing::Return;
+    FakeStorageBackend backend;
+    Storage storage(backend);
+
+    PolicyBucketId testBucketId = "test-bucket-1";
+    PolicyBucketId nonexistentBucketId = "nonexistent";
+
+    typedef std::pair<PolicyBucketId, std::vector<Policy>> BucketPolicyPair;
+
+    auto createPolicy = [] (const std::string &keySuffix, const PolicyResult &result) -> Policy {
+        return Policy(Helpers::generatePolicyKey(keySuffix), result);
+    };
+
+    std::map<PolicyBucketId, std::vector<Policy>> policiesToInsert = {
+        BucketPolicyPair(testBucketId, {
+            createPolicy("1", { PredefinedPolicyType::DENY }),
+            createPolicy("2", { PredefinedPolicyType::BUCKET, nonexistentBucketId }),
+        }),
+    };
+
+    EXPECT_CALL(backend, hasBucket(nonexistentBucketId)).WillOnce(Return(false));
+
+    ASSERT_THROW(storage.insertPolicies(policiesToInsert), BucketNotExistsException);
 }

@@ -24,6 +24,7 @@
 #include <memory>
 #include <vector>
 
+#include <exceptions/BucketNotExistsException.h>
 #include "exceptions/DefaultBucketDeletionException.h"
 #include <types/pointers.h>
 #include <types/Policy.h>
@@ -79,6 +80,24 @@ PolicyResult Storage::minimalPolicy(const PolicyBucket &bucket, const PolicyKey 
 }
 
 void Storage::insertPolicies(const std::map<PolicyBucketId, std::vector<Policy>> &policiesByBucketId) {
+
+    auto pointedBucketExists = [this] (const Policy &policy) -> void {
+        if (policy.result().policyType() == PredefinedPolicyType::BUCKET) {
+            const auto &bucketId = policy.result().metadata();
+            if (m_backend.hasBucket(bucketId) == false) {
+                throw BucketNotExistsException(bucketId);
+            }
+        }
+    };
+
+    // TODO: Rewrite, when transactions are supported
+    // Check if all of buckets exist
+    for (const auto &group : policiesByBucketId) {
+        const auto &policies = group.second;
+        std::for_each(policies.cbegin(), policies.cend(), pointedBucketExists);
+    }
+
+    // Then insert policies
     for (const auto &group : policiesByBucketId) {
         const PolicyBucketId &bucketId = group.first;
         const auto &policies = group.second;

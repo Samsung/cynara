@@ -24,6 +24,7 @@
 #include <fstream>
 #include <functional>
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <string.h>
 #include <sys/stat.h>

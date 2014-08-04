@@ -46,7 +46,7 @@ private:
 
 public:
     SocketClient(const std::string &socketPath, ProtocolPtr protocol);
-    virtual ~SocketClient() = default;
+    virtual ~SocketClient() {};
 
     //returns pointer to response
     //        or nullptr when connection to cynara service is lost

@@ -43,7 +43,7 @@ MATCHER_P(PolicyAtPtrEq, policy, "") {
 
 class BucketDeserializerFixture : public ::testing::Test {
 public:
-    virtual ~BucketDeserializerFixture() = default;
+    virtual ~BucketDeserializerFixture() {};
 
     PolicyPtr createPolicy(const PolicyKey &pk, const PolicyResult &pr) {
         return std::make_shared<Policy>(pk, pr);

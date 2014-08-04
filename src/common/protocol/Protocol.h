@@ -40,7 +40,7 @@ typedef std::shared_ptr<Protocol> ProtocolPtr;
 class Protocol : public RequestTaker, public ResponseTaker {
 public:
     Protocol() = default;
-    virtual ~Protocol() = default;
+    virtual ~Protocol() {};
 
     virtual ProtocolPtr clone(void) = 0;
 

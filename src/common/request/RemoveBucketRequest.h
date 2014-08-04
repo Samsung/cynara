@@ -40,7 +40,7 @@ public:
         : Request(sequenceNumber), m_bucketId(bucketId) {
     }
 
-    virtual ~RemoveBucketRequest() = default;
+    virtual ~RemoveBucketRequest() {};
 
     const PolicyBucketId &bucketId(void) const {
         return m_bucketId;

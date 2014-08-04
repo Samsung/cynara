@@ -32,7 +32,7 @@ namespace Cynara {
 class NotImplementedException : public Exception {
 public:
     NotImplementedException() = default;
-    virtual ~NotImplementedException() = default;
+    virtual ~NotImplementedException() noexcept {};
 
     virtual const std::string message(void) const {
         return "NotImplementedException";

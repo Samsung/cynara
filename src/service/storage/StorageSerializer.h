@@ -45,7 +45,7 @@ public:
             BucketStreamOpener;
 
     StorageSerializer(std::shared_ptr<std::ostream> os);
-    virtual ~StorageSerializer() = default;
+    virtual ~StorageSerializer() {};
 
     virtual void dump(const Buckets &buckets,
                       BucketStreamOpener streamOpener);

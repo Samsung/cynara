@@ -46,7 +46,7 @@ private:
 
 public:
     ProtocolFrameHeader(BinaryQueuePtr headerContent = nullptr);
-    virtual ~ProtocolFrameHeader() = default;
+    virtual ~ProtocolFrameHeader() {};
 
     virtual void read(size_t num, void *bytes);
     virtual void write(size_t num, const void *bytes);

@@ -31,7 +31,7 @@ namespace Cynara {
 class ApiInterface {
 public:
     ApiInterface() = default;
-    virtual ~ApiInterface() = default;
+    virtual ~ApiInterface() {};
 
     virtual int check(const std::string &client, const std::string &session,
                       const std::string &user, const std::string &privilege) = 0;

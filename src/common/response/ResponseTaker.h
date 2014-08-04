@@ -31,7 +31,7 @@ namespace Cynara {
 class ResponseTaker {
 public:
     ResponseTaker() = default;
-    virtual ~ResponseTaker() = default;
+    virtual ~ResponseTaker() {};
 
     virtual void execute(RequestContextPtr context, CheckResponsePtr response);
     virtual void execute(RequestContextPtr context, CodeResponsePtr response);

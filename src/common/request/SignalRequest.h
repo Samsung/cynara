@@ -38,7 +38,7 @@ public:
     SignalRequest(struct signalfd_siginfo sigInfo) : Request(0), m_sigInfo(sigInfo) {
     }
 
-    virtual ~SignalRequest() = default;
+    virtual ~SignalRequest() {};
 
     virtual void execute(RequestPtr self, RequestTakerPtr taker, RequestContextPtr context) const;
 

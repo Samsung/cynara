@@ -56,7 +56,7 @@ public:
 
 class StorageSerializerFixture : public ::testing::Test {
 public:
-    virtual ~StorageSerializerFixture() = default;
+    virtual ~StorageSerializerFixture() {};
 
     Cynara::Buckets buckets;
     FakeStreamForBucketId fakeStreamOpener;

@@ -40,7 +40,7 @@ public:
         Request(sequenceNumber), m_key(key) {
     }
 
-    virtual ~CheckRequest() = default;
+    virtual ~CheckRequest() {};
 
     const PolicyKey &key(void) const {
         return m_key;

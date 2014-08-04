@@ -44,7 +44,7 @@ public:
         m_whatMsg = stream.str();
     }
 
-    virtual ~OutOfDataException() = default;
+    virtual ~OutOfDataException() noexcept {};
 
     virtual const std::string message(void) const {
         return m_whatMsg;

@@ -32,7 +32,7 @@ namespace Cynara {
 class CannotCreateFileException : public DatabaseException {
 public:
     CannotCreateFileException(const std::string &filename) : m_filename(filename) {};
-    virtual ~CannotCreateFileException() = default;
+    virtual ~CannotCreateFileException() noexcept {};
 
     const std::string message(void) const {
         if (m_message.empty()) {

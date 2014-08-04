@@ -33,7 +33,7 @@ class Request {
 public:
     Request(ProtocolFrameSequenceNumber sequenceNumber) : m_sequenceNumber(sequenceNumber) {
     }
-    virtual ~Request() = default;
+    virtual ~Request() {};
 
     virtual void execute(RequestPtr self, RequestTakerPtr taker,
             RequestContextPtr context) const = 0;

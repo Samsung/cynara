@@ -59,7 +59,7 @@ public:
 
     }
 
-    virtual ~InvalidProtocolException() = default;
+    virtual ~InvalidProtocolException() noexcept {};
 
     virtual const std::string message(void) const {
         return m_whatMessage;

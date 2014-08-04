@@ -49,7 +49,7 @@ public:
         m_removePolicies(removePolicies) {
     }
 
-    virtual ~SetPoliciesRequest() = default;
+    virtual ~SetPoliciesRequest() {};
 
     const std::map<PolicyBucketId, std::vector<Policy>> &policiesToBeInsertedOrUpdated(void) const {
         return m_insertOrUpdatePolicies;

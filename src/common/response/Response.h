@@ -33,7 +33,7 @@ class Response {
 public:
     Response(ProtocolFrameSequenceNumber sequenceNumber) : m_sequenceNumber(sequenceNumber) {
     };
-    virtual ~Response() = default;
+    virtual ~Response() {};
 
     virtual void execute(ResponsePtr self, ResponseTakerPtr taker,
                          RequestContextPtr context) const = 0;

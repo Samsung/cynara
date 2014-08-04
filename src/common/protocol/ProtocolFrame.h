@@ -40,7 +40,7 @@ class ProtocolFrame: public IStream {
 
 public:
     ProtocolFrame(ProtocolFrameHeaderPtr frameHeader, BinaryQueuePtr headerContent);
-    virtual ~ProtocolFrame() = default;
+    virtual ~ProtocolFrame() {};
 
     ProtocolFrameHeaderPtr frameHeader(void) {
         return m_frameHeader;

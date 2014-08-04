@@ -43,7 +43,7 @@ public:
         Response(sequenceNumber), m_code(code) {
     }
 
-    virtual ~CodeResponse() = default;
+    virtual ~CodeResponse() {};
 
     virtual void execute(ResponsePtr self, ResponseTakerPtr taker,
                          RequestContextPtr context) const;

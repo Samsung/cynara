@@ -30,7 +30,7 @@ namespace Cynara {
 class RequestTaker {
 public:
     RequestTaker() = default;
-    virtual ~RequestTaker() = default;
+    virtual ~RequestTaker() {};
 
     virtual void execute(RequestContextPtr context, CheckRequestPtr request);
     virtual void execute(RequestContextPtr context, InsertOrUpdateBucketRequestPtr request);

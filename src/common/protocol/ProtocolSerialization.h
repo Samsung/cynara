@@ -38,7 +38,7 @@ class IStream {
 public:
     virtual void read(size_t num, void *bytes) = 0;
     virtual void write(size_t num, const void *bytes) = 0;
-    virtual ~IStream() = default;
+    virtual ~IStream() {};
 };
 
 // Serializable interface
@@ -47,7 +47,7 @@ public:
     /*    ISerializable(){};
      *    ISerializable(IStream&){}; */
     virtual void serialize(IStream &) const = 0;
-    virtual ~ISerializable() = default;
+    virtual ~ISerializable() {};
 };
 
 struct ProtocolSerialization {

@@ -47,7 +47,7 @@ typedef std::shared_ptr<ResultGetterInterface> ResultGetterInterfacePtr;
 class ResultGetterInterface {
 public:
     virtual int requestResult(const PolicyKey &key, PolicyResult &result) noexcept = 0;
-    virtual ~ResultGetterInterface() = default;
+    virtual ~ResultGetterInterface() {};
 };
 
 class InterpreterInterface {
@@ -56,7 +56,7 @@ public:
     virtual bool isUsable(const PolicyResult &result) noexcept = 0;
     virtual int toResult(const PolicyResult &result) noexcept = 0;
 
-    virtual ~InterpreterInterface() = default;
+    virtual ~InterpreterInterface() {};
 };
 
 class PluginCache {
@@ -72,7 +72,7 @@ public:
         m_plugins.clear();
     }
 
-    virtual ~PluginCache() = default;
+    virtual ~PluginCache() {};
 
 protected:
     std::map<PolicyType, InterpreterInterfacePtr> m_plugins;

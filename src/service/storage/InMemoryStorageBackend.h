@@ -44,7 +44,7 @@ class InMemoryStorageBackend : public StorageBackend {
 public:
     InMemoryStorageBackend(const std::string &path) : m_dbPath(path) {
     }
-    virtual ~InMemoryStorageBackend() = default;
+    virtual ~InMemoryStorageBackend() {};
 
     virtual void load(void);
     virtual void save(void);

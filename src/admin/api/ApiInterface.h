@@ -39,7 +39,7 @@ namespace Cynara {
 class ApiInterface {
 public:
     ApiInterface() = default;
-    virtual ~ApiInterface() = default;
+    virtual ~ApiInterface() {};
 
     virtual int setPolicies(const std::map<PolicyBucketId, std::vector<Policy>> &insertOrUpdate,
                     const std::map<PolicyBucketId, std::vector<PolicyKey>> &remove) noexcept = 0;

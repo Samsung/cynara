@@ -43,7 +43,7 @@ public:
         m_whatMsg = stream.str();
     }
 
-    virtual ~DescriptorNotExistsException() = default;
+    virtual ~DescriptorNotExistsException() noexcept {};
 
     virtual const std::string message(void) const {
         return m_whatMsg;

@@ -40,7 +40,7 @@ private:
 
 public:
     Logic();
-    virtual ~Logic() = default;
+    virtual ~Logic() {};
 
     virtual int setPolicies(const std::map<PolicyBucketId, std::vector<Policy>> &insertOrUpdate,
                     const std::map<PolicyBucketId, std::vector<PolicyKey>> &remove) noexcept;

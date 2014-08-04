@@ -41,7 +41,7 @@ private:
 
 public:
     Logic();
-    virtual ~Logic() = default;
+    virtual ~Logic() {};
 
     virtual int check(const std::string &client, const std::string &session,
                       const std::string &user, const std::string &privilege) noexcept;

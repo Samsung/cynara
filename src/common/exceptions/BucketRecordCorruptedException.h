@@ -31,7 +31,7 @@ namespace Cynara {
 class BucketRecordCorruptedException : public Exception {
 public:
     BucketRecordCorruptedException(void) = delete;
-    virtual ~BucketRecordCorruptedException(void) = default;
+    virtual ~BucketRecordCorruptedException() noexcept {};
 
     BucketRecordCorruptedException(const std::string &line)
         : m_lineNumber(0), m_line(line)  {}

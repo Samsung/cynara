@@ -39,7 +39,7 @@ public:
         Response(sequenceNumber), m_resultRef(result) {
     }
 
-    virtual ~CheckResponse() = default;
+    virtual ~CheckResponse() {};
 
     virtual void execute(ResponsePtr self, ResponseTakerPtr taker,
                          RequestContextPtr context) const;

@@ -43,7 +43,7 @@ public:
         Request(sequenceNumber), m_bucketId(bucketId), m_result(result) {
     }
 
-    virtual ~InsertOrUpdateBucketRequest() = default;
+    virtual ~InsertOrUpdateBucketRequest() {};
 
     const PolicyBucketId &bucketId(void) const {
         return m_bucketId;

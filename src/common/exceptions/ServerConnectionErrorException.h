@@ -32,7 +32,7 @@ namespace Cynara {
 class ServerConnectionErrorException : public Exception {
 public:
     ServerConnectionErrorException() = default;
-    virtual ~ServerConnectionErrorException() = default;
+    virtual ~ServerConnectionErrorException() noexcept {};
     virtual const std::string message(void) const {
         return "ServerConnectionError";
     }

@@ -33,7 +33,7 @@ namespace Cynara {
 class PolicyKey;
 
 class PolicyKeyFeature {
-friend PolicyKey;
+friend class PolicyKey;
 
 public:
     typedef std::string ValueType;

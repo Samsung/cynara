@@ -213,7 +213,7 @@ void ProtocolAdmin::execute(RequestContextPtr context, RemoveBucketRequestPtr re
 }
 
 void ProtocolAdmin::execute(RequestContextPtr context, SetPoliciesRequestPtr request) {
-    LOGD("Serializing SetPoliciesRequestPtr: sequenceNumber [%u], insertOrUpdate count [%zu]",
+    LOGD("Serializing SetPoliciesRequestPtr: sequenceNumber [%u], insertOrUpdate count [%zu], "
          "remove count [%zu]", static_cast<unsigned int>(request->sequenceNumber()),
          request->policiesToBeInsertedOrUpdated().size(),
          request->policiesToBeRemoved().size());

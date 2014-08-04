@@ -70,7 +70,7 @@ protected:
 private:
     std::string m_dbPath;
     Buckets m_buckets;
-    const std::string m_indexFileName = "buckets";
+    static const std::string m_indexFileName;
 
 protected:
     virtual Buckets &buckets(void) {

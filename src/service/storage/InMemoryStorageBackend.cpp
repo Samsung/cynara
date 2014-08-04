@@ -49,6 +49,8 @@
 
 namespace Cynara {
 
+const std::string InMemoryStorageBackend::m_indexFileName = "buckets";
+
 void InMemoryStorageBackend::load(void) {
     std::string indexFilename = m_dbPath + m_indexFileName;
 

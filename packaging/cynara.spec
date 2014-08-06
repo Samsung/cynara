@@ -104,13 +104,7 @@ mkdir -p %{buildroot}/%{state_path}
 ln -s ../cynara.socket %{buildroot}/usr/lib/systemd/system/sockets.target.wants/cynara.socket
 ln -s ../cynara-admin.socket %{buildroot}/usr/lib/systemd/system/sockets.target.wants/cynara-admin.socket
 
-%post
-### Add file capabilities if needed
-### setcap/getcap binary are useful. To use them you must install libcap and libcap-tools packages
-### In such case uncomment Requires with those packages
-
-systemctl daemon-reload
-
+%pre
 id -g %{group_name} > /dev/null 2>&1
 if [ $? -eq 1 ]; then
     groupadd %{group_name} -r > /dev/null 2>&1
@@ -120,6 +114,13 @@ id -u %{user_name} > /dev/null 2>&1
 if [ $? -eq 1 ]; then
     useradd -m %{user_name} -r > /dev/null 2>&1
 fi
+
+%post
+### Add file capabilities if needed
+### setcap/getcap binary are useful. To use them you must install libcap and libcap-tools packages
+### In such case uncomment Requires with those packages
+
+systemctl daemon-reload
 
 if [ $1 = 1 ]; then
     systemctl enable %{name}.service

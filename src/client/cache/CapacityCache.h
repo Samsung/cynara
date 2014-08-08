@@ -24,7 +24,7 @@
 #define  SRC_CLIENT_CACHE_CAPACITYCACHE_H_
 
 #include <list>
-#include <map>
+#include <unordered_map>
 
 #include <cache/CacheInterface.h>
 
@@ -44,7 +44,7 @@ public:
 
 private:
     typedef std::list<std::string> KeyUsageList;
-    typedef std::map<std::string,
+    typedef std::unordered_map<std::string,
         std::pair<PolicyResult,
                   KeyUsageList::iterator>> KeyValueMap;
 

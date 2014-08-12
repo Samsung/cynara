@@ -25,7 +25,7 @@
 #ifndef CYNARA_CLIENT_ASYNC_H
 #define CYNARA_CLIENT_ASYNC_H
 
-#include <cstdint>
+#include <stdint.h>
 
 /**
  * \name Return Codes

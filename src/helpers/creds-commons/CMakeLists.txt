@@ -13,43 +13,32 @@
 #    limitations under the License.
 #
 # @file        CMakeLists.txt
+# @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
+# @author      Radoslaw Bartosiak <r.bartosiak@samsung.com>
 # @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
 #
 
-SET(COMMON_DEPS
-    libsystemd-daemon
-    libsystemd-journal
-    )
+SET(LIB_CREDS_COMMONS_VERSION_MAJOR 0)
+SET(LIB_CREDS_COMMONS_VERSION ${LIB_CREDS_COMMONS_VERSION_MAJOR}.0.1)
 
-IF (CMAKE_BUILD_TYPE MATCHES "DEBUG")
-SET(COMMON_DEPS
-    ${COMMON_DEPS}
-    libunwind
-    )
-ENDIF (CMAKE_BUILD_TYPE MATCHES "DEBUG")
+SET(LIB_CREDS_COMMONS_PATH ${CYNARA_PATH}/helpers/creds-commons)
 
-PKG_CHECK_MODULES(CYNARA_DEP
-    REQUIRED
-    ${COMMON_DEPS}
+SET(LIB_CREDS_COMMONS_SOURCES
+    ${LIB_CREDS_COMMONS_PATH}/creds-commons.cpp
     )
-
-INCLUDE_DIRECTORIES(SYSTEM
-    ${CYNARA_DEP_INCLUDE_DIRS}
-    )
-
-SET(CYNARA_PATH ${PROJECT_SOURCE_DIR}/src)
 
 INCLUDE_DIRECTORIES(
-    ${CYNARA_PATH}/common
+    ${CYNARA_PATH}/include
+    ${LIB_CREDS_COMMONS_PATH}
     )
 
-ADD_SUBDIRECTORY(include)
-ADD_SUBDIRECTORY(common)
-ADD_SUBDIRECTORY(client)
-ADD_SUBDIRECTORY(client-common)
-ADD_SUBDIRECTORY(admin)
-ADD_SUBDIRECTORY(service)
-ADD_SUBDIRECTORY(helpers/creds-commons)
-ADD_SUBDIRECTORY(helpers/creds-dbus)
-ADD_SUBDIRECTORY(helpers/creds-socket)
-ADD_SUBDIRECTORY(helpers/session)
+ADD_LIBRARY(${TARGET_LIB_CREDS_COMMONS} SHARED ${LIB_CREDS_COMMONS_SOURCES})
+
+SET_TARGET_PROPERTIES(
+    ${TARGET_LIB_CREDS_COMMONS}
+    PROPERTIES
+        SOVERSION ${LIB_CREDS_COMMONS_VERSION_MAJOR}
+        VERSION ${LIB_CREDS_COMMONS_VERSION}
+    )
+
+INSTALL(TARGETS ${TARGET_LIB_CREDS_COMMONS} DESTINATION ${LIB_INSTALL_DIR})

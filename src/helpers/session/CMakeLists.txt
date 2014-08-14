@@ -13,13 +13,32 @@
 #    limitations under the License.
 #
 # @file        CMakeLists.txt
-# @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+# @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
 # @author      Radoslaw Bartosiak <r.bartosiak@samsung.com>
+# @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
 #
 
-ADD_SUBDIRECTORY(cynara-client)
-ADD_SUBDIRECTORY(cynara-admin)
-ADD_SUBDIRECTORY(cynara-creds-commons)
-ADD_SUBDIRECTORY(cynara-creds-dbus)
-ADD_SUBDIRECTORY(cynara-creds-socket)
-ADD_SUBDIRECTORY(cynara-session)
+SET(LIB_SESSION_VERSION_MAJOR 0)
+SET(LIB_SESSION_VERSION ${LIB_SESSION_VERSION_MAJOR}.0.1)
+
+SET(LIB_SESSION_PATH ${CYNARA_PATH}/helpers/session)
+
+SET(LIB_SESSION_SOURCES
+    ${LIB_SESSION_PATH}/session.cpp
+    )
+
+INCLUDE_DIRECTORIES(
+    ${CYNARA_PATH}/include
+    ${LIB_SESSION_PATH}
+    )
+
+ADD_LIBRARY(${TARGET_LIB_SESSION} SHARED ${LIB_SESSION_SOURCES})
+
+SET_TARGET_PROPERTIES(
+    ${TARGET_LIB_SESSION}
+    PROPERTIES
+        SOVERSION ${LIB_SESSION_VERSION_MAJOR}
+        VERSION ${LIB_SESSION_VERSION}
+    )
+
+INSTALL(TARGETS ${TARGET_LIB_SESSION} DESTINATION ${LIB_INSTALL_DIR})

@@ -1,0 +1,11 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=@LIB_INSTALL_DIR@
+includedir=${prefix}/include
+
+Name: cynara-creds-dbus
+Description: cynara-creds package for dbus clients
+Version: 0.0.1
+Requires: dbus-1
+Libs: -L${libdir} -lcynara-creds-dbus
+Cflags: -I${includedir}/cynara

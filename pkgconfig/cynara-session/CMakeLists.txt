@@ -13,13 +13,14 @@
 #    limitations under the License.
 #
 # @file        CMakeLists.txt
-# @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+# @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
 # @author      Radoslaw Bartosiak <r.bartosiak@samsung.com>
 #
 
-ADD_SUBDIRECTORY(cynara-client)
-ADD_SUBDIRECTORY(cynara-admin)
-ADD_SUBDIRECTORY(cynara-creds-commons)
-ADD_SUBDIRECTORY(cynara-creds-dbus)
-ADD_SUBDIRECTORY(cynara-creds-socket)
-ADD_SUBDIRECTORY(cynara-session)
+CONFIGURE_FILE(cynara-session.pc.in cynara-session.pc @ONLY)
+
+INSTALL(FILES
+    ${CMAKE_BINARY_DIR}/pkgconfig/cynara-session/cynara-session.pc
+    DESTINATION
+    ${LIB_INSTALL_DIR}/pkgconfig
+    )

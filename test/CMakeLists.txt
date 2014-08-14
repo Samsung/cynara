@@ -16,7 +16,7 @@
 # @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
 # @brief       Cmake for tests
 #
-PKG_CHECK_MODULES(PKGS REQUIRED gmock_main)
+PKG_CHECK_MODULES(PKGS REQUIRED gmock)
 
 ADD_DEFINITIONS("-DCYNARA_NO_LOGS")
 SET(CYNARA_SRC ${PROJECT_SOURCE_DIR}/src)
@@ -49,6 +49,8 @@ SET(CYNARA_TESTS_SOURCES
     storage/serializer/serialize.cpp
     common/types/policybucket.cpp
     helpers.cpp
+    TestEventListenerProxy.cpp
+    tests.cpp
 )
 
 INCLUDE_DIRECTORIES(

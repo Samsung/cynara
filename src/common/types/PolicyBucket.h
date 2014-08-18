@@ -48,12 +48,19 @@ public:
     typedef PolicyCollection::value_type value_type;
     typedef const_policy_iterator const_iterator;
 
+    // TODO: Review usefulness of ctors
     PolicyBucket() : m_defaultPolicy(PredefinedPolicyType::DENY) {}
     PolicyBucket(const PolicyBucketId &id, const PolicyResult &defaultPolicy)
         : m_defaultPolicy(defaultPolicy), m_id(id) {}
     PolicyBucket(const PolicyCollection &policies)
         : m_policyCollection(makePolicyMap(policies)),
           m_defaultPolicy(PredefinedPolicyType::DENY) {}
+    PolicyBucket(const PolicyBucketId &id,
+                 const PolicyResult &defaultPolicy,
+                 const PolicyCollection &policies)
+        : m_policyCollection(makePolicyMap(policies)),
+          m_defaultPolicy(defaultPolicy),
+          m_id(id) {}
 
     PolicyBucket filtered(const PolicyKey &key) const;
     void insertPolicy(PolicyPtr policy);

@@ -49,7 +49,7 @@ TEST(storage, checkEmpty) {
     Cynara::Storage storage(backend);
     PolicyKey pk = Helpers::generatePolicyKey();
 
-    EXPECT_CALL(backend, searchDefaultBucket(pk))
+    EXPECT_CALL(backend, searchBucket(defaultPolicyBucketId, pk))
         .WillOnce(ReturnPointee(&emptyBucket));
 
     // Default bucket empty -- return DENY
@@ -66,7 +66,7 @@ TEST(storage, checkSimple) {
     Cynara::Storage storage(backend);
     PolicyKey pk = Helpers::generatePolicyKey();
 
-    EXPECT_CALL(backend, searchDefaultBucket(pk))
+    EXPECT_CALL(backend, searchBucket(defaultPolicyBucketId, pk))
         .WillRepeatedly(ReturnPointee(&bucket));
 
     // Default bucket empty -- return DENY
@@ -81,6 +81,7 @@ TEST(storage, checkSimple) {
     ASSERT_EQ(PredefinedPolicyType::DENY, storage.checkPolicy(pk).policyType());
 }
 
+// TODO: Refactorize to resemble checkNonrecursive()
 TEST(storage, checkBucket) {
     using ::testing::ReturnPointee;
 
@@ -96,9 +97,6 @@ TEST(storage, checkBucket) {
     }));
 
     PolicyBucket additionalBucket;
-
-    EXPECT_CALL(backend, searchDefaultBucket(pk))
-        .WillRepeatedly(ReturnPointee(&defaultBucket));
 
     EXPECT_CALL(backend, searchBucket(defaultPolicyBucketId, pk))
         .WillRepeatedly(ReturnPointee(&defaultBucket));
@@ -136,9 +134,6 @@ TEST(storage, checkBucketWildcard) {
     FakeStorageBackend backend;
     Cynara::Storage storage(backend);
 
-    EXPECT_CALL(backend, searchDefaultBucket(checkKey))
-        .WillRepeatedly(ReturnPointee(&defaultBucket));
-
     EXPECT_CALL(backend, searchBucket(defaultPolicyBucketId, checkKey))
         .WillRepeatedly(ReturnPointee(&defaultBucket));
 
@@ -166,9 +161,6 @@ TEST(storage, checkBucketWildcardOtherDefault) {
     FakeStorageBackend backend;
     Cynara::Storage storage(backend);
 
-    EXPECT_CALL(backend, searchDefaultBucket(checkKey))
-        .WillRepeatedly(ReturnPointee(&defaultBucket));
-
     EXPECT_CALL(backend, searchBucket(defaultPolicyBucketId, checkKey))
         .WillRepeatedly(ReturnPointee(&defaultBucket));
 
@@ -178,4 +170,22 @@ TEST(storage, checkBucketWildcardOtherDefault) {
 
     // Should return additional bucket's default policy
     ASSERT_EQ(PredefinedPolicyType::ALLOW, storage.checkPolicy(checkKey));
+}
+
+TEST(storage, checkNonrecursive) {
+    using ::testing::ReturnPointee;
+
+    PolicyKey pk = Helpers::generatePolicyKey();
+    PolicyBucketId bucketId = "a-bucket";
+
+    PolicyBucket bucket(bucketId, PredefinedPolicyType::ALLOW,
+                               { Policy::bucketWithKey(pk, "must-not-be-touched") });
+    FakeStorageBackend backend;
+
+    Cynara::Storage storage(backend);
+
+    EXPECT_CALL(backend, searchBucket(bucketId, pk))
+        .WillOnce(ReturnPointee(&bucket));
+
+    ASSERT_EQ(PredefinedPolicyType::ALLOW, storage.checkPolicy(pk, bucketId, false));
 }

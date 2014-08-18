@@ -37,6 +37,7 @@ class StorageBackend {
 public:
     virtual ~StorageBackend() {}
 
+    // TODO: Remove searchDefaultBucket()
     virtual PolicyBucket searchDefaultBucket(const PolicyKey &key) = 0;
     virtual PolicyBucket searchBucket(const PolicyBucketId &bucket, const PolicyKey &key) = 0;
 

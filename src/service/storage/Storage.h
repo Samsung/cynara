@@ -43,7 +43,9 @@ class Storage
 public:
     Storage(StorageBackend &backend) : m_backend(backend) {}
 
-    PolicyResult checkPolicy(const PolicyKey &key);
+    PolicyResult checkPolicy(const PolicyKey &key,
+                             const PolicyBucketId &startBucketId = defaultPolicyBucketId,
+                             bool recursive = true);
 
     void insertPolicies(const std::map<PolicyBucketId, std::vector<Policy>> &policiesByBucketId);
     void deletePolicies(const std::map<PolicyBucketId, std::vector<PolicyKey>> &keysByBucketId);
@@ -55,7 +57,7 @@ public:
     void save(void);
 
 protected:
-    PolicyResult minimalPolicy(const PolicyBucket &bucket, const PolicyKey &key);
+    PolicyResult minimalPolicy(const PolicyBucket &bucket, const PolicyKey &key, bool recursive);
 
 private:
     StorageBackend &m_backend; // backend strategy

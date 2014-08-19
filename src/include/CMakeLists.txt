@@ -22,11 +22,6 @@ INSTALL(FILES
     )
 
 INSTALL(FILES
-    ${CYNARA_PATH}/include/cynara-client-async.h
-    DESTINATION ${INCLUDE_INSTALL_DIR}/cynara
-    )
-
-INSTALL(FILES
     ${CYNARA_PATH}/include/cynara-admin.h
     DESTINATION ${INCLUDE_INSTALL_DIR}/cynara
     )

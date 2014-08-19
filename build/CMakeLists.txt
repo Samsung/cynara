@@ -17,5 +17,4 @@
 #
 
 ADD_SUBDIRECTORY(cynara-client)
-ADD_SUBDIRECTORY(cynara-client-async)
 ADD_SUBDIRECTORY(cynara-admin)

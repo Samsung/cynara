@@ -14,23 +14,31 @@
  *    limitations under the License.
  */
 /*
- * @file        PolicyType.cpp
+ * @file        DefaultBucketSetNoneException.h
  * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @version     1.0
- * @brief       Implementation of functions for Cynara::PolicyType
+ * @brief       Implementation of DefaultBucketSetNoneException
  */
 
-#include "PolicyType.h"
-#include "PolicyResult.h"
+#ifndef SRC_COMMON_EXCEPTIONS_DEFAULTBUCKETSETNONEEXCEPTION_H_
+#define SRC_COMMON_EXCEPTIONS_DEFAULTBUCKETSETNONEEXCEPTION_H_
+
+#include <exception>
+
+#include "Exception.h"
 
 namespace Cynara {
 
-bool operator ==(const PolicyType &policyType, const PolicyResult &policyResult) {
-    return policyResult == policyType;
-}
+class DefaultBucketSetNoneException : public Exception {
+public:
+    DefaultBucketSetNoneException() = default;
+    virtual ~DefaultBucketSetNoneException() noexcept {};
 
-bool operator !=(const PolicyType &policyType, const PolicyResult &policyResult) {
-    return !(policyResult == policyType);
-}
+    virtual const std::string message(void) const {
+        return "DefaultBucketSetNoneException";
+    }
+};
 
-}  // namespace Cynara
+} /* namespace Cynara */
+
+#endif // SRC_COMMON_EXCEPTIONS_DEFAULTBUCKETSETNONEEXCEPTION_H_

@@ -33,12 +33,14 @@ typedef std::uint16_t PolicyType;
 
 namespace PredefinedPolicyType  {
     const PolicyType DENY = 0;
+    const PolicyType NONE = 1;
     const PolicyType BUCKET = 0xFFFE;
     const PolicyType ALLOW = 0xFFFF;
 };
 
 class PolicyResult;
 bool operator ==(const PolicyType &policyType, const PolicyResult &policyResult);
+bool operator !=(const PolicyType &policyType, const PolicyResult &policyResult);
 
 }  // namespace Cynara
 

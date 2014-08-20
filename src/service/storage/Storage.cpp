@@ -25,7 +25,8 @@
 #include <vector>
 
 #include <exceptions/BucketNotExistsException.h>
-#include "exceptions/DefaultBucketDeletionException.h"
+#include <exceptions/DefaultBucketDeletionException.h>
+#include <exceptions/DefaultBucketSetNoneException.h>
 #include <types/pointers.h>
 #include <types/Policy.h>
 #include <types/PolicyBucket.h>
@@ -69,7 +70,9 @@ PolicyResult Storage::minimalPolicy(const PolicyBucket &bucket, const PolicyKey 
                     if (recursive == true) {
                         auto bucketResults = m_backend.searchBucket(policyResult.metadata(), key);
                         auto minimumOfBucket = minimalPolicy(bucketResults, key, true);
-                        proposeMinimal(minimumOfBucket);
+                        if (minimumOfBucket != PredefinedPolicyType::NONE) {
+                            proposeMinimal(minimumOfBucket);
+                        }
                     }
                     continue;
                 }
@@ -112,7 +115,12 @@ void Storage::insertPolicies(const std::map<PolicyBucketId, std::vector<Policy>>
     }
 }
 
-void Storage::addOrUpdateBucket(const PolicyBucketId &bucketId, const PolicyResult &defaultBucketPolicy) {
+void Storage::addOrUpdateBucket(const PolicyBucketId &bucketId,
+                                const PolicyResult &defaultBucketPolicy) {
+
+    if (bucketId == defaultPolicyBucketId && defaultBucketPolicy == PredefinedPolicyType::NONE)
+        throw DefaultBucketSetNoneException();
+
     if (m_backend.hasBucket(bucketId)) {
         m_backend.updateBucket(bucketId, defaultBucketPolicy);
     } else {

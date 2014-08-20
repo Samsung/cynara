@@ -60,8 +60,16 @@ public:
         return std::tie(m_type, m_metadata) == std::tie(other.m_type, other.m_metadata);
     }
 
+    bool operator !=(const PolicyResult &other) const {
+        return !(*this == other);
+    }
+
     bool operator ==(const PolicyType &policyType) const {
         return (m_type == policyType) && m_metadata.empty();
+    }
+
+    bool operator !=(const PolicyType &policyType) const {
+        return !(*this == policyType);
     }
 };
 

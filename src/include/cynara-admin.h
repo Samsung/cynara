@@ -64,11 +64,14 @@ struct cynara_admin;
 /*! \brief   set policy result or bucket's default policy to DENY */
 #define CYNARA_ADMIN_DENY 0
 
+/*! \brief   set bucket's default policy to NONE */
+#define CYNARA_ADMIN_NONE 1
+
 /*! \brief   set policy result or bucket's default policy to ALLOW */
-#define CYNARA_ADMIN_ALLOW 1
+#define CYNARA_ADMIN_ALLOW 2
 
 /*! \brief   set policy to point into another bucket */
-#define CYNARA_ADMIN_BUCKET 2
+#define CYNARA_ADMIN_BUCKET 3
 /** @}*/
 
 /**

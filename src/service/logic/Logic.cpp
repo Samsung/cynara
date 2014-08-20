@@ -25,6 +25,7 @@
 #include <exceptions/PluginNotFoundException.h>
 #include <exceptions/BucketNotExistsException.h>
 #include <exceptions/DefaultBucketDeletionException.h>
+#include <exceptions/DefaultBucketSetNoneException.h>
 #include <signal.h>
 
 #include <main/Cynara.h>
@@ -90,10 +91,16 @@ bool Logic::check(RequestContextPtr context UNUSED, const PolicyKey &key,
 }
 
 void Logic::execute(RequestContextPtr context, InsertOrUpdateBucketRequestPtr request) {
-    m_storage->addOrUpdateBucket(request->bucketId(), request->result());
-    onPoliciesChanged();
+    auto code = CodeResponse::Code::OK;
 
-    context->returnResponse(context, std::make_shared<CodeResponse>(CodeResponse::Code::OK,
+    try {
+        m_storage->addOrUpdateBucket(request->bucketId(), request->result());
+        onPoliciesChanged();
+    } catch (const DefaultBucketSetNoneException &ex) {
+        code = CodeResponse::Code::NOT_ALLOWED;
+    }
+
+    context->returnResponse(context, std::make_shared<CodeResponse>(code,
                             request->sequenceNumber()));
 }
 

@@ -33,9 +33,9 @@ int CapacityCache::get(const std::string &session, const PolicyKey &key) {
     //This can be very time heavy. This part is welcomed to be optimized.
     if (session != m_session) {
         LOGD("Session changed from %s to %s.", m_session.c_str(), session.c_str());
-        m_keyValue.clear();
-        m_keyUsage.clear();
+        clear();
         m_session = session;
+        return CYNARA_API_CACHE_MISS;
     }
     auto resultIt = m_keyValue.find(keyToString(key));
     //Do we have entry in cache?
@@ -44,7 +44,7 @@ int CapacityCache::get(const std::string &session, const PolicyKey &key) {
                 key.client().toString().c_str(),
                 key.user().toString().c_str(),
                 key.privilege().toString().c_str());
-        return update(key);
+        return CYNARA_API_CACHE_MISS;
     } else {
         LOGD("Entry available for client=%s user=%s privilege=%s",
                 key.client().toString().c_str(),
@@ -64,14 +64,13 @@ int CapacityCache::get(const std::string &session, const PolicyKey &key) {
             LOGD("Entry usable.");
             m_keyUsage.splice(m_keyUsage.begin(), m_keyUsage, resultIt->second.second);
             return plugin->toResult(resultIt->second.first);
-        } else {
-            //remove from list and map and update
-            LOGD("Entry not usable.");
-            auto usage_it = resultIt->second.second;
-            m_keyUsage.erase(usage_it);
-            m_keyValue.erase(resultIt);
-            return update(key);
         }
+        //Remove unusable entry
+        LOGD("Entry not usable");
+        auto usageIt = resultIt->second.second;
+        m_keyUsage.erase(usageIt);
+        m_keyValue.erase(resultIt);
+        return CYNARA_API_CACHE_MISS;
     }
 }
 
@@ -101,14 +100,16 @@ void CapacityCache::evict(void) {
     m_keyValue.erase(value_it);
 }
 
-int CapacityCache::update(const PolicyKey &key) {
-    int ret;
-    PolicyResult result;
-    if ((ret = m_getter->requestResult(key, result)) != CYNARA_API_SUCCESS) {
-        LOGE("Error fetching new entry.");
-        return ret;
+int CapacityCache::update(const std::string &session,
+                          const PolicyKey &key,
+                          const PolicyResult &result) {
+    //This can be very time heavy. This part is welcomed to be optimized.
+    if (session != m_session) {
+        LOGD("Session changed from %s to %s.", m_session.c_str(), session.c_str());
+        clear();
+        m_session = session;
     }
-    LOGD("Fetched new entry.");
+
     auto pluginIt = m_plugins.find(result.policyType());
 
     //No registered plugin for returned type of policy

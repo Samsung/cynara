@@ -61,8 +61,11 @@ public:
 
 class PluginCache {
 public:
-    PluginCache(ResultGetterInterfacePtr getter) : m_getter(getter) {}
+    PluginCache() {}
     virtual int get(const std::string &session, const PolicyKey &key) = 0;
+    virtual int update(const std::string &session,
+                       const PolicyKey &key,
+                       const PolicyResult &result) = 0;
 
     void registerPlugin(const PolicyType policyType, InterpreterInterfacePtr plugin) {
         m_plugins[policyType] = plugin;
@@ -76,7 +79,6 @@ public:
 
 protected:
     std::map<PolicyType, InterpreterInterfacePtr> m_plugins;
-    ResultGetterInterfacePtr m_getter;
 };
 
 } // namespace Cynara

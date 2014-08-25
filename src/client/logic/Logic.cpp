@@ -39,7 +39,8 @@ const std::string clientSocketPath("/run/cynara/cynara.socket");
 
 Logic::Logic() {
     m_socket = std::make_shared<SocketClient>(clientSocketPath, std::make_shared<ProtocolClient>());
-    m_cache = std::make_shared<CapacityCache>(std::make_shared<PolicyGetter>(m_socket));
+    m_resultGetter = std::make_shared<PolicyGetter>(m_socket);
+    m_cache = std::make_shared<CapacityCache>();
     auto naiveInterpreter = std::make_shared<NaiveInterpreter>();
     m_cache->registerPlugin(PredefinedPolicyType::ALLOW, naiveInterpreter);
     m_cache->registerPlugin(PredefinedPolicyType::DENY, naiveInterpreter);
@@ -49,15 +50,26 @@ Logic::Logic() {
 int Logic::check(const std::string &client, const std::string &session, const std::string &user,
                  const std::string &privilege) noexcept
 {
+    if (!m_socket->isConnected()){
+        onDisconnected();
+    }
+
     PolicyKey key(client, user, privilege);
-
-    if (!m_socket->isConnected())
-        onDisconnected();
-
     auto ret = m_cache->get(session, key);
-    if (ret == CYNARA_API_SERVICE_NOT_AVAILABLE)
-        onDisconnected();
-    return ret;
+    //Any other situation than cache miss
+    if (ret != CYNARA_API_CACHE_MISS) {
+        return ret;
+    }
+
+    //No value in Cache
+    PolicyResult result;
+    ret = m_resultGetter->requestResult(key, result);
+    if (ret != CYNARA_API_SUCCESS) {
+        LOGE("Error fetching new entry.");
+        return ret;
+    }
+
+    return m_cache->update(session, key, result);
 }
 
 void Logic::onDisconnected(void) {

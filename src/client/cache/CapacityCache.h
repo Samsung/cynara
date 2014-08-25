@@ -34,12 +34,13 @@ class CapacityCache : public PluginCache {
 public:
     static const std::size_t CACHE_DEFAULT_CAPACITY = 10000;
 
-    CapacityCache(ResultGetterInterfacePtr getter,
-                   std::size_t capacity = CACHE_DEFAULT_CAPACITY) :
-        PluginCache(getter),
+    CapacityCache(std::size_t capacity = CACHE_DEFAULT_CAPACITY) :
         m_capacity(capacity) {}
 
     int get(const std::string &session, const PolicyKey &key);
+    int update(const std::string& session,
+               const PolicyKey &key,
+               const PolicyResult &result);
     void clear(void);
 
 private:
@@ -50,7 +51,7 @@ private:
 
     static std::string keyToString(const PolicyKey &key);
     void evict(void);
-    int update(const PolicyKey &key);
+
 
     std::size_t m_capacity;
     std::string m_session;

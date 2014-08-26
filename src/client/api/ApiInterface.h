@@ -24,7 +24,9 @@
 #define SRC_CLIENT_API_APIINTERFACE_H_
 
 #include <string>
+
 #include <cynara-client.h>
+#include <types/ClientSession.h>
 
 namespace Cynara {
 
@@ -33,7 +35,7 @@ public:
     ApiInterface() = default;
     virtual ~ApiInterface() {};
 
-    virtual int check(const std::string &client, const std::string &session,
+    virtual int check(const std::string &client, const ClientSession &session,
                       const std::string &user, const std::string &privilege) = 0;
 };
 

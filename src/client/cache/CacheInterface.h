@@ -29,6 +29,7 @@
 #include <string>
 
 #include <cynara-client.h>
+#include <types/ClientSession.h>
 #include <types/PolicyKey.h>
 #include <types/PolicyResult.h>
 #include <types/PolicyType.h>
@@ -62,8 +63,8 @@ public:
 class PluginCache {
 public:
     PluginCache() {}
-    virtual int get(const std::string &session, const PolicyKey &key) = 0;
-    virtual int update(const std::string &session,
+    virtual int get(const ClientSession &session, const PolicyKey &key) = 0;
+    virtual int update(const ClientSession &session,
                        const PolicyKey &key,
                        const PolicyResult &result) = 0;
 

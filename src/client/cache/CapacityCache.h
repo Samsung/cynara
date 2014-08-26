@@ -37,8 +37,8 @@ public:
     CapacityCache(std::size_t capacity = CACHE_DEFAULT_CAPACITY) :
         m_capacity(capacity) {}
 
-    int get(const std::string &session, const PolicyKey &key);
-    int update(const std::string& session,
+    int get(const ClientSession &session, const PolicyKey &key);
+    int update(const ClientSession& session,
                const PolicyKey &key,
                const PolicyResult &result);
     void clear(void);
@@ -54,7 +54,7 @@ private:
 
 
     std::size_t m_capacity;
-    std::string m_session;
+    ClientSession m_session;
 
     KeyUsageList m_keyUsage;
     KeyValueMap m_keyValue;

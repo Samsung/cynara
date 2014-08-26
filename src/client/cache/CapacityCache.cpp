@@ -29,7 +29,7 @@
 
 namespace Cynara {
 
-int CapacityCache::get(const std::string &session, const PolicyKey &key) {
+int CapacityCache::get(const ClientSession &session, const PolicyKey &key) {
     //This can be very time heavy. This part is welcomed to be optimized.
     if (session != m_session) {
         LOGD("Session changed from %s to %s.", m_session.c_str(), session.c_str());
@@ -100,7 +100,7 @@ void CapacityCache::evict(void) {
     m_keyValue.erase(value_it);
 }
 
-int CapacityCache::update(const std::string &session,
+int CapacityCache::update(const ClientSession &session,
                           const PolicyKey &key,
                           const PolicyResult &result) {
     //This can be very time heavy. This part is welcomed to be optimized.

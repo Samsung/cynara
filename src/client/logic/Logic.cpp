@@ -47,7 +47,7 @@ Logic::Logic() {
     m_cache->registerPlugin(PredefinedPolicyType::BUCKET, naiveInterpreter);
 }
 
-int Logic::check(const std::string &client, const std::string &session, const std::string &user,
+int Logic::check(const std::string &client, const ClientSession &session, const std::string &user,
                  const std::string &privilege) noexcept
 {
     if (!m_socket->isConnected()){

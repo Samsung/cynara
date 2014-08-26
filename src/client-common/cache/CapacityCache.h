@@ -20,8 +20,8 @@
  * @brief       This file contains capacity cache header.
  */
 
-#ifndef  SRC_CLIENT_CACHE_CAPACITYCACHE_H_
-#define  SRC_CLIENT_CACHE_CAPACITYCACHE_H_
+#ifndef  SRC_CLIENT_COMMON_CACHE_CAPACITYCACHE_H_
+#define  SRC_CLIENT_COMMON_CACHE_CAPACITYCACHE_H_
 
 #include <list>
 #include <unordered_map>
@@ -62,7 +62,7 @@ private:
 
 } //namespace Cynara
 
-#endif // SRC_CLIENT_CACHE_CAPACITYCACHE_H_
+#endif // SRC_CLIENT_COMMON_CACHE_CAPACITYCACHE_H_
 
 
 

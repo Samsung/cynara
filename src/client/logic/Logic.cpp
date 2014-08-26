@@ -22,24 +22,33 @@
 
 #include <memory>
 
+#include <cache/CapacityCache.h>
 #include <common.h>
+#include <cynara-client-error.h>
+#include <exceptions/ServerConnectionErrorException.h>
+#include <log/log.h>
+#include <plugins/NaiveInterpreter.h>
 #include <protocol/Protocol.h>
 #include <protocol/ProtocolClient.h>
+#include <request/CheckRequest.h>
+#include <request/pointers.h>
+#include <response/CheckResponse.h>
+#include <response/pointers.h>
 #include <sockets/SocketClient.h>
-#include <types/PolicyKey.h>
 
-#include <cache/CapacityCache.h>
-#include <cache/NaiveInterpreter.h>
-#include <cache/PolicyGetter.h>
-#include "Logic.h"
+#include <logic/Logic.h>
 
 namespace Cynara {
 
 const std::string clientSocketPath("/run/cynara/cynara.socket");
 
+static ProtocolFrameSequenceNumber generateSequenceNumber(void) {
+    static ProtocolFrameSequenceNumber sequenceNumber = 0;
+    return ++sequenceNumber;
+}
+
 Logic::Logic() {
     m_socket = std::make_shared<SocketClient>(clientSocketPath, std::make_shared<ProtocolClient>());
-    m_resultGetter = std::make_shared<PolicyGetter>(m_socket);
     m_cache = std::make_shared<CapacityCache>();
     auto naiveInterpreter = std::make_shared<NaiveInterpreter>();
     m_cache->registerPlugin(PredefinedPolicyType::ALLOW, naiveInterpreter);
@@ -63,13 +72,43 @@ int Logic::check(const std::string &client, const ClientSession &session, const 
 
     //No value in Cache
     PolicyResult result;
-    ret = m_resultGetter->requestResult(key, result);
+    ret = requestResult(key, result);
     if (ret != CYNARA_API_SUCCESS) {
         LOGE("Error fetching new entry.");
         return ret;
     }
 
     return m_cache->update(session, key, result);
+}
+
+int Logic::requestResult(const PolicyKey &key, PolicyResult &result) noexcept {
+    ProtocolFrameSequenceNumber sequenceNumber = generateSequenceNumber();
+
+    //Ask cynara service
+    CheckResponsePtr checkResponse;
+    try {
+        RequestPtr request = std::make_shared<CheckRequest>(key, sequenceNumber);
+        ResponsePtr response = m_socket->askCynaraServer(request);
+        if (!response) {
+            LOGW("Disconnected by cynara server.");
+            return CYNARA_API_SERVICE_NOT_AVAILABLE;
+        }
+        checkResponse = std::dynamic_pointer_cast<CheckResponse>(response);
+        if (!checkResponse) {
+            LOGC("Critical error. Casting Response to CheckResponse failed.");
+            return CYNARA_API_ACCESS_DENIED;
+        }
+
+        LOGD("checkResponse: policyType = %" PRIu16 ", metadata = %s",
+             checkResponse->m_resultRef.policyType(),
+             checkResponse->m_resultRef.metadata().c_str());
+    } catch (const ServerConnectionErrorException &ex) {
+        LOGE("Cynara service not available.");
+        return CYNARA_API_SERVICE_NOT_AVAILABLE;
+    }
+
+    result = checkResponse->m_resultRef;
+    return CYNARA_API_SUCCESS;
 }
 
 void Logic::onDisconnected(void) {

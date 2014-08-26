@@ -19,8 +19,8 @@
  * @version     1.0
  * @brief       This file contains PolicyType naive interpreter implementation.
  */
-#ifndef SRC_CLIENT_CACHE_NAIVEINTERPRETER_H_
-#define SRC_CLIENT_CACHE_NAIVEINTERPRETER_H_
+#ifndef SRC_CLIENT_COMMON_PLUGINS_NAIVEINTERPRETER_H_
+#define SRC_CLIENT_COMMON_PLUGINS_NAIVEINTERPRETER_H_
 
 #include <attributes/attributes.h>
 #include <cache/CacheInterface.h>
@@ -45,6 +45,6 @@ class NaiveInterpreter : public InterpreterInterface {
 
 } // namespace Cynara
 
-#endif // SRC_CLIENT_CACHE_NAIVEINTERPRETER_H_
+#endif // SRC_CLIENT_COMMON_PLUGINS_NAIVEINTERPRETER_H_
 
 

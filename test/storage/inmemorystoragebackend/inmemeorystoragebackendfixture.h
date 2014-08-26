@@ -24,6 +24,7 @@
 #define INMEMEORYSTORAGEBACKENDFIXTURE_H_
 
 #include <gmock/gmock.h>
+#include <gtest/gtest.h>
 
 #include <types/PolicyBucket.h>
 #include <types/PolicyCollection.h>
@@ -50,6 +51,16 @@ protected:
         for (const auto &policy : policies) {
             m_buckets[bucketId].insertPolicy(policy);
         }
+    }
+
+    static void ASSERT_DB_VIRGIN(Cynara::Buckets &buckets)  {
+        using ::testing::IsEmpty;
+        ASSERT_EQ(1, buckets.size());
+        auto defaultBucketIter = buckets.find(Cynara::defaultPolicyBucketId);
+        ASSERT_NE(buckets.end(), defaultBucketIter);
+        auto &defaultBucket = defaultBucketIter->second;
+        ASSERT_THAT(defaultBucket, IsEmpty());
+        ASSERT_EQ(Cynara::PredefinedPolicyType::DENY, defaultBucket.defaultPolicy());
     }
 
     virtual ~InMemeoryStorageBackendFixture() {}

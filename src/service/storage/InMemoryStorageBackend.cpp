@@ -35,6 +35,7 @@
 #include <log/log.h>
 #include <exceptions/BucketNotExistsException.h>
 #include <exceptions/CannotCreateFileException.h>
+#include <exceptions/DatabaseException.h>
 #include <exceptions/FileNotFoundException.h>
 #include <exceptions/UnexpectedErrorException.h>
 #include <types/PolicyBucket.h>
@@ -63,13 +64,15 @@ void InMemoryStorageBackend::load(void) {
 
         storageDeserializer.initBuckets(buckets());
         storageDeserializer.loadBuckets(buckets());
-    } catch (const FileNotFoundException &) {
-        LOGE("Reading cynara database failed.");
+    } catch (const DatabaseException &) {
+        LOGC("Reading cynara database failed.");
+        buckets().clear();
+        // TODO: Implement emergency mode toggle
     }
 
     if (!hasBucket(defaultPolicyBucketId)) {
-            LOGN("Creating defaultBucket.");
-            this->buckets().insert({ defaultPolicyBucketId, PolicyBucket() });
+        LOGN("Creating defaultBucket.");
+        this->buckets().insert({ defaultPolicyBucketId, PolicyBucket() });
     }
 }
 

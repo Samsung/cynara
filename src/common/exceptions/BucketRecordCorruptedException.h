@@ -22,13 +22,13 @@
 #ifndef SRC_COMMON_EXCEPTIONS_BUCKETRECORDCORRUPTEDEXCEPTION_H_
 #define SRC_COMMON_EXCEPTIONS_BUCKETRECORDCORRUPTEDEXCEPTION_H_
 
-#include "Exception.h"
-
 #include <string>
+
+#include <exceptions/DatabaseException.h>
 
 namespace Cynara {
 
-class BucketRecordCorruptedException : public Exception {
+class BucketRecordCorruptedException : public DatabaseException {
 public:
     BucketRecordCorruptedException(void) = delete;
     virtual ~BucketRecordCorruptedException() noexcept {};

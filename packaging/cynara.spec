@@ -29,6 +29,7 @@ BuildRequires: pkgconfig(libsystemd-journal)
 %global group_name %{name}
 
 %global state_path %{_localstatedir}/%{name}/
+%global tests_dir %{_datarootdir}/%{name}/tests
 
 %global build_type %{?build_type:%build_type}%{!?build_type:RELEASE}
 
@@ -195,6 +196,7 @@ cp -a %{SOURCE1007} .
 cp -a %{SOURCE1008} .
 cp -a %{SOURCE1009} .
 cp -a %{SOURCE1010} .
+cp -a test/db/db* .
 
 %build
 %if 0%{?sec_build_binary_debug_enable}
@@ -205,7 +207,8 @@ export CXXFLAGS="$CXXFLAGS -DTIZEN_DEBUG_ENABLE"
 export CXXFLAGS="$CXXFLAGS -Wp,-U_FORTIFY_SOURCE"
 %endif
 
-export CXXFLAGS="$CXXFLAGS -DCYNARA_STATE_PATH=\\\"%{state_path}\\\""
+export CXXFLAGS="$CXXFLAGS -DCYNARA_STATE_PATH=\\\"%{state_path}\\\" \
+                           -DCYNARA_TESTS_DIR=\\\"%{tests_dir}\\\""
 export LDFLAGS+="-Wl,--rpath=%{_libdir}"
 
 %cmake . \
@@ -221,6 +224,8 @@ rm -rf %{buildroot}
 
 mkdir -p %{buildroot}/usr/lib/systemd/system/sockets.target.wants
 mkdir -p %{buildroot}/%{state_path}
+mkdir -p %{buildroot}/%{tests_dir}
+cp -a db* %{buildroot}/%{tests_dir}
 ln -s ../cynara.socket %{buildroot}/usr/lib/systemd/system/sockets.target.wants/cynara.socket
 ln -s ../cynara-admin.socket %{buildroot}/usr/lib/systemd/system/sockets.target.wants/cynara-admin.socket
 
@@ -380,6 +385,7 @@ fi
 %files -n cynara-tests
 %manifest cynara-tests.manifest
 %attr(755,root,root) /usr/bin/cynara-tests
+%attr(755,root,root) %{tests_dir}/db*/*
 
 %files -n libcynara-creds-commons
 %manifest libcynara-creds-commons.manifest

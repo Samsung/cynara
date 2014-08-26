@@ -21,8 +21,8 @@
  * @brief       This file contains error codes returned by client APIs of Cynara.
  */
 
-#ifndef CYNARA_ERROR_H
-#define CYNARA_ERROR_H
+#ifndef CYNARA_CLIENT_ERROR_H
+#define CYNARA_CLIENT_ERROR_H
 
 /**
  * \name Return Codes
@@ -45,6 +45,9 @@
 
 /*! \brief   service not available */
 #define CYNARA_API_SERVICE_NOT_AVAILABLE -4
+
+/*! \brief   indicating that value is not present in cache */
+#define CYNARA_API_CACHE_MISS -5
 /** @}*/
 
-#endif // CYNARA_ERROR_H
+#endif // CYNARA_CLIENT_ERROR_H

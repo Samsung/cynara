@@ -20,38 +20,8 @@
  * \brief       This file contains administration APIs of cynara available with libcynara-admin.
  */
 
-
 #ifndef CYNARA_ADMIN_H
 #define CYNARA_ADMIN_H
-
-/**
- * \name Return Codes
- * exported by the foundation API.
- * result codes begin with the start error code and extend into negative direction.
- * @{
-*/
-
-/*! \brief   indicating the result of the one specific API is successful or access is allowed */
-#define CYNARA_ADMIN_API_SUCCESS 0
-
-/*! \brief   indicating client process is running out of memory */
-#define CYNARA_ADMIN_API_OUT_OF_MEMORY -1
-
-/*! \brief   indicating the API's parameter is malformed */
-#define CYNARA_ADMIN_API_INVALID_PARAM -2
-
-/*! \brief   service not available (cannot connect to cynara service) */
-#define CYNARA_ADMIN_API_SERVICE_NOT_AVAILABLE -3
-
-/*! \brief   unexpected error in client library */
-#define CYNARA_ADMIN_API_UNEXPECTED_CLIENT_ERROR -4
-
-/*! \brief   cynara service does not allow to perform requested operation */
-#define CYNARA_ADMIN_API_OPERATION_NOT_ALLOWED -5
-
-/*! \brief   cynara service hasn't found requested bucket */
-#define CYNARA_ADMIN_API_BUCKET_NOT_FOUND -6
-/** @}*/
 
 #ifdef __cplusplus
 extern "C" {

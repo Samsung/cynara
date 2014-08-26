@@ -22,6 +22,7 @@
 
 #include <memory>
 
+#include <cynara-admin-error.h>
 #include <common.h>
 #include <exceptions/ServerConnectionErrorException.h>
 #include <log/log.h>

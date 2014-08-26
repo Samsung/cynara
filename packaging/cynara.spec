@@ -197,6 +197,7 @@ fi
 %files -n libcynara-client-devel
 %defattr(-,root,root,-)
 %{_includedir}/cynara/cynara-client.h
+%{_includedir}/cynara/cynara-client-error.h
 %{_libdir}/pkgconfig/cynara-client.pc
 %{_libdir}/libcynara-client.so
 
@@ -209,6 +210,7 @@ fi
 %files -n libcynara-admin-devel
 %defattr(-,root,root,-)
 %{_includedir}/cynara/cynara-admin.h
+%{_includedir}/cynara/cynara-admin-error.h
 %{_libdir}/libcynara-admin.so
 %{_libdir}/pkgconfig/cynara-admin.pc
 

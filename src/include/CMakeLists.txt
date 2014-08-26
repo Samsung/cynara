@@ -18,10 +18,12 @@
 
 INSTALL(FILES
     ${CYNARA_PATH}/include/cynara-client.h
+    ${CYNARA_PATH}/include/cynara-client-error.h
     DESTINATION ${INCLUDE_INSTALL_DIR}/cynara
     )
 
 INSTALL(FILES
     ${CYNARA_PATH}/include/cynara-admin.h
+    ${CYNARA_PATH}/include/cynara-admin-error.h
     DESTINATION ${INCLUDE_INSTALL_DIR}/cynara
     )

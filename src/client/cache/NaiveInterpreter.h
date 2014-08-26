@@ -24,6 +24,7 @@
 
 #include <attributes/attributes.h>
 #include <cache/CacheInterface.h>
+#include <cynara-client-error.h>
 
 namespace Cynara {
 

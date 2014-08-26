@@ -22,6 +22,7 @@
 
 #include <cinttypes>
 
+#include <cynara-client-error.h>
 #include <log/log.h>
 
 #include <cache/CapacityCache.h>

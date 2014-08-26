@@ -20,32 +20,8 @@
  * @brief       This file contains client APIs of Cynara available with libcynara-client.
  */
 
-
 #ifndef CYNARA_CLIENT_H
 #define CYNARA_CLIENT_H
-
-/**
- * \name Return Codes
- * exported by the foundation API.
- * result codes begin with the start error code and extend into negative direction.
- * @{
-*/
-
-/*! \brief   indicating the result of the one specific API is successful or access is allowed */
-#define CYNARA_API_SUCCESS 0
-
-/*! \brief   indicating that access that was checked is denied */
-#define CYNARA_API_ACCESS_DENIED -1
-
-/*! \brief   indicating system is running out of memory state */
-#define CYNARA_API_OUT_OF_MEMORY -2
-
-/*! \brief   indicating the API's parameter is malformed */
-#define CYNARA_API_INVALID_PARAM -3
-
-/*! \brief   service not available */
-#define CYNARA_API_SERVICE_NOT_AVAILABLE -4
-/** @}*/
 
 #ifdef __cplusplus
 extern "C" {

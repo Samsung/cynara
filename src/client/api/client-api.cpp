@@ -27,6 +27,7 @@
 #include <log/log.h>
 
 #include <cynara-client.h>
+#include <cynara-client-error.h>
 #include <api/ApiInterface.h>
 #include <logic/Logic.h>
 

@@ -9,6 +9,8 @@ Source1001:    cynara.manifest
 Source1002:    libcynara-client.manifest
 Source1003:    libcynara-admin.manifest
 Source1004:    cynara-tests.manifest
+Source1005:    libcynara-client-commons.manifest
+Source1006:    libcynara-commons.manifest
 Requires:      default-ac-domains
 BuildRequires: cmake
 BuildRequires: zip
@@ -51,6 +53,23 @@ Requires:   libcynara-client = %{version}-%{release}
 client library (devel) for checking policies
 
 #######################################################
+%package -n libcynara-client-commons
+Summary:    Cynara - client commons library
+Requires:   cynara = %{version}-%{release}
+Requires(post): /sbin/ldconfig
+Requires(postun): /sbin/ldconfig
+
+%description -n libcynara-client-commons
+client commons library with common functionalities
+
+%package -n libcynara-client-commons-devel
+Summary:    Cynara - client commons library (devel)
+Requires:   libcynara-client-commons = %{version}-%{release}
+
+%description -n libcynara-client-commons-devel
+client commons library (devel) with common functionalities
+
+#######################################################
 %package -n libcynara-admin
 Summary:    Cynara - admin client library
 Requires:   cynara = %{version}-%{release}
@@ -66,6 +85,23 @@ Requires:   libcynara-admin = %{version}-%{release}
 
 %description -n libcynara-admin-devel
 admin client library (devel) for setting, listing and removing policies
+
+#######################################################
+%package -n libcynara-commons
+Summary:    Cynara - cynara commons library
+Requires:   cynara = %{version}-%{release}
+Requires(post): /sbin/ldconfig
+Requires(postun): /sbin/ldconfig
+
+%description -n libcynara-commons
+cynara common library with common functionalities
+
+%package -n libcynara-commons-devel
+Summary:    Cynara - cynara commons library (devel)
+Requires:   libcynara-commons = %{version}-%{release}
+
+%description -n libcynara-commons-devel
+cynara common library (devel) with common functionalities
 
 #######################################################
 %package -n cynara-tests
@@ -90,6 +126,8 @@ cp -a %{SOURCE1001} .
 cp -a %{SOURCE1002} .
 cp -a %{SOURCE1003} .
 cp -a %{SOURCE1004} .
+cp -a %{SOURCE1005} .
+cp -a %{SOURCE1006} .
 
 %build
 %if 0%{?sec_build_binary_debug_enable}
@@ -163,23 +201,38 @@ fi
 
 %postun -n libcynara-client -p /sbin/ldconfig
 
+%post -n libcynara-client-commons -p /sbin/ldconfig
+
+%postun -n libcynara-client-commons -p /sbin/ldconfig
+
 %post -n libcynara-admin -p /sbin/ldconfig
 
 %postun -n libcynara-admin -p /sbin/ldconfig
+
+%post -n libcynara-commons -p /sbin/ldconfig
+
+%postun -n libcynara-commons -p /sbin/ldconfig
 
 %post -n libcynara-client-devel -p /sbin/ldconfig
 
 %postun -n libcynara-client-devel -p /sbin/ldconfig
 
+%post -n libcynara-client-commons-devel -p /sbin/ldconfig
+
+%postun -n libcynara-client-commons-devel -p /sbin/ldconfig
+
 %post -n libcynara-admin-devel -p /sbin/ldconfig
 
 %postun -n libcynara-admin-devel -p /sbin/ldconfig
+
+%post -n libcynara-commons-devel -p /sbin/ldconfig
+
+%postun -n libcynara-commons-devel -p /sbin/ldconfig
 
 %files -n cynara
 %manifest cynara.manifest
 %license LICENSE
 %attr(755,root,root) /usr/bin/cynara
-%{_libdir}/libcynara-commons.so*
 %attr(-,root,root) /usr/lib/systemd/system/cynara.service
 %attr(-,root,root) /usr/lib/systemd/system/cynara.target
 %attr(-,root,root) /usr/lib/systemd/system/sockets.target.wants/cynara.socket
@@ -193,14 +246,20 @@ fi
 %license LICENSE
 %defattr(-,root,root,-)
 %{_libdir}/libcynara-client.so.*
-%{_libdir}/libcynara-client-commons.so.*
 
 %files -n libcynara-client-devel
 %defattr(-,root,root,-)
 %{_includedir}/cynara/cynara-client.h
-%{_includedir}/cynara/cynara-client-error.h
 %{_libdir}/pkgconfig/cynara-client.pc
 %{_libdir}/libcynara-client.so
+
+%files -n libcynara-client-commons
+%manifest libcynara-client-commons.manifest
+%license LICENSE
+%{_libdir}/libcynara-client-commons.so.*
+
+%files -n libcynara-client-commons-devel
+%{_includedir}/cynara/cynara-client-error.h
 %{_libdir}/libcynara-client-commons.so
 
 %files -n libcynara-admin
@@ -215,6 +274,14 @@ fi
 %{_includedir}/cynara/cynara-admin-error.h
 %{_libdir}/libcynara-admin.so
 %{_libdir}/pkgconfig/cynara-admin.pc
+
+%files -n libcynara-commons
+%manifest libcynara-commons.manifest
+%license LICENSE
+%{_libdir}/libcynara-commons.so.*
+
+%files -n libcynara-commons-devel
+%{_libdir}/libcynara-commons.so
 
 %files -n cynara-tests
 %manifest cynara-tests.manifest

@@ -62,15 +62,19 @@ public:
 protected:
     InMemoryStorageBackend() {}
     void openFileStream(std::shared_ptr<std::ifstream> stream, const std::string &filename);
-    std::shared_ptr<BucketDeserializer> bucketStreamOpener(const PolicyBucketId &bucketId);
+    std::shared_ptr<BucketDeserializer> bucketStreamOpener(const PolicyBucketId &bucketId,
+                                                           const std::string &fileNameSuffix);
 
-    void openDumpFileStream(std::shared_ptr<std::ofstream> stream, const std::string &filename);
+    virtual void openDumpFileStream(std::shared_ptr<std::ofstream> stream,
+                                    const std::string &filename);
     std::shared_ptr<StorageSerializer> bucketDumpStreamOpener(const PolicyBucketId &bucketId);
 
 private:
     std::string m_dbPath;
     Buckets m_buckets;
-    static const std::string m_indexFileName;
+    static const std::string m_indexFilename;
+    static const std::string m_backupFilenameSuffix;
+    static const std::string m_bucketFilenamePrefix;
 
 protected:
     virtual Buckets &buckets(void) {

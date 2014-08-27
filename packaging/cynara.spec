@@ -283,7 +283,7 @@ cp ./conf/creds.conf %{buildroot}/%{conf_path}/creds.conf
 
 mkdir -p %{buildroot}/usr/lib/systemd/system/sockets.target.wants
 mkdir -p %{buildroot}/%{state_path}
-mkdir -p %{buildroot}/%{tests_dir}
+mkdir -p %{buildroot}/%{tests_dir}/empty_db
 cp -a db* %{buildroot}/%{tests_dir}
 ln -s ../cynara.socket %{buildroot}/usr/lib/systemd/system/sockets.target.wants/cynara.socket
 ln -s ../cynara-admin.socket %{buildroot}/usr/lib/systemd/system/sockets.target.wants/cynara-admin.socket
@@ -494,6 +494,7 @@ fi
 %manifest cynara-tests.manifest
 %attr(755,root,root) /usr/bin/cynara-tests
 %attr(755,root,root) %{tests_dir}/db*/*
+%dir %attr(755,root,root) %{tests_dir}/empty_db
 
 %files -n libcynara-creds-commons
 %manifest libcynara-creds-commons.manifest

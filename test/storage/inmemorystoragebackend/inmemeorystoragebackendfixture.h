@@ -67,6 +67,8 @@ protected:
 
     // TODO: consider defaulting accessor with ON_CALL
     Cynara::Buckets m_buckets;
+    static const std::string m_indexFileName;
+    static const std::string m_backupFileNameSuffix;
 };
 
 

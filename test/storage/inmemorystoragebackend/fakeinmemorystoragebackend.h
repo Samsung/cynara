@@ -29,7 +29,7 @@
 class FakeInMemoryStorageBackend : public Cynara::InMemoryStorageBackend {
 public:
     using Cynara::InMemoryStorageBackend::InMemoryStorageBackend;
-    MOCK_METHOD0(buckets, Cynara::Buckets&());
+    MOCK_METHOD0(buckets, Cynara::Buckets&(void));
 };
 
 

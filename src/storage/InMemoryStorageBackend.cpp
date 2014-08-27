@@ -30,7 +30,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unordered_map>
-#include <vector>
 
 #include <log/log.h>
 #include <exceptions/BucketNotExistsException.h>
@@ -43,6 +42,7 @@
 #include <types/PolicyType.h>
 
 #include <storage/BucketDeserializer.h>
+#include <storage/Integrity.h>
 #include <storage/StorageDeserializer.h>
 #include <storage/StorageSerializer.h>
 
@@ -50,17 +50,28 @@
 
 namespace Cynara {
 
-const std::string InMemoryStorageBackend::m_indexFileName = "buckets";
+const std::string InMemoryStorageBackend::m_indexFilename = "buckets";
+const std::string InMemoryStorageBackend::m_backupFilenameSuffix = "~";
+const std::string InMemoryStorageBackend::m_bucketFilenamePrefix = "_";
 
 void InMemoryStorageBackend::load(void) {
-    std::string indexFilename = m_dbPath + m_indexFileName;
+    Integrity integrity(m_dbPath, m_indexFilename, m_backupFilenameSuffix, m_bucketFilenamePrefix);
+    bool isBackupValid = integrity.backupGuardExists();
+    std::string bucketSuffix = "";
+    std::string indexFilename = m_dbPath + m_indexFilename;
+
+    if (isBackupValid) {
+        bucketSuffix += m_backupFilenameSuffix;
+        indexFilename += m_backupFilenameSuffix;
+    }
 
     try {
         auto indexStream = std::make_shared<std::ifstream>();
         openFileStream(indexStream, indexFilename);
 
         StorageDeserializer storageDeserializer(indexStream,
-            std::bind(&InMemoryStorageBackend::bucketStreamOpener, this, std::placeholders::_1));
+            std::bind(&InMemoryStorageBackend::bucketStreamOpener, this,
+                      std::placeholders::_1, bucketSuffix));
 
         storageDeserializer.initBuckets(buckets());
         storageDeserializer.loadBuckets(buckets());
@@ -74,6 +85,13 @@ void InMemoryStorageBackend::load(void) {
         LOGN("Creating defaultBucket.");
         this->buckets().insert({ defaultPolicyBucketId, PolicyBucket(defaultPolicyBucketId) });
     }
+
+    if (isBackupValid) {
+        integrity.revalidatePrimaryDatabase(buckets());
+    }
+    //in case there were unnecessary files in db directory
+    integrity.deleteNonIndexedFiles(std::bind(&InMemoryStorageBackend::hasBucket, this,
+                                    std::placeholders::_1));
 }
 
 void InMemoryStorageBackend::save(void) {
@@ -90,11 +108,19 @@ void InMemoryStorageBackend::save(void) {
     }
 
     auto indexStream = std::make_shared<std::ofstream>();
-    openDumpFileStream(indexStream, m_dbPath + m_indexFileName);
+    std::string indexFilename = m_dbPath + m_indexFilename;
+    openDumpFileStream(indexStream, indexFilename + m_backupFilenameSuffix);
 
     StorageSerializer storageSerializer(indexStream);
     storageSerializer.dump(buckets(), std::bind(&InMemoryStorageBackend::bucketDumpStreamOpener,
                            this, std::placeholders::_1));
+
+    Integrity integrity(m_dbPath, m_indexFilename, m_backupFilenameSuffix, m_bucketFilenamePrefix);
+
+    integrity.syncDatabase(buckets(), true);
+    integrity.createBackupGuard();
+    integrity.revalidatePrimaryDatabase(buckets());
+    //guard is removed during revalidation
 }
 
 PolicyBucket InMemoryStorageBackend::searchDefaultBucket(const PolicyKey &key) {
@@ -181,8 +207,9 @@ void InMemoryStorageBackend::openFileStream(std::shared_ptr<std::ifstream> strea
     // stream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     stream->open(filename);
 
-    if (!stream->is_open())
+    if (!stream->is_open()) {
         throw FileNotFoundException(filename);
+    }
 }
 
 void InMemoryStorageBackend::openDumpFileStream(std::shared_ptr<std::ofstream> stream,
@@ -195,8 +222,8 @@ void InMemoryStorageBackend::openDumpFileStream(std::shared_ptr<std::ofstream> s
 }
 
 std::shared_ptr<BucketDeserializer> InMemoryStorageBackend::bucketStreamOpener(
-        const PolicyBucketId &bucketId) {
-    std::string bucketFilename = m_dbPath + "_" + bucketId;
+        const PolicyBucketId &bucketId, const std::string &filenameSuffix) {
+    std::string bucketFilename = m_dbPath + m_bucketFilenamePrefix + bucketId + filenameSuffix;
     auto bucketStream = std::make_shared<std::ifstream>();
     try {
         openFileStream(bucketStream, bucketFilename);
@@ -208,7 +235,8 @@ std::shared_ptr<BucketDeserializer> InMemoryStorageBackend::bucketStreamOpener(
 
 std::shared_ptr<StorageSerializer> InMemoryStorageBackend::bucketDumpStreamOpener(
         const PolicyBucketId &bucketId) {
-    std::string bucketFilename = m_dbPath + "_" + bucketId;
+    std::string bucketFilename = m_dbPath + m_bucketFilenamePrefix +
+                                 bucketId + m_backupFilenameSuffix;
     auto bucketStream = std::make_shared<std::ofstream>();
 
     openDumpFileStream(bucketStream, bucketFilename);

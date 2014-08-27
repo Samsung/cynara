@@ -32,6 +32,7 @@ SET(CYNARA_SOURCES_FOR_TESTS
     ${CYNARA_SRC}/helpers/creds-commons/creds-commons.cpp
     ${CYNARA_SRC}/storage/BucketDeserializer.cpp
     ${CYNARA_SRC}/storage/InMemoryStorageBackend.cpp
+    ${CYNARA_SRC}/storage/Integrity.cpp
     ${CYNARA_SRC}/storage/Storage.cpp
     ${CYNARA_SRC}/storage/StorageDeserializer.cpp
     ${CYNARA_SRC}/storage/StorageSerializer.cpp

@@ -40,6 +40,9 @@
 
 using namespace Cynara;
 
+const std::string InMemeoryStorageBackendFixture::m_indexFileName = "buckets";
+const std::string InMemeoryStorageBackendFixture::m_backupFileNameSuffix = "~";
+
 TEST_F(InMemeoryStorageBackendFixture, defaultPolicyIsDeny) {
     using ::testing::ReturnRef;
 
@@ -192,7 +195,7 @@ TEST_F(InMemeoryStorageBackendFixture, deletePolicyFromNonexistentBucket) {
 // Database dir is empty
 TEST_F(InMemeoryStorageBackendFixture, load_no_db) {
     using ::testing::ReturnRef;
-    auto testDbPath = std::string(CYNARA_TESTS_DIR) + "/db1/";
+    auto testDbPath = std::string(CYNARA_TESTS_DIR) + "/empty_db/";
     FakeInMemoryStorageBackend backend(testDbPath);
     EXPECT_CALL(backend, buckets()).WillRepeatedly(ReturnRef(m_buckets));
     backend.load();
@@ -251,4 +254,37 @@ TEST_F(InMemeoryStorageBackendFixture, second_bucket_corrupted) {
     EXPECT_CALL(backend, buckets()).WillRepeatedly(ReturnRef(m_buckets));
     backend.load();
     ASSERT_DB_VIRGIN(m_buckets);
+}
+
+/**
+ * @brief   Database was corrupted, restore from backup (which is present)
+ * @test    Scenario:
+ * - There still is guard file in earlier prepared Cynara's policy database directory (db6)
+ * - Execution of load() should use backup files (present, with different contents than primaries)
+ * - Loaded database is checked - backup files were empty, so should recently loaded policies
+ */
+TEST_F(InMemeoryStorageBackendFixture, load_from_backup) {
+    using ::testing::ReturnRef;
+    using ::testing::IsEmpty;
+    using ::testing::InSequence;
+
+    auto testDbPath = std::string(CYNARA_TESTS_DIR) + "/db6/";
+    FakeInMemoryStorageBackend backend(testDbPath);
+
+    {
+        // Calls are expected in a specific order
+        InSequence s;
+        EXPECT_CALL(backend, buckets()).WillRepeatedly(ReturnRef(m_buckets));
+        backend.load();
+    }
+
+    std::vector<std::string> bucketIds = { "", "additional" };
+    for(const auto &bucketId : bucketIds) {
+        SCOPED_TRACE(bucketId);
+        const auto bucketIter = m_buckets.find(bucketId);
+        ASSERT_NE(m_buckets.end(), bucketIter);
+
+        const auto &bucketPolicies = bucketIter->second;
+        ASSERT_THAT(bucketPolicies, IsEmpty());
+    }
 }

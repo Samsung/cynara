@@ -5,7 +5,7 @@ includedir=${prefix}/include
 
 Name: cynara-creds-dbus
 Description: cynara-creds package for dbus clients
-Version: 0.0.1
+Version: @CYNARA_VERSION@
 Requires: dbus-1
 Libs: -L${libdir} -lcynara-creds-dbus
 Cflags: -I${includedir}/cynara

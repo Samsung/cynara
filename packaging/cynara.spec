@@ -12,6 +12,9 @@ Source1004:    cynara-tests.manifest
 Source1005:    libcynara-client-commons.manifest
 Source1006:    libcynara-commons.manifest
 Requires:      default-ac-domains
+Requires(pre): pwdutils
+Requires(post):   smack
+Requires(postun): pwdutils
 BuildRequires: cmake
 BuildRequires: zip
 BuildRequires: pkgconfig(libsystemd-daemon)
@@ -39,8 +42,6 @@ and tests (cynara-tests)
 %package -n libcynara-client
 Summary:    Cynara - client library
 Requires:   cynara = %{version}-%{release}
-Requires(post): /sbin/ldconfig
-Requires(postun): /sbin/ldconfig
 
 %description -n libcynara-client
 client library for checking policies
@@ -57,8 +58,6 @@ client library (devel) for checking policies
 %package -n libcynara-client-commons
 Summary:    Cynara - client commons library
 Requires:   cynara = %{version}-%{release}
-Requires(post): /sbin/ldconfig
-Requires(postun): /sbin/ldconfig
 
 %description -n libcynara-client-commons
 client commons library with common functionalities
@@ -74,8 +73,6 @@ client commons library (devel) with common functionalities
 %package -n libcynara-admin
 Summary:    Cynara - admin client library
 Requires:   cynara = %{version}-%{release}
-Requires(post): /sbin/ldconfig
-Requires(postun): /sbin/ldconfig
 
 %description -n libcynara-admin
 admin client library for setting, listing and removing policies
@@ -91,8 +88,6 @@ admin client library (devel) for setting, listing and removing policies
 %package -n libcynara-commons
 Summary:    Cynara - cynara commons library
 Requires:   cynara = %{version}-%{release}
-Requires(post): /sbin/ldconfig
-Requires(postun): /sbin/ldconfig
 
 %description -n libcynara-commons
 cynara common library with common functionalities
@@ -181,8 +176,6 @@ chsmack -a System %{state_path}
 
 systemctl restart %{name}.service
 
-/sbin/ldconfig
-
 %preun
 if [ $1 = 0 ]; then
     # unistall
@@ -195,8 +188,6 @@ if [ $1 = 0 ]; then
     groupdel %{user_name} > /dev/null 2>&1
     systemctl daemon-reload
 fi
-
-/sbin/ldconfig
 
 %post -n libcynara-client -p /sbin/ldconfig
 

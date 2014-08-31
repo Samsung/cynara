@@ -36,11 +36,6 @@ SET(CMAKE_CXX_FLAGS_RELEASE    "-g -std=c++0x -O2")
 SET(CMAKE_C_FLAGS_CCOV         "-g -O2 --coverage")
 SET(CMAKE_CXX_FLAGS_CCOV       "-g -std=c++0x -O2 --coverage")
 
-# If supported for the target machine, emit position-independent code,suitable
-# for dynamic linking and avoiding any limit on the size of the global offset
-# table. This option makes a difference on the m68k, PowerPC and SPARC.
-ADD_DEFINITIONS("-fPIC")
-
 # Set compiler warning flags
 ADD_DEFINITIONS("-Werror")                      # Make all warnings into errors.
 ADD_DEFINITIONS("-Wall")                        # Generate all warnings

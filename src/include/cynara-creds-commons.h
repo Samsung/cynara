@@ -40,7 +40,9 @@ enum cynara_user_creds {
 extern "C" {
 #endif
 
-/* empty initial file */
+int cynara_creds_get_default_client_method(enum cynara_client_creds *method);
+
+int cynara_creds_get_default_user_method(enum cynara_user_creds *method);
 
 #ifdef __cplusplus
 }

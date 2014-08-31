@@ -16,8 +16,29 @@
 /*
  * @file        creds-commons.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @author      Radoslaw Bartosiak <r.bartosiak@samsung.com>
+ * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @version     1.0
  * @brief       Implementation of external libcynara-creds-commons API
  */
 
-// Empty initial file
+#include <attributes/attributes.h>
+
+#include <cynara-client-error.h>
+#include <cynara-creds-commons.h>
+
+CYNARA_API
+int cynara_creds_get_default_client_method(enum cynara_client_creds *method) {
+    //todo read from proper file and parse
+
+    *method = CLIENT_METHOD_SMACK;
+    return CYNARA_API_SUCCESS;
+}
+
+CYNARA_API
+int cynara_creds_get_default_user_method(enum cynara_user_creds *method) {
+    //todo read from proper file and parse
+
+    *method = USER_METHOD_UID;
+    return CYNARA_API_SUCCESS;
+}

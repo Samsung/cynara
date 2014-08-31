@@ -48,6 +48,12 @@
 
 /*! \brief   indicating that value is not present in cache */
 #define CYNARA_API_CACHE_MISS -5
+
+/*! \brief   indicating that provided method is not supported by library */
+#define CYNARA_API_METHOD_NOT_SUPPORTED -6
+
+/*! \brief   indicating an unknown error */
+#define CYNARA_API_UNKNOWN_ERROR -7
 /** @}*/
 
 #endif // CYNARA_CLIENT_ERROR_H

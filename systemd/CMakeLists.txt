@@ -22,6 +22,6 @@ INSTALL(FILES
     ${CMAKE_SOURCE_DIR}/systemd/cynara.socket
     ${CMAKE_SOURCE_DIR}/systemd/cynara-admin.socket
     DESTINATION
-    /usr/lib/systemd/system
+    lib/systemd/system
 )
 

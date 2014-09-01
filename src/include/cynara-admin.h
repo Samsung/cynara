@@ -23,6 +23,8 @@
 #ifndef CYNARA_ADMIN_H
 #define CYNARA_ADMIN_H
 
+#include <cynara-admin-error.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif

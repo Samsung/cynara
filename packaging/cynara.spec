@@ -48,6 +48,7 @@ client library for checking policies
 %package -n libcynara-client-devel
 Summary:    Cynara - client library (devel)
 Requires:   libcynara-client = %{version}-%{release}
+Requires:   libcynara-client-commons-devel = %{version}-%{release}
 
 %description -n libcynara-client-devel
 client library (devel) for checking policies

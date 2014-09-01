@@ -23,6 +23,8 @@
 #ifndef CYNARA_CLIENT_H
 #define CYNARA_CLIENT_H
 
+#include <cynara-client-error.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif

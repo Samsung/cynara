@@ -135,7 +135,7 @@ export FFLAGS="$FFLAGS -DTIZEN_DEBUG_ENABLE"
 export CXXFLAGS="$CXXFLAGS -DCYNARA_STATE_PATH=\\\"%{state_path}\\\""
 export LDFLAGS+="-Wl,--rpath=%{_libdir}"
 
-%cmake . -DVERSION=%{version} \
+%cmake . \
         -DCMAKE_BUILD_TYPE=%{?build_type} \
         -DCMAKE_VERBOSE_MAKEFILE=ON
 make %{?jobs:-j%jobs}

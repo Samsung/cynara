@@ -44,8 +44,6 @@ ADD_DEFINITIONS("-Wextra")                      # Generate even more extra warni
 # Don't export symbols by default
 ADD_DEFINITIONS("-fvisibility=hidden")
 
-STRING(REGEX MATCH "([^.]*)" API_VERSION "${VERSION}")
-ADD_DEFINITIONS("-DAPI_VERSION=\"$(API_VERSION)\"")
 
 IF (CMAKE_BUILD_TYPE MATCHES "DEBUG")
     ADD_DEFINITIONS("-DBUILD_TYPE_DEBUG")

@@ -24,17 +24,25 @@ PROJECT("cynara")
 ############################# cmake packages ##################################
 
 INCLUDE(FindPkgConfig)
+INCLUDE(CheckCXXCompilerFlag)
 
 ############################# compiler flags ##################################
 
-SET(CMAKE_C_FLAGS_PROFILING    "-g -O0 -pg")
-SET(CMAKE_CXX_FLAGS_PROFILING  "-g -std=c++0x -O0 -pg -Wp,-U_FORTIFY_SOURCE")
-SET(CMAKE_C_FLAGS_DEBUG        "-g -O0 -ggdb")
-SET(CMAKE_CXX_FLAGS_DEBUG      "-g -std=c++0x -O0 -ggdb -Wp,-U_FORTIFY_SOURCE")
-SET(CMAKE_C_FLAGS_RELEASE      "-g -O2")
-SET(CMAKE_CXX_FLAGS_RELEASE    "-g -std=c++0x -O2")
-SET(CMAKE_C_FLAGS_CCOV         "-g -O2 --coverage")
-SET(CMAKE_CXX_FLAGS_CCOV       "-g -std=c++0x -O2 --coverage")
+SET(CMAKE_CXX_FLAGS_PROFILING  "-O0 -g -pg")
+SET(CMAKE_CXX_FLAGS_DEBUG      "-O0 -g -ggdb")
+SET(CMAKE_CXX_FLAGS_RELEASE    "-O2 -g")
+SET(CMAKE_CXX_FLAGS_CCOV       "-O2 -g --coverage")
+
+# Check for C++11 support and enable proper compilation flags
+CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
+CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
+IF(COMPILER_SUPPORTS_CXX11)
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+ELSEIF(COMPILER_SUPPORTS_CXX0X)
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+ELSE()
+    MESSAGE(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
+ENDIF()
 
 # Set compiler warning flags
 ADD_DEFINITIONS("-Werror")                      # Make all warnings into errors.

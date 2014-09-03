@@ -15,9 +15,58 @@
  */
 /*
  * @file        creds-dbus.cpp
+ * @author      Radoslaw Bartosiak <r.bartosiak@samsung.com>
+ * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       Implementation of external libcynara-creds-dbus API
  */
 
-// Empty initial file
+
+#include <attributes/attributes.h>
+
+#include <creds-dbus-inner.h>
+
+#include <cynara-client-error.h>
+#include <cynara-creds-commons.h>
+#include <cynara-creds-dbus.h>
+
+CYNARA_API
+int cynara_creds_dbus_get_client(DBusConnection *connection, const char *uniqueName,
+                                 enum cynara_client_creds method, char **client) {
+    if (connection == nullptr || uniqueName == nullptr || client == nullptr)
+        return CYNARA_API_INVALID_PARAM;
+
+    switch (method) {
+        case cynara_client_creds::CLIENT_METHOD_SMACK:
+            return getClientSmackLabel(connection, uniqueName, client);
+        case cynara_client_creds::CLIENT_METHOD_PID:
+            return getClientPid(connection, uniqueName, client);
+        default:
+            return CYNARA_API_METHOD_NOT_SUPPORTED;
+    }
+}
+
+CYNARA_API
+int cynara_creds_dbus_get_user(DBusConnection *connection, const char *uniqueName,
+                               enum cynara_user_creds method, char **user) {
+    if (connection == nullptr || uniqueName == nullptr || user == nullptr)
+        return CYNARA_API_INVALID_PARAM;
+
+    switch (method) {
+        case cynara_user_creds::USER_METHOD_UID:
+            return getUserId(connection, uniqueName, user);
+        case cynara_user_creds::USER_METHOD_GID:
+            return getUserGid(connection, uniqueName, user);
+        default:
+            return CYNARA_API_METHOD_NOT_SUPPORTED;
+    }
+}
+
+CYNARA_API
+int cynara_creds_dbus_get_pid(DBusConnection *connection, const char *uniqueName, pid_t *pid) {
+    if (connection == nullptr || uniqueName == nullptr)
+        return CYNARA_API_INVALID_PARAM;
+
+    return getPid(connection, uniqueName, pid);
+}

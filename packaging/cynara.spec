@@ -209,6 +209,7 @@ export CXXFLAGS="$CXXFLAGS -DCYNARA_STATE_PATH=\\\"%{state_path}\\\""
 export LDFLAGS+="-Wl,--rpath=%{_libdir}"
 
 %cmake . \
+        -DBUILD_TESTS=ON \
         -DCMAKE_BUILD_TYPE=%{?build_type} \
         -DCMAKE_VERBOSE_MAKEFILE=ON
 make %{?jobs:-j%jobs}

@@ -15,9 +15,29 @@
  */
 /*
  * @file        session.cpp
+ * @author      Radoslaw Bartosiak <r.bartosiak@samsung.com>
+ * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       Implementation of external libcynara-session API
  */
 
-// Empty initial file
+#include <cstring>
+#include <string>
+#include <sys/stat.h>
+
+#include <attributes/attributes.h>
+
+#include <cynara-session.h>
+
+CYNARA_API
+char *cynara_session_from_pid(pid_t client_pid) {
+    std::string path = std::string("/proc/") + std::to_string(client_pid);
+
+    struct stat st;
+    if (stat(path.c_str(), &st) < 0)
+        return nullptr;
+
+    std::string session = std::to_string(st.st_ctim.tv_sec) + path;
+    return strdup(session.c_str());
+}

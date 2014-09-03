@@ -28,6 +28,23 @@ set(CYNARA_VERSION 0.2.2)
 INCLUDE(FindPkgConfig)
 INCLUDE(CheckCXXCompilerFlag)
 
+#############################  install dirs  ##################################
+
+SET(LIB_INSTALL_DIR
+    "${CMAKE_INSTALL_PREFIX}/lib"
+    CACHE PATH
+    "Library installation directory")
+
+SET(BIN_INSTALL_DIR
+    "${CMAKE_INSTALL_PREFIX}/bin"
+    CACHE PATH
+    "Binary installation directory")
+
+SET(INCLUDE_INSTALL_DIR
+    "${CMAKE_INSTALL_PREFIX}/include"
+    CACHE PATH
+    "Include installation directory")
+
 ############################# compiler flags ##################################
 
 SET(CMAKE_CXX_FLAGS_PROFILING  "-O0 -g -pg")

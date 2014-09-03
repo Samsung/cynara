@@ -41,6 +41,9 @@ ADD_DEFINITIONS("-Werror")                      # Make all warnings into errors.
 ADD_DEFINITIONS("-Wall")                        # Generate all warnings
 ADD_DEFINITIONS("-Wextra")                      # Generate even more extra warnings
 
+# Don't export symbols by default
+ADD_DEFINITIONS("-fvisibility=hidden")
+
 STRING(REGEX MATCH "([^.]*)" API_VERSION "${VERSION}")
 ADD_DEFINITIONS("-DAPI_VERSION=\"$(API_VERSION)\"")
 

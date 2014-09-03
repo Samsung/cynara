@@ -31,11 +31,6 @@ SET(CYNARA_SOURCES
     ${CYNARA_SERVICE_PATH}/storage/StorageSerializer.cpp
     )
 
-SET_SOURCE_FILES_PROPERTIES(
-    ${CYNARA_SOURCES}
-    PROPERTIES
-        COMPILE_FLAGS "-D_GNU_SOURCE -fvisibility=hidden")
-
 INCLUDE_DIRECTORIES(
     ${CYNARA_SERVICE_PATH}
     )

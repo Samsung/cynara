@@ -25,6 +25,7 @@ SET(LIB_CREDS_SOCKET_PATH ${CYNARA_PATH}/helpers/creds-socket)
 
 SET(LIB_CREDS_SOCKET_SOURCES
     ${LIB_CREDS_SOCKET_PATH}/creds-socket.cpp
+    ${LIB_CREDS_SOCKET_PATH}/creds-socket-inner.cpp
     )
 
 INCLUDE_DIRECTORIES(

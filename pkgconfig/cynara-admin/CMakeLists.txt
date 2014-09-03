@@ -20,7 +20,7 @@
 CONFIGURE_FILE(cynara-admin.pc.in cynara-admin.pc @ONLY)
 
 INSTALL(FILES
-    cynara-admin.pc
+    ${CMAKE_BINARY_DIR}/pkgconfig/cynara-admin/cynara-admin.pc
     DESTINATION
     ${LIB_INSTALL_DIR}/pkgconfig
     )

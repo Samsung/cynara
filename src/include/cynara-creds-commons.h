@@ -16,6 +16,8 @@
 /*
  * @file        cynara-creds-commons.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @author      Radoslaw Bartosiak <r.bartosiak@samsung.com>
+ * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @version     1.0
  * @brief       This file contains common APIs for Cynara credentials helper.
  */
@@ -23,6 +25,16 @@
 
 #ifndef CYNARA_CREDS_COMMONS_H
 #define CYNARA_CREDS_COMMONS_H
+
+enum cynara_client_creds {
+    CLIENT_METHOD_SMACK,
+    CLIENT_METHOD_PID
+};
+
+enum cynara_user_creds {
+    USER_METHOD_UID,
+    USER_METHOD_GID
+};
 
 #ifdef __cplusplus
 extern "C" {

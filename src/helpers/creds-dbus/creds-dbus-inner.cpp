@@ -23,27 +23,160 @@
  */
 
 #include <attributes/attributes.h>
+#include <string>
+#include <string.h>
 
 #include <cynara-client-error.h>
 
 #include "creds-dbus-inner.h"
 
-int getClientSmackLabel(DBusConnection *connection UNUSED, const char *uniqueName UNUSED,
-                   char **client UNUSED) {
-    //todo
-    return CYNARA_API_METHOD_NOT_SUPPORTED;
+// TODO: Move this class somewhere else
+// TODO: Find a better name for this class
+// TODO: Introduce std::exception instead of throwing ints
+// TODO: Make this class more general
+// TODO: Write tests for this class
+class DBusMethod {
+public:
+    typedef int ArgType;
+    DBusMethod(DBusConnection *connection, const std::string &method) : m_connection(connection) {
+        if (connection == nullptr)
+            throw CYNARA_API_INVALID_PARAM;
+
+        m_message = dbus_message_new_method_call(m_dbusName.c_str(), m_dbusObject.c_str(),
+                                                 m_dbusInterface.c_str(), method.c_str());
+
+        if (m_message == nullptr)
+            throw CYNARA_API_OUT_OF_MEMORY;
+    }
+
+    ~DBusMethod() {
+        if (m_message != nullptr)
+            dbus_message_unref(m_message);
+
+        delete m_argsIter;
+    }
+
+    void appendArg(ArgType type, void *value) {
+        if (dbus_message_append_args(m_message, type, value, DBUS_TYPE_INVALID) == FALSE)
+            throw CYNARA_API_UNKNOWN_ERROR;
+    }
+
+    void getArgPtr(ArgType type, void *value) {
+        if (m_argsIter == nullptr)
+            throw CYNARA_API_UNKNOWN_ERROR;
+
+        if (dbus_message_iter_get_arg_type(m_argsIter) != type)
+            throw CYNARA_API_UNKNOWN_ERROR;
+
+        dbus_message_iter_get_basic(m_argsIter, value);
+        dbus_message_iter_next(m_argsIter);
+    }
+
+    DBusMethod send(void) {
+        DBusPendingCall *reply = nullptr;
+        auto ret = dbus_connection_send_with_reply(m_connection, m_message, &reply,
+                                                   DBUS_TIMEOUT_USE_DEFAULT);
+        if (ret == FALSE)
+            throw CYNARA_API_OUT_OF_MEMORY;
+
+        if (reply == nullptr)
+            throw CYNARA_API_INVALID_PARAM;
+
+        dbus_connection_flush(m_connection);
+        dbus_pending_call_block(reply);
+
+        DBusMessage *replyMsg = dbus_pending_call_steal_reply(reply);
+        if (replyMsg == nullptr)
+            throw CYNARA_API_UNKNOWN_ERROR;
+
+        return { m_connection, replyMsg };
+    }
+
+private:
+    DBusMethod(DBusConnection *connection, DBusMessage *message)
+        : m_connection(connection), m_message(message), m_argsIter(new DBusMessageIter()) {
+
+        if (dbus_message_iter_init(m_message, m_argsIter) == FALSE)
+            throw CYNARA_API_UNKNOWN_ERROR;
+    }
+
+    DBusConnection *m_connection = nullptr;
+    DBusMessage *m_message = nullptr;
+    DBusMessageIter *m_argsIter = nullptr;
+
+    static const std::string m_dbusName;
+    static const std::string m_dbusObject;
+    static const std::string m_dbusInterface;
+};
+
+const std::string DBusMethod::m_dbusName = "org.freedesktop.DBus";
+const std::string DBusMethod::m_dbusObject = "/org/freedesktop/DBus";
+const std::string DBusMethod::m_dbusInterface = "org.freedesktop.DBus";
+
+
+int getIdFromConnection(DBusConnection *connection, const char *uniqueName,
+                        const std::string &dbusMethod, unsigned int *id) {
+
+    if (uniqueName == nullptr)
+        return CYNARA_API_INVALID_PARAM;
+
+    if (dbusMethod != "GetConnectionUnixUser" && dbusMethod != "GetConnectionUnixProcessID")
+        return CYNARA_API_INVALID_PARAM;
+
+    try {
+        DBusMethod call(connection, dbusMethod);
+        call.appendArg(DBUS_TYPE_STRING, &uniqueName);
+        auto reply = call.send();
+        reply.getArgPtr(DBUS_TYPE_UINT32, id);
+    } catch (int apiError) {
+        return apiError;
+    }
+
+    return CYNARA_API_SUCCESS;
 }
 
-int getClientPid(DBusConnection *connection UNUSED, const char *uniqueName UNUSED,
-                 char **client UNUSED) {
-    //todo
-    return CYNARA_API_METHOD_NOT_SUPPORTED;
+int getClientSmackLabel(DBusConnection *connection, const char *uniqueName, char **client) {
+    if (uniqueName == nullptr)
+        return CYNARA_API_INVALID_PARAM;
+
+    try {
+        DBusMethod call(connection, "GetConnectionSmackContext");
+        call.appendArg(DBUS_TYPE_STRING, &uniqueName);
+        auto reply = call.send();
+        char *label;
+        reply.getArgPtr(DBUS_TYPE_STRING, &label);
+        *client = strdup(label);
+        if (*client == nullptr)
+          return CYNARA_API_OUT_OF_MEMORY;
+    } catch (int apiError) {
+        return apiError;
+    }
+
+    return CYNARA_API_SUCCESS;
 }
 
-int getUserId(DBusConnection *connection UNUSED, const char *uniqueName UNUSED,
-               char **user UNUSED) {
-    //todo
-    return CYNARA_API_METHOD_NOT_SUPPORTED;
+int getUint32(DBusConnection *connection, const char *uniqueName, const char *method,
+              char **value) {
+    unsigned int dbusValue;
+    int ret = getIdFromConnection(connection, uniqueName, method, &dbusValue);
+
+    if (ret != CYNARA_API_SUCCESS)
+        return ret;
+
+    *value = strdup(std::to_string(dbusValue).c_str());
+
+    if (*value == nullptr)
+      return CYNARA_API_OUT_OF_MEMORY;
+
+    return CYNARA_API_SUCCESS;
+}
+
+int getClientPid(DBusConnection *connection, const char *uniqueName, char **client) {
+    return getUint32(connection, uniqueName, "GetConnectionUnixProcessID", client);
+}
+
+int getUserId(DBusConnection *connection, const char *uniqueName, char **user) {
+    return getUint32(connection, uniqueName, "GetConnectionUnixUser", user);
 }
 
 int getUserGid(DBusConnection *connection UNUSED, const char *uniqueName UNUSED,
@@ -52,7 +185,12 @@ int getUserGid(DBusConnection *connection UNUSED, const char *uniqueName UNUSED,
     return CYNARA_API_METHOD_NOT_SUPPORTED;
 }
 
-int getPid(DBusConnection *connection UNUSED, const char *uniqueName UNUSED, pid_t *pid UNUSED) {
-    //todo
-    return CYNARA_API_METHOD_NOT_SUPPORTED;
+int getPid(DBusConnection *connection, const char *uniqueName, pid_t *pid) {
+    unsigned int _pid;
+    auto ret = getIdFromConnection(connection, uniqueName, "GetConnectionUnixProcessID", &_pid);
+
+    if (ret == CYNARA_API_SUCCESS)
+        *pid = _pid;
+
+    return ret;
 }

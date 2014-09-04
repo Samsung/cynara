@@ -132,6 +132,7 @@ Cynara credentials helpers library for dbus clients
 %package -n libcynara-creds-dbus-devel
 Summary:    Cynara credentials helpers library for dbus clients (devel)
 Requires:   libcynara-creds-dbus = %{version}-%{release}
+Requires:   libcynara-creds-commons-devel = %{version}-%{release}
 
 %description -n libcynara-creds-dbus-devel
 Cynara credentials helpers library for dbus clients (devel)
@@ -146,6 +147,7 @@ Cynara credentials helpers library for socket clients
 %package -n libcynara-creds-socket-devel
 Summary:    Cynara credentials helpers library for socket clients (devel)
 Requires:   libcynara-creds-socket = %{version}-%{release}
+Requires:   libcynara-creds-commons-devel = %{version}-%{release}
 
 %description -n libcynara-creds-socket-devel
 Cynara credentials helpers library for socket clients (devel)

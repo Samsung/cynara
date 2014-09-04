@@ -7,15 +7,16 @@ License:    Apache-2.0
 Source0:    %{name}-%{version}.tar.gz
 Source1001:    cynara.manifest
 Source1002:    libcynara-client.manifest
-Source1003:    libcynara-admin.manifest
-Source1004:    cynara-tests.manifest
-Source1005:    libcynara-client-commons.manifest
-Source1006:    libcynara-commons.manifest
-Source1007:    libcynara-creds-commons.manifest
-Source1008:    libcynara-creds-dbus.manifest
-Source1009:    libcynara-creds-socket.manifest
-Source1010:    libcynara-session.manifest
-Source1011:    libcynara-storage.manifest
+Source1003:    libcynara-client-async.manifest
+Source1004:    libcynara-admin.manifest
+Source1005:    cynara-tests.manifest
+Source1006:    libcynara-client-commons.manifest
+Source1007:    libcynara-commons.manifest
+Source1008:    libcynara-creds-commons.manifest
+Source1009:    libcynara-creds-dbus.manifest
+Source1010:    libcynara-creds-socket.manifest
+Source1011:    libcynara-session.manifest
+Source1012:    libcynara-storage.manifest
 Requires:      default-ac-domains
 Requires(pre): pwdutils
 Requires(post):   smack
@@ -42,7 +43,7 @@ BuildRequires: pkgconfig(libunwind)
 %endif
 
 %description
-service, client libraries (libcynara-client, libcynara-admin),
+service, client libraries (libcynara-client, libcynara-client-async, libcynara-admin),
 helper libraries (libcynara-session, libcynara-creds-common, libcynara-creds-dbus,
 libcynara-creds-socket)
 and tests (cynara-tests)
@@ -62,6 +63,22 @@ Requires:   libcynara-client-commons-devel = %{version}-%{release}
 
 %description -n libcynara-client-devel
 client library (devel) for checking policies
+
+#######################################################
+%package -n libcynara-client-async
+Summary:    Cynara - asynchronous client library
+Requires:   cynara = %{version}-%{release}
+
+%description -n libcynara-client-async
+asynchronous client library for checking policies
+
+%package -n libcynara-client-async-devel
+Summary:    Cynara - asynchronous client library (devel)
+Requires:   libcynara-client-async = %{version}-%{release}
+Requires:   libcynara-client-commons-devel = %{version}-%{release}
+
+%description -n libcynara-client-async-devel
+asynchronous client library (devel) for checking policies
 
 #######################################################
 %package -n libcynara-client-commons
@@ -214,6 +231,7 @@ cp -a %{SOURCE1008} .
 cp -a %{SOURCE1009} .
 cp -a %{SOURCE1010} .
 cp -a %{SOURCE1011} .
+cp -a %{SOURCE1012} .
 cp -a test/db/db* .
 
 %build
@@ -290,6 +308,10 @@ fi
 
 %postun -n libcynara-client -p /sbin/ldconfig
 
+%post -n libcynara-client-async -p /sbin/ldconfig
+
+%postun -n libcynara-client-async -p /sbin/ldconfig
+
 %post -n libcynara-client-commons -p /sbin/ldconfig
 
 %postun -n libcynara-client-commons -p /sbin/ldconfig
@@ -313,6 +335,10 @@ fi
 %post -n libcynara-client-devel -p /sbin/ldconfig
 
 %postun -n libcynara-client-devel -p /sbin/ldconfig
+
+%post -n libcynara-client-async-devel -p /sbin/ldconfig
+
+%postun -n libcynara-client-async-devel -p /sbin/ldconfig
 
 %post -n libcynara-client-commons-devel -p /sbin/ldconfig
 
@@ -379,6 +405,16 @@ fi
 %{_includedir}/cynara/cynara-client.h
 %{_libdir}/pkgconfig/cynara-client.pc
 %{_libdir}/libcynara-client.so
+
+%files -n libcynara-client-async
+%manifest libcynara-client-async.manifest
+%license LICENSE
+%{_libdir}/libcynara-client-async.so.*
+
+%files -n libcynara-client-async-devel
+%{_includedir}/cynara/cynara-client-async.h
+%{_libdir}/pkgconfig/cynara-client-async.pc
+%{_libdir}/libcynara-client-async.so
 
 %files -n libcynara-client-commons
 %manifest libcynara-client-commons.manifest

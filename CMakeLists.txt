@@ -78,6 +78,7 @@ ENDIF (CMAKE_BUILD_TYPE MATCHES "DEBUG")
 
 SET(TARGET_CYNARA "cynara")
 SET(TARGET_LIB_CYNARA "cynara-client")
+SET(TARGET_LIB_CYNARA_ASYNC "cynara-client-async")
 SET(TARGET_LIB_CYNARA_COMMON "cynara-client-commons")
 SET(TARGET_LIB_CYNARA_ADMIN "cynara-admin")
 SET(TARGET_CYNARA_COMMON "cynara-commons")

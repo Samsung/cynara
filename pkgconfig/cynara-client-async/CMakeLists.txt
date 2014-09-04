@@ -13,19 +13,13 @@
 #    limitations under the License.
 #
 # @file        CMakeLists.txt
-# @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+# @author      Marcin Niesluchowski <m.niesluchow@samsung.com>
 #
 
+CONFIGURE_FILE(cynara-client-async.pc.in cynara-client-async.pc @ONLY)
+
 INSTALL(FILES
-    ${CYNARA_PATH}/include/cynara-admin.h
-    ${CYNARA_PATH}/include/cynara-admin-error.h
-    ${CYNARA_PATH}/include/cynara-admin-types.h
-    ${CYNARA_PATH}/include/cynara-client.h
-    ${CYNARA_PATH}/include/cynara-client-async.h
-    ${CYNARA_PATH}/include/cynara-client-error.h
-    ${CYNARA_PATH}/include/cynara-creds-commons.h
-    ${CYNARA_PATH}/include/cynara-creds-dbus.h
-    ${CYNARA_PATH}/include/cynara-creds-socket.h
-    ${CYNARA_PATH}/include/cynara-session.h
-    DESTINATION ${INCLUDE_INSTALL_DIR}/cynara
+    ${CMAKE_BINARY_DIR}/pkgconfig/cynara-client-async/cynara-client-async.pc
+    DESTINATION
+    ${LIB_INSTALL_DIR}/pkgconfig
     )

@@ -1,0 +1,11 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=@LIB_INSTALL_DIR@
+includedir=${prefix}/include
+
+Name: cynara-client-async
+Description: cynara-client-async package
+Version: @CYNARA_VERSION@
+Requires:
+Libs: -L${libdir} -lcynara-client-async
+Cflags: -I${includedir}/cynara

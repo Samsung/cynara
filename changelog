@@ -1,5 +1,26 @@
 ##############################
 
+Release: 0.3.0
+Date:    2014.09.05
+Name:    Helper libraries
+
+Libraries:
+libcynara-common.0.3.0
+libcynara-client.0.3.0
+libcynara-client-common.0.3.0
+libcynara-admin.0.3.0
+libcynara-session.0.3.0
+libcynara-creds-commons.0.3.0
+libcynara-creds-dbus.0.3.0
+libcynara-creds-socket.0.3.0
+
+Description:
+Helper libraries for credentials and session.
+Client-common library  - common for all client libraries introduced.
+Improve cache performance and move cache to client-common library.
+
+##############################
+
 Release: 0.2.2
 Date:    2014.08.08
 Name:    Merge cynara and cynara-tests SRPMs

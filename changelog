@@ -1,0 +1,75 @@
+##############################
+
+Release: 0.2.2
+Date:    2014.08.08
+Name:    Merge cynara and cynara-tests SRPMs
+
+Libraries:
+libcynara-common.0.0.1
+libcynara-client.0.0.2
+libcynara-admin.0.0.2
+
+Description:
+Cynara's and cynara-tests spec files were merged. They are built together now.
+
+##############################
+
+Release: 0.2.1
+Date:    2014.08.06
+Name:    "cynara" system user
+
+Libraries:
+libcynara-common.0.0.1
+libcynara-client.0.0.2
+libcynara-admin.0.0.2
+
+Description:
+Cynara service runs as user cynara, created during package installation.
+Minor bug fixing.
+
+##############################
+
+Release: 0.2.0
+Date:    2014.08.01
+Name:    Client cache feature
+
+Libraries:
+libcynara-common.0.0.1
+libcynara-client.0.0.2
+libcynara-admin.0.0.2
+
+Description:
+Policy responses cache added in libcynara-client.
+Lots of code cleaning and bug fixing.
+
+##############################
+
+Release: 0.1.1
+Date:    2014.07.21
+Name:    First version base on cynara service
+
+Libraries:
+libcynara-common.0.0.1
+libcynara-client.0.0.2
+libcynara-admin.0.0.2
+
+Description:
+First version of cynara using own service and database.
+API provided by 2 libraries - client for privilege checking
+and admin for managing policies in database.
+
+##############################
+
+Release: 0.0.1
+Date:    2014.05.08
+Name:    Cynara bootstrap version
+
+Libraries:
+libcynara-client.0.0.1
+
+Description:
+First version of cynara client - using security-server API.
+libprivilege-control database was used for holding privilege access policies.
+
+##############################
+

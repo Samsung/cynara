@@ -31,7 +31,8 @@ BuildRequires: pkgconfig(libsystemd-journal)
 %global group_name %{name}
 
 %global state_path %{_localstatedir}/%{name}/
-%global tests_dir %{_datarootdir}/%{name}/tests
+%global tests_dir %{_datarootdir}/%{name}/tests/
+%global conf_path %{_sysconfdir}/%{name}/
 
 %if !%{defined build_type}
 %define build_type RELEASE
@@ -218,7 +219,6 @@ BuildRequires: pkgconfig(gmock)
 Cynara tests
 
 #######################################################
-
 %package -n cynara-devel
 Summary:    Cynara service (devel)
 Requires:   cynara = %{version}-%{release}
@@ -252,7 +252,8 @@ export CXXFLAGS="$CXXFLAGS -Wp,-U_FORTIFY_SOURCE"
 %endif
 
 export CXXFLAGS="$CXXFLAGS -DCYNARA_STATE_PATH=\\\"%{state_path}\\\" \
-                           -DCYNARA_TESTS_DIR=\\\"%{tests_dir}\\\""
+                           -DCYNARA_TESTS_DIR=\\\"%{tests_dir}\\\" \
+                           -DCYNARA_CONFIGURATION_DIR=\\\"%{conf_path}\\\""
 export LDFLAGS+="-Wl,--rpath=%{_libdir}"
 
 %cmake . \
@@ -262,9 +263,11 @@ export LDFLAGS+="-Wl,--rpath=%{_libdir}"
 make %{?jobs:-j%jobs}
 
 %install
-
 rm -rf %{buildroot}
 %make_install
+
+mkdir -p %{buildroot}/%{conf_path}
+cp ./conf/creds.conf %{buildroot}/%{conf_path}/creds.conf
 
 mkdir -p %{buildroot}/usr/lib/systemd/system/sockets.target.wants
 mkdir -p %{buildroot}/%{state_path}
@@ -476,6 +479,7 @@ fi
 %manifest libcynara-creds-commons.manifest
 %license LICENSE
 %{_libdir}/libcynara-creds-commons.so.*
+%{conf_path}creds.conf
 
 %files -n libcynara-creds-commons-devel
 %{_includedir}/cynara/cynara-creds-commons.h

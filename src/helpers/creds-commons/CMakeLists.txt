@@ -25,6 +25,7 @@ SET(LIB_CREDS_COMMONS_PATH ${CYNARA_PATH}/helpers/creds-commons)
 
 SET(LIB_CREDS_COMMONS_SOURCES
     ${LIB_CREDS_COMMONS_PATH}/creds-commons.cpp
+    ${LIB_CREDS_COMMONS_PATH}/CredsCommonsInner.cpp
     )
 
 INCLUDE_DIRECTORIES(

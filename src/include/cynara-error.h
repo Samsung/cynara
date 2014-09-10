@@ -17,6 +17,7 @@
  * @file        src/include/cynara-error.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @author      Zofia Abramowska <z.abramowska@samsung.com>
+ * @author      Radoslaw Bartosiak <r.bartosiak@samsung.com>
  * @version     1.0
  * @brief       This file contains error codes returned by APIs of Cynara.
  */
@@ -70,6 +71,8 @@
 /*! \brief   indicating an unknown error */
 #define CYNARA_API_UNKNOWN_ERROR         -10
 
+/*! \brief   indicating configuration error */
+#define CYNARA_API_CONFIGURATION_ERROR   -11
 /** @}*/
 
 #endif /* CYNARA_ERROR_H */

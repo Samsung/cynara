@@ -206,7 +206,7 @@ int cynara_admin_finish(struct cynara_admin *p_cynara_admin);
  * \brief Insert, update or delete policies in cynara database.
  */
 int cynara_admin_set_policies(struct cynara_admin *p_cynara_admin,
-                              const cynara_admin_policy *const *policies);
+                              const struct cynara_admin_policy *const *policies);
 
 /**
  * \par Description:

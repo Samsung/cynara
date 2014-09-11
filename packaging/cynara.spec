@@ -35,6 +35,7 @@ BuildRequires: pkgconfig(libsystemd-journal)
 
 %if %{?build_type} == "DEBUG"
 
+BuildRequires: libdw-devel
 BuildRequires: pkgconfig(libunwind)
 
 %endif

@@ -23,13 +23,14 @@
  */
 
 #include <cxxabi.h>
+#include <elfutils/libdw.h>
+#include <inttypes.h>
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <iostream>
 #include <sstream>
 
-#include <attributes/attributes.h>
 #include <log/log.h>
 
 #include "Backtrace.h"
@@ -41,19 +42,68 @@ Backtrace &Backtrace::getInstance(void) {
     return m_instance;
 }
 
-Backtrace::Backtrace() :
-        m_fileName(NULL),
-        m_functionName(NULL), m_lineNumber(0) {
+const Dwfl_Callbacks Backtrace::m_callbacks = {
+    dwfl_linux_proc_find_elf,
+    dwfl_standard_find_debuginfo,
+    nullptr,
+    nullptr,
+};
+
+Backtrace::Backtrace() {
+    init();
 }
 
 Backtrace::~Backtrace() {
+    dwfl_end(m_dwfl);
 }
 
-void Backtrace::getSourceInfo(unw_word_t proc_address UNUSED) {
-    // TODO: extract filename and line number for symbol at given address
-    m_fileName = "??";
-    m_functionName = "??";
-    m_lineNumber = 0;
+void Backtrace::init(void) {
+    m_dwfl = dwfl_begin(&m_callbacks);
+    if (m_dwfl == nullptr) {
+        LOGE("dwfl_begin failed! Source info won't be available in backtrace!");
+        return;
+    }
+
+    if (dwfl_linux_proc_report(m_dwfl, getpid())) {
+        LOGE("dwfl_linux_proc_report failed! Source info won't be available in backtrace!");
+        dwfl_end(m_dwfl);
+        m_dwfl = nullptr;
+    }
+}
+
+void Backtrace::getSourceInfo(unw_word_t address, std::string &fileName, int &lineNumber) {
+    fileName = "??";
+    lineNumber = 0;
+
+    if (m_dwfl == nullptr)
+        return;
+
+    Dwarf_Addr addr = static_cast<Dwarf_Addr>(address);
+
+    Dwfl_Module *module = dwfl_addrmodule(m_dwfl, addr);
+    if (module == nullptr)
+        return;
+
+    Dwfl_Line *line = dwfl_module_getsrc(module, addr);
+    if (line == nullptr)
+        return;
+
+    const char *src = dwfl_lineinfo(line, &addr, &lineNumber, nullptr, nullptr, nullptr);
+    if (src == nullptr)
+        return;
+
+    const char *compilationDirectory = "";
+    const char *compilationDirectorySeparator = "";
+
+    if (src[0] != '/') {
+        compilationDirectory = dwfl_line_comp_dir(line);
+        if (compilationDirectory != NULL)
+            compilationDirectorySeparator = "/";
+    }
+
+    std::ostringstream fileNameStream;
+    fileNameStream << compilationDirectory << compilationDirectorySeparator << src;
+    fileName = fileNameStream.str();
 }
 
 const std::string Backtrace::buildBacktrace(void) {
@@ -64,6 +114,8 @@ const std::string Backtrace::buildBacktrace(void) {
     char proc_name[BUFSIZ];
     unw_word_t offp;
     int status;
+    std::string fileName;
+    int  lineNumber;
 
     unw_getcontext(&uc);
     // get rid of previous function: Backtrace::getBacktrace
@@ -74,12 +126,12 @@ const std::string Backtrace::buildBacktrace(void) {
         unw_get_reg(&cursor, UNW_REG_SP, &sp);
         unw_get_proc_name(&cursor, proc_name, sizeof(proc_name), &offp);
         char *realname = abi::__cxa_demangle(proc_name, 0, 0, &status);
-        getSourceInfo(ip);
+        getSourceInfo(ip, fileName, lineNumber);
 
         backtrace << std::hex << "ip = 0x" <<  ip << ", sp = 0x" << sp
                   << ", " << (realname ? realname : proc_name)
-                  << ", " << m_fileName
-                  << ":" << std::dec << m_lineNumber << std::endl;
+                  << ", " << fileName
+                  << ":" << std::dec << lineNumber << std::endl;
 
         free(realname);
     }

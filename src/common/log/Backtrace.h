@@ -26,6 +26,7 @@
 #define SRC_COMMON_LOG_BACKTRACE_H_
 
 #if defined(BUILD_TYPE_DEBUG) && !defined(CYNARA_NO_LOGS)
+#include <elfutils/libdwfl.h>
 #define UNW_LOCAL_ONLY
 #include <libunwind.h>
 #endif
@@ -52,15 +53,15 @@ private:
 
     void operator=(Backtrace const &) = delete;
 
+    void init(void);
     const std::string buildBacktrace(void);
-#if defined(BUILD_TYPE_DEBUG) && !defined(CYNARA_NO_LOGS)
-    void getSourceInfo(unw_word_t proc_address);
-#endif
 
-private:
-    const char *m_fileName;
-    const char *m_functionName;
-    unsigned int m_lineNumber;
+#if defined(BUILD_TYPE_DEBUG) && !defined(CYNARA_NO_LOGS)
+    void getSourceInfo(unw_word_t address, std::string &fileName, int &lineNumber);
+
+    Dwfl *m_dwfl;
+    static const Dwfl_Callbacks m_callbacks;
+#endif
 };
 
 } /* namespace Cynara */

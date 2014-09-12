@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /*
- * @file        buckets.cpp
+ * @file        check.cpp
  * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @version     1.0
  * @brief       Tests of check in Storage

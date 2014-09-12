@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /*
- * @file        load.cpp
+ * @file        bucket_load.cpp
  * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @version     1.0
  * @brief       Tests for Cynara::BucketDeserializer

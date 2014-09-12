@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /*
- * @file        buckets.cpp
+ * @file        policies.cpp
  * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @version     1.0
  * @brief       Tests of policies in Storage

@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /*
- * @file        binary_queue.cpp
+ * @file        BinaryQueue.cpp
  * @author      Przemyslaw Dobrowolski <p.dobrowolsk@samsung.com>
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0

@@ -14,7 +14,7 @@
  *  limitations under the License
  */
 /*
- * @file        cynara-error.h
+ * @file        cynara-client-error.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @author      Zofia Abramowska <z.abramowska@samsung.com>
  * @version     1.0

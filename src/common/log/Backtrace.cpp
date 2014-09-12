@@ -110,7 +110,7 @@ const std::string Backtrace::buildBacktrace(void) {
     std::ostringstream backtrace;
     unw_cursor_t cursor;
     unw_context_t uc;
-    unw_word_t ip, sp;
+    unw_word_t ip;
     char proc_name[BUFSIZ];
     unw_word_t offp;
     int status;
@@ -123,15 +123,12 @@ const std::string Backtrace::buildBacktrace(void) {
     unw_step(&cursor);
     while (unw_step(&cursor) > 0) {
         unw_get_reg(&cursor, UNW_REG_IP, &ip);
-        unw_get_reg(&cursor, UNW_REG_SP, &sp);
         unw_get_proc_name(&cursor, proc_name, sizeof(proc_name), &offp);
         char *realname = abi::__cxa_demangle(proc_name, 0, 0, &status);
         getSourceInfo(ip, fileName, lineNumber);
 
-        backtrace << std::hex << "ip = 0x" <<  ip << ", sp = 0x" << sp
-                  << ", " << (realname ? realname : proc_name)
-                  << ", " << fileName
-                  << ":" << std::dec << lineNumber << std::endl;
+        backtrace << (realname ? realname : proc_name) << ", " << fileName << ":"
+                  << std::dec << lineNumber << std::endl;
 
         free(realname);
     }

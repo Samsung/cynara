@@ -25,6 +25,7 @@
 
 #include <memory>
 
+#include <types/ClientSession.h>
 #include <types/PolicyResult.h>
 
 namespace Cynara {
@@ -34,13 +35,14 @@ typedef std::shared_ptr<InterpreterInterface> InterpreterInterfacePtr;
 
 class InterpreterInterface {
 public:
-    virtual bool isCacheable(const PolicyResult &result) = 0;
-    virtual bool isUsable(const PolicyResult &result) = 0;
-    virtual int toResult(const PolicyResult &result) = 0;
+    virtual bool isCacheable(const ClientSession &session, const PolicyResult &result) = 0;
+    virtual bool isUsable(const ClientSession &session, const ClientSession &prevSession,
+                          bool &updateSession, PolicyResult &result) = 0;
+    virtual int toResult(const ClientSession &session, PolicyResult &result) = 0;
 
     virtual ~InterpreterInterface() {};
 };
 
-}
+} // namespace Cynara
 
 #endif // SRC_CLIENT_COMMON_PLUGINS_PLUGININTERFACE_H_

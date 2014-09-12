@@ -29,13 +29,15 @@
 namespace Cynara {
 
 class NaiveInterpreter : public InterpreterInterface {
-    bool isUsable(const PolicyResult &result UNUSED) {
+    bool isUsable(const ClientSession &session UNUSED, const ClientSession &prevSession UNUSED,
+                  bool &updateSession UNUSED, PolicyResult &result UNUSED) {
         return true;
     }
-    bool isCacheable(const PolicyResult &result UNUSED) {
+    bool isCacheable(const ClientSession &session UNUSED,
+                     const PolicyResult &result UNUSED) {
         return true;
     }
-    int toResult(const PolicyResult &result) {
+    int toResult(const ClientSession &session UNUSED, PolicyResult &result) {
         if (result.policyType() == PredefinedPolicyType::ALLOW)
             return CYNARA_API_ACCESS_ALLOWED;
         else

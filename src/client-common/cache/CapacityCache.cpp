@@ -30,13 +30,6 @@
 namespace Cynara {
 
 int CapacityCache::get(const ClientSession &session, const PolicyKey &key) {
-    //This can be very time heavy. This part is welcomed to be optimized.
-    if (session != m_session) {
-        LOGD("Session changed from %s to %s.", m_session.c_str(), session.c_str());
-        clear();
-        m_session = session;
-        return CYNARA_API_CACHE_MISS;
-    }
     auto resultIt = m_keyValue.find(keyToString(key));
     //Do we have entry in cache?
     if (resultIt == m_keyValue.end()) {
@@ -51,23 +44,33 @@ int CapacityCache::get(const ClientSession &session, const PolicyKey &key) {
                 key.user().toString().c_str(),
                 key.privilege().toString().c_str());
 
-        auto pluginIt = m_plugins.find(resultIt->second.first.policyType());
+        auto &cachedValue = resultIt->second;
+        auto &policyResult = std::get<0>(cachedValue);
+
+        auto pluginIt = m_plugins.find(policyResult.policyType());
         if (pluginIt == m_plugins.end()) {
             LOGE("No plugin registered for given PolicyType : %" PRIu16,
-                    resultIt->second.first.policyType());
+                    policyResult.policyType());
             return CYNARA_API_ACCESS_DENIED;
         }
 
         //Is it still usable?
         InterpreterInterfacePtr plugin = pluginIt->second;
-        if (plugin->isUsable(resultIt->second.first)) {
+        auto &prevSession = std::get<1>(cachedValue);
+        auto usageIt = std::get<2>(cachedValue);
+        bool updateSession = false;
+        if (plugin->isUsable(session, prevSession, updateSession, policyResult)) {
             LOGD("Entry usable.");
-            m_keyUsage.splice(m_keyUsage.begin(), m_keyUsage, resultIt->second.second);
-            return plugin->toResult(resultIt->second.first);
+            m_keyUsage.splice(m_keyUsage.begin(), m_keyUsage, usageIt);
+
+            if (updateSession) {
+                prevSession = session;
+            }
+
+            return plugin->toResult(session, policyResult);
         }
         //Remove unusable entry
         LOGD("Entry not usable");
-        auto usageIt = resultIt->second.second;
         m_keyUsage.erase(usageIt);
         m_keyValue.erase(resultIt);
         return CYNARA_API_CACHE_MISS;
@@ -77,7 +80,6 @@ int CapacityCache::get(const ClientSession &session, const PolicyKey &key) {
 void CapacityCache::clear(void) {
     m_keyUsage.clear();
     m_keyValue.clear();
-    m_session.clear();
 }
 
 std::string CapacityCache::keyToString(const PolicyKey &key) {
@@ -103,12 +105,6 @@ void CapacityCache::evict(void) {
 int CapacityCache::update(const ClientSession &session,
                           const PolicyKey &key,
                           const PolicyResult &result) {
-    //This can be very time heavy. This part is welcomed to be optimized.
-    if (session != m_session) {
-        LOGD("Session changed from %s to %s.", m_session.c_str(), session.c_str());
-        clear();
-        m_session = session;
-    }
 
     auto pluginIt = m_plugins.find(result.policyType());
 
@@ -120,18 +116,21 @@ int CapacityCache::update(const ClientSession &session,
     }
     auto plugin = pluginIt->second;
 
-    if (m_capacity != 0) {
-        if (plugin->isCacheable(result)) {
+    PolicyResult storedResult = result;
+
+    if (m_capacity > 0) {
+        if (plugin->isCacheable(session, storedResult)) {
             LOGD("Entry cacheable");
             if (m_keyValue.size() == m_capacity) {
                 LOGD("Capacity reached.");
                 evict();
             }
-            m_keyUsage.push_front(keyToString(key));
-            m_keyValue[keyToString(key)] = std::make_pair(result, m_keyUsage.begin());
+            std::string cacheKey = keyToString(key);
+            m_keyUsage.push_front(cacheKey);
+            m_keyValue[cacheKey] = std::make_tuple(storedResult, session, m_keyUsage.begin());
         }
     }
-    return plugin->toResult(result);
+    return plugin->toResult(session, storedResult);
 }
 
 } // namespace Cynara

@@ -31,6 +31,7 @@ SET(COMMON_SOURCES
     ${COMMON_PATH}/protocol/ProtocolFrameSerializer.cpp
     ${COMMON_PATH}/protocol/ProtocolSerialization.cpp
     ${COMMON_PATH}/protocol/ProtocolSignal.cpp
+    ${COMMON_PATH}/request/AdminCheckRequest.cpp
     ${COMMON_PATH}/request/CheckRequest.cpp
     ${COMMON_PATH}/request/InsertOrUpdateBucketRequest.cpp
     ${COMMON_PATH}/request/RemoveBucketRequest.cpp

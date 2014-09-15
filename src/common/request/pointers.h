@@ -27,6 +27,9 @@
 
 namespace Cynara {
 
+class AdminCheckRequest;
+typedef std::shared_ptr<AdminCheckRequest> AdminCheckRequestPtr;
+
 class CheckRequest;
 typedef std::shared_ptr<CheckRequest> CheckRequestPtr;
 

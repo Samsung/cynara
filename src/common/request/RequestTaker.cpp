@@ -29,6 +29,10 @@
 
 namespace Cynara {
 
+void RequestTaker::execute(RequestContextPtr context UNUSED, AdminCheckRequestPtr request UNUSED) {
+    throw NotImplementedException();
+}
+
 void RequestTaker::execute(RequestContextPtr context UNUSED, CheckRequestPtr request UNUSED) {
     throw NotImplementedException();
 }

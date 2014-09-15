@@ -32,5 +32,4 @@
 
 #include "types/PolicyTypeExtension.h"
 
-
 #endif /* COMMON_H */

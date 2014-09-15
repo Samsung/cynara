@@ -31,6 +31,7 @@ SET(COMMON_SOURCES
     ${COMMON_PATH}/log/log.cpp
     ${COMMON_PATH}/plugin/PluginManager.cpp
     ${COMMON_PATH}/protocol/ProtocolAdmin.cpp
+    ${COMMON_PATH}/protocol/ProtocolAgent.cpp
     ${COMMON_PATH}/protocol/ProtocolClient.cpp
     ${COMMON_PATH}/protocol/ProtocolFrame.cpp
     ${COMMON_PATH}/protocol/ProtocolFrameHeader.cpp

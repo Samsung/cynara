@@ -12,6 +12,7 @@ Restart=always
 
 Sockets=cynara.socket
 Sockets=cynara-admin.socket
+Sockets=cynara-agent.socket
 
 UMask=0000
 User=cynara

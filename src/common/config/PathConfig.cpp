@@ -47,6 +47,7 @@ const std::string clientPath("/run/cynara/");
 namespace SocketPath {
 const std::string client(clientPath + "cynara.socket");
 const std::string admin(clientPath + "cynara-admin.socket");
+const std::string agent(clientPath + "cynara-agent.socket");
 } // namespace SocketPath
 
 namespace StoragePath {

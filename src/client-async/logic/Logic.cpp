@@ -21,39 +21,121 @@
  *              libcynara-client-async class
  */
 
+#include <memory>
+
 #include <common.h>
+#include <exceptions/Exception.h>
+#include <exceptions/UnexpectedErrorException.h>
+#include <log/log.h>
+#include <protocol/ProtocolClient.h>
+#include <sockets/Socket.h>
+#include <sockets/SocketPath.h>
 
 #include "Logic.h"
 
 namespace Cynara {
 
-Logic::Logic(cynara_status_callback callback UNUSED, void *userStatusData UNUSED) {
-    // MOCKUP
+Logic::Logic(cynara_status_callback callback, void *userStatusData)
+    : m_statusCallback(callback, userStatusData) {
+    m_socketClient = std::make_shared<SocketClientAsync>(
+        SocketPath::client, std::make_shared<ProtocolClient>());
+}
+
+Logic::~Logic() {
+    onDisconnected();
 }
 
 int Logic::checkCache(const std::string &client UNUSED, const std::string &session UNUSED,
                       const std::string &user UNUSED, const std::string &privilege UNUSED) {
+    if (!checkCacheValid())
+        return CYNARA_API_CACHE_MISS;
+
     // MOCKUP
-    return CYNARA_API_CACHE_MISS;
+    return CYNARA_API_SUCCESS;
 }
 
 int Logic::createRequest(const std::string &client UNUSED, const std::string &session UNUSED,
                          const std::string &user UNUSED, const std::string &privilege UNUSED,
                          cynara_check_id &checkId UNUSED, cynara_response_callback callback UNUSED,
                          void *userResponseData UNUSED) {
+    if (!ensureConnection())
+        return CYNARA_API_SERVICE_NOT_AVAILABLE;
+
     // MOCKUP
     return CYNARA_API_MAX_PENDING_REQUESTS;
 }
 
-
 int Logic::process(void) {
+    bool completed;
+    int ret = completeConnection(completed);
+    if (!completed)
+        return ret;
+
     // MOCKUP
     return CYNARA_API_SUCCESS;
 }
 
 int Logic::cancelRequest(cynara_check_id checkId UNUSED) {
+    if (!ensureConnection())
+        return CYNARA_API_SERVICE_NOT_AVAILABLE;
+
     // MOCKUP
     return CYNARA_API_SUCCESS;
+}
+
+bool Logic::checkCacheValid(void) {
+    return m_socketClient->isConnected();
+}
+
+void Logic::prepareRequestsToSend(void) {
+    // MOCKUP
+}
+
+cynara_async_status Logic::socketDataStatus(void) {
+    return m_socketClient->isDataToSend() ? cynara_async_status::CYNARA_STATUS_FOR_RW
+                                          : cynara_async_status::CYNARA_STATUS_FOR_READ;
+}
+
+bool Logic::ensureConnection(void) {
+    if (m_socketClient->isConnected())
+        return true;
+    onDisconnected();
+    switch (m_socketClient->connect()) {
+        case Socket::ConnectionStatus::CONNECTION_SUCCEEDED:
+            prepareRequestsToSend();
+            m_statusCallback.onStatusChange(m_socketClient->getSockFd(), socketDataStatus());
+            return true;
+        case Socket::ConnectionStatus::CONNECTION_IN_PROGRESS:
+            prepareRequestsToSend();
+            m_statusCallback.onStatusChange(m_socketClient->getSockFd(),
+                                            cynara_async_status::CYNARA_STATUS_FOR_RW);
+            return true;
+        default:
+            return false;
+    }
+}
+
+int Logic::completeConnection(bool &completed) {
+    switch (m_socketClient->completeConnection()) {
+        case Socket::ConnectionStatus::ALREADY_CONNECTED:
+            completed = true;
+            return CYNARA_API_SUCCESS;
+        case Socket::ConnectionStatus::CONNECTION_SUCCEEDED:
+            m_statusCallback.onStatusChange(m_socketClient->getSockFd(), socketDataStatus());
+            completed = true;
+            return CYNARA_API_SUCCESS;
+        case Socket::ConnectionStatus::CONNECTION_IN_PROGRESS:
+            completed = false;
+            return CYNARA_API_SUCCESS;
+        default:
+            completed = false;
+            onDisconnected();
+            return CYNARA_API_SERVICE_NOT_AVAILABLE;
+    }
+}
+
+void Logic::onDisconnected(void) {
+    m_statusCallback.onDisconnected();
 }
 
 } // namespace Cynara

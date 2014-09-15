@@ -16,7 +16,7 @@
  *    limitations under the License.
  */
 /**
- * @file        ProtocolFrame.h
+ * @file        src/common/protocol/ProtocolFrame.h
  * @author      Adam Malinowski <a.malinowsk2@partner.samsung.com>
  * @version     1.0
  * @brief       Header for ProtocolFrame class.

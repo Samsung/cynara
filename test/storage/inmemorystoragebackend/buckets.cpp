@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        buckets.cpp
+ * @file        test/storage/inmemorystoragebackend/buckets.cpp
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Tests of buckets in InMemeoryStorageBackend

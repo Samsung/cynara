@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        PolicyBucket.cpp
+ * @file        src/common/types/PolicyBucket.cpp
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Implementation of Cynara::PolicyBucket methods

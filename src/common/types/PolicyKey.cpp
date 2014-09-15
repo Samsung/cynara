@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        PolicyKey.cpp
+ * @file        src/common/types/PolicyKey.cpp
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Implementation of Cynara:PolicyKey methods

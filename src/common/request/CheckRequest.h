@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        CheckRequest.h
+ * @file        src/common/request/CheckRequest.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file defines check request class

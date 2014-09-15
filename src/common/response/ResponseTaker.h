@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        ResponseTaker.h
+ * @file        src/common/response/ResponseTaker.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file defines ResponseTaker class

@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        fakestoragebackend.h
+ * @file        test/storage/storage/fakestoragebackend.h
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Mock of StorageBackend

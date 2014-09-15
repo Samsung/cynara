@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        DefaultBucketSetNoneException.h
+ * @file        src/common/exceptions/DefaultBucketSetNoneException.h
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Implementation of DefaultBucketSetNoneException

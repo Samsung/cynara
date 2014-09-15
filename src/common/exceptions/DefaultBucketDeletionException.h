@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        DefaultBucketDeletionException.h
+ * @file        src/common/exceptions/DefaultBucketDeletionException.h
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Implementation of DefaultBucketDeletionException

@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        InsertOrUpdateBucketRequest.cpp
+ * @file        src/common/request/InsertOrUpdateBucketRequest.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file implements request class for inserting or updating policy bucket

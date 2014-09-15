@@ -14,7 +14,7 @@
  *  limitations under the License
  */
 /**
- * @file        SocketClient.h
+ * @file        src/common/sockets/SocketClient.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file contains definition of cynara's socket client

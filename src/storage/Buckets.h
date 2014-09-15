@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        Buckets.h
+ * @file        src/storage/Buckets.h
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0

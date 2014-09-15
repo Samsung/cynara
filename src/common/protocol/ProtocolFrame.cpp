@@ -16,7 +16,7 @@
  *    limitations under the License.
  */
 /**
- * @file        ProtocolFrame.cpp
+ * @file        src/common/protocol/ProtocolFrame.cpp
  * @author      Adam Malinowski <a.malinowsk2@partner.samsung.com>
  * @version     1.0
  * @brief       Implementation of ProtocolFrame class.

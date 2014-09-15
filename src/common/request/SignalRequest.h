@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        SignalRequest.h
+ * @file        src/common/request/SignalRequest.h
  * @author      Adam Malinowski <a.malinowsk2@partner.samsung.com>
  * @version     1.0
  * @brief       This file defines signal request class

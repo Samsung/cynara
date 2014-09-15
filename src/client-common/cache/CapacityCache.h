@@ -14,7 +14,7 @@
  *  limitations under the License
  */
 /**
- * @file        CapacityCache.h
+ * @file        src/client-common/cache/CapacityCache.h
  * @author      Zofia Abramowska <z.abramowska@samsung.com>
  * @version     1.0
  * @brief       This file contains capacity cache header.

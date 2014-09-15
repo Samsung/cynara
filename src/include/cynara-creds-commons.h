@@ -14,7 +14,7 @@
  *  limitations under the License
  */
 /**
- * @file        cynara-creds-commons.h
+ * @file        src/include/cynara-creds-commons.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @author      Radoslaw Bartosiak <r.bartosiak@samsung.com>
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>

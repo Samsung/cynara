@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        deserialize.cpp
+ * @file        test/storage/serializer/deserialize.cpp
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Tests for Cynara::StorageDeserializer

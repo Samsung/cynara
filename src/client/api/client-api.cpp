@@ -14,7 +14,7 @@
  *  limitations under the License
  */
 /**
- * @file        client-api.cpp
+ * @file        src/client/api/client-api.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       Implementation of external libcynara-client API

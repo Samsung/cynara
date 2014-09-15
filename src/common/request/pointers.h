@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        pointers.h
+ * @file        src/common/request/pointers.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file defines request classes pointers

@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        Cynara.cpp
+ * @file        src/service/main/Cynara.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file implements main class of cynara service

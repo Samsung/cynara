@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        InvalidProtocolException.h
+ * @file        src/common/exceptions/InvalidProtocolException.h
  * @author      Adam Malinowski <a.malinowsk2@partner.samsung.com>
  * @version     1.0
  * @brief       Implementation of InvalidProtocolException

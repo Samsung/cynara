@@ -16,7 +16,7 @@
  *    limitations under the License.
  */
 /**
- * @file        ProtocolOpCode.h
+ * @file        src/common/protocol/ProtocolOpCode.h
  * @author      Adam Malinowski <a.malinowsk2@partner.samsung.com>
  * @version     1.0
  * @brief       Decalaration of protocol frame operation codes.

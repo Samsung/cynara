@@ -16,7 +16,7 @@
  *    limitations under the License.
  */
 /**
- * @file        ProtocolFields.h
+ * @file        src/common/types/ProtocolFields.h
  * @author      Adam Malinowski <a.malinowsk2@partner.samsung.com>
  * @version     1.0
  * @brief       Types definition for protocol frame fields.

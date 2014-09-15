@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        CheckResponse.cpp
+ * @file        src/common/response/CheckResponse.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file implements check response class

@@ -14,7 +14,7 @@
  *  limitations under the License
  */
 /**
- * @file        CapacityCache.cpp
+ * @file        src/client-common/cache/CapacityCache.cpp
  * @author      Zofia Abramowska <z.abramowska@samsung.com>
  * @version     1.0
  * @brief       This file contains capacity cache implementation.

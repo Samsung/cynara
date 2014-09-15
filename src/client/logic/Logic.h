@@ -14,7 +14,7 @@
  *  limitations under the License
  */
 /**
- * @file        Logic.h
+ * @file        src/client/logic/Logic.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file contains definition of Logic class - main libcynara-client class

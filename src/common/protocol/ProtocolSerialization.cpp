@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        ProtocolSerialization.cpp
+ * @file        src/common/protocol/ProtocolSerialization.cpp
  * @author      Tomasz Swierczek (t.swierczek@samsung.com)
  * @version     1.0
  * @brief       This file is the implementation file of data serialization.

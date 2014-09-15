@@ -16,7 +16,7 @@
  *    limitations under the License.
  */
 /**
- * @file        ProtocolFrameHeader.cpp
+ * @file        src/common/protocol/ProtocolFrameHeader.cpp
  * @author      Adam Malinowski <a.malinowsk2@partner.samsung.com>
  * @version     1.0
  * @brief       Implementation of protocol frame header (de)serializer class.

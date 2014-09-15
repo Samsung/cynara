@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        dump_load.cpp
+ * @file        test/storage/serializer/dump_load.cpp
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Tests for dump => load routine

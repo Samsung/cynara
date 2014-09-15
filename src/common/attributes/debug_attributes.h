@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        debug_attributes.h
+ * @file        src/common/attributes/debug_attributes.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file defines debug related attributes

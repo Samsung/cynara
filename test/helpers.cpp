@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        helpers.cpp
+ * @file        test/helpers.cpp
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Helper functions for tests

@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        tests.cpp
+ * @file        test/tests.cpp
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Unit-tests setup

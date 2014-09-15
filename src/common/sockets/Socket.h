@@ -14,7 +14,7 @@
  *  limitations under the License
  */
 /**
- * @file        Socket.h
+ * @file        src/common/sockets/Socket.h
  * @author      Bartlomiej Grzelewski <b.grzelewski@samsung.com>
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0

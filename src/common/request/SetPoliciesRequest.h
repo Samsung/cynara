@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        SetPoliciesRequest.h
+ * @file        src/common/request/SetPoliciesRequest.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file defines request class for modifying policies

@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        Response.h
+ * @file        src/common/response/Response.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file defines response base class

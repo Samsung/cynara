@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        SignalRequest.cpp
+ * @file        src/common/request/SignalRequest.cpp
  * @author      Adam Malinowski <a.malinowsk2@partner.samsung.com>
  * @version     1.0
  * @brief       This file implements signal request class

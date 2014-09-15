@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        PolicyTypeExtension.h
+ * @file        src/common/types/PolicyTypeExtension.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file defines an extension type for policy. It can be

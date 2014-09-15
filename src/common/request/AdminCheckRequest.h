@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        AdminCheckRequest.h
+ * @file        src/common/request/AdminCheckRequest.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file defines admin check request class

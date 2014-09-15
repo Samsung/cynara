@@ -16,7 +16,7 @@
  *  limitations under the License
  */
 /**
- * @file        main.cpp
+ * @file        src/service/main/main.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @author      Adam Malinowski <a.malinowsk2@partner.samsung.com>
  * @version     1.0

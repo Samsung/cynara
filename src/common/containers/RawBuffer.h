@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        RawBuffer.h
+ * @file        src/common/containers/RawBuffer.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file defines binary raw buffer type

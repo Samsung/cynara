@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        serialize.cpp
+ * @file        test/storage/serializer/serialize.cpp
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Tests for dumping feature of Cynara::StorageSerializer

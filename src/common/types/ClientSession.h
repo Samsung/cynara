@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        ClientSession.h
+ * @file        src/common/types/ClientSession.h
  * @author      Zofia Abramowska <z.abramowska@samsung.com>
  * @version     1.0
  * @brief       Description of user defined session type

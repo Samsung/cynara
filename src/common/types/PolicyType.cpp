@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        PolicyType.cpp
+ * @file        src/common/types/PolicyType.cpp
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Implementation of functions for Cynara::PolicyType

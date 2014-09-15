@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        NullPointerException.h
+ * @file        src/common/exceptions/NullPointerException.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       Implementation of OutOfDataException

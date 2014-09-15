@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        Policy.h
+ * @file        src/common/types/Policy.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0

@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        CheckResponse.h
+ * @file        src/common/response/CheckResponse.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file defines response class for check request

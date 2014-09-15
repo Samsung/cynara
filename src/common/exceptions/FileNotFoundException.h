@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        FileNotFoundException.h
+ * @file        src/common/exceptions/FileNotFoundException.h
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       This file defines exception thrown when database file is not found

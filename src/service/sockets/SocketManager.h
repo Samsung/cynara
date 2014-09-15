@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        SocketManager.h
+ * @file        src/service/sockets/SocketManager.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file defines socket layer manager for cynara

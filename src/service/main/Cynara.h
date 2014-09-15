@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        Cynara.h
+ * @file        src/service/main/Cynara.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file defines main class of cynara service

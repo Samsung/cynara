@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        Descriptor.cpp
+ * @file        src/service/sockets/Descriptor.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file implements descriptor class

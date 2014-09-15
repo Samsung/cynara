@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        ProtocolAdmin.cpp
+ * @file        src/common/protocol/ProtocolAdmin.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @author      Adam Malinowski <a.malinowsk2@partner.samsung.com>
  * @version     1.0

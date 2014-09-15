@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        inmemorystoragebackend.cpp
+ * @file        test/storage/inmemorystoragebackend/inmemorystoragebackend.cpp
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Tests of InMemeoryStorageBackend

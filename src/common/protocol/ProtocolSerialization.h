@@ -14,11 +14,11 @@
  *    limitations under the License.
  */
 /**
- * @file    ProtocolSerialization.h
- * @author  Tomasz Swierczek (t.swierczek@samsung.com)
- * @author  Adam Malinowski (a.malinowsk2@samsung.com)
- * @version 1.0
- * @brief   Interfaces and templates used for data serialization.
+ * @file        src/common/protocol/ProtocolSerialization.h
+ * @author	Tomasz Swierczek (t.swierczek@samsung.com)
+ * @author	Adam Malinowski (a.malinowsk2@samsung.com)
+ * @version	1.0
+ * @brief	Interfaces and templates used for data serialization.
  */
 #ifndef SRC_COMMON_PROTOCOL_PROTOCOLSERIALIZATION_H_
 #define SRC_COMMON_PROTOCOL_PROTOCOLSERIALIZATION_H_

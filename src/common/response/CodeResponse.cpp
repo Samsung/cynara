@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        CodeResponse.cpp
+ * @file        src/common/response/CodeResponse.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file implements class for responding to a request with a code

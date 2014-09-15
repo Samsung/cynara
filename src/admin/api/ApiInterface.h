@@ -14,7 +14,7 @@
  *  limitations under the License
  */
 /**
- * @file        ApiInterface.h
+ * @file        src/admin/api/ApiInterface.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file contains libcynara-admin API interface definition.

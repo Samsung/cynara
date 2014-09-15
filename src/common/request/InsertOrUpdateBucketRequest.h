@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        InsertOrUpdateBucketRequest.h
+ * @file        src/common/request/InsertOrUpdateBucketRequest.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file defines request class for inserting or updating policy bucket

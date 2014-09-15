@@ -14,7 +14,7 @@
  *  limitations under the License
  */
 /**
- * @file        Logic.cpp
+ * @file        src/client/logic/Logic.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file contains implementation of Logic class - main libcynara-client class

@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        StorageSerializer.cpp
+ * @file        src/storage/StorageSerializer.cpp
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Implementation of Cynara::StorageSerializer methods

@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        search.cpp
+ * @file        test/storage/inmemorystoragebackend/search.cpp
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Tests of search in InMemeoryStorageBackend

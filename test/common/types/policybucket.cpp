@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        policybucket.cpp
+ * @file        test/common/types/policybucket.cpp
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Tests for Cynara::PolicyBucket

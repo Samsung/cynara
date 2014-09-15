@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        InMemoryStorageBackend.h
+ * @file        src/storage/InMemoryStorageBackend.h
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Headers for InMemoryStorageBackend

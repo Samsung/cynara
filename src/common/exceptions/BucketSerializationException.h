@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        BucketSerializationException.h
+ * @file        src/common/exceptions/BucketSerializationException.h
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Implementation of BucketSerializationException

@@ -14,7 +14,7 @@
  *  limitations under the License
  */
 /**
- * @file        NaiveInterpreter.h
+ * @file        src/client-common/plugins/NaiveInterpreter.h
  * @author      Zofia Abramowska <z.abramowska@samsung.com>
  * @version     1.0
  * @brief       This file contains PolicyType naive interpreter implementation.

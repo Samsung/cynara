@@ -14,7 +14,7 @@
  *  limitations under the License
  */
 /**
- * @file        PluginInterface.h
+ * @file        src/client-common/plugins/PluginInterface.h
  * @author      Zofia Abramowska <z.abramowska@samsung.com>
  * @version     1.0
  * @brief       This file contains plugin interface definitions.

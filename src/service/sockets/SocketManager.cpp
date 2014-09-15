@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        SocketManager.cpp
+ * @file        src/service/sockets/SocketManager.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @author      Adam Malinowski <a.malinowsk2@partner.samsung.com>
  * @version     1.0

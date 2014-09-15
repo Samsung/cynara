@@ -14,7 +14,7 @@
  *  limitations under the License
  */
 /**
- * @file        common.h
+ * @file        src/common/common.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file binds includes from cynara common library

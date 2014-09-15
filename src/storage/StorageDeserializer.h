@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        StorageDeserializer.h
+ * @file        src/storage/StorageDeserializer.h
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Headers for Cynara::StorageDeserializer

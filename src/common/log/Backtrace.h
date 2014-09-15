@@ -16,7 +16,7 @@
  *    limitations under the License.
  */
 /**
- * @file        Backtrace.h
+ * @file        src/common/log/Backtrace.h
  * @author      Adam Malinowski <a.malinowsk2@partner.samsung.com>
  * @version     1.0
  * @brief       Header file for backtrace utility class.

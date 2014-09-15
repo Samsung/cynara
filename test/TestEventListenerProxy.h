@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        TestEventListenerProxy.h
+ * @file        test/TestEventListenerProxy.h
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Proxy for ::testing::TestEventListener

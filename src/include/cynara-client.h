@@ -14,7 +14,7 @@
  *  limitations under the License
  */
 /**
- * @file        cynara-client.h
+ * @file        src/include/cynara-client.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file contains client APIs of Cynara available with libcynara-client.

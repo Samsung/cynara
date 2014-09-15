@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        ProtocolClient.h
+ * @file        src/common/protocol/ProtocolClient.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file defines protocol class for communication with client

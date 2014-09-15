@@ -14,7 +14,7 @@
  *  limitations under the License
  */
 /**
- * @file        admin-api.cpp
+ * @file        src/admin/api/admin-api.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       Implementation of external libcynara-admin API

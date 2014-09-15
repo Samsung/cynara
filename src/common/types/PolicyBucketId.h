@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        PolicyBucketId.h
+ * @file        src/common/types/PolicyBucketId.h
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Definition of Cynara::PolicyBucketId type

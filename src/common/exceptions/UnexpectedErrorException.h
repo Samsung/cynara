@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        UnexpectedErrorException.h
+ * @file        src/common/exceptions/UnexpectedErrorException.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       Implementation of UnexpectedErrorException

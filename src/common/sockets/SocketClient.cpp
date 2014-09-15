@@ -14,7 +14,7 @@
  *  limitations under the License
  */
 /**
- * @file        SocketClient.cpp
+ * @file        src/common/sockets/SocketClient.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file contains implementation of cynara's socket client

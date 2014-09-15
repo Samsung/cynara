@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        BucketNotExistsException.h
+ * @file        src/common/exceptions/BucketNotExistsException.h
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Implementation of BucketNotExistsException

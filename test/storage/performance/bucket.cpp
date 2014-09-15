@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        bucket.cpp
+ * @file        test/storage/performance/bucket.cpp
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Performance tests for Cynara::PolicyBucket

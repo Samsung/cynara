@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        policies.cpp
+ * @file        test/storage/storage/policies.cpp
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Tests of policies in Storage

@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        check.cpp
+ * @file        test/storage/storage/check.cpp
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Tests of check in Storage

@@ -14,7 +14,7 @@
  *  limitations under the License
  */
 /**
- * @file        creds-socket.cpp
+ * @file        src/helpers/creds-socket/creds-socket.cpp
  * @author      Radoslaw Bartosiak <r.bartosiak@samsung.com>
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>

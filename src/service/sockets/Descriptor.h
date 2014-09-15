@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        Descriptor.h
+ * @file        src/service/sockets/Descriptor.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file defines descriptor class

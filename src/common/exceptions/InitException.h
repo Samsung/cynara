@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        InitException.h
+ * @file        src/common/exceptions/InitException.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       Implementation of InitException

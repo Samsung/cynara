@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        BucketRecordCorruptedException.h
+ * @file        src/common/exceptions/BucketRecordCorruptedException.h
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Implementation of BucketRecordCorruptedException

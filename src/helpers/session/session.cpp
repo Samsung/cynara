@@ -14,7 +14,7 @@
  *  limitations under the License
  */
 /**
- * @file        session.cpp
+ * @file        src/helpers/session/session.cpp
  * @author      Radoslaw Bartosiak <r.bartosiak@samsung.com>
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>

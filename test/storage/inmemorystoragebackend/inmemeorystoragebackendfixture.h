@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        inmemeorystoragebackendfixture.h
+ * @file        test/storage/inmemorystoragebackend/inmemeorystoragebackendfixture.h
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Fixture for InMemeoryStorageBackend tests

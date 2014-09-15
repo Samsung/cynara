@@ -14,7 +14,7 @@
  *  limitations under the License
  */
 /**
- * \file        cynara-admin.h
+ * @file        src/include/cynara-admin.h
  * \author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * \version     1.0
  * \brief       This file contains administration APIs of cynara available with libcynara-admin.

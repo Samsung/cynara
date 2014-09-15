@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        BinaryQueue.h
+ * @file        src/common/containers/BinaryQueue.h
  * @author      Przemyslaw Dobrowolski <p.dobrowolsk@samsung.com>
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0

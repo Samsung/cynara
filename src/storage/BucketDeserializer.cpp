@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        BucketDeserializer.cpp
+ * @file        src/storage/BucketDeserializer.cpp
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Methods implementation of Cynara::BucketDeserializer

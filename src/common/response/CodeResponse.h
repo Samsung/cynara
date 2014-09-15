@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        CodeResponse.h
+ * @file        src/common/response/CodeResponse.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file defines class for responding to a request with a code

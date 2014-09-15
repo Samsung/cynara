@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        helpers.h
+ * @file        test/helpers.h
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Helper functions for tests

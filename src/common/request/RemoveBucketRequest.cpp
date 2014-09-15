@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        RemoveBucketRequest.cpp
+ * @file        src/common/request/RemoveBucketRequest.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file implements request class for bucket removal

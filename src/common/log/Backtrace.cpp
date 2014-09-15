@@ -16,7 +16,7 @@
  *    limitations under the License.
  */
 /**
- * @file        Backtrace.cpp
+ * @file        src/common/log/Backtrace.cpp
  * @author      Adam Malinowski <a.malinowsk2@partner.samsung.com>
  * @version     1.0
  * @brief       Implementation of backtrace utility class.

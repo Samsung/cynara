@@ -14,7 +14,7 @@
  *  limitations under the License
  */
 /**
- * @file        cynara-creds-dbus.h
+ * @file        src/include/cynara-creds-dbus.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @author      Radoslaw Bartosiak <r.bartosiak@samsung.com>
  * @version     1.0

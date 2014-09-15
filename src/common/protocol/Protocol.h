@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        Protocol.h
+ * @file        src/common/protocol/Protocol.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file defines protocol base class

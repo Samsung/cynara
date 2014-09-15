@@ -14,7 +14,7 @@
  *  limitations under the License
  */
 /**
- * @file        creds-commons.cpp
+ * @file        src/helpers/creds-commons/creds-commons.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @author      Radoslaw Bartosiak <r.bartosiak@samsung.com>
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>

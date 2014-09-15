@@ -14,7 +14,7 @@
  *  limitations under the License
  */
 /**
- * @file        cynara-creds-socket.h
+ * @file        src/include/cynara-creds-socket.h
  * @author      Radoslaw Bartosiak <r.bartosiak@samsung.com>
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>

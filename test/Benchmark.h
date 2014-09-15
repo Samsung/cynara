@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        Benchmark.h
+ * @file        test/Benchmark.h
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       A generic benchmark

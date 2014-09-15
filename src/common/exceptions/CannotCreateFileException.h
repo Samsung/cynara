@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        CannotCreateFileException.h
+ * @file        src/common/exceptions/CannotCreateFileException.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file defines exception thrown when database file cannot be created

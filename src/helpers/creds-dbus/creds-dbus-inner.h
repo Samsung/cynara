@@ -14,7 +14,7 @@
  *  limitations under the License
  */
 /**
- * @file        creds-dbus-inner.h
+ * @file        src/helpers/creds-dbus/creds-dbus-inner.h
  * @author      Radoslaw Bartosiak <r.bartosiak@samsung.com>
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>

@@ -16,7 +16,7 @@
  *    limitations under the License.
  */
 /**
- * @file        log.h
+ * @file        src/common/log/log.h
  * @author      Adam Malinowski <a.malinowsk2@partner.samsung.com>
  * @version     1.0
  * @brief       This file defines logging utilities.

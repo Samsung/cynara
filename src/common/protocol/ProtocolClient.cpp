@@ -21,9 +21,10 @@
  * @brief       This file implements protocol class for communication with client
  */
 
-#include <common.h>
+#include <cinttypes>
 #include <memory>
 
+#include <common.h>
 #include <exceptions/InvalidProtocolException.h>
 #include <exceptions/OutOfDataException.h>
 #include <log/log.h>
@@ -58,7 +59,7 @@ RequestPtr ProtocolClient::deserializeCheckRequest(ProtocolFrameHeader &frame) {
     ProtocolDeserialization::deserialize(frame, userId);
     ProtocolDeserialization::deserialize(frame, privilegeId);
 
-    LOGD("Deserialized CheckRequest: client = %s, user = %s, privilege = %s",
+    LOGD("Deserialized CheckRequest: client <%s>, user <%s>, privilege <%s>",
          clientId.c_str(), userId.c_str(), privilegeId.c_str());
 
     return std::make_shared<CheckRequest>(PolicyKey(clientId, userId, privilegeId),
@@ -73,9 +74,10 @@ RequestPtr ProtocolClient::extractRequestFromBuffer(BinaryQueue &bufferQueue) {
 
         m_frameHeader.resetState();
         ProtocolDeserialization::deserialize(m_frameHeader, opCode);
-        LOGD("Deserialized opCode = %d", (int)opCode);
+
+        LOGD("Deserialized opCode [%" PRIu8 "]", opCode);
         switch (opCode) {
-        case OpCheckPolicy:
+        case OpCheckPolicyRequest:
             return deserializeCheckRequest(m_frameHeader);
         default:
             throw InvalidProtocolException(InvalidProtocolException::WrongOpCode);
@@ -95,8 +97,8 @@ ResponsePtr ProtocolClient::deserializeCheckResponse(ProtocolFrameHeader &frame)
 
     const PolicyResult policyResult(result, additionalInfo);
 
-    LOGD("Deserialized CheckResponse: result = %d, metadata = %s",
-         (int)policyResult.policyType(), policyResult.metadata().c_str());
+    LOGD("Deserialized CheckResponse: result [%" PRIu16 "], metadata <%s>",
+         policyResult.policyType(), policyResult.metadata().c_str());
 
     return std::make_shared<CheckResponse>(policyResult, frame.sequenceNumber());
 }
@@ -109,9 +111,9 @@ ResponsePtr ProtocolClient::extractResponseFromBuffer(BinaryQueue &bufferQueue) 
 
         m_frameHeader.resetState();
         ProtocolDeserialization::deserialize(m_frameHeader, opCode);
-        LOGD("Deserialized opCode = %d", (int)opCode);
+        LOGD("Deserialized opCode [%" PRIu8 "]", opCode);
         switch (opCode) {
-        case OpCheckPolicy:
+        case OpCheckPolicyResponse:
             return deserializeCheckResponse(m_frameHeader);
         default:
             throw InvalidProtocolException(InvalidProtocolException::WrongOpCode);
@@ -125,11 +127,11 @@ ResponsePtr ProtocolClient::extractResponseFromBuffer(BinaryQueue &bufferQueue) 
 void ProtocolClient::execute(RequestContextPtr context, CheckRequestPtr request) {
     ProtocolFramePtr frame = ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
 
-    LOGD("Serializing CheckRequest: client = %s, user = %s, privilege = %s",
-         request->key().client().value().c_str(),
-         request->key().user().value().c_str(), request->key().privilege().value().c_str());
+    LOGD("Serializing CheckRequest: client <%s>, user <%s>, privilege <%s>",
+         request->key().client().value().c_str(), request->key().user().value().c_str(),
+         request->key().privilege().value().c_str());
 
-    ProtocolSerialization::serialize(*frame, OpCheckPolicy);
+    ProtocolSerialization::serialize(*frame, OpCheckPolicyRequest);
     ProtocolSerialization::serialize(*frame, request->key().client().value());
     ProtocolSerialization::serialize(*frame, request->key().user().value());
     ProtocolSerialization::serialize(*frame, request->key().privilege().value());
@@ -138,13 +140,14 @@ void ProtocolClient::execute(RequestContextPtr context, CheckRequestPtr request)
 }
 
 void ProtocolClient::execute(RequestContextPtr context, CheckResponsePtr response) {
-    ProtocolFramePtr frame = ProtocolFrameSerializer::startSerialization(response->sequenceNumber());
+    ProtocolFramePtr frame = ProtocolFrameSerializer::startSerialization(
+            response->sequenceNumber());
 
-    LOGD("Serializing CheckResponse: op [%d], policyType [%d], metadata <%s>",
-         (int)OpCheckPolicy, (int)response->m_resultRef.policyType(),
+    LOGD("Serializing CheckResponse: op [%" PRIu8 "], policyType [%" PRIu16 "], metadata <%s>",
+         OpCheckPolicyResponse, response->m_resultRef.policyType(),
          response->m_resultRef.metadata().c_str());
 
-    ProtocolSerialization::serialize(*frame, OpCheckPolicy);
+    ProtocolSerialization::serialize(*frame, OpCheckPolicyResponse);
     ProtocolSerialization::serialize(*frame, response->m_resultRef.policyType());
     ProtocolSerialization::serialize(*frame, response->m_resultRef.metadata());
 

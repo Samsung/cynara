@@ -31,9 +31,10 @@ namespace Cynara {
 
 enum ProtocolOpCode : uint8_t {
     /** Client operations */
-    OpCheckPolicy = 0,
+    OpCheckPolicyRequest = 0,
+    OpCheckPolicyResponse,
 
-    /** Opcodes 1 - 19 are reserved for future use */
+    /** Opcodes 2 - 19 are reserved for future use */
 
     /** Admin operations */
     OpInsertOrUpdateBucket = 20,

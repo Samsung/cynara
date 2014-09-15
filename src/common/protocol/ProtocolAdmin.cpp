@@ -21,16 +21,19 @@
  * @brief       This file implements protocol class for administration
  */
 
+#include <cinttypes>
 #include <memory>
 
 #include <exceptions/InvalidProtocolException.h>
 #include <log/log.h>
 #include <protocol/ProtocolFrame.h>
 #include <protocol/ProtocolFrameSerializer.h>
+#include <request/AdminCheckRequest.h>
 #include <request/InsertOrUpdateBucketRequest.h>
 #include <request/RemoveBucketRequest.h>
 #include <request/RequestContext.h>
 #include <request/SetPoliciesRequest.h>
+#include <response/CheckResponse.h>
 #include <response/CodeResponse.h>
 
 #include "ProtocolAdmin.h"
@@ -47,6 +50,25 @@ ProtocolPtr ProtocolAdmin::clone(void) {
     return std::make_shared<ProtocolAdmin>();
 }
 
+RequestPtr ProtocolAdmin::deserializeAdminCheckRequest(ProtocolFrameHeader &frame) {
+    std::string clientId, userId, privilegeId;
+    PolicyBucketId startBucket;
+    bool recursive;
+
+    ProtocolDeserialization::deserialize(frame, clientId);
+    ProtocolDeserialization::deserialize(frame, userId);
+    ProtocolDeserialization::deserialize(frame, privilegeId);
+    ProtocolDeserialization::deserialize(frame, startBucket);
+    ProtocolDeserialization::deserialize(frame, recursive);
+
+    LOGD("Deserialized AdminCheckRequest: clientId <%s>, userId <%s>, privilegeId <%s>, "
+         "startBucket <%s>, recursive [%d]", clientId.c_str(), userId.c_str(),
+         privilegeId.c_str(), startBucket.c_str(), recursive);
+
+    return std::make_shared<AdminCheckRequest>(PolicyKey(clientId, userId, privilegeId),
+                                               startBucket, recursive, frame.sequenceNumber());
+}
+
 RequestPtr ProtocolAdmin::deserializeInsertOrUpdateBucketRequest(ProtocolFrameHeader &frame) {
     PolicyBucketId policyBucketId;
     PolicyType policyType;
@@ -57,8 +79,8 @@ RequestPtr ProtocolAdmin::deserializeInsertOrUpdateBucketRequest(ProtocolFrameHe
     ProtocolDeserialization::deserialize(frame, policyMetaData);
 
     LOGD("Deserialized InsertOrUpdateBucketRequest: bucketId <%s>, "
-         "result.type [%u], result.meta <%s>", policyBucketId.c_str(),
-         static_cast<unsigned int>(policyType), policyMetaData.c_str());
+         "result.type [%" PRIu16 "], result.meta <%s>", policyBucketId.c_str(),
+         policyType, policyMetaData.c_str());
 
     return std::make_shared<InsertOrUpdateBucketRequest>(policyBucketId,
             PolicyResult(policyType, policyMetaData), frame.sequenceNumber());
@@ -118,9 +140,8 @@ RequestPtr ProtocolAdmin::deserializeSetPoliciesRequest(ProtocolFrameHeader &fra
         }
     }
 
-    LOGD("Deserialized SetPoliciesRequestPtr: insertOrUpdate count [%u], remove count [%u]",
-         static_cast<unsigned int>(toBeInsertedOrUpdatedCount),
-         static_cast<unsigned int>(toBeRemovedCount));
+    LOGD("Deserialized SetPoliciesRequestPtr: insertOrUpdate count [%" PRIu16 "], "
+         "remove count [%" PRIu16 "]", toBeInsertedOrUpdatedCount, toBeRemovedCount);
 
     return std::make_shared<SetPoliciesRequest>(toBeInsertedOrUpdatedPolicies,
                                                 toBeRemovedPolicies, frame.sequenceNumber());
@@ -134,8 +155,10 @@ RequestPtr ProtocolAdmin::extractRequestFromBuffer(BinaryQueue &bufferQueue) {
 
         m_frameHeader.resetState();
         ProtocolDeserialization::deserialize(m_frameHeader, opCode);
-        LOGD("Deserialized opCode [%u]", static_cast<unsigned int>(opCode));
+        LOGD("Deserialized opCode [%" PRIu8 "]", opCode);
         switch (opCode) {
+        case OpAdminCheckRequest:
+            return deserializeAdminCheckRequest(m_frameHeader);
         case OpInsertOrUpdateBucket:
             return deserializeInsertOrUpdateBucketRequest(m_frameHeader);
         case OpRemoveBucket:
@@ -151,11 +174,26 @@ RequestPtr ProtocolAdmin::extractRequestFromBuffer(BinaryQueue &bufferQueue) {
     return nullptr;
 }
 
+ResponsePtr ProtocolAdmin::deserializeCheckResponse(ProtocolFrameHeader &frame) {
+    PolicyType result;
+    PolicyResult::PolicyMetadata additionalInfo;
+
+    ProtocolDeserialization::deserialize(frame, result);
+    ProtocolDeserialization::deserialize(frame, additionalInfo);
+
+    const PolicyResult policyResult(result, additionalInfo);
+
+    LOGD("Deserialized CheckResponse: result [%" PRIu16 "], metadata <%s>",
+         policyResult.policyType(), policyResult.metadata().c_str());
+
+    return std::make_shared<CheckResponse>(policyResult, frame.sequenceNumber());
+}
+
 ResponsePtr ProtocolAdmin::deserializeCodeResponse(ProtocolFrameHeader &frame) {
     ProtocolResponseCode responseCode;
     ProtocolDeserialization::deserialize(frame, responseCode);
 
-    LOGD("Deserialized CodeResponse: code [%u], ", static_cast<unsigned int>(responseCode));
+    LOGD("Deserialized CodeResponse: code [%" PRIu16 "], ", responseCode);
 
     return std::make_shared<CodeResponse>(static_cast<CodeResponse::Code>(responseCode),
                                           frame.sequenceNumber());
@@ -169,8 +207,10 @@ ResponsePtr ProtocolAdmin::extractResponseFromBuffer(BinaryQueue &bufferQueue) {
 
         m_frameHeader.resetState();
         ProtocolDeserialization::deserialize(m_frameHeader, opCode);
-        LOGD("Deserialized opCode [%u]", static_cast<unsigned int>(opCode));
+        LOGD("Deserialized opCode [%" PRIu8 "]", opCode);
         switch (opCode) {
+        case OpCheckPolicyResponse:
+            return deserializeCheckResponse(m_frameHeader);
         case OpCodeResponse:
             return deserializeCodeResponse(m_frameHeader);
         default:
@@ -182,12 +222,28 @@ ResponsePtr ProtocolAdmin::extractResponseFromBuffer(BinaryQueue &bufferQueue) {
     return nullptr;
 }
 
+void ProtocolAdmin::execute(RequestContextPtr context, AdminCheckRequestPtr request) {
+    LOGD("Serializing AdminCheckRequest: client <%s>, user <%s>, privilege <%s>, "
+         "startBucket <%s>, recursive [%d]", request->key().client().value().c_str(),
+         request->key().user().value().c_str(), request->key().privilege().value().c_str(),
+         request->startBucket().c_str(), request->recursive());
+
+    ProtocolFramePtr frame = ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
+
+    ProtocolSerialization::serialize(*frame, OpAdminCheckRequest);
+    ProtocolSerialization::serialize(*frame, request->key().client().value());
+    ProtocolSerialization::serialize(*frame, request->key().user().value());
+    ProtocolSerialization::serialize(*frame, request->key().privilege().value());
+    ProtocolSerialization::serialize(*frame, request->startBucket());
+    ProtocolSerialization::serialize(*frame, request->recursive());
+
+    ProtocolFrameSerializer::finishSerialization(frame, context->responseQueue());
+}
+
 void ProtocolAdmin::execute(RequestContextPtr context, InsertOrUpdateBucketRequestPtr request) {
-    LOGD("Serializing InsertOrUpdateBucketRequest: sequenceNumber [%u], bucketId <%s>, "
-         "result.type [%u], result.meta <%s>",
-         static_cast<unsigned int>(request->sequenceNumber()),
-         request->bucketId().c_str(),
-         static_cast<unsigned int>(request->result().policyType()),
+    LOGD("Serializing InsertOrUpdateBucketRequest: sequenceNumber [%" PRIu16 "], bucketId <%s>, "
+         "result.type [%" PRIu16 "], result.meta <%s>", request->sequenceNumber(),
+         request->bucketId().c_str(), request->result().policyType(),
          request->result().metadata().c_str());
 
     ProtocolFramePtr frame = ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
@@ -201,8 +257,8 @@ void ProtocolAdmin::execute(RequestContextPtr context, InsertOrUpdateBucketReque
 }
 
 void ProtocolAdmin::execute(RequestContextPtr context, RemoveBucketRequestPtr request) {
-    LOGD("Serializing RemoveBucketRequest: sequenceNumber [%u], bucketId <%s>",
-         static_cast<unsigned int>(request->sequenceNumber()), request->bucketId().c_str());
+    LOGD("Serializing RemoveBucketRequest: sequenceNumber [%" PRIu16 "], bucketId <%s>",
+         request->sequenceNumber(), request->bucketId().c_str());
 
     ProtocolFramePtr frame = ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
 
@@ -213,10 +269,9 @@ void ProtocolAdmin::execute(RequestContextPtr context, RemoveBucketRequestPtr re
 }
 
 void ProtocolAdmin::execute(RequestContextPtr context, SetPoliciesRequestPtr request) {
-    LOGD("Serializing SetPoliciesRequestPtr: sequenceNumber [%u], insertOrUpdate count [%zu], "
-         "remove count [%zu]", static_cast<unsigned int>(request->sequenceNumber()),
-         request->policiesToBeInsertedOrUpdated().size(),
-         request->policiesToBeRemoved().size());
+    LOGD("Serializing SetPoliciesRequestPtr: sequenceNumber [%" PRIu16 "], "
+         "insertOrUpdate count [%zu], remove count [%zu]", request->sequenceNumber(),
+         request->policiesToBeInsertedOrUpdated().size(), request->policiesToBeRemoved().size());
 
     ProtocolFramePtr frame =
             ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
@@ -257,10 +312,25 @@ void ProtocolAdmin::execute(RequestContextPtr context, SetPoliciesRequestPtr req
     ProtocolFrameSerializer::finishSerialization(frame, context->responseQueue());
 }
 
+void ProtocolAdmin::execute(RequestContextPtr context, CheckResponsePtr response) {
+    LOGD("Serializing CheckResponse: op [%" PRIu8 "], sequenceNumber [%" PRIu16 "], "
+         "policyType [%" PRIu16 "], metadata <%s>", OpCheckPolicyResponse,
+         response->sequenceNumber(), response->m_resultRef.policyType(),
+         response->m_resultRef.metadata().c_str());
+
+    ProtocolFramePtr frame = ProtocolFrameSerializer::startSerialization(
+            response->sequenceNumber());
+
+    ProtocolSerialization::serialize(*frame, OpCheckPolicyResponse);
+    ProtocolSerialization::serialize(*frame, response->m_resultRef.policyType());
+    ProtocolSerialization::serialize(*frame, response->m_resultRef.metadata());
+
+    ProtocolFrameSerializer::finishSerialization(frame, context->responseQueue());
+}
+
 void ProtocolAdmin::execute(RequestContextPtr context, CodeResponsePtr response) {
-    LOGD("Serializing CodeResponse: sequenceNumber [%u], code [%u]",
-         static_cast<unsigned int>(response->sequenceNumber()),
-         static_cast<unsigned int>(response->m_code));
+    LOGD("Serializing CodeResponse: op [%" PRIu8 "], sequenceNumber [%" PRIu16 "], "
+         "code [%" PRIu16 "]", OpCodeResponse, response->sequenceNumber(), response->m_code);
 
     ProtocolFramePtr frame = ProtocolFrameSerializer::startSerialization(
             response->sequenceNumber());

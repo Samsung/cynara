@@ -40,7 +40,8 @@ enum ProtocolOpCode : uint8_t {
     OpInsertOrUpdateBucket = 20,
     OpRemoveBucket,
     OpSetPolicies,
-    OpCodeResponse
+    OpCodeResponse,
+    OpAdminCheckRequest,
 };
 
 } /* namespace Cynara */

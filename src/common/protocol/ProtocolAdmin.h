@@ -38,17 +38,21 @@ public:
     virtual RequestPtr extractRequestFromBuffer(BinaryQueue &bufferQueue);
     virtual ResponsePtr extractResponseFromBuffer(BinaryQueue &bufferQueue);
 
+    virtual void execute(RequestContextPtr context, AdminCheckRequestPtr request);
     virtual void execute(RequestContextPtr context, InsertOrUpdateBucketRequestPtr request);
     virtual void execute(RequestContextPtr context, RemoveBucketRequestPtr request);
     virtual void execute(RequestContextPtr context, SetPoliciesRequestPtr request);
 
+    virtual void execute(RequestContextPtr context, CheckResponsePtr response);
     virtual void execute(RequestContextPtr context, CodeResponsePtr response);
 
 private:
+    RequestPtr deserializeAdminCheckRequest(ProtocolFrameHeader &frame);
     RequestPtr deserializeInsertOrUpdateBucketRequest(ProtocolFrameHeader &frame);
     RequestPtr deserializeRemoveBucketRequest(ProtocolFrameHeader &frame);
     RequestPtr deserializeSetPoliciesRequest(ProtocolFrameHeader &frame);
 
+    ResponsePtr deserializeCheckResponse(ProtocolFrameHeader &frame);
     ResponsePtr deserializeCodeResponse(ProtocolFrameHeader &frame);
 };
 

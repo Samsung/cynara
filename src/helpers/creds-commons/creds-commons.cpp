@@ -17,7 +17,7 @@
  * @file        creds-commons.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @author      Radoslaw Bartosiak <r.bartosiak@samsung.com>
- * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
+ * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Implementation of external libcynara-creds-commons API
  */

@@ -15,7 +15,7 @@
  */
 /**
  * @file        Benchmark.h
- * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
+ * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       A generic benchmark
  */

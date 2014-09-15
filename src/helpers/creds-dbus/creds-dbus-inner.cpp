@@ -16,7 +16,7 @@
 /**
  * @file        creds-dbus-inner.cpp
  * @author      Radoslaw Bartosiak <r.bartosiak@samsung.com>
- * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
+ * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       Implementation of internal libcynara-creds-dbus functions

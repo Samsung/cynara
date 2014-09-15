@@ -15,7 +15,7 @@
  */
 /**
  * @file        cynara-session.h
- * \author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
+ * \author      Aleksander Zdyb <a.zdyb@samsung.com>
  * \author      Radoslaw Bartosiak <r.bartosiak@samsung.com.pl>
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0

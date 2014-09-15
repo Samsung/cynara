@@ -13,7 +13,7 @@
 #    limitations under the License.
 #
 # @file        CMakeLists.txt
-# @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
+# @author      Aleksander Zdyb <a.zdyb@samsung.com>
 # @author      Radoslaw Bartosiak <r.bartosiak@samsung.com>
 # @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
 #

@@ -16,7 +16,7 @@
 /**
  * @file        creds-socket-inner.h
  * @author      Radoslaw Bartosiak <r.bartosiak@samsung.com>
- * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
+ * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       Definition of internal external libcynara-creds-socket functions

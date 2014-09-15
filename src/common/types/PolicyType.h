@@ -16,7 +16,7 @@
 /**
  * @file        PolicyType.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
- * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
+ * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       This file defines PolicyType e.g. ALLOW or DENY
  */

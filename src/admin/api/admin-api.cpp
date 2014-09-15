@@ -172,3 +172,21 @@ int cynara_admin_set_bucket(struct cynara_admin *p_cynara_admin, const char *buc
             return CYNARA_ADMIN_API_INVALID_PARAM;
     }
 }
+
+CYNARA_API
+int cynara_admin_check(struct cynara_admin *p_cynara_admin,
+                       const char *start_bucket, const int recursive UNUSED,
+                       const char *client, const char *user, const char *privilege,
+                       int *result, char **result_extra) {
+    if (!p_cynara_admin || !p_cynara_admin->impl)
+        return CYNARA_ADMIN_API_INVALID_PARAM;
+    if (!start_bucket)
+        return CYNARA_ADMIN_API_INVALID_PARAM;
+    if (!client || !user || !privilege)
+        return CYNARA_ADMIN_API_INVALID_PARAM;
+    if (!result || !result_extra)
+        return CYNARA_ADMIN_API_INVALID_PARAM;
+
+    //just mock-up
+    return CYNARA_ADMIN_API_SUCCESS;
+}

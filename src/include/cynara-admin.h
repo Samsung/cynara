@@ -198,6 +198,55 @@ int cynara_admin_set_policies(struct cynara_admin *p_cynara_admin,
 int cynara_admin_set_bucket(struct cynara_admin *p_cynara_admin, const char *bucket, int operation,
                             const char *extra);
 
+/**
+ * \par Description:
+ * Raw check client and user access for given privilege without using plugins extensions.
+ *
+ * \par Purpose:
+ * This API should be used to check type of matching policy for check request
+ *
+ * \par Typical use case:
+ * Administrator of cynara want to know, what would cynara return to client, if asked about given
+ * access.
+ *
+ * \par Method of function operation:
+ * Function works almost the same way as cynara_check() client function.
+ * The differences are:
+ * - user must specify bucket, from which search would be started (in case of cynara_check()
+ *   it is always the default bucket)
+ * - user can specify if search should be recursive: disabling recursive check will constrain search
+ *   to single bucket only, ignoring all policies leading to other buckets (in case of
+ *   cynara_check() search is always recursive)
+ * - when matching policy in cynara is found, its result is returned without being interpreted by
+ *   plugin extensions.
+ *
+ * \par Sync (or) Async:
+ * This is a synchronous API.
+ *
+ * \par Important notes:
+ * (*result_extra) may be set to NULL, if extra data are not used in matched policy
+ * If (*result_extra) is not NULL, it contains a string allocated by cynara admin library
+ * with malloc(3) function and must be released with free(3) function.
+ *
+ * \param[in] p_cynara_admin cynara admin structure.
+ * \param[in] start_bucket name of bucket where search would start.
+ * \param[in] recursive FALSE (== 0) : search is not recursive (single bucket search);
+ *                      TRUE  (!= 0) : search does not ignore policies leading to another buckets.
+ * \param[in] client application or process identifier.
+ * \param[in] user user running client.
+ * \param[in] privilege privilege that is a subject of a check.
+ * \param[out] result placeholder for matched policy type.
+ * \param[out] result_extra placeholder for matched policy additional data (see Important Notes!).
+ *
+ * \return CYNARA_ADMIN_API_SUCCESS on success, or error code otherwise.
+ *
+ * \brief Raw check client and user access for given privilege without using plugins extensions.
+ */
+int cynara_admin_check(struct cynara_admin *p_cynara_admin,
+                       const char *start_bucket, const int recursive,
+                       const char *client, const char *user, const char *privilege,
+                       int *result, char **result_extra);
+
 #ifdef __cplusplus
 }
 #endif

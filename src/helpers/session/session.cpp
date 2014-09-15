@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License
  */
-/*
+/**
  * @file        session.cpp
  * @author      Radoslaw Bartosiak <r.bartosiak@samsung.com>
  * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>

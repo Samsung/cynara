@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License
  */
-/*
+/**
  * @file        cynara-creds-dbus.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @author      Radoslaw Bartosiak <r.bartosiak@samsung.com>

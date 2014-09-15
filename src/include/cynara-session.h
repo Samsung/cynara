@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License
  */
-/*
+/**
  * @file        cynara-session.h
  * \author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * \author      Radoslaw Bartosiak <r.bartosiak@samsung.com.pl>

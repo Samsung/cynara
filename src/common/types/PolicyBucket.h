@@ -13,7 +13,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-/*
+/**
  * @file        PolicyBucket.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>

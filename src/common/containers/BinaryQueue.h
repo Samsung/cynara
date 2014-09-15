@@ -13,7 +13,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-/*
+/**
  * @file        BinaryQueue.h
  * @author      Przemyslaw Dobrowolski <p.dobrowolsk@samsung.com>
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>

@@ -17,6 +17,7 @@
  * @file        src/common/sockets/Socket.h
  * @author      Bartlomiej Grzelewski <b.grzelewski@samsung.com>
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @author      Marcin Niesluchowski <m.niesluchow@samsung.com>
  * @version     1.0
  * @brief       This file contains definition of UNIX client socket class
  */
@@ -27,15 +28,36 @@
 #include <string>
 
 #include <containers/BinaryQueue.h>
+#include <containers/RawBuffer.h>
 
 namespace Cynara {
 
 class Socket {
+public:
+    enum class ConnectionStatus {
+        ALREADY_CONNECTED,
+        CONNECTION_SUCCEEDED,
+        CONNECTION_IN_PROGRESS,
+        CONNECTION_FAILED
+    };
+
+    enum class SendStatus {
+        PARTIAL_DATA_SENT,
+        ALL_DATA_SENT,
+        CONNECTION_LOST
+    };
+
 private:
     int m_sock;
+    bool m_connectionInProgress;
 
     std::string m_socketPath;
     int m_pollTimeout;
+
+    RawBuffer m_sendBuffer;
+    size_t m_sendBufferPos;
+    size_t m_sendBufferEnd;
+    BinaryQueue m_sendQueue;
 
     void close(void);
 
@@ -48,6 +70,21 @@ private:
     //throws            in critical situations
     int getSocketError(void);
 
+    //throws            in critical situations
+    void createSocket(void);
+
+    //returns ConnectionStatus::CONNECTION_SUCCEEDED           if connection succeeded
+    //returns ConnectionStatus::CONNECTION_IN_PROGRESS         if connection in progress
+    //returns ConnectionStatus::CONNECTION_FAILED              if connection failed
+    //throws                                                   in critical situations
+    ConnectionStatus connectSocket(void);
+
+    //returns SendStatus::PARTIAL_DATA_SENT         if no data to send is available
+    //returns SendStatus::ALL_DATA_SENT             if no additional data to send
+    //returns SendStatus::CONNECTION_LOST           if connection was lost
+    //throws                                        in critical situations
+    SendStatus sendBuffer(void);
+
 public:
     Socket(const std::string &socketPath, int timeoutMiliseconds = -1);
     ~Socket();
@@ -56,26 +93,36 @@ public:
     //throws            in critical situations
     bool isConnected(void);
 
-    //returns true      if connection succeeded
-    //returns false     if connection was timeout or no one is listening
-    //throws            in critical situations
-    bool connect(void);
+    //returns ConnectionStatus::CONNECTION_SUCCEEDED           if connection succeeded
+    //returns ConnectionStatus::CONNECTION_IN_PROGRESS         if connection in progress
+    //returns ConnectionStatus::CONNECTION_FAILED              if connection failed
+    //throws                                                   in critical situations
+    ConnectionStatus connect(void);
 
-    //returns true                              if data was successfully send to server
-    //returns false                             if connection was lost
-    //throws ServerConnectionErrorException     if cannot connect server (or timeout)
-    //throws other exceptions                   in critical situations
-    bool sendToServer(BinaryQueue &queue);
+    //returns ConnectionStatus::ALREADY_CONNECTED              if was already connected
+    //returns ConnectionStatus::CONNECTION_SUCCEEDED           if connection succeeded
+    //returns ConnectionStatus::CONNECTION_IN_PROGRESS         if connection in progress
+    //returns ConnectionStatus::CONNECTION_FAILED              if connection failed
+    //throws                                                   in critical situations
+    ConnectionStatus completeConnection(void);
+
+    //returns socket descriptor
+    //returns -1                if socket descriptor no present
+    int getSockFd(void);
+
+    //returns true          There is still data to send
+    //returns false         No data to send
+    bool isDataToSend(void);
+
+    //returns SendStatus::PARTIAL_DATA_SENT         if no all data sent
+    //returns SendStatus::ALL_DATA_SENT             if all data was sent
+    //returns SendStatus::CONNECTION_LOST           if connection was lost
+    //throws                                        in critical situations
+    SendStatus sendToServer(BinaryQueue &queue);
 
     //returns true                              if data was successfully read from server
     //returns false                             if connection was lost
-    //throws ServerConnectionErrorException     if cannot connect server (or timeout)
-    //throws other exceptions                   in critical situations
-    bool waitAndReceiveFromServer(BinaryQueue &queue);
-
-    //returns true                              if data was successfully read from server
-    //returns false                             if connection was lost
-    //throws other exceptions                   in critical situations
+    //throws                                    in critical situations
     bool receiveFromServer(BinaryQueue &queue);
 };
 

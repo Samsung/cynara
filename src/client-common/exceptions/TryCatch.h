@@ -27,6 +27,7 @@
 #include <functional>
 #include <new>
 
+#include <exceptions/NoMemoryException.h>
 #include <log/log.h>
 
 #include <cynara-client-error.h>
@@ -37,6 +38,9 @@ int tryCatch(const std::function<int(void)> &func) {
     try {
         return func();
     } catch (const std::bad_alloc &e) {
+        LOGE(e.what());
+        return CYNARA_API_OUT_OF_MEMORY;
+    } catch (const NoMemoryException &e) {
         LOGE(e.what());
         return CYNARA_API_OUT_OF_MEMORY;
     } catch (const std::exception &e) {

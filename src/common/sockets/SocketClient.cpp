@@ -39,21 +39,40 @@ SocketClient::SocketClient(const std::string &socketPath, ProtocolPtr protocol)
         : m_socket(socketPath), m_protocol(protocol) {
 }
 
+bool SocketClient::connect(void) {
+    switch (m_socket.connect()) {
+        case Socket::ConnectionStatus::CONNECTION_FAILED:
+            LOGW("Error connecting to Cynara. Service not available.");
+            return false;
+        case Socket::ConnectionStatus::CONNECTION_IN_PROGRESS:
+            if (m_socket.completeConnection() == Socket::ConnectionStatus::CONNECTION_FAILED) {
+                LOGW("Error connecting to Cynara. Service not available.");
+                return false;
+            }
+        default:
+            return true;
+    }
+}
+
+bool SocketClient::isConnected(void) {
+    return m_socket.isConnected();
+}
+
 ResponsePtr SocketClient::askCynaraServer(RequestPtr request) {
     //pass request to protocol
     RequestContextPtr context = std::make_shared<RequestContext>(ResponseTakerPtr(), m_writeQueue);
     request->execute(request, m_protocol, context);
 
     //send request to cynara
-    if (!m_socket.sendToServer(m_writeQueue)) {
-        LOGW("Error sending request to Cynara. Service not available.");
+    if (m_socket.sendToServer(m_writeQueue) == Socket::SendStatus::CONNECTION_LOST) {
+        LOGW("Disconnected while sending request to Cynara.");
         return nullptr;
     }
 
     // receive response from cynara
     while (true) {
-        if (!m_socket.waitAndReceiveFromServer(m_readQueue)) {
-            LOGW("Error receiving response from Cynara. Service not available.");
+        if (!m_socket.receiveFromServer(m_readQueue)) {
+            LOGW("Disconnected while receiving response from Cynara.");
             return nullptr;
         }
         ResponsePtr response = m_protocol->extractResponseFromBuffer(m_readQueue);
@@ -61,10 +80,6 @@ ResponsePtr SocketClient::askCynaraServer(RequestPtr request) {
             return response;
         }
     }
-}
-
-bool SocketClient::isConnected(void) {
-    return m_socket.isConnected() && m_socket.receiveFromServer(m_readQueue);
 }
 
 } // namespace Cynara

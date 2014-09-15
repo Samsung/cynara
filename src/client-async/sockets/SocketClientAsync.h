@@ -14,48 +14,52 @@
  *  limitations under the License
  */
 /**
- * @file        src/common/sockets/SocketClient.h
- * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @file        src/client-async/sockets/SocketClientAsync.h
+ * @author      Marcin Niesluchowski <m.niesluchow@samsung.com>
  * @version     1.0
- * @brief       This file contains definition of cynara's socket client
+ * @brief       This file contains declaration of cynara's socket asynchronous
+                client
  */
 
-#ifndef SRC_COMMON_SOCKETS_SOCKETCLIENT_H_
-#define SRC_COMMON_SOCKETS_SOCKETCLIENT_H_
+#ifndef SRC_CLIENT_ASYNC_SOCKETS_SOCKETCLIENTASYNC_H_
+#define SRC_CLIENT_ASYNC_SOCKETS_SOCKETCLIENTASYNC_H_
 
 #include <memory>
+#include <string>
 
 #include <containers/BinaryQueue.h>
 #include <protocol/Protocol.h>
 #include <request/pointers.h>
 #include <response/pointers.h>
-#include <response/ResponseTaker.h>
 #include <sockets/Socket.h>
 
 namespace Cynara {
 
-class SocketClient;
-typedef std::shared_ptr<SocketClient> SocketClientPtr;
+class SocketClientAsync;
+typedef std::shared_ptr<SocketClientAsync> SocketClientAsyncPtr;
 
-class SocketClient {
+class SocketClientAsync {
+public:
+    SocketClientAsync(const std::string &socketPath, ProtocolPtr protocol);
+    ~SocketClientAsync() {};
+
+    Socket::ConnectionStatus connect(void);
+    Socket::ConnectionStatus completeConnection(void);
+    int getSockFd(void);
+    bool isConnected(void);
+    void appendRequest(RequestPtr request);
+    bool isDataToSend(void);
+    Socket::SendStatus sendToCynara(void);
+    bool receiveFromCynara(void);
+    ResponsePtr getResponse(void);
+
 private:
     Socket m_socket;
     ProtocolPtr m_protocol;
     BinaryQueue m_readQueue;
     BinaryQueue m_writeQueue;
-
-public:
-    SocketClient(const std::string &socketPath, ProtocolPtr protocol);
-    virtual ~SocketClient() {};
-
-    bool connect(void);
-    bool isConnected(void);
-
-    //returns pointer to response
-    //        or nullptr when connection to cynara service is lost
-    ResponsePtr askCynaraServer(RequestPtr request);
 };
 
 } // namespace Cynara
 
-#endif /* SRC_COMMON_SOCKETS_SOCKETCLIENT_H_ */
+#endif /* SRC_CLIENT_ASYNC_SOCKETS_SOCKETCLIENTASYNC_H_ */

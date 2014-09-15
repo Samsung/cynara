@@ -31,10 +31,8 @@
 #include <sys/un.h>
 #include <unistd.h>
 
-#include <containers/BinaryQueue.h>
-#include <containers/RawBuffer.h>
 #include <exceptions/InitException.h>
-#include <exceptions/ServerConnectionErrorException.h>
+#include <exceptions/NoMemoryException.h>
 #include <exceptions/UnexpectedErrorException.h>
 #include <log/log.h>
 
@@ -42,8 +40,9 @@
 
 namespace Cynara {
 
-Socket::Socket(const std::string &socketPath, int timeoutMiliseconds) : m_sock(-1),
-    m_socketPath(socketPath), m_pollTimeout(timeoutMiliseconds) {
+Socket::Socket(const std::string &socketPath, int timeoutMiliseconds)
+    : m_sock(-1), m_connectionInProgress(false), m_socketPath(socketPath),
+      m_pollTimeout(timeoutMiliseconds), m_sendBufferPos(0), m_sendBufferEnd(0) {
 }
 
 Socket::~Socket() {
@@ -54,6 +53,9 @@ void Socket::close(void) {
     if (m_sock > -1)
         ::close(m_sock);
     m_sock = -1;
+    m_sendBufferPos = 0;
+    m_sendBufferEnd = 0;
+    m_sendQueue.clear();
 }
 
 bool Socket::waitForSocket(int event) {
@@ -62,12 +64,14 @@ bool Socket::waitForSocket(int event) {
     desc[0].fd = m_sock;
     desc[0].events = event;
 
-    ret = TEMP_FAILURE_RETRY(poll(desc, 1, m_pollTimeout));
+    if (event != POLLHUP)
+        ret = TEMP_FAILURE_RETRY(poll(desc, 1, m_pollTimeout));
+    else
+        ret = TEMP_FAILURE_RETRY(poll(desc, 1, 0));
 
     if (ret == -1) {
         int err = errno;
         LOGE("'poll' function error [%d] : <%s>", err, strerror(err));
-        close();
         throw UnexpectedErrorException(err, strerror(err));
     } else if (ret == 0) {
         LOGD("Poll timeout");
@@ -82,7 +86,6 @@ int Socket::getSocketError(void) {
     int ret = getsockopt(m_sock, SOL_SOCKET, SO_ERROR, &err, &len);
     if (ret < 0) {
         int err = errno;
-        close();
         LOGE("'getsockopt' function error [%d] : <%s>", err, strerror(err));
         throw UnexpectedErrorException(err, strerror(err));
     }
@@ -90,25 +93,20 @@ int Socket::getSocketError(void) {
 }
 
 bool Socket::isConnected(void) {
+    if (m_connectionInProgress)
+        return true;
+
     if (m_sock < 0)
         return false;
 
-    if (getSocketError() != 0) {
-        close();
+    if (getSocketError() != 0)
         return false;
-    }
 
-    return true;
+    return !waitForSocket(POLLHUP);
 }
 
-bool Socket::connect(void) {
-    sockaddr_un clientAddr;
+void Socket::createSocket(void) {
     int flags;
-
-    if (isConnected())
-        return true;
-
-    close();
 
     m_sock = socket(AF_UNIX, SOCK_STREAM, 0);
     if (m_sock < 0) {
@@ -125,6 +123,10 @@ bool Socket::connect(void) {
         LOGE("'fcntl' function error [%d] : <%s>", err, strerror(err));
         throw UnexpectedErrorException(err, strerror(err));
     }
+}
+
+Socket::ConnectionStatus Socket::connectSocket(void) {
+    sockaddr_un clientAddr;
 
     memset(&clientAddr, 0, sizeof(clientAddr));
 
@@ -145,111 +147,136 @@ bool Socket::connect(void) {
                                             SUN_LEN(&clientAddr)));
     if (retval == -1) {
         int err = errno;
-        if (err == EINPROGRESS) {
-            if (!waitForSocket(POLLOUT)) {
-                return false;
-            }
-            err = getSocketError();
+        switch (err) {
+            case EINPROGRESS:
+                m_connectionInProgress = true;
+                return ConnectionStatus::CONNECTION_IN_PROGRESS;
+            case ECONNREFUSED:
+                //no one is listening
+                return ConnectionStatus::CONNECTION_FAILED;
+            default:
+                close();
+                LOGE("'connect' function error [%d] : <%s>", err, strerror(err));
+                throw UnexpectedErrorException(err, strerror(err));
         }
-        if (err == ECONNREFUSED) {
-            //no one is listening
+    }
+    return ConnectionStatus::CONNECTION_SUCCEEDED;
+}
+
+Socket::SendStatus Socket::sendBuffer(void) {
+    while (m_sendBufferEnd != m_sendBufferPos) {
+        if (!waitForSocket(POLLOUT)) {
+            LOGD("No POLLOUT event");
+            return SendStatus::PARTIAL_DATA_SENT;
+        }
+
+        ssize_t t = TEMP_FAILURE_RETRY(send(m_sock, m_sendBuffer.data() + m_sendBufferPos,
+                                            m_sendBufferEnd - m_sendBufferPos, MSG_NOSIGNAL));
+        if (t == -1) {
+            int err = errno;
+            switch (err) {
+                case EAGAIN:
+#if EWOULDBLOCK != EAGAIN
+                case EWOULDBLOCK:
+#endif
+                    continue;
+                case ENOMEM:
+                    throw NoMemoryException("'send' function failed due to ENOMEM");
+                case EPIPE:
+                    LOGN("Connection closed by server");
+                    return SendStatus::CONNECTION_LOST;
+                default:
+                    LOGE("'send' function error [%d] : <%s>", err, strerror(err));
+                    throw UnexpectedErrorException(err, strerror(err));
+            }
+        }
+        m_sendBufferPos += static_cast<size_t>(t);
+    }
+    return SendStatus::ALL_DATA_SENT;
+}
+
+Socket::ConnectionStatus Socket::connect(void) {
+    close();
+
+    createSocket();
+
+    ConnectionStatus status = connectSocket();
+    if (status != ConnectionStatus::CONNECTION_SUCCEEDED)
+        return status;
+
+    return isConnected() ? ConnectionStatus::CONNECTION_SUCCEEDED
+                         : ConnectionStatus::CONNECTION_FAILED;
+}
+
+Socket::ConnectionStatus Socket::completeConnection(void) {
+    if (!m_connectionInProgress)
+        return ConnectionStatus::ALREADY_CONNECTED;
+
+    if (!waitForSocket(POLLOUT))
+        return ConnectionStatus::CONNECTION_IN_PROGRESS;
+
+    m_connectionInProgress = false;
+    return isConnected() ? ConnectionStatus::CONNECTION_SUCCEEDED
+                         : ConnectionStatus::CONNECTION_FAILED;
+}
+
+int Socket::getSockFd(void) {
+    return m_sock;
+}
+
+bool Socket::isDataToSend(void) {
+    return !m_sendQueue.empty() || m_sendBufferEnd != 0;
+}
+
+Socket::SendStatus Socket::sendToServer(BinaryQueue &queue) {
+    m_sendQueue.appendMoveFrom(queue);
+
+    SendStatus status = sendBuffer();
+    if (status != SendStatus::ALL_DATA_SENT)
+        return status;
+
+    if (m_sendQueue.size() > m_sendBuffer.size())
+        m_sendBuffer.resize(m_sendQueue.size());
+
+    m_sendBufferEnd = m_sendQueue.size();
+    m_sendBufferPos = 0;
+
+    m_sendQueue.flattenConsume(m_sendBuffer.data(), m_sendQueue.size());
+
+    return sendBuffer();
+}
+
+bool Socket::receiveFromServer(BinaryQueue &queue) {
+    if (!waitForSocket(POLLIN)) {
+        LOGD("No POLLIN event");
+        return true;
+    }
+
+    RawBuffer buffer(BUFSIZ);
+    ssize_t size = 0;
+    while (true) {
+        size = TEMP_FAILURE_RETRY(read(m_sock, buffer.data(), BUFSIZ));
+        if (size == 0) {
+            LOGW("read return 0 / Connection closed by server.");
             return false;
         }
-        close();
-        LOGE("'connect' function error [%d] : <%s>", err, strerror(err));
-        throw UnexpectedErrorException(err, strerror(err));
-    }
 
-    return isConnected();
-}
-
-bool Socket::sendToServer(BinaryQueue &queue) {
-    bool retry = false;
-
-    RawBuffer buffer(queue.size());
-    queue.flattenConsume(buffer.data(), queue.size());
-
-    do {
-        if (!connect()) {
-            LOGE("Error connecting to socket");
-            throw ServerConnectionErrorException();
-        }
-
-        retry = false;
-        ssize_t done = 0;
-        while ((buffer.size() - done) > 0) {
-            if (! waitForSocket(POLLOUT)) {
-                LOGE("Error in poll(POLLOUT)");
-                throw ServerConnectionErrorException();
+        if (size == -1) {
+            int err = errno;
+            switch (err) {
+                case EAGAIN:
+#if EWOULDBLOCK != EAGAIN
+                case EWOULDBLOCK:
+#endif
+                    return true;
+                default:
+                    LOGE("'read' function error [%d] : <%s>", err, strerror(err));
+                    throw UnexpectedErrorException(err, strerror(err));
             }
-            ssize_t t = TEMP_FAILURE_RETRY(send(m_sock, buffer.data() + done,
-                                           buffer.size() - done, MSG_NOSIGNAL));
-            if (t == -1) {
-                int err = errno;
-                if (err == EPIPE) {
-                    close();
-                    LOGN("Connection closed by server. Retrying to connect.");
-                    retry = true;
-                    break;
-                }
-                close();
-                LOGE("'write' function error [%d] : <%s>", err, strerror(err));
-                throw UnexpectedErrorException(err, strerror(err));
-            }
-            done += t;
         }
-    } while (retry);
 
-    return true;
-}
-
-bool Socket::waitAndReceiveFromServer(BinaryQueue &queue)
-{
-    if (!waitForSocket(POLLIN)) {
-        LOGE("Error in poll(POLLIN)");
-        throw ServerConnectionErrorException();
+        queue.appendCopy(buffer.data(), static_cast<size_t>(size));
     }
-
-    RawBuffer readBuffer(BUFSIZ);
-    ssize_t size = TEMP_FAILURE_RETRY(read(m_sock, readBuffer.data(), BUFSIZ));
-
-    if (size == -1) {
-        int err = errno;
-        LOGE("'read' function error [%d] : <%s>", err, strerror(err));
-        throw UnexpectedErrorException(err, strerror(err));
-    }
-
-    if (size == 0) {
-        LOGW("read return 0 / Connection closed by server.");
-        return false;
-    }
-    queue.appendCopy(readBuffer.data(), size);
-
-    return true;
-}
-
-bool Socket::receiveFromServer(BinaryQueue &queue)
-{
-    RawBuffer readBuffer(BUFSIZ);
-    ssize_t size = TEMP_FAILURE_RETRY(read(m_sock, readBuffer.data(), BUFSIZ));
-
-    if (size == -1) {
-        int err = errno;
-        if (err == EAGAIN) {
-            LOGD("is connected, but no data available");
-            return true;
-        }
-        LOGE("'read' function error [%d] : <%s>", err, strerror(err));
-        throw UnexpectedErrorException(err, strerror(err));
-    }
-
-    if (size == 0) {
-        LOGW("read return 0 / Connection closed by server.");
-        return false;
-    }
-    queue.appendCopy(readBuffer.data(), size);
-
-    return true;
 }
 
 } // namespace Cynara

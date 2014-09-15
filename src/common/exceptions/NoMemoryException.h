@@ -14,30 +14,39 @@
  *    limitations under the License.
  */
 /**
- * @file        src/common/exceptions/ServerConnectionErrorException.h
- * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @file        src/common/exceptions/NoMemoryException.h
+ * @author      Marcin Niesluchowski <m.niesluchow@samsung.com>
  * @version     1.0
- * @brief       Implementation of ServerConnectionErrorException
+ * @brief       Implementation of NoMemoryException
  */
 
-#ifndef SRC_COMMON_EXCEPTIONS_SERVERCONNECTIONERROREXCEPTION_H_
-#define SRC_COMMON_EXCEPTIONS_SERVERCONNECTIONERROREXCEPTION_H_
+#ifndef SRC_COMMON_EXCEPTIONS_NOMEMORYEXCEPTION_H_
+#define SRC_COMMON_EXCEPTIONS_NOMEMORYEXCEPTION_H_
+
+#include <sstream>
+#include <string>
 
 #include "Exception.h"
 
-#include <exception>
-
 namespace Cynara {
 
-class ServerConnectionErrorException : public Exception {
+class NoMemoryException : public Exception {
 public:
-    ServerConnectionErrorException() = default;
-    virtual ~ServerConnectionErrorException() noexcept {};
-    virtual const std::string message(void) const {
-        return "ServerConnectionError";
+    NoMemoryException() = delete;
+    NoMemoryException(const std::string &errorMsg) {
+        m_whatMessage = "NoMemoryException with message <" + errorMsg + ">";
     }
+
+    virtual ~NoMemoryException() noexcept {};
+
+    virtual const std::string message(void) const {
+        return m_whatMessage;
+    }
+
+private:
+    std::string m_whatMessage;
 };
 
-} /* namespace Cynara */
+} // namespace Cynara
 
-#endif /* SRC_COMMON_EXCEPTIONS_SERVERCONNECTIONERROREXCEPTION_H_ */
+#endif /* SRC_COMMON_EXCEPTIONS_NOMEMORYEXCEPTION_H_ */

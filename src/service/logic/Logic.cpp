@@ -29,6 +29,7 @@
 #include <signal.h>
 
 #include <main/Cynara.h>
+#include <request/AdminCheckRequest.h>
 #include <request/CheckRequest.h>
 #include <request/InsertOrUpdateBucketRequest.h>
 #include <request/RemoveBucketRequest.h>
@@ -59,6 +60,14 @@ void Logic::execute(RequestContextPtr context UNUSED, SignalRequestPtr request) 
         m_socketManager->mainLoopStop();
         break;
     }
+}
+
+void Logic::execute(RequestContextPtr context, AdminCheckRequestPtr request) {
+    PolicyResult result = m_storage->checkPolicy(request->key(), request->startBucket(),
+                                                 request->recursive());
+
+    context->returnResponse(context, std::make_shared<CheckResponse>(result,
+                            request->sequenceNumber()));
 }
 
 void Logic::execute(RequestContextPtr context, CheckRequestPtr request) {

@@ -50,6 +50,7 @@ public:
         m_socketManager.reset();
     }
 
+    virtual void execute(RequestContextPtr context, AdminCheckRequestPtr request);
     virtual void execute(RequestContextPtr context, CheckRequestPtr request);
     virtual void execute(RequestContextPtr context, InsertOrUpdateBucketRequestPtr request);
     virtual void execute(RequestContextPtr context, RemoveBucketRequestPtr request);

@@ -35,12 +35,11 @@
 #include <response/CheckResponse.h>
 #include <response/pointers.h>
 #include <sockets/SocketClient.h>
+#include <sockets/SocketPath.h>
 
 #include <logic/Logic.h>
 
 namespace Cynara {
-
-const std::string clientSocketPath("/run/cynara/cynara.socket");
 
 static ProtocolFrameSequenceNumber generateSequenceNumber(void) {
     static ProtocolFrameSequenceNumber sequenceNumber = 0;
@@ -48,7 +47,7 @@ static ProtocolFrameSequenceNumber generateSequenceNumber(void) {
 }
 
 Logic::Logic() {
-    m_socket = std::make_shared<SocketClient>(clientSocketPath, std::make_shared<ProtocolClient>());
+    m_socket = std::make_shared<SocketClient>(SocketPath::client, std::make_shared<ProtocolClient>());
     m_cache = std::make_shared<CapacityCache>();
     auto naiveInterpreter = std::make_shared<NaiveInterpreter>();
     m_cache->registerPlugin(PredefinedPolicyType::ALLOW, naiveInterpreter);

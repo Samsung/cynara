@@ -48,6 +48,8 @@ public:
                     noexcept;
     virtual int removeBucket(const PolicyBucketId &bucket) noexcept;
 
+    virtual int adminCheck(const PolicyBucketId &startBucket, bool recursive,
+                           const PolicyKey &key, PolicyResult &result) noexcept;
 };
 
 } // namespace Cynara

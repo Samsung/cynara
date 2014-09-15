@@ -22,7 +22,9 @@
 
 #include <map>
 #include <new>
+#include <stdexcept>
 #include <string>
+#include <string.h>
 #include <vector>
 
 #include <common.h>
@@ -175,7 +177,7 @@ int cynara_admin_set_bucket(struct cynara_admin *p_cynara_admin, const char *buc
 
 CYNARA_API
 int cynara_admin_check(struct cynara_admin *p_cynara_admin,
-                       const char *start_bucket, const int recursive UNUSED,
+                       const char *start_bucket, const int recursive,
                        const char *client, const char *user, const char *privilege,
                        int *result, char **result_extra) {
     if (!p_cynara_admin || !p_cynara_admin->impl)
@@ -187,6 +189,28 @@ int cynara_admin_check(struct cynara_admin *p_cynara_admin,
     if (!result || !result_extra)
         return CYNARA_ADMIN_API_INVALID_PARAM;
 
-    //just mock-up
+    Cynara::PolicyResult policyResult;
+
+    try {
+        int ret = p_cynara_admin->impl->adminCheck(start_bucket, recursive != 0,
+                                                   Cynara::PolicyKey(client, user, privilege),
+                                                   policyResult);
+        if (ret != CYNARA_ADMIN_API_SUCCESS)
+            return ret;
+    } catch (const std::bad_alloc &ex) {
+        return CYNARA_ADMIN_API_OUT_OF_MEMORY;
+    } catch (const std::length_error &ex) {
+        return CYNARA_ADMIN_API_INVALID_PARAM;
+    }
+
+    char *str = nullptr;
+    if (!policyResult.metadata().empty()) {
+        str = strdup(policyResult.metadata().c_str());
+        if (!str)
+            return CYNARA_ADMIN_API_OUT_OF_MEMORY;
+    }
+    *result = static_cast<int>(policyResult.policyType());
+    *result_extra = str;
+
     return CYNARA_ADMIN_API_SUCCESS;
 }

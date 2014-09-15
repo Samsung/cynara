@@ -114,4 +114,10 @@ int Logic::removeBucket(const PolicyBucketId &bucket) noexcept {
     return askCynaraAndInterpreteCodeResponse<RemoveBucketRequest>(bucket);
 }
 
+int Logic::adminCheck(const PolicyBucketId &startBucket UNUSED, bool recursive UNUSED,
+                      const PolicyKey &key UNUSED, PolicyResult &result UNUSED) noexcept {
+    //just mock-up
+    return CYNARA_ADMIN_API_SUCCESS;
+}
+
 } // namespace Cynara

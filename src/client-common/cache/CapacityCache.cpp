@@ -119,15 +119,31 @@ int CapacityCache::update(const ClientSession &session,
     PolicyResult storedResult = result;
 
     if (m_capacity > 0) {
+        std::string cacheKey = keyToString(key);
+        auto resultIt = m_keyValue.find(cacheKey);
         if (plugin->isCacheable(session, storedResult)) {
             LOGD("Entry cacheable");
             if (m_keyValue.size() == m_capacity) {
                 LOGD("Capacity reached.");
                 evict();
             }
-            std::string cacheKey = keyToString(key);
-            m_keyUsage.push_front(cacheKey);
+
+            //Move value usage to front
+            if (resultIt != m_keyValue.end()) {
+                auto usageIt = std::get<2>(resultIt->second);
+                m_keyUsage.splice(m_keyUsage.begin(), m_keyUsage, usageIt);
+            } else {
+                m_keyUsage.push_front(cacheKey);
+            }
+
             m_keyValue[cacheKey] = std::make_tuple(storedResult, session, m_keyUsage.begin());
+        } else {
+            //Remove element
+            if (resultIt != m_keyValue.end()) {
+                auto usageIt = std::get<2>(resultIt->second);
+                m_keyUsage.erase(usageIt);
+                m_keyValue.erase(resultIt);
+            }
         }
     }
     return plugin->toResult(session, storedResult);

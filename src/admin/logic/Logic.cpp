@@ -20,6 +20,7 @@
  * @brief       This file contains implementation of Logic class - main libcynara-admin class
  */
 
+#include <cinttypes>
 #include <memory>
 
 #include <cynara-admin-error.h>
@@ -28,10 +29,12 @@
 #include <log/log.h>
 #include <protocol/Protocol.h>
 #include <protocol/ProtocolAdmin.h>
+#include <request/AdminCheckRequest.h>
 #include <request/InsertOrUpdateBucketRequest.h>
 #include <request/pointers.h>
 #include <request/RemoveBucketRequest.h>
 #include <request/SetPoliciesRequest.h>
+#include <response/CheckResponse.h>
 #include <response/CodeResponse.h>
 #include <response/pointers.h>
 #include <sockets/SocketClient.h>
@@ -72,7 +75,7 @@ int Logic::askCynaraAndInterpreteCodeResponse(Args... args) {
             return CYNARA_ADMIN_API_UNEXPECTED_CLIENT_ERROR;
         }
 
-        LOGD("codeResponse: code = %d", static_cast<int>(codeResponse->m_code));
+        LOGD("codeResponse: code [%" PRIu16 "]", codeResponse->m_code);
         switch (codeResponse->m_code) {
             case CodeResponse::Code::OK:
                 LOGI("Policies set successfully.");
@@ -84,7 +87,7 @@ int Logic::askCynaraAndInterpreteCodeResponse(Args... args) {
                 LOGE("Trying to use unexisting bucket.");
                 return CYNARA_ADMIN_API_BUCKET_NOT_FOUND;
             default:
-                LOGE("Unexpected response code from server: %d",
+                LOGE("Unexpected response code from server: [%d]",
                      static_cast<int>(codeResponse->m_code));
                 return CYNARA_ADMIN_API_UNEXPECTED_CLIENT_ERROR;
         }
@@ -95,7 +98,7 @@ int Logic::askCynaraAndInterpreteCodeResponse(Args... args) {
         LOGE("Cynara admin client out of memory.");
         return CYNARA_ADMIN_API_OUT_OF_MEMORY;
     } catch (const std::exception &ex) {
-        LOGE("Unexpected client error: %s", ex.what());
+        LOGE("Unexpected client error: <%s>", ex.what());
         return CYNARA_ADMIN_API_UNEXPECTED_CLIENT_ERROR;
     }
 }
@@ -114,9 +117,42 @@ int Logic::removeBucket(const PolicyBucketId &bucket) noexcept {
     return askCynaraAndInterpreteCodeResponse<RemoveBucketRequest>(bucket);
 }
 
-int Logic::adminCheck(const PolicyBucketId &startBucket UNUSED, bool recursive UNUSED,
-                      const PolicyKey &key UNUSED, PolicyResult &result UNUSED) noexcept {
-    //just mock-up
+int Logic::adminCheck(const PolicyBucketId &startBucket, bool recursive, const PolicyKey &key,
+                      PolicyResult &result) noexcept {
+
+    ProtocolFrameSequenceNumber sequenceNumber = generateSequenceNumber();
+
+    //Ask cynara service
+    CheckResponsePtr checkResponse;
+    try {
+        RequestPtr request = std::make_shared<AdminCheckRequest>(key, startBucket, recursive,
+                                                                 sequenceNumber);
+        ResponsePtr response = m_socketClient->askCynaraServer(request);
+        if (!response) {
+            LOGW("Disconnected by cynara server.");
+            return CYNARA_ADMIN_API_SERVICE_NOT_AVAILABLE;
+        }
+        checkResponse = std::dynamic_pointer_cast<CheckResponse>(response);
+        if (!checkResponse) {
+            LOGC("Casting Response to CheckResponse failed.");
+            return CYNARA_ADMIN_API_UNEXPECTED_CLIENT_ERROR;
+        }
+
+        LOGD("checkResponse: policyType [%" PRIu16 "], metadata <%s>",
+             checkResponse->m_resultRef.policyType(),
+             checkResponse->m_resultRef.metadata().c_str());
+    } catch (const ServerConnectionErrorException &ex) {
+        LOGE("Cynara service not available.");
+        return CYNARA_ADMIN_API_SERVICE_NOT_AVAILABLE;
+    } catch (const std::bad_alloc &ex) {
+        LOGE("Cynara admin client out of memory.");
+        return CYNARA_ADMIN_API_OUT_OF_MEMORY;
+    } catch (const std::exception &ex) {
+        LOGE("Unexpected client error: <%s>", ex.what());
+        return CYNARA_ADMIN_API_UNEXPECTED_CLIENT_ERROR;
+    }
+
+    result = checkResponse->m_resultRef;
     return CYNARA_ADMIN_API_SUCCESS;
 }
 

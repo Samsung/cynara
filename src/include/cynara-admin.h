@@ -24,6 +24,7 @@
 #define CYNARA_ADMIN_H
 
 #include <cynara-admin-error.h>
+#include <cynara-admin-types.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,64 +36,6 @@ extern "C" {
  * and usage of all libcynara-admin API functions
  */
 struct cynara_admin;
-
-/**
- * \name Wildcard
- * definition of WILDCARD, that can replace client, user or privilege name.
- * WILDCARD matches any string during check procedure from libcynara-client.
- */
-#define CYNARA_ADMIN_WILDCARD "*"
-
-/**
- * \name Name of Default Bucket
- * definition of name for default bucket - the one that check starts in.
- * default bucket cannot be removed, although its default policy
- * (which originaly is set to DENY) can be changed.
- */
-#define CYNARA_ADMIN_DEFAULT_BUCKET ""
-
-/**
- * \name Operation Codes
- * operation codes that define action type to be taken in below defined functions
- * they are used mosty to define policy result
- * @{
- */
-
-/*! \brief   a policy or bucket should be removed */
-#define CYNARA_ADMIN_DELETE -1
-
-/*! \brief   set policy result or bucket's default policy to DENY */
-#define CYNARA_ADMIN_DENY 0
-
-/*! \brief   set bucket's default policy to NONE */
-#define CYNARA_ADMIN_NONE 1
-
-/*! \brief   set policy result or bucket's default policy to ALLOW */
-#define CYNARA_ADMIN_ALLOW 2
-
-/*! \brief   set policy to point into another bucket */
-#define CYNARA_ADMIN_BUCKET 3
-/** @}*/
-
-/**
- * \name cynara_admin_policy
- * defines single policy
- * bucket - is the name of bucket, in which policy is placed
- * client, user, privilege - defines policy key
- * result - defines result of policy
- * result_extra - not always used, may contain some additional result data
- *                like e.g. name of bucket in case result == CYNARA_ADMIN_BUCKET
- */
-struct cynara_admin_policy {
-    char *bucket;
-
-    char *client;
-    char *user;
-    char *privilege;
-
-    int result;
-    char *result_extra;
-};
 
 /**
  * \par Description:

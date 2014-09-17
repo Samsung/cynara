@@ -372,6 +372,7 @@ fi
 %files -n libcynara-admin-devel
 %{_includedir}/cynara/cynara-admin.h
 %{_includedir}/cynara/cynara-admin-error.h
+%{_includedir}/cynara/cynara-admin-types.h
 %{_libdir}/libcynara-admin.so
 %{_libdir}/pkgconfig/cynara-admin.pc
 

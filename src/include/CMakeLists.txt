@@ -19,6 +19,7 @@
 INSTALL(FILES
     ${CYNARA_PATH}/include/cynara-admin.h
     ${CYNARA_PATH}/include/cynara-admin-error.h
+    ${CYNARA_PATH}/include/cynara-admin-types.h
     ${CYNARA_PATH}/include/cynara-client.h
     ${CYNARA_PATH}/include/cynara-client-error.h
     ${CYNARA_PATH}/include/cynara-creds-commons.h

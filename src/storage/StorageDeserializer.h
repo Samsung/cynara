@@ -19,8 +19,8 @@
  * @version     1.0
  * @brief       Headers for Cynara::StorageDeserializer
  */
-#ifndef SRC_SERVICE_STORAGE_STORAGEDESERIALIZER_H_
-#define SRC_SERVICE_STORAGE_STORAGEDESERIALIZER_H_
+#ifndef SRC_STORAGE_STORAGEDESERIALIZER_H_
+#define SRC_STORAGE_STORAGEDESERIALIZER_H_
 
 #include <functional>
 #include <fstream>
@@ -57,4 +57,4 @@ private:
 
 } /* namespace Cynara */
 
-#endif /* SRC_SERVICE_STORAGE_STORAGEDESERIALIZER_H_ */
+#endif /* SRC_STORAGE_STORAGEDESERIALIZER_H_ */

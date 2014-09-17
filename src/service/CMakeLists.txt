@@ -24,15 +24,11 @@ SET(CYNARA_SOURCES
     ${CYNARA_SERVICE_PATH}/main/main.cpp
     ${CYNARA_SERVICE_PATH}/sockets/Descriptor.cpp
     ${CYNARA_SERVICE_PATH}/sockets/SocketManager.cpp
-    ${CYNARA_SERVICE_PATH}/storage/BucketDeserializer.cpp
-    ${CYNARA_SERVICE_PATH}/storage/InMemoryStorageBackend.cpp
-    ${CYNARA_SERVICE_PATH}/storage/Storage.cpp
-    ${CYNARA_SERVICE_PATH}/storage/StorageDeserializer.cpp
-    ${CYNARA_SERVICE_PATH}/storage/StorageSerializer.cpp
     )
 
 INCLUDE_DIRECTORIES(
     ${CYNARA_SERVICE_PATH}
+    ${CYNARA_PATH}
     )
 
 ADD_EXECUTABLE(${TARGET_CYNARA} ${CYNARA_SOURCES})
@@ -40,6 +36,7 @@ ADD_EXECUTABLE(${TARGET_CYNARA} ${CYNARA_SOURCES})
 TARGET_LINK_LIBRARIES(${TARGET_CYNARA}
     ${CYNARA_DEP_LIBRARIES}
     ${TARGET_CYNARA_COMMON}
+    ${TARGET_LIB_CYNARA_STORAGE}
     )
 
 INSTALL(TARGETS ${TARGET_CYNARA} DESTINATION ${BIN_INSTALL_DIR})

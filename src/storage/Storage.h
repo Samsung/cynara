@@ -18,11 +18,11 @@
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
  * @version     1.0
- * @brief       This file is the implementation file of log system
+ * @brief       This file is the implementation storage
  */
 
-#ifndef SRC_SERVICE_STORAGE_STORAGE_H_
-#define SRC_SERVICE_STORAGE_STORAGE_H_
+#ifndef SRC_STORAGE_STORAGE_H_
+#define SRC_STORAGE_STORAGE_H_
 
 #include <map>
 #include <string>
@@ -65,4 +65,4 @@ private:
 
 } // namespace Cynara
 
-#endif /* SRC_SERVICE_STORAGE_STORAGE_H_ */
+#endif /* SRC_STORAGE_STORAGE_H_ */

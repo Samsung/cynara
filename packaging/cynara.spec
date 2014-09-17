@@ -15,6 +15,7 @@ Source1007:    libcynara-creds-commons.manifest
 Source1008:    libcynara-creds-dbus.manifest
 Source1009:    libcynara-creds-socket.manifest
 Source1010:    libcynara-session.manifest
+Source1011:    libcynara-storage.manifest
 Requires:      default-ac-domains
 Requires(pre): pwdutils
 Requires(post):   smack
@@ -91,6 +92,21 @@ Requires:   libcynara-admin = %{version}-%{release}
 
 %description -n libcynara-admin-devel
 admin client library (devel) for setting, listing and removing policies
+
+#######################################################
+%package -n libcynara-storage
+Summary:    Cynara - storage
+Requires:   cynara = %{version}-%{release}
+
+%description -n libcynara-storage
+cynara common storage library with common storage functionalities
+
+%package -n libcynara-storage-devel
+Summary:    Cynara - storage-devel
+Requires:   cynara = %{version}-%{release}
+
+%description -n libcynara-storage-devel
+cynara common storage library (devel) with common storage functionalities
 
 #######################################################
 %package -n libcynara-commons
@@ -197,6 +213,7 @@ cp -a %{SOURCE1007} .
 cp -a %{SOURCE1008} .
 cp -a %{SOURCE1009} .
 cp -a %{SOURCE1010} .
+cp -a %{SOURCE1011} .
 cp -a test/db/db* .
 
 %build
@@ -280,6 +297,14 @@ fi
 %post -n libcynara-admin -p /sbin/ldconfig
 
 %postun -n libcynara-admin -p /sbin/ldconfig
+
+%post -n libcynara-storage -p /sbin/ldconfig
+
+%postun -n libcynara-storage -p /sbin/ldconfig
+
+%post -n libcynara-storage-devel -p /sbin/ldconfig
+
+%postun -n libcynara-storage-devel -p /sbin/ldconfig
 
 %post -n libcynara-commons -p /sbin/ldconfig
 
@@ -375,6 +400,14 @@ fi
 %{_includedir}/cynara/cynara-admin-types.h
 %{_libdir}/libcynara-admin.so
 %{_libdir}/pkgconfig/cynara-admin.pc
+
+%files -n libcynara-storage
+%manifest libcynara-storage.manifest
+%license LICENSE
+%{_libdir}/libcynara-storage.so.*
+
+%files -n libcynara-storage-devel
+%{_libdir}/libcynara-storage.so
 
 %files -n libcynara-commons
 %manifest libcynara-commons.manifest

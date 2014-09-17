@@ -26,11 +26,11 @@ SET(CYNARA_SOURCES_FOR_TESTS
     ${CYNARA_SRC}/common/types/PolicyKey.cpp
     ${CYNARA_SRC}/common/types/PolicyKeyHelpers.cpp
     ${CYNARA_SRC}/common/types/PolicyType.cpp
-    ${CYNARA_SRC}/service/storage/Storage.cpp
-    ${CYNARA_SRC}/service/storage/InMemoryStorageBackend.cpp
-    ${CYNARA_SRC}/service/storage/BucketDeserializer.cpp
-    ${CYNARA_SRC}/service/storage/StorageDeserializer.cpp
-    ${CYNARA_SRC}/service/storage/StorageSerializer.cpp
+    ${CYNARA_SRC}/storage/BucketDeserializer.cpp
+    ${CYNARA_SRC}/storage/InMemoryStorageBackend.cpp
+    ${CYNARA_SRC}/storage/Storage.cpp
+    ${CYNARA_SRC}/storage/StorageDeserializer.cpp
+    ${CYNARA_SRC}/storage/StorageSerializer.cpp
 )
 
 SET(CYNARA_TESTS_SOURCES
@@ -58,7 +58,7 @@ INCLUDE_DIRECTORIES(
     ${PKGS_INCLUDE_DIRS}
     ${CYNARA_SRC}/common
     ${CYNARA_SRC}/include
-    ${CYNARA_SRC}/service
+    ${CYNARA_SRC}
 )
 
 ADD_EXECUTABLE(${TARGET_CYNARA_TESTS}

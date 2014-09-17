@@ -20,8 +20,8 @@
  * @brief       Headers for StorageBackend base class
  */
 
-#ifndef SRC_SERVICE_STORAGE_STORAGEBACKEND_H_
-#define SRC_SERVICE_STORAGE_STORAGEBACKEND_H_
+#ifndef SRC_STORAGE_STORAGEBACKEND_H_
+#define SRC_STORAGE_STORAGEBACKEND_H_
 
 #include <string>
 
@@ -59,4 +59,4 @@ public:
 
 } /* namespace Cynara */
 
-#endif /* SRC_SERVICE_STORAGE_STORAGEBACKEND_H_ */
+#endif /* SRC_STORAGE_STORAGEBACKEND_H_ */

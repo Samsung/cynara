@@ -14,38 +14,25 @@
  *    limitations under the License.
  */
 /*
- * @file        BucketDeserializer.h
+ * @file        Buckets.h
  * @author      Aleksander Zdyb <a.zdyb@partner.samsung.com>
+ * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
- * @brief       Headers for Cynara::BucketDeserializer
+ * @brief       Headers for Buckets
  */
-#ifndef SRC_SERVICE_STORAGE_BUCKETDESERIALIZER_H_
-#define SRC_SERVICE_STORAGE_BUCKETDESERIALIZER_H_
 
-#include <fstream>
-#include <memory>
-#include <string>
+#ifndef SRC_STORAGE_BUCKETS_H_
+#define SRC_STORAGE_BUCKETS_H_
 
-#include <types/PolicyCollection.h>
-#include <types/PolicyKey.h>
+#include <unordered_map>
+
+#include <types/PolicyBucket.h>
+#include <types/PolicyBucketId.h>
 
 namespace Cynara {
 
-class BucketDeserializer {
-
-public:
-    BucketDeserializer(std::shared_ptr<std::istream> inStream) : m_inStream(inStream) {
-    }
-
-    PolicyCollection loadPolicies(void);
-
-protected:
-    static PolicyKey parseKey(const std::string &line, std::size_t &beginToken);
-
-private:
-    std::shared_ptr<std::istream> m_inStream;
-};
+typedef std::unordered_map<PolicyBucketId, PolicyBucket> Buckets;
 
 } /* namespace Cynara */
 
-#endif /* SRC_SERVICE_STORAGE_BUCKETDESERIALIZER_H_ */
+#endif /* SRC_STORAGE_BUCKETS_H_ */

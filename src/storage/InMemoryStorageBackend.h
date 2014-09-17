@@ -20,8 +20,8 @@
  * @brief       Headers for InMemoryStorageBackend
  */
 
-#ifndef SRC_SERVICE_STORAGE_INMEMORYSTORAGEBACKEND_H_
-#define SRC_SERVICE_STORAGE_INMEMORYSTORAGEBACKEND_H_
+#ifndef SRC_STORAGE_INMEMORYSTORAGEBACKEND_H_
+#define SRC_STORAGE_INMEMORYSTORAGEBACKEND_H_
 
 #include <fstream>
 #include <memory>
@@ -80,4 +80,4 @@ protected:
 
 } /* namespace Cynara */
 
-#endif /* SRC_SERVICE_STORAGE_INMEMORYSTORAGEBACKEND_H_ */
+#endif /* SRC_STORAGE_INMEMORYSTORAGEBACKEND_H_ */

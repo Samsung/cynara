@@ -20,8 +20,8 @@
  * @brief       Headers for Cynara::StorageSerializer
  */
 
-#ifndef SRC_SERVICE_STORAGE_STORAGESERIALIZER_H_
-#define SRC_SERVICE_STORAGE_STORAGESERIALIZER_H_
+#ifndef SRC_STORAGE_STORAGESERIALIZER_H_
+#define SRC_STORAGE_STORAGESERIALIZER_H_
 
 #include <functional>
 #include <fstream>
@@ -88,4 +88,4 @@ public:
 
 } /* namespace Cynara */
 
-#endif /* SRC_SERVICE_STORAGE_STORAGESERIALIZER_H_ */
+#endif /* SRC_STORAGE_STORAGESERIALIZER_H_ */

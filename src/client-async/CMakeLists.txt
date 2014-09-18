@@ -30,8 +30,10 @@ INCLUDE_DIRECTORIES(
 
 SET(LIB_CYNARA_ASYNC_SOURCES
     ${CYNARA_LIB_CYNARA_ASYNC_PATH}/api/client-async-api.cpp
+    ${CYNARA_LIB_CYNARA_ASYNC_PATH}/callback/ResponseCallback.cpp
     ${CYNARA_LIB_CYNARA_ASYNC_PATH}/callback/StatusCallback.cpp
     ${CYNARA_LIB_CYNARA_ASYNC_PATH}/logic/Logic.cpp
+    ${CYNARA_LIB_CYNARA_ASYNC_PATH}/sequence/SequenceContainer.cpp
     ${CYNARA_LIB_CYNARA_ASYNC_PATH}/sockets/SocketClientAsync.cpp
     )
 

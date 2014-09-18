@@ -16,12 +16,13 @@
 /**
  * @file        src/common/types/PolicyResult.h
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
+ * @author      Zofia Abramowska <z.abramowska@samsung.com>
  * @version     1.0
  * @brief       Definitions of PolicyResult and friends
  */
 
-#ifndef POLICYRESULT_H_
-#define POLICYRESULT_H_
+#ifndef SRC_COMMON_TYPES_POLICYRESULT_H_
+#define SRC_COMMON_TYPES_POLICYRESULT_H_
 
 #include "types/PolicyType.h"
 
@@ -33,47 +34,23 @@ class PolicyResult {
 public:
     typedef std::string PolicyMetadata;
 
-public:
-    PolicyResult() : m_type(PredefinedPolicyType::DENY) {}
-    PolicyResult(const PolicyType &policyType) : m_type(policyType) {}
-    PolicyResult(const PolicyType &policyType, const PolicyMetadata &metadata)
-        : m_type(policyType), m_metadata(metadata) {}
+    PolicyResult();
+    PolicyResult(const PolicyType &policyType);
+    PolicyResult(const PolicyType &policyType, const PolicyMetadata &metadata);
+
+    const PolicyType &policyType(void) const;
+    const PolicyMetadata &metadata(void) const;
+    bool operator <(const PolicyResult &other) const;
+    bool operator ==(const PolicyResult &other) const;
+    bool operator !=(const PolicyResult &other) const;
+    bool operator ==(const PolicyType &policyType) const;
+    bool operator !=(const PolicyType &policyType) const;
 
 private:
     PolicyType m_type;
     PolicyMetadata m_metadata;
-
-public:
-    const PolicyType &policyType() const {
-        return m_type;
-    }
-
-    const PolicyMetadata& metadata() const {
-        return m_metadata;
-    }
-
-    bool operator <(const PolicyResult &other) const {
-        return this->m_type < other.m_type;
-    }
-
-    bool operator ==(const PolicyResult &other) const {
-        return std::tie(m_type, m_metadata) == std::tie(other.m_type, other.m_metadata);
-    }
-
-    bool operator !=(const PolicyResult &other) const {
-        return !(*this == other);
-    }
-
-    bool operator ==(const PolicyType &policyType) const {
-        return (m_type == policyType) && m_metadata.empty();
-    }
-
-    bool operator !=(const PolicyType &policyType) const {
-        return !(*this == policyType);
-    }
 };
 
 } // namespace Cynara
 
-
-#endif /* POLICYRESULT_H_ */
+#endif /* SRC_COMMON_TYPES_POLICYRESULT_H_ */

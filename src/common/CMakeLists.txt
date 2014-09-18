@@ -49,6 +49,7 @@ SET(COMMON_SOURCES
     ${COMMON_PATH}/types/PolicyBucket.cpp
     ${COMMON_PATH}/types/PolicyKey.cpp
     ${COMMON_PATH}/types/PolicyKeyHelpers.cpp
+    ${COMMON_PATH}/types/PolicyResult.cpp
     )
 
 IF (CMAKE_BUILD_TYPE MATCHES "DEBUG")

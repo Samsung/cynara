@@ -25,6 +25,7 @@ SET(CYNARA_SOURCES_FOR_TESTS
     ${CYNARA_SRC}/common/types/PolicyBucket.cpp
     ${CYNARA_SRC}/common/types/PolicyKey.cpp
     ${CYNARA_SRC}/common/types/PolicyKeyHelpers.cpp
+    ${CYNARA_SRC}/common/types/PolicyResult.cpp
     ${CYNARA_SRC}/common/types/PolicyType.cpp
     ${CYNARA_SRC}/storage/BucketDeserializer.cpp
     ${CYNARA_SRC}/storage/InMemoryStorageBackend.cpp

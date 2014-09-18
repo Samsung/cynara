@@ -141,6 +141,14 @@ Requires:   libcynara-commons = %{version}-%{release}
 cynara common library (devel) with common functionalities
 
 #######################################################
+%package -n libcynara-plugin-devel
+Summary:    Cynara - cynara plugin library (devel)
+Requires:   libcynara-commons-devel = %{version}-%{release}
+
+%description -n libcynara-plugin-devel
+cynara plugin library (devel) with plugin definitions
+
+#######################################################
 %package -n libcynara-creds-commons
 Summary:    Base library for cynara credentials helpers
 
@@ -451,7 +459,13 @@ fi
 %{_libdir}/libcynara-commons.so.*
 
 %files -n libcynara-commons-devel
+%{_includedir}/cynara/types/PolicyResult.h
+%{_includedir}/cynara/types/PolicyType.h
 %{_libdir}/libcynara-commons.so
+
+%files -n libcynara-plugin-devel
+%{_includedir}/cynara/cynara-plugin.h
+%{_libdir}/pkgconfig/cynara-plugin.pc
 
 %files -n cynara-tests
 %manifest cynara-tests.manifest

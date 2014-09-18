@@ -24,6 +24,8 @@
 #ifndef SRC_CLIENT_ASYNC_LOGIC_LOGIC_H_
 #define SRC_CLIENT_ASYNC_LOGIC_LOGIC_H_
 
+#include <cache/CacheInterface.h>
+
 #include <api/ApiInterface.h>
 #include <callback/StatusCallback.h>
 #include <cynara-client-async.h>
@@ -47,6 +49,7 @@ public:
 
 private:
     StatusCallback m_statusCallback;
+    PluginCachePtr m_cache;
     SocketClientAsyncPtr m_socketClient;
 
     bool checkCacheValid(void);

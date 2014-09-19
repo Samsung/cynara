@@ -27,6 +27,7 @@
 #include <types/PolicyResult.h>
 
 #include <main/pointers.h>
+#include <plugin/PluginManager.h>
 #include <request/pointers.h>
 #include <request/RequestTaker.h>
 
@@ -37,6 +38,10 @@ public:
     Logic();
     virtual ~Logic();
 
+    void bindPluginManager(PluginManagerPtr pluginManager) {
+        m_pluginManager = pluginManager;
+    }
+
     void bindStorage(StoragePtr storage) {
         m_storage = storage;
     }
@@ -46,6 +51,7 @@ public:
     }
 
     void unbindAll(void) {
+        m_pluginManager.reset();
         m_storage.reset();
         m_socketManager.reset();
     }
@@ -59,6 +65,7 @@ public:
     virtual void execute(RequestContextPtr context, SignalRequestPtr request);
 
 private:
+    PluginManagerPtr m_pluginManager;
     StoragePtr m_storage;
     SocketManagerPtr m_socketManager;
 

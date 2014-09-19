@@ -97,13 +97,29 @@ bool Logic::check(RequestContextPtr context UNUSED, const PolicyKey &key,
             LOGD("check of policy key <%s> returned DENY", key.toString().c_str());
             return true;
     }
-    //todo pass question to proper plugin that:
-    //  1) returns false when answer has to be waited for (UI)
-    //  2) returns true if Response is to be generated
-    // In case 1) context should be saved in plugin in order to return answer when ready.
 
-    //in case no proper plugin is found
-    throw PluginNotFoundException(result);
+    ExternalPluginPtr plugin = m_pluginManager->getPlugin(result.policyType());
+    if (!plugin) {
+        throw PluginNotFoundException(result);
+    }
+
+    AgentType requiredAgent;
+    PluginData pluginData;
+
+    auto ret = plugin->check(key.client().toString(), key.user().toString(),
+                             key.privilege().toString(), result, requiredAgent, pluginData);
+
+    switch (ret) {
+        case ExternalPluginInterface::PluginStatus::ANSWER_READY:
+            return true;
+        case ExternalPluginInterface::PluginStatus::ANSWER_NOTREADY:
+            //todo send request to agent
+            //context should be saved in plugin in order to return answer when ready
+            return false;
+        default:
+            //todo make additional class
+            throw std::runtime_error("Plugin error");
+    }
 }
 
 void Logic::execute(RequestContextPtr context, InsertOrUpdateBucketRequestPtr request) {

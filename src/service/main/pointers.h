@@ -30,6 +30,9 @@ namespace Cynara {
 class Logic;
 typedef std::shared_ptr<Logic> LogicPtr;
 
+class PluginManager;
+typedef std::shared_ptr<PluginManager> PluginManagerPtr;
+
 class SocketManager;
 typedef std::shared_ptr<SocketManager> SocketManagerPtr;
 

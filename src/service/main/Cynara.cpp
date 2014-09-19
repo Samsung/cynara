@@ -27,6 +27,7 @@
 #include <exceptions/InitException.h>
 
 #include <logic/Logic.h>
+#include <plugin/PluginManager.h>
 #include <sockets/SocketManager.h>
 #include <storage/InMemoryStorageBackend.h>
 #include <storage/Storage.h>
@@ -58,12 +59,27 @@ const std::string Cynara::storageDir(void) {
     return dir;
 }
 
+const std::string Cynara::pluginDir(void) {
+    std::string dir("/usr/lib/cynara/");
+
+#ifdef CYNARA_LIB_PATH
+    dir = CYNARA_LIB_PATH;
+#else
+    LOGW("Cynara compiled without CYNARA_LIB_PATH flag. Using default plugin directory.");
+#endif
+    dir += "plugin/";
+    LOGI("Cynara plugin path <%s>", dir.c_str());
+    return dir;
+}
+
 void Cynara::init(void) {
     m_logic = std::make_shared<Logic>();
+    m_pluginManager = std::make_shared<PluginManager>(pluginDir());
     m_socketManager = std::make_shared<SocketManager>();
     m_storageBackend = std::make_shared<InMemoryStorageBackend>(storageDir());
     m_storage = std::make_shared<Storage>(*m_storageBackend);
 
+    m_logic->bindPluginManager(m_pluginManager);
     m_logic->bindStorage(m_storage);
     m_logic->bindSocketManager(m_socketManager);
 
@@ -90,6 +106,7 @@ void Cynara::finalize(void) {
     }
 
     m_logic.reset();
+    m_pluginManager.reset();
     m_socketManager.reset();
     m_storageBackend.reset();
     m_storage.reset();

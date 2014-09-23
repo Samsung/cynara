@@ -27,6 +27,7 @@
 
 #include <cynara-admin-types.h>
 #include <cynara-error.h>
+#include <cynara-policy-types.h>
 
 #ifdef __cplusplus
 extern "C" {

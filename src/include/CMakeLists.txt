@@ -26,6 +26,7 @@ INSTALL(FILES
     ${CYNARA_PATH}/include/cynara-creds-socket.h
     ${CYNARA_PATH}/include/cynara-error.h
     ${CYNARA_PATH}/include/cynara-plugin.h
+    ${CYNARA_PATH}/include/cynara-policy-types.h
     ${CYNARA_PATH}/include/cynara-session.h
     DESTINATION ${INCLUDE_INSTALL_DIR}/cynara
     )

@@ -63,29 +63,6 @@ struct cynara_admin_policy {
  */
 #define CYNARA_ADMIN_DEFAULT_BUCKET ""
 
-/**
- * \name Operation Codes
- * operation codes that define action type to be taken in below defined functions
- * they are used mostly to define policy result
- * @{
- */
-
-/*! \brief   a policy or bucket should be removed */
-#define CYNARA_ADMIN_DELETE -1
-
-/*! \brief   set policy result or bucket's default policy to DENY */
-#define CYNARA_ADMIN_DENY 0
-
-/*! \brief   set bucket's default policy to NONE */
-#define CYNARA_ADMIN_NONE 1
-
-/*! \brief   set policy result or bucket's default policy to ALLOW */
-#define CYNARA_ADMIN_ALLOW 2
-
-/*! \brief   set policy to point into another bucket */
-#define CYNARA_ADMIN_BUCKET 3
-/** @}*/
-
 #ifdef __cplusplus
 }
 #endif

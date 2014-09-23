@@ -27,15 +27,17 @@
 #include <cstdint>
 #include <string>
 
+#include <cynara-policy-types.h>
+
 namespace Cynara {
 
 typedef std::uint16_t PolicyType;
 
 namespace PredefinedPolicyType  {
-    const PolicyType DENY = 0;
-    const PolicyType NONE = 1;
-    const PolicyType BUCKET = 0xFFFE;
-    const PolicyType ALLOW = 0xFFFF;
+    const PolicyType DENY = CYNARA_ADMIN_DENY;
+    const PolicyType NONE = CYNARA_ADMIN_NONE;
+    const PolicyType BUCKET = CYNARA_ADMIN_BUCKET;
+    const PolicyType ALLOW = CYNARA_ADMIN_ALLOW;
 };
 
 class PolicyResult;

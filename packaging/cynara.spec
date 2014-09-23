@@ -458,6 +458,7 @@ fi
 %{_libdir}/libcynara-commons.so.*
 
 %files -n libcynara-commons-devel
+%{_includedir}/cynara/cynara-policy-types.h
 %{_includedir}/cynara/types/PolicyResult.h
 %{_includedir}/cynara/types/PolicyType.h
 %{_libdir}/libcynara-commons.so

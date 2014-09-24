@@ -30,12 +30,14 @@
 
 #include <main/Cynara.h>
 #include <request/AdminCheckRequest.h>
+#include <request/CancelRequest.h>
 #include <request/CheckRequest.h>
 #include <request/InsertOrUpdateBucketRequest.h>
 #include <request/RemoveBucketRequest.h>
 #include <request/RequestContext.h>
 #include <request/SetPoliciesRequest.h>
 #include <request/SignalRequest.h>
+#include <response/CancelResponse.h>
 #include <response/CheckResponse.h>
 #include <response/CodeResponse.h>
 #include <storage/Storage.h>
@@ -68,6 +70,11 @@ void Logic::execute(RequestContextPtr context, AdminCheckRequestPtr request) {
 
     context->returnResponse(context, std::make_shared<CheckResponse>(result,
                             request->sequenceNumber()));
+}
+
+void Logic::execute(RequestContextPtr context, CancelRequestPtr request) {
+    // MOCKUP
+    context->returnResponse(context, std::make_shared<CancelResponse>(request->sequenceNumber()));
 }
 
 void Logic::execute(RequestContextPtr context, CheckRequestPtr request) {

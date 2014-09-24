@@ -32,12 +32,14 @@ SET(COMMON_SOURCES
     ${COMMON_PATH}/protocol/ProtocolSerialization.cpp
     ${COMMON_PATH}/protocol/ProtocolSignal.cpp
     ${COMMON_PATH}/request/AdminCheckRequest.cpp
+    ${COMMON_PATH}/request/CancelRequest.cpp
     ${COMMON_PATH}/request/CheckRequest.cpp
     ${COMMON_PATH}/request/InsertOrUpdateBucketRequest.cpp
     ${COMMON_PATH}/request/RemoveBucketRequest.cpp
     ${COMMON_PATH}/request/RequestTaker.cpp
     ${COMMON_PATH}/request/SetPoliciesRequest.cpp
     ${COMMON_PATH}/request/SignalRequest.cpp
+    ${COMMON_PATH}/response/CancelResponse.cpp
     ${COMMON_PATH}/response/CheckResponse.cpp
     ${COMMON_PATH}/response/CodeResponse.cpp
     ${COMMON_PATH}/response/ResponseTaker.cpp

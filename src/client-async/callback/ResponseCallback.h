@@ -34,7 +34,7 @@ public:
     ~ResponseCallback() {};
 
     void onAnswer(cynara_check_id checkId, int response) const;
-    // MOCKUP
+    void onCancel(cynara_check_id checkId) const;
     void onFinish(cynara_check_id checkId) const;
     void onDisconnected(cynara_check_id checkId) const;
 

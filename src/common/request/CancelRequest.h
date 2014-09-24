@@ -14,30 +14,31 @@
  *    limitations under the License.
  */
 /**
- * @file        src/common/response/ResponseTaker.h
- * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @file        src/common/request/CancelRequest.h
+ * @author      Marcin Niesluchowski <m.niesluchow@samsung.com>
  * @version     1.0
- * @brief       This file defines ResponseTaker class
+ * @brief       This file defines cancel request class
  */
 
-#ifndef SRC_COMMON_RESPONSE_RESPONSETAKER_H_
-#define SRC_COMMON_RESPONSE_RESPONSETAKER_H_
+#ifndef SRC_COMMON_REQUEST_CANCELREQUEST_H_
+#define SRC_COMMON_REQUEST_CANCELREQUEST_H_
 
 #include <request/pointers.h>
-#include <response/pointers.h>
+#include <request/Request.h>
+#include <request/RequestTaker.h>
 
 namespace Cynara {
 
-class ResponseTaker {
+class CancelRequest : public Request {
 public:
-    ResponseTaker() = default;
-    virtual ~ResponseTaker() {};
+    CancelRequest(ProtocolFrameSequenceNumber sequenceNumber) : Request(sequenceNumber) {
+    }
 
-    virtual void execute(RequestContextPtr context, CancelResponsePtr response);
-    virtual void execute(RequestContextPtr context, CheckResponsePtr response);
-    virtual void execute(RequestContextPtr context, CodeResponsePtr response);
+    virtual ~CancelRequest() {};
+
+    virtual void execute(RequestPtr self, RequestTakerPtr taker, RequestContextPtr context) const;
 };
 
 } // namespace Cynara
 
-#endif /* SRC_COMMON_RESPONSE_RESPONSETAKER_H_ */
+#endif /* SRC_COMMON_REQUEST_CANCELREQUEST_H_ */

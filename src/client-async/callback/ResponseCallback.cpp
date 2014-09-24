@@ -34,6 +34,12 @@ void ResponseCallback::onAnswer(cynara_check_id checkId, int response) const {
     m_callback(checkId, cynara_async_call_cause::CYNARA_CALL_CAUSE_ANSWER, response, m_userData);
 }
 
+void ResponseCallback::onCancel(cynara_check_id checkId) const {
+    if (!m_callback)
+        return;
+    m_callback(checkId, cynara_async_call_cause::CYNARA_CALL_CAUSE_CANCEL, 0, m_userData);
+}
+
 void ResponseCallback::onFinish(cynara_check_id checkId) const {
     if (!m_callback)
         return;

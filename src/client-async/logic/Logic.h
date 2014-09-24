@@ -65,6 +65,7 @@ private:
     cynara_async_status socketDataStatus(void);
     bool processOut(void);
     void processCheckResponse(CheckResponsePtr checkResponse);
+    void processCancelResponse(CancelResponsePtr cancelResponse);
     void processResponses(void);
     bool processIn(void);
     bool ensureConnection(void);

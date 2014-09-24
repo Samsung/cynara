@@ -31,8 +31,10 @@
 #include <protocol/ProtocolFrameSerializer.h>
 #include <protocol/ProtocolOpCode.h>
 #include <protocol/ProtocolSerialization.h>
+#include <request/CancelRequest.h>
 #include <request/CheckRequest.h>
 #include <request/RequestContext.h>
+#include <response/CancelResponse.h>
 #include <response/CheckResponse.h>
 #include <types/PolicyKey.h>
 #include <types/PolicyResult.h>
@@ -50,6 +52,11 @@ ProtocolClient::~ProtocolClient() {
 
 ProtocolPtr ProtocolClient::clone(void) {
     return std::make_shared<ProtocolClient>();
+}
+
+RequestPtr ProtocolClient::deserializeCancelRequest(ProtocolFrameHeader &frame) {
+    LOGD("Deserialized CancelRequest");
+    return std::make_shared<CancelRequest>(frame.sequenceNumber());
 }
 
 RequestPtr ProtocolClient::deserializeCheckRequest(ProtocolFrameHeader &frame) {
@@ -79,6 +86,8 @@ RequestPtr ProtocolClient::extractRequestFromBuffer(BinaryQueue &bufferQueue) {
         switch (opCode) {
         case OpCheckPolicyRequest:
             return deserializeCheckRequest(m_frameHeader);
+        case OpCancelRequest:
+            return deserializeCancelRequest(m_frameHeader);
         default:
             throw InvalidProtocolException(InvalidProtocolException::WrongOpCode);
             break;
@@ -86,6 +95,11 @@ RequestPtr ProtocolClient::extractRequestFromBuffer(BinaryQueue &bufferQueue) {
     }
 
     return nullptr;
+}
+
+ResponsePtr ProtocolClient::deserializeCancelResponse(ProtocolFrameHeader &frame) {
+    LOGD("Deserialized CancelResponse");
+    return std::make_shared<CancelResponse>(frame.sequenceNumber());
 }
 
 ResponsePtr ProtocolClient::deserializeCheckResponse(ProtocolFrameHeader &frame) {
@@ -115,6 +129,8 @@ ResponsePtr ProtocolClient::extractResponseFromBuffer(BinaryQueue &bufferQueue) 
         switch (opCode) {
         case OpCheckPolicyResponse:
             return deserializeCheckResponse(m_frameHeader);
+        case OpCancelResponse:
+            return deserializeCancelResponse(m_frameHeader);
         default:
             throw InvalidProtocolException(InvalidProtocolException::WrongOpCode);
             break;
@@ -122,6 +138,16 @@ ResponsePtr ProtocolClient::extractResponseFromBuffer(BinaryQueue &bufferQueue) 
     }
 
     return nullptr;
+}
+
+void ProtocolClient::execute(RequestContextPtr context, CancelRequestPtr request) {
+    ProtocolFramePtr frame = ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
+
+    LOGD("Serializing CancelRequest op [%" PRIu8 "]", OpCancelRequest);
+
+    ProtocolSerialization::serialize(*frame, OpCancelRequest);
+
+    ProtocolFrameSerializer::finishSerialization(frame, context->responseQueue());
 }
 
 void ProtocolClient::execute(RequestContextPtr context, CheckRequestPtr request) {
@@ -135,6 +161,17 @@ void ProtocolClient::execute(RequestContextPtr context, CheckRequestPtr request)
     ProtocolSerialization::serialize(*frame, request->key().client().value());
     ProtocolSerialization::serialize(*frame, request->key().user().value());
     ProtocolSerialization::serialize(*frame, request->key().privilege().value());
+
+    ProtocolFrameSerializer::finishSerialization(frame, context->responseQueue());
+}
+
+void ProtocolClient::execute(RequestContextPtr context, CancelResponsePtr response) {
+    ProtocolFramePtr frame = ProtocolFrameSerializer::startSerialization(
+            response->sequenceNumber());
+
+    LOGD("Serializing CancelResponse: op [%" PRIu8 "]", OpCancelResponse);
+
+    ProtocolSerialization::serialize(*frame, OpCancelResponse);
 
     ProtocolFrameSerializer::finishSerialization(frame, context->responseQueue());
 }

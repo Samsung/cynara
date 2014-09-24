@@ -31,7 +31,9 @@
 #include <log/log.h>
 #include <plugins/NaiveInterpreter.h>
 #include <protocol/ProtocolClient.h>
+#include <request/CancelRequest.h>
 #include <request/CheckRequest.h>
+#include <response/CancelResponse.h>
 #include <response/CheckResponse.h>
 #include <sockets/Socket.h>
 #include <sockets/SocketPath.h>
@@ -52,8 +54,10 @@ Logic::Logic(cynara_status_callback callback, void *userStatusData)
 }
 
 Logic::~Logic() {
-    for (auto &kv : m_checks)
-        kv.second.callback().onFinish(kv.first);
+    for (auto &kv : m_checks) {
+        if (!kv.second.cancelled())
+            kv.second.callback().onFinish(kv.first);
+    }
     m_statusCallback.onDisconnected();
 }
 
@@ -102,11 +106,21 @@ int Logic::process(void) {
     }
 }
 
-int Logic::cancelRequest(cynara_check_id checkId UNUSED) {
+int Logic::cancelRequest(cynara_check_id checkId) {
     if (!ensureConnection())
         return CYNARA_API_SERVICE_NOT_AVAILABLE;
 
-    // MOCKUP
+    auto it = m_checks.find(checkId);
+    if (it == m_checks.end() || it->second.cancelled())
+        return CYNARA_API_SUCCESS;
+
+    m_socketClient->appendRequest(std::make_shared<CancelRequest>(it->first));
+
+    it->second.cancel();
+    it->second.callback().onCancel(it->first);
+    m_statusCallback.onStatusChange(m_socketClient->getSockFd(),
+                                    cynara_async_status::CYNARA_STATUS_FOR_RW);
+
     return CYNARA_API_SUCCESS;
 }
 
@@ -115,9 +129,14 @@ bool Logic::checkCacheValid(void) {
 }
 
 void Logic::prepareRequestsToSend(void) {
-    for (auto &kv : m_checks) {
-        // MOCKUP
-        m_socketClient->appendRequest(std::make_shared<CheckRequest>(kv.second.key(), kv.first));
+    for (auto it = m_checks.begin(); it != m_checks.end();) {
+        if (it->second.cancelled()) {
+            m_sequenceContainer.release(it->first);
+            it = m_checks.erase(it);
+        } else {
+            m_socketClient->appendRequest(std::make_shared<CheckRequest>(it->second.key(), it->first));
+            ++it;
+        }
     }
 }
 
@@ -140,14 +159,32 @@ void Logic::processCheckResponse(CheckResponsePtr checkResponse) {
 
     auto it = m_checks.find(checkResponse->sequenceNumber());
     if (it == m_checks.end()) {
-        LOGC("Critical error. Unknown response received: sequenceNumber = [%" PRIu16 "]",
+        LOGC("Critical error. Unknown checkResponse received: sequenceNumber = [%" PRIu16 "]",
              checkResponse->sequenceNumber());
         throw UnexpectedErrorException("Unexpected response from cynara service");
     }
     int result = m_cache->update(it->second.session(), it->second.key(),
                                  checkResponse->m_resultRef);
-    // MOCKUP
-    it->second.callback().onAnswer(static_cast<cynara_check_id>(it->first), result);
+    if (!it->second.cancelled())
+        it->second.callback().onAnswer(static_cast<cynara_check_id>(it->first), result);
+    m_sequenceContainer.release(it->first);
+    m_checks.erase(it);
+}
+
+void Logic::processCancelResponse(CancelResponsePtr cancelResponse) {
+    LOGD("cancelResponse");
+
+    auto it = m_checks.find(cancelResponse->sequenceNumber());
+    if (it == m_checks.end()) {
+        LOGC("Critical error. Unknown cancelResponse received: sequenceNumber = [%" PRIu16 "]",
+             cancelResponse->sequenceNumber());
+        throw UnexpectedErrorException("Unexpected response from cynara service");
+    }
+    if (!it->second.cancelled()) {
+        LOGC("Critical error. CancelRequest not sent: sequenceNumber = [%" PRIu16 "]",
+             cancelResponse->sequenceNumber());
+        throw UnexpectedErrorException("Unexpected response from cynara service");
+    }
     m_sequenceContainer.release(it->first);
     m_checks.erase(it);
 }
@@ -155,18 +192,21 @@ void Logic::processCheckResponse(CheckResponsePtr checkResponse) {
 void Logic::processResponses(void) {
     ResponsePtr response;
     CheckResponsePtr checkResponse;
-    while (true) {
-        response = m_socketClient->getResponse();
-        if (!response)
-            break;
-
+    CancelResponsePtr cancelResponse;
+    while (response = m_socketClient->getResponse()) {
         checkResponse = std::dynamic_pointer_cast<CheckResponse>(response);
         if (checkResponse) {
             processCheckResponse(checkResponse);
             continue;
         }
-        // MOCKUP
-        LOGC("Critical error. Casting Response to CheckResponse failed.");
+
+        cancelResponse = std::dynamic_pointer_cast<CancelResponse>(response);
+        if (cancelResponse) {
+            processCancelResponse(cancelResponse);
+            continue;
+        }
+
+        LOGC("Critical error. Casting Response to known response failed.");
         throw UnexpectedErrorException("Unexpected response from cynara service");
     }
 }
@@ -230,8 +270,10 @@ int Logic::completeConnection(bool &completed) {
 
 void Logic::onServiceNotAvailable(void)
 {
-    for (auto &kv : m_checks)
-        kv.second.callback().onDisconnected(kv.first);
+    for (auto &kv : m_checks) {
+        if (!kv.second.cancelled())
+            kv.second.callback().onDisconnected(kv.first);
+    }
     m_checks.clear();
     m_sequenceContainer.clear();
 }

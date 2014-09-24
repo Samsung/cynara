@@ -14,30 +14,21 @@
  *    limitations under the License.
  */
 /**
- * @file        src/common/response/ResponseTaker.h
- * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @file        src/common/response/CancelResponse.cpp
+ * @author      Marcin Niesluchowski <m.niesluchow@samsung.com>
  * @version     1.0
- * @brief       This file defines ResponseTaker class
+ * @brief       This file implements cancel response class
  */
 
-#ifndef SRC_COMMON_RESPONSE_RESPONSETAKER_H_
-#define SRC_COMMON_RESPONSE_RESPONSETAKER_H_
+#include <memory>
 
-#include <request/pointers.h>
-#include <response/pointers.h>
+#include "CancelResponse.h"
 
 namespace Cynara {
 
-class ResponseTaker {
-public:
-    ResponseTaker() = default;
-    virtual ~ResponseTaker() {};
-
-    virtual void execute(RequestContextPtr context, CancelResponsePtr response);
-    virtual void execute(RequestContextPtr context, CheckResponsePtr response);
-    virtual void execute(RequestContextPtr context, CodeResponsePtr response);
-};
+void CancelResponse::execute(ResponsePtr self, ResponseTakerPtr taker,
+                             RequestContextPtr context) const {
+    taker->execute(context, std::dynamic_pointer_cast<CancelResponse>(self));
+}
 
 } // namespace Cynara
-
-#endif /* SRC_COMMON_RESPONSE_RESPONSETAKER_H_ */

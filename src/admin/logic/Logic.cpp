@@ -96,6 +96,9 @@ int Logic::askCynaraAndInterpreteCodeResponse(Args... args) {
         case CodeResponse::Code::NO_BUCKET:
             LOGE("Trying to use unexisting bucket.");
             return CYNARA_API_BUCKET_NOT_FOUND;
+        case CodeResponse::Code::FAILED:
+            LOGC("Cynara service answered: Operation failed.");
+            return CYNARA_API_OPERATION_FAILED;
         default:
             LOGE("Unexpected response code from server: [%d]",
                  static_cast<int>(codeResponse->m_code));

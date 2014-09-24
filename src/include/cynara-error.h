@@ -61,11 +61,14 @@
 /*! \brief   cynara service does not allow to perform requested operation */
 #define CYNARA_API_OPERATION_NOT_ALLOWED -7
 
+/*! \brief   cynara service failed to perform requested operation */
+#define CYNARA_API_OPERATION_FAILED      -8
+
 /*! \brief   cynara service hasn't found requested bucket */
-#define CYNARA_API_BUCKET_NOT_FOUND      -8
+#define CYNARA_API_BUCKET_NOT_FOUND      -9
 
 /*! \brief   indicating an unknown error */
-#define CYNARA_API_UNKNOWN_ERROR         -9
+#define CYNARA_API_UNKNOWN_ERROR         -10
 
 /** @}*/
 

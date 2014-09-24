@@ -34,7 +34,8 @@ public:
     enum Code {
         OK,
         NO_BUCKET,
-        NOT_ALLOWED
+        NOT_ALLOWED,
+        FAILED
     };
 
     const Code m_code;

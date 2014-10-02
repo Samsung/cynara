@@ -33,6 +33,9 @@ typedef std::shared_ptr<AdminCheckRequest> AdminCheckRequestPtr;
 class AgentActionRequest;
 typedef std::shared_ptr<AgentActionRequest> AgentActionRequestPtr;
 
+class AgentRegisterRequest;
+typedef std::shared_ptr<AgentRegisterRequest> AgentRegisterRequestPtr;
+
 class CancelRequest;
 typedef std::shared_ptr<CancelRequest> CancelRequestPtr;
 

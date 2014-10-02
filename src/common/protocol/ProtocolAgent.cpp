@@ -23,6 +23,7 @@
 #include <inttypes.h>
 #include <memory>
 
+#include <attributes/attributes.h>
 #include <exceptions/InvalidProtocolException.h>
 #include <log/log.h>
 #include <protocol/ProtocolFrameSerializer.h>
@@ -79,6 +80,16 @@ ResponsePtr ProtocolAgent::extractResponseFromBuffer(BinaryQueuePtr bufferQueue)
     }
 
     return nullptr;
+}
+
+void ProtocolAgent::execute(RequestContextPtr context UNUSED,
+                            AgentActionRequestPtr request UNUSED) {
+    //TODO: implement
+}
+
+void ProtocolAgent::execute(RequestContextPtr context UNUSED,
+                            AgentActionResponsePtr request UNUSED) {
+    //TODO: implement
 }
 
 } // namespace Cynara

@@ -30,6 +30,9 @@ namespace Cynara {
 class AgentActionResponse;
 typedef std::shared_ptr<AgentActionResponse> AgentActionResponsePtr;
 
+class AgentRegisterResponse;
+typedef std::shared_ptr<AgentRegisterResponse> AgentRegisterResponsePtr;
+
 class CancelResponse;
 typedef std::shared_ptr<CancelResponse> CancelResponsePtr;
 

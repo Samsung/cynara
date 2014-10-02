@@ -14,37 +14,40 @@
  *    limitations under the License.
  */
 /**
- * @file        src/common/protocol/ProtocolAgent.h
+ * @file        src/common/response/AgentRegisterResponse.h
  * @author      Adam Malinowski <a.malinowsk2@partner.samsung.com>
  * @version     1.0
- * @brief       This file defines protocol class for communication with agent
+ * @brief       This file defines class for responding to agent register request
  */
 
-#ifndef SRC_COMMON_PROTOCOL_PROTOCOLAGENT_H_
-#define SRC_COMMON_PROTOCOL_PROTOCOLAGENT_H_
+#ifndef SRC_COMMON_RESPONSE_AGENTREGISTERRESPONSE_H_
+#define SRC_COMMON_RESPONSE_AGENTREGISTERRESPONSE_H_
 
-#include <protocol/ProtocolFrameHeader.h>
 #include <request/pointers.h>
 #include <response/pointers.h>
-
-#include "Protocol.h"
+#include <response/Response.h>
 
 namespace Cynara {
 
-class ProtocolAgent : public Protocol {
+class AgentRegisterResponse : public Response {
 public:
-    ProtocolAgent();
-    virtual ~ProtocolAgent();
+    enum Code {
+        DONE,
+        REJECTED,
+        ERROR
+    };
 
-    virtual ProtocolPtr clone(void);
+    const Code m_code;
 
-    virtual RequestPtr extractRequestFromBuffer(BinaryQueuePtr bufferQueue);
-    virtual ResponsePtr extractResponseFromBuffer(BinaryQueuePtr bufferQueue);
+    AgentRegisterResponse(Code code, ProtocolFrameSequenceNumber sequenceNumber) :
+        Response(sequenceNumber), m_code(code) {
+    }
 
-    virtual void execute(RequestContextPtr context, AgentActionRequestPtr request);
-    virtual void execute(RequestContextPtr context, AgentActionResponsePtr response);
+    virtual ~AgentRegisterResponse() {};
+
+    virtual void execute(ResponsePtr self, ResponseTakerPtr taker, RequestContextPtr context) const;
 };
 
 } // namespace Cynara
 
-#endif /* SRC_COMMON_PROTOCOL_PROTOCOLAGENT_H_ */
+#endif /* SRC_COMMON_RESPONSE_AGENTREGISTERRESPONSE_H_ */

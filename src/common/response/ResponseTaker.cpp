@@ -32,6 +32,10 @@ void ResponseTaker::execute(RequestContextPtr context UNUSED, AgentActionRespons
     throw NotImplementedException();
 }
 
+void ResponseTaker::execute(RequestContextPtr context UNUSED, AgentRegisterResponsePtr response UNUSED) {
+    throw NotImplementedException();
+}
+
 void ResponseTaker::execute(RequestContextPtr context UNUSED, CancelResponsePtr response UNUSED) {
     throw NotImplementedException();
 }

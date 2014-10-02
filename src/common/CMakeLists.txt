@@ -39,6 +39,8 @@ SET(COMMON_SOURCES
     ${COMMON_PATH}/protocol/ProtocolSerialization.cpp
     ${COMMON_PATH}/protocol/ProtocolSignal.cpp
     ${COMMON_PATH}/request/AdminCheckRequest.cpp
+    ${COMMON_PATH}/request/AgentActionRequest.cpp
+    ${COMMON_PATH}/request/AgentRegisterRequest.cpp
     ${COMMON_PATH}/request/CancelRequest.cpp
     ${COMMON_PATH}/request/CheckRequest.cpp
     ${COMMON_PATH}/request/InsertOrUpdateBucketRequest.cpp
@@ -47,6 +49,7 @@ SET(COMMON_SOURCES
     ${COMMON_PATH}/request/SetPoliciesRequest.cpp
     ${COMMON_PATH}/request/SignalRequest.cpp
     ${COMMON_PATH}/response/AgentActionResponse.cpp
+    ${COMMON_PATH}/response/AgentRegisterResponse.cpp
     ${COMMON_PATH}/response/CancelResponse.cpp
     ${COMMON_PATH}/response/CheckResponse.cpp
     ${COMMON_PATH}/response/CodeResponse.cpp

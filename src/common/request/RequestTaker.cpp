@@ -33,6 +33,14 @@ void RequestTaker::execute(RequestContextPtr context UNUSED, AdminCheckRequestPt
     throw NotImplementedException();
 }
 
+void RequestTaker::execute(RequestContextPtr context UNUSED, AgentActionRequestPtr request UNUSED) {
+    throw NotImplementedException();
+}
+
+void RequestTaker::execute(RequestContextPtr context UNUSED, AgentRegisterRequestPtr request UNUSED) {
+    throw NotImplementedException();
+}
+
 void RequestTaker::execute(RequestContextPtr context UNUSED, CancelRequestPtr request UNUSED) {
     throw NotImplementedException();
 }

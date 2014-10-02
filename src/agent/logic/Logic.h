@@ -26,6 +26,7 @@
 #include <types/Agent.h>
 
 #include <api/ApiInterface.h>
+#include <socket/AgentSocketClient.h>
 
 namespace Cynara {
 
@@ -42,6 +43,13 @@ public:
 
 private:
     AgentType m_agentType;
+    AgentSocketPtr m_agentSocket;
+    bool m_registered;
+    RequestTakerPtr m_responseTakerPtr;
+    BinaryQueuePtr m_responseBuffer;
+
+    int registerInCynara(void);
+    int ensureConnection(void);
 };
 
 } // namespace Cynara

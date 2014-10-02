@@ -19,6 +19,7 @@
 INSTALL(FILES
     ${CYNARA_PATH}/include/cynara-admin.h
     ${CYNARA_PATH}/include/cynara-admin-types.h
+    ${CYNARA_PATH}/include/cynara-agent.h
     ${CYNARA_PATH}/include/cynara-client.h
     ${CYNARA_PATH}/include/cynara-client-async.h
     ${CYNARA_PATH}/include/cynara-client-plugin.h

@@ -46,6 +46,7 @@ SET(COMMON_SOURCES
     ${COMMON_PATH}/request/RequestTaker.cpp
     ${COMMON_PATH}/request/SetPoliciesRequest.cpp
     ${COMMON_PATH}/request/SignalRequest.cpp
+    ${COMMON_PATH}/response/AgentActionResponse.cpp
     ${COMMON_PATH}/response/CancelResponse.cpp
     ${COMMON_PATH}/response/CheckResponse.cpp
     ${COMMON_PATH}/response/CodeResponse.cpp

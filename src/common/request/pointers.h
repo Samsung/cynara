@@ -30,6 +30,9 @@ namespace Cynara {
 class AdminCheckRequest;
 typedef std::shared_ptr<AdminCheckRequest> AdminCheckRequestPtr;
 
+class AgentActionRequest;
+typedef std::shared_ptr<AgentActionRequest> AgentActionRequestPtr;
+
 class CancelRequest;
 typedef std::shared_ptr<CancelRequest> CancelRequestPtr;
 

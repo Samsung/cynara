@@ -1,0 +1,11 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=@LIB_INSTALL_DIR@
+includedir=${prefix}/include
+
+Name: cynara-agent
+Description: cynara-agent package
+Version: @CYNARA_VERSION@
+Requires:
+Libs: -L${libdir} -lcynara-agent
+Cflags: -I${includedir}/cynara

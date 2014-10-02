@@ -11,14 +11,15 @@ Source1002:    libcynara-client.manifest
 Source1003:    libcynara-client-async.manifest
 Source1004:    libcynara-admin.manifest
 Source1005:    cynara-tests.manifest
-Source1006:    libcynara-client-commons.manifest
-Source1007:    libcynara-commons.manifest
-Source1008:    libcynara-creds-commons.manifest
-Source1009:    libcynara-creds-dbus.manifest
-Source1010:    libcynara-creds-socket.manifest
-Source1011:    libcynara-session.manifest
-Source1012:    libcynara-storage.manifest
-Source1013:    cynara-db-migration.manifest
+Source1006:    libcynara-agent.manifest
+Source1007:    libcynara-client-commons.manifest
+Source1008:    libcynara-commons.manifest
+Source1009:    libcynara-creds-commons.manifest
+Source1010:    libcynara-creds-dbus.manifest
+Source1011:    libcynara-creds-socket.manifest
+Source1012:    libcynara-session.manifest
+Source1013:    libcynara-storage.manifest
+Source1014:    cynara-db-migration.manifest
 Requires:      default-ac-domains
 Requires(pre): pwdutils
 Requires(pre): cynara-db-migration >= %{version}-%{release}
@@ -51,9 +52,8 @@ BuildRequires: pkgconfig(libunwind)
 
 %description
 service, client libraries (libcynara-client, libcynara-client-async, libcynara-admin),
-helper libraries (libcynara-session, libcynara-creds-common, libcynara-creds-dbus,
-libcynara-creds-socket)
-and tests (cynara-tests)
+agent library, helper libraries (libcynara-session, libcynara-creds-common, libcynara-creds-dbus,
+libcynara-creds-socket) and tests (cynara-tests)
 
 #######################################################
 %package -n libcynara-client
@@ -116,6 +116,22 @@ Requires:   libcynara-commons-devel = %{version}-%{release}
 
 %description -n libcynara-admin-devel
 admin client library (devel) for setting, listing and removing policies
+
+#######################################################
+%package -n libcynara-agent
+Summary:    Cynara - agent client library
+Requires:   cynara = %{version}-%{release}
+
+%description -n libcynara-agent
+agent client library for communication with cynara service and plugins
+
+%package -n libcynara-agent-devel
+Summary:    Cynara - agent client library (devel)
+Requires:   libcynara-agent = %{version}-%{release}
+Requires:   libcynara-client-commons-devel = %{version}-%{release}
+
+%description -n libcynara-agent-devel
+agent client library (devel) for communication with cynara service and plugins
 
 #######################################################
 %package -n libcynara-storage
@@ -252,6 +268,7 @@ cp -a %{SOURCE1010} .
 cp -a %{SOURCE1011} .
 cp -a %{SOURCE1012} .
 cp -a %{SOURCE1013} .
+cp -a %{SOURCE1014} .
 cp -a test/db/db* .
 
 %build
@@ -352,6 +369,10 @@ fi
 
 %postun -n libcynara-admin -p /sbin/ldconfig
 
+%post -n libcynara-agent -p /sbin/ldconfig
+
+%postun -n libcynara-agent -p /sbin/ldconfig
+
 %post -n libcynara-storage -p /sbin/ldconfig
 
 %postun -n libcynara-storage -p /sbin/ldconfig
@@ -379,6 +400,10 @@ fi
 %post -n libcynara-admin-devel -p /sbin/ldconfig
 
 %postun -n libcynara-admin-devel -p /sbin/ldconfig
+
+%post -n libcynara-agent-devel -p /sbin/ldconfig
+
+%postun -n libcynara-agent-devel -p /sbin/ldconfig
 
 %post -n libcynara-commons-devel -p /sbin/ldconfig
 
@@ -469,6 +494,16 @@ fi
 %{_includedir}/cynara/cynara-admin-types.h
 %{_libdir}/libcynara-admin.so
 %{_libdir}/pkgconfig/cynara-admin.pc
+
+%files -n libcynara-agent
+%manifest libcynara-agent.manifest
+%license LICENSE
+%{_libdir}/libcynara-agent.so.*
+
+%files -n libcynara-agent-devel
+%{_includedir}/cynara/cynara-agent.h
+%{_libdir}/libcynara-agent.so
+%{_libdir}/pkgconfig/cynara-agent.pc
 
 %files -n libcynara-storage
 %manifest libcynara-storage.manifest

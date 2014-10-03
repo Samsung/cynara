@@ -255,7 +255,7 @@ fi
 
 id -u %{user_name} > /dev/null 2>&1
 if [ $? -eq 1 ]; then
-    useradd -m %{user_name} -r > /dev/null 2>&1
+    useradd %{user_name} -r > /dev/null 2>&1
 fi
 
 %post

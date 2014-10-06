@@ -52,20 +52,12 @@ public:
     //delete default constructor in order to prevent creation of buckets with no id
     PolicyBucket() = delete;
     PolicyBucket(const PolicyBucketId &id,
-                 const PolicyResult &defaultPolicy = PredefinedPolicyType::DENY)
-        : m_defaultPolicy(defaultPolicy),
-          m_id(id) {}
+                 const PolicyResult &defaultPolicy = PredefinedPolicyType::DENY);
     PolicyBucket(const PolicyBucketId &id,
-                 const PolicyCollection &policies)
-        : m_policyCollection(makePolicyMap(policies)),
-          m_defaultPolicy(PredefinedPolicyType::DENY),
-          m_id(id) {}
+                 const PolicyCollection &policies);
     PolicyBucket(const PolicyBucketId &id,
                  const PolicyResult &defaultPolicy,
-                 const PolicyCollection &policies)
-        : m_policyCollection(makePolicyMap(policies)),
-          m_defaultPolicy(defaultPolicy),
-          m_id(id) {}
+                 const PolicyCollection &policies);
 
     PolicyBucket filtered(const PolicyKey &key) const;
     void insertPolicy(PolicyPtr policy);
@@ -75,13 +67,6 @@ public:
     void deletePolicy(std::function<bool(PolicyPtr)> predicate);
 
     static PolicyMap makePolicyMap(const PolicyCollection &policies);
-
-private:
-    PolicyMap m_policyCollection;
-    PolicyResult m_defaultPolicy;
-    PolicyBucketId m_id;
-
-public:
 
     const_policy_iterator begin(void) const {
         return const_policy_iterator(m_policyCollection.begin());
@@ -111,6 +96,15 @@ public:
     void setDefaultPolicy(const PolicyResult &defaultPolicy) {
         m_defaultPolicy = defaultPolicy;
     }
+
+private:
+    static void idValidator(const PolicyBucketId &id);
+    static bool isIdSeparator(char c);
+
+    PolicyMap m_policyCollection;
+    PolicyResult m_defaultPolicy;
+    PolicyBucketId m_id;
+    static const std::string m_idSeparators;
 };
 
 } /* namespace Cynara */

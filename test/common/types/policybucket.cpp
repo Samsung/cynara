@@ -27,6 +27,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include "exceptions/InvalidBucketIdException.h"
 #include "types/PolicyBucket.h"
 #include "types/PolicyCollection.h"
 #include "types/PolicyKey.h"
@@ -56,6 +57,15 @@ protected:
         Policy::simpleWithKey(PolicyKey("*", "u1", "p2"), PredefinedPolicyType::ALLOW),
         Policy::simpleWithKey(PolicyKey("*", "*", "p1"), PredefinedPolicyType::ALLOW),
         Policy::simpleWithKey(PolicyKey("*", "*", "*"), PredefinedPolicyType::ALLOW)
+    };
+
+    const std::vector<PolicyBucketId> goodIds = {
+        "_goodid", "good_id", "goodid_", "-goodid", "good-id", "goodid-"
+    };
+
+    const std::vector<PolicyBucketId> badIds = {
+        "{badid", "bad[id", "badid~", "/badid", "bad*id", "badid|", "badid;", "\tbadid", "badid\n",
+        " badid", "bad id", "badid "
     };
 };
 
@@ -140,4 +150,30 @@ TEST_F(PolicyBucketFixture, filtered_wildcard_none) {
                                            wildcardPolicies.begin() + 3 }));
     auto filtered = bucket.filtered(PolicyKey("cccc", "uuuu", "pppp"));
     ASSERT_THAT(filtered, IsEmpty());
+}
+
+/**
+ * @brief   Validate PolicyBucketIds during creation - passing bucket ids
+ * @test    Scenario:
+ * - Iterate through vector of valid bucket ids and create them normally
+ * - PolicyBucket constructor should not throw any exception
+ */
+TEST_F(PolicyBucketFixture, bucket_id_validation_passes) {
+    for (auto it = goodIds.begin(); it != goodIds.end(); ++it) {
+        SCOPED_TRACE(*it);
+        ASSERT_NO_THROW(PolicyBucket(PolicyBucketId(*it)));
+    }
+}
+
+/**
+ * @brief   Validate PolicyBucketIds during creation - failing bucket ids
+ * @test    Scenario:
+ * - Iterate through vector of bucket ids containing forbidden characters
+ * - PolicyBucket constructor should throw an exception every time it is called
+ */
+TEST_F(PolicyBucketFixture, bucket_id_validation_fails) {
+    for (auto it = badIds.begin(); it != badIds.end(); ++it) {
+        SCOPED_TRACE(*it);
+        ASSERT_THROW(PolicyBucket(PolicyBucketId(*it)), InvalidBucketIdException);
+    }
 }

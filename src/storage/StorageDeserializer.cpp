@@ -56,7 +56,8 @@ void StorageDeserializer::initBuckets(Buckets &buckets) {
         auto policyType = parsePolicyType(line, beginToken);
         auto metadata = parseMetadata(line, beginToken);
 
-        buckets[bucketId] = PolicyBucket(bucketId, PolicyResult(policyType, metadata));
+        //it's safe to simply insert; buckets were cleared earlier, all ids should be unique
+        buckets.insert({ bucketId, PolicyBucket(bucketId, PolicyResult(policyType, metadata)) });
     }
 }
 

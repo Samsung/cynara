@@ -62,7 +62,7 @@ protected:
 TEST_F(PolicyBucketFixture, filtered) {
     using ::testing::UnorderedElementsAre;
 
-    PolicyBucket bucket(pkPolicies);
+    PolicyBucket bucket("filtered", pkPolicies);
     bucket.setDefaultPolicy(PredefinedPolicyType::DENY);
     auto filtered = bucket.filtered(pk1);
 
@@ -76,7 +76,7 @@ TEST_F(PolicyBucketFixture, filtered) {
 TEST_F(PolicyBucketFixture, filtered_other) {
     using ::testing::IsEmpty;
 
-    PolicyBucket bucket(pkPolicies);
+    PolicyBucket bucket("filtered_other", pkPolicies);
     bucket.setDefaultPolicy(PredefinedPolicyType::DENY);
     auto filtered = bucket.filtered(otherPk);
 
@@ -93,7 +93,7 @@ TEST_F(PolicyBucketFixture, filtered_wildcard_1) {
     // Leave policies with given client, given user and any privilege
     auto policiesToStay = Helpers::pickFromCollection(wildcardPolicies, { 0, 1, 3 });
 
-    PolicyBucket bucket(wildcardPolicies);
+    PolicyBucket bucket("filtered_wildcard_1", wildcardPolicies);
     auto filtered = bucket.filtered(PolicyKey("c1", "u1", "p2"));
     ASSERT_THAT(filtered, UnorderedElementsAreArray(policiesToStay));
 }
@@ -104,7 +104,7 @@ TEST_F(PolicyBucketFixture, filtered_wildcard_2) {
     // Leave policies with given client, given user and any privilege
     auto policiesToStay = Helpers::pickFromCollection(wildcardPolicies, { 2, 3 });
 
-    PolicyBucket bucket(wildcardPolicies);
+    PolicyBucket bucket("filtered_wildcard_2", wildcardPolicies);
     auto filtered = bucket.filtered(PolicyKey("cccc", "u1", "p1"));
 
     ASSERT_THAT(filtered, UnorderedElementsAreArray(policiesToStay));
@@ -116,7 +116,7 @@ TEST_F(PolicyBucketFixture, filtered_wildcard_3) {
     // Leave policies with given client, given user and any privilege
     auto policiesToStay = Helpers::pickFromCollection(wildcardPolicies, { 0, 3 });
 
-    PolicyBucket bucket(wildcardPolicies);
+    PolicyBucket bucket("filtered_wildcard_3", wildcardPolicies);
     auto filtered = bucket.filtered(PolicyKey("c1", "u1", "pppp"));
     ASSERT_THAT(filtered, UnorderedElementsAreArray(policiesToStay));
 }
@@ -127,7 +127,7 @@ TEST_F(PolicyBucketFixture, filtered_wildcard_4) {
     // Leave policies with given client, given user and any privilege
     auto policiesToStay = Helpers::pickFromCollection(wildcardPolicies, { 3 });
 
-    PolicyBucket bucket(wildcardPolicies);
+    PolicyBucket bucket("filtered_wildcard_4", wildcardPolicies);
     auto filtered = bucket.filtered(PolicyKey("cccc", "uuuu", "pppp"));
     ASSERT_THAT(filtered, UnorderedElementsAreArray(policiesToStay));
 }
@@ -135,7 +135,9 @@ TEST_F(PolicyBucketFixture, filtered_wildcard_4) {
 TEST_F(PolicyBucketFixture, filtered_wildcard_none) {
     using ::testing::IsEmpty;
 
-    PolicyBucket bucket({ wildcardPolicies.begin(), wildcardPolicies.begin() + 3 });
+    PolicyBucket bucket("filtered_wildcard_none",
+                        PolicyCollection({ wildcardPolicies.begin(),
+                                           wildcardPolicies.begin() + 3 }));
     auto filtered = bucket.filtered(PolicyKey("cccc", "uuuu", "pppp"));
     ASSERT_THAT(filtered, IsEmpty());
 }

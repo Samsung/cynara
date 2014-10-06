@@ -86,7 +86,7 @@ TEST_F(InMemeoryStorageBackendFixture, deleteBucket) {
         .WillRepeatedly(ReturnRef(m_buckets));
 
     PolicyBucketId bucketId = "delete-bucket";
-    m_buckets.insert({ bucketId, PolicyBucket() });
+    m_buckets.insert({ bucketId, PolicyBucket(bucketId) });
 
     backend.deleteBucket(bucketId);
 
@@ -102,7 +102,7 @@ TEST_F(InMemeoryStorageBackendFixture, hasBucket) {
         .WillRepeatedly(ReturnRef(m_buckets));
 
     PolicyBucketId bucketId = "bucket";
-    m_buckets.insert({ bucketId, PolicyBucket() });
+    m_buckets.insert({ bucketId, PolicyBucket(bucketId) });
 
     ASSERT_TRUE(backend.hasBucket(bucketId));
     ASSERT_FALSE(backend.hasBucket("non-existent"));

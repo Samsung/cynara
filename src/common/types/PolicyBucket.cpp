@@ -30,7 +30,7 @@
 namespace Cynara {
 
 PolicyBucket PolicyBucket::filtered(const PolicyKey &key) const {
-    PolicyBucket result;
+    PolicyBucket result(m_id + "_filtered");
 
     const auto &policies = m_policyCollection;
     const auto variants = PolicyKeyHelpers::keyVariants(key);

@@ -49,7 +49,7 @@ static std::string expectedPolicyType(const PolicyType &type) {
 
 TEST(serializer_dump, dump_empty_bucket) {
     auto oss = std::make_shared<std::ostringstream>();
-    PolicyBucket bucket;
+    PolicyBucket bucket("empty");
 
     StorageSerializer serializer(oss);
     serializer.dump(bucket);
@@ -65,8 +65,8 @@ TEST(serializer_dump, dump_bucket) {
     PolicyKey pk1 = Helpers::generatePolicyKey("1");
     PolicyKey pk2 = Helpers::generatePolicyKey("2");
 
-    PolicyBucket bucket = {{ Policy::simpleWithKey(pk1, ALLOW),
-                             Policy::simpleWithKey(pk2, DENY) }};
+    PolicyBucket bucket("dump_bucket", PolicyCollection({ Policy::simpleWithKey(pk1, ALLOW),
+                                                          Policy::simpleWithKey(pk2, DENY) }));
 
     auto outStream = std::make_shared<std::stringstream>();
     StorageSerializer serializer(outStream);
@@ -94,9 +94,9 @@ TEST(serializer_dump, dump_bucket_bucket) {
     PolicyKey pk3 = Helpers::generatePolicyKey("3");
     PolicyBucketId bucketId = Helpers::generateBucketId();
 
-    PolicyBucket bucket = {{ Policy::bucketWithKey(pk1, bucketId),
-                             Policy::simpleWithKey(pk2, DENY),
-                             Policy::bucketWithKey(pk3, bucketId) }};
+    PolicyBucket bucket = {"dump_bucket_bucket", { Policy::bucketWithKey(pk1, bucketId),
+                                                   Policy::simpleWithKey(pk2, DENY),
+                                                   Policy::bucketWithKey(pk3, bucketId) }};
 
     auto outStream = std::make_shared<std::stringstream>();
     StorageSerializer serializer(outStream);

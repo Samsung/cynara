@@ -83,7 +83,7 @@ private:
 TEST(Performance, bucket_filtered_100000) {
     using std::chrono::microseconds;
 
-    PolicyBucket bucket;
+    PolicyBucket bucket("test");
 
     PolicyKeyGenerator generator(100, 10);
 

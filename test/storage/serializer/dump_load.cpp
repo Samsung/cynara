@@ -48,9 +48,9 @@ TEST(dump_load, bucket) {
     PolicyKey pk2 = Helpers::generatePolicyKey("2");
     PolicyKey pk3 = Helpers::generatePolicyKey("3");
     PolicyBucketId bucketId = Helpers::generateBucketId();
-    PolicyBucket bucket = {{ Policy::bucketWithKey(pk1, bucketId),
-                             Policy::simpleWithKey(pk2, PredefinedPolicyType::DENY),
-                             Policy::bucketWithKey(pk3, bucketId) }};
+    PolicyBucket bucket = {"bucket", { Policy::bucketWithKey(pk1, bucketId),
+                                       Policy::simpleWithKey(pk2, PredefinedPolicyType::DENY),
+                                       Policy::bucketWithKey(pk3, bucketId) }};
 
     auto ioStream = std::make_shared<std::stringstream>();
 

@@ -36,20 +36,20 @@ class InMemeoryStorageBackendFixture : public ::testing::Test {
 protected:
     Cynara::Buckets::mapped_type &
     createBucket(const Cynara::PolicyBucketId &bucketId) {
-        auto bucket = Cynara::PolicyBucket();
+        auto bucket = Cynara::PolicyBucket(bucketId);
         return m_buckets.insert({ bucketId, bucket }).first->second;
     }
 
     Cynara::Buckets::mapped_type &
     createBucket(const Cynara::PolicyBucketId &bucketId, const Cynara::PolicyCollection &policies) {
-        auto bucket = Cynara::PolicyBucket(policies);
+        auto bucket = Cynara::PolicyBucket(bucketId, policies);
         return m_buckets.insert({ bucketId, bucket }).first->second;
     }
 
     void addToBucket(Cynara::PolicyBucketId bucketId, const Cynara::PolicyCollection &policies) {
         // TODO: Consider altering PolicyMap directly
         for (const auto &policy : policies) {
-            m_buckets[bucketId].insertPolicy(policy);
+            m_buckets.at(bucketId).insertPolicy(policy);
         }
     }
 

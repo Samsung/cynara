@@ -22,10 +22,12 @@
 
 #include <log/log.h>
 #include <common.h>
-#include <exceptions/PluginNotFoundException.h>
 #include <exceptions/BucketNotExistsException.h>
 #include <exceptions/DefaultBucketDeletionException.h>
 #include <exceptions/DefaultBucketSetNoneException.h>
+#include <exceptions/PluginErrorException.h>
+#include <exceptions/PluginNotFoundException.h>
+
 #include <signal.h>
 
 #include <main/Cynara.h>
@@ -117,8 +119,7 @@ bool Logic::check(RequestContextPtr context UNUSED, const PolicyKey &key,
             //context should be saved in plugin in order to return answer when ready
             return false;
         default:
-            //todo make additional class
-            throw std::runtime_error("Plugin error");
+            throw PluginErrorException(key);
     }
 }
 

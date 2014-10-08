@@ -133,7 +133,7 @@ int cynara_finish(cynara *p_cynara);
  * \param[in] user User running client.
  * \param[in] privilege Privilege that is a subject of a check..
  *
- * \return CYNARA_API_SUCCESS on success (access granted), CYNARA_API_ACCESS_DENIED on access denial
+ * \return CYNARA_API_ACCESS_ALLOWED on access allowed, CYNARA_API_ACCESS_DENIED on access denial
  * or other error code on error.
  */
 int cynara_check(cynara *p_cynara, const char *client, const char *client_session, const char *user,

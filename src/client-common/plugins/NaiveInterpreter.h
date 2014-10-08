@@ -37,7 +37,7 @@ class NaiveInterpreter : public InterpreterInterface {
     }
     int toResult(const PolicyResult &result) noexcept {
         if (result.policyType() == PredefinedPolicyType::ALLOW)
-            return CYNARA_API_SUCCESS;
+            return CYNARA_API_ACCESS_ALLOWED;
         else
             return CYNARA_API_ACCESS_DENIED;
     }

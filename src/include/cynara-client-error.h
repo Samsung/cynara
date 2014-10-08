@@ -40,23 +40,27 @@
 /*! \brief   indicating the result of the one specific API is successful */
 #define CYNARA_API_SUCCESS                0
 
+/*! \brief   indicating that value is not present in cache */
+#define CYNARA_API_CACHE_MISS            -1
+
+/*! \brief   indicating that pending requests reached maximum */
+#define CYNARA_API_MAX_PENDING_REQUESTS  -2
+
 /*! \brief   indicating system is running out of memory state */
-#define CYNARA_API_OUT_OF_MEMORY         -1
+#define CYNARA_API_OUT_OF_MEMORY         -3
 
 /*! \brief   indicating the API's parameter is malformed */
-#define CYNARA_API_INVALID_PARAM         -2
+#define CYNARA_API_INVALID_PARAM         -4
 
-/*! \brief   service not available */
-#define CYNARA_API_SERVICE_NOT_AVAILABLE -3
-
-/*! \brief   indicating that value is not present in cache */
-#define CYNARA_API_CACHE_MISS            -4
+/*! \brief   indicating that service is not available */
+#define CYNARA_API_SERVICE_NOT_AVAILABLE -5
 
 /*! \brief   indicating that provided method is not supported by library */
-#define CYNARA_API_METHOD_NOT_SUPPORTED  -5
+#define CYNARA_API_METHOD_NOT_SUPPORTED  -6
 
 /*! \brief   indicating an unknown error */
-#define CYNARA_API_UNKNOWN_ERROR         -6
+#define CYNARA_API_UNKNOWN_ERROR         -7
+
 /** @}*/
 
-#endif // CYNARA_CLIENT_ERROR_H
+#endif /* CYNARA_CLIENT_ERROR_H */

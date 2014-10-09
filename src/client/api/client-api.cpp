@@ -24,6 +24,7 @@
 
 #include <common.h>
 
+#include <exceptions/TryCatch.h>
 #include <log/log.h>
 
 #include <cynara-client.h>
@@ -47,17 +48,15 @@ int cynara_initialize(cynara **pp_cynara, const cynara_configuration *p_conf UNU
     if (!pp_cynara)
         return CYNARA_API_INVALID_PARAM;
 
-    try {
+    return Cynara::tryCatch([&]() {
         *pp_cynara = new cynara(new Cynara::Logic);
-    } catch (const std::bad_alloc &ex) {
-        return CYNARA_API_OUT_OF_MEMORY;
-    }
 
-    init_log();
+        init_log();
 
-    LOGD("Cynara client initialized");
+        LOGD("Cynara client initialized");
 
-    return CYNARA_API_SUCCESS;
+        return CYNARA_API_SUCCESS;
+    });
 }
 
 CYNARA_API
@@ -77,5 +76,21 @@ int cynara_check(cynara *p_cynara, const char *client, const char *client_sessio
     if(!client || !client_session || !user || !privilege)
         return CYNARA_API_INVALID_PARAM;
 
-    return p_cynara->impl->check(client, client_session, user, privilege);
+    return Cynara::tryCatch([&]() {
+        std::string clientStr;
+        std::string clientSessionStr;
+        std::string userStr;
+        std::string privilegeStr;
+
+        try {
+            clientStr = client;
+            clientSessionStr = client_session;
+            userStr = user;
+            privilegeStr = privilege;
+        } catch (const std::length_error &e) {
+            LOGE(e.what());
+            return CYNARA_API_INVALID_PARAM;
+        }
+        return p_cynara->impl->check(clientStr, clientSessionStr, userStr, privilegeStr);
+    });
 }

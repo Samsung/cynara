@@ -57,7 +57,7 @@ Logic::Logic() {
 }
 
 int Logic::check(const std::string &client, const ClientSession &session, const std::string &user,
-                 const std::string &privilege) noexcept
+                 const std::string &privilege)
 {
     if (!m_socket->isConnected()){
         onDisconnected();
@@ -81,7 +81,7 @@ int Logic::check(const std::string &client, const ClientSession &session, const 
     return m_cache->update(session, key, result);
 }
 
-int Logic::requestResult(const PolicyKey &key, PolicyResult &result) noexcept {
+int Logic::requestResult(const PolicyKey &key, PolicyResult &result) {
     ProtocolFrameSequenceNumber sequenceNumber = generateSequenceNumber();
 
     //Ask cynara service

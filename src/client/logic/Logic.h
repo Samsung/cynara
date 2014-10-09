@@ -40,13 +40,13 @@ private:
     PluginCachePtr m_cache;
 
     void onDisconnected(void);
-    int requestResult(const PolicyKey &key, PolicyResult &result) noexcept;
+    int requestResult(const PolicyKey &key, PolicyResult &result);
 public:
     Logic();
     virtual ~Logic() {};
 
     virtual int check(const std::string &client, const ClientSession &session,
-                      const std::string &user, const std::string &privilege) noexcept;
+                      const std::string &user, const std::string &privilege);
 };
 
 } // namespace Cynara

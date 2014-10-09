@@ -37,7 +37,7 @@ private:
     std::string m_socketPath;
     int m_pollTimeout;
 
-    void close(void) noexcept;
+    void close(void);
 
     //returns true      if socket is ready
     //returns false     in case of timeout

@@ -50,7 +50,7 @@ Socket::~Socket() {
     close();
 }
 
-void Socket::close(void) noexcept {
+void Socket::close(void) {
     if (m_sock > -1)
         ::close(m_sock);
     m_sock = -1;

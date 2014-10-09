@@ -34,9 +34,9 @@ typedef std::shared_ptr<InterpreterInterface> InterpreterInterfacePtr;
 
 class InterpreterInterface {
 public:
-    virtual bool isCacheable(const PolicyResult &result) noexcept = 0;
-    virtual bool isUsable(const PolicyResult &result) noexcept = 0;
-    virtual int toResult(const PolicyResult &result) noexcept = 0;
+    virtual bool isCacheable(const PolicyResult &result) = 0;
+    virtual bool isUsable(const PolicyResult &result) = 0;
+    virtual int toResult(const PolicyResult &result) = 0;
 
     virtual ~InterpreterInterface() {};
 };

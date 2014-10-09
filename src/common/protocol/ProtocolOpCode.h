@@ -44,6 +44,14 @@ enum ProtocolOpCode : uint8_t {
     OpSetPolicies,
     OpCodeResponse,
     OpAdminCheckRequest,
+
+    /** Opcodes 25 - 39 are reserved for future use */
+
+    /** Agent operations */
+    OpAgentRegisterRequest = 40,
+    OpAgentRegisterResponse,
+    OpAgentActionRequest,
+    OpAgentActionResponse,
 };
 
 } /* namespace Cynara */

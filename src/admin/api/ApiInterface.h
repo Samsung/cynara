@@ -42,13 +42,13 @@ public:
     virtual ~ApiInterface() {};
 
     virtual int setPolicies(const std::map<PolicyBucketId, std::vector<Policy>> &insertOrUpdate,
-                    const std::map<PolicyBucketId, std::vector<PolicyKey>> &remove) noexcept = 0;
-    virtual int insertOrUpdateBucket(const PolicyBucketId &bucket, const PolicyResult &policyResult)
-                    noexcept = 0;
-    virtual int removeBucket(const PolicyBucketId &bucket) noexcept = 0;
+                            const std::map<PolicyBucketId, std::vector<PolicyKey>> &remove) = 0;
+    virtual int insertOrUpdateBucket(const PolicyBucketId &bucket,
+                                     const PolicyResult &policyResult) = 0;
+    virtual int removeBucket(const PolicyBucketId &bucket) = 0;
 
     virtual int adminCheck(const PolicyBucketId &startBucket, bool recursive,
-                           const PolicyKey &key, PolicyResult &result) noexcept = 0;
+                           const PolicyKey &key, PolicyResult &result) = 0;
 
 };
 

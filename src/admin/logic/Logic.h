@@ -44,13 +44,13 @@ public:
     virtual ~Logic() {};
 
     virtual int setPolicies(const std::map<PolicyBucketId, std::vector<Policy>> &insertOrUpdate,
-                    const std::map<PolicyBucketId, std::vector<PolicyKey>> &remove) noexcept;
-    virtual int insertOrUpdateBucket(const PolicyBucketId &bucket, const PolicyResult &policyResult)
-                    noexcept;
-    virtual int removeBucket(const PolicyBucketId &bucket) noexcept;
+                            const std::map<PolicyBucketId, std::vector<PolicyKey>> &remove);
+    virtual int insertOrUpdateBucket(const PolicyBucketId &bucket,
+                                     const PolicyResult &policyResult);
+    virtual int removeBucket(const PolicyBucketId &bucket);
 
     virtual int adminCheck(const PolicyBucketId &startBucket, bool recursive,
-                           const PolicyKey &key, PolicyResult &result) noexcept;
+                           const PolicyKey &key, PolicyResult &result);
 };
 
 } // namespace Cynara

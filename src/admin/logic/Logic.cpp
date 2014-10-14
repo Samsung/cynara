@@ -112,21 +112,21 @@ int Logic::askCynaraAndInterpreteCodeResponse(Args... args) {
 }
 
 int Logic::setPolicies(const std::map<PolicyBucketId, std::vector<Policy>> &insertOrUpdate,
-                const std::map<PolicyBucketId, std::vector<PolicyKey>> &remove) noexcept {
+                       const std::map<PolicyBucketId, std::vector<PolicyKey>> &remove) {
     return askCynaraAndInterpreteCodeResponse<SetPoliciesRequest>(insertOrUpdate, remove);
 }
 
 int Logic::insertOrUpdateBucket(const PolicyBucketId &bucket,
-                                const PolicyResult &policyResult) noexcept {
+                                const PolicyResult &policyResult) {
     return askCynaraAndInterpreteCodeResponse<InsertOrUpdateBucketRequest>(bucket, policyResult);
 }
 
-int Logic::removeBucket(const PolicyBucketId &bucket) noexcept {
+int Logic::removeBucket(const PolicyBucketId &bucket) {
     return askCynaraAndInterpreteCodeResponse<RemoveBucketRequest>(bucket);
 }
 
 int Logic::adminCheck(const PolicyBucketId &startBucket, bool recursive, const PolicyKey &key,
-                      PolicyResult &result) noexcept {
+                      PolicyResult &result) {
     try {
         if (!ensureConnection()) {
             LOGE("Cannot connect to cynara. Service not available.");

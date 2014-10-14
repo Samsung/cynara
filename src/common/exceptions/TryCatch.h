@@ -14,14 +14,14 @@
  *  limitations under the License
  */
 /**
- * @file        src/client-common/exceptions/TryCatch.h
+ * @file        src/common/exceptions/TryCatch.h
  * @author      Marcin Niesluchowski <m.niesluchow@samsung.com>
  * @version     1.0
  * @brief       This file contains functions for catching exceptions
  */
 
-#ifndef SRC_CLIENT_COMMON_EXCEPTIONS_TRYCATCH_H_
-#define SRC_CLIENT_COMMON_EXCEPTIONS_TRYCATCH_H_
+#ifndef SRC_COMMON_EXCEPTIONS_TRYCATCH_H_
+#define SRC_COMMON_EXCEPTIONS_TRYCATCH_H_
 
 #include <exception>
 #include <functional>
@@ -54,5 +54,4 @@ int tryCatch(const std::function<int(void)> &func) {
 
 } // namespace Cynara
 
-#endif // SRC_CLIENT_COMMON_EXCEPTIONS_TRYCATCH_H_
-
+#endif // SRC_COMMON_EXCEPTIONS_TRYCATCH_H_

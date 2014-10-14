@@ -37,7 +37,7 @@ public:
         m_whatMessage = "NoMemoryException with message <" + errorMsg + ">";
     }
 
-    virtual ~NoMemoryException() noexcept {};
+    virtual ~NoMemoryException() {};
 
     virtual const std::string message(void) const {
         return m_whatMessage;

@@ -34,19 +34,18 @@ class BucketNotExistsException : public Exception {
 public:
     BucketNotExistsException() = delete;
     BucketNotExistsException(const PolicyBucketId &bucketId) : m_bucketId(bucketId) {}
-    virtual ~BucketNotExistsException() noexcept {};
+    virtual ~BucketNotExistsException() {};
 
     virtual const std::string message(void) const {
         return "BucketNotExistsException";
     }
 
-private:
-    PolicyBucketId m_bucketId;
-
-public:
-    const PolicyBucketId &bucketId() const {
+    const PolicyBucketId &bucketId(void) const {
         return m_bucketId;
     }
+
+private:
+    PolicyBucketId m_bucketId;
 };
 
 } /* namespace Cynara */

@@ -33,11 +33,15 @@ public:
         m_backtrace = Backtrace::getBacktrace();
     }
 
-    virtual ~Exception() noexcept {};
+    virtual ~Exception() {};
 
     virtual const char *what(void) const noexcept {
         if(m_whatMessage.empty()) {
-            m_whatMessage = message() + " From: " + m_backtrace;
+            try {
+                m_whatMessage = message() + " From: " + m_backtrace;
+            }
+            catch (...) {
+            }
         }
         return m_whatMessage.c_str();
     }

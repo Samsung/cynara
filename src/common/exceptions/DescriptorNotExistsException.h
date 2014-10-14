@@ -32,9 +32,6 @@
 namespace Cynara {
 
 class DescriptorNotExistsException : public Exception {
-private:
-    std::string m_whatMsg;
-
 public:
     DescriptorNotExistsException() = delete;
     DescriptorNotExistsException(int desc) {
@@ -43,11 +40,14 @@ public:
         m_whatMsg = stream.str();
     }
 
-    virtual ~DescriptorNotExistsException() noexcept {};
+    virtual ~DescriptorNotExistsException() {};
 
     virtual const std::string message(void) const {
         return m_whatMsg;
     }
+
+private:
+    std::string m_whatMsg;
 };
 
 } // namespace Cynara

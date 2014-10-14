@@ -32,9 +32,6 @@
 namespace Cynara {
 
 class OutOfDataException : public Exception {
-private:
-    std::string m_whatMsg;
-
 public:
     OutOfDataException() = delete;
     OutOfDataException(size_t dataRange, size_t accessTry) {
@@ -44,11 +41,14 @@ public:
         m_whatMsg = stream.str();
     }
 
-    virtual ~OutOfDataException() noexcept {};
+    virtual ~OutOfDataException() {};
 
     virtual const std::string message(void) const {
         return m_whatMsg;
     }
+
+private:
+    std::string m_whatMsg;
 };
 
 } // namespace Cynara

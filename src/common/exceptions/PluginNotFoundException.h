@@ -32,9 +32,6 @@
 namespace Cynara {
 
 class PluginNotFoundException : public Exception {
-private:
-    std::string m_whatMessage;
-
 public:
     PluginNotFoundException() = delete;
     PluginNotFoundException(const PolicyResult &result) {
@@ -45,11 +42,14 @@ public:
         m_whatMessage = stream.str();
     }
 
-    virtual ~PluginNotFoundException() noexcept {};
+    virtual ~PluginNotFoundException() {};
 
     virtual const std::string message(void) const {
         return m_whatMessage;
     }
+
+private:
+    std::string m_whatMessage;
 };
 
 } // namespace Cynara

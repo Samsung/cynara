@@ -32,7 +32,7 @@ namespace Cynara {
 class DefaultBucketSetNoneException : public Exception {
 public:
     DefaultBucketSetNoneException() = default;
-    virtual ~DefaultBucketSetNoneException() noexcept {};
+    virtual ~DefaultBucketSetNoneException() {};
 
     virtual const std::string message(void) const {
         return "DefaultBucketSetNoneException";

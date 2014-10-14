@@ -31,7 +31,7 @@ namespace Cynara {
 class BucketRecordCorruptedException : public DatabaseException {
 public:
     BucketRecordCorruptedException(void) = delete;
-    virtual ~BucketRecordCorruptedException() noexcept {};
+    virtual ~BucketRecordCorruptedException() {};
 
     BucketRecordCorruptedException(const std::string &line)
         : m_lineNumber(0), m_line(line)  {}
@@ -60,6 +60,18 @@ public:
         return m_whatMsg;
     }
 
+    const std::string &filename(void) const {
+        return m_filename;
+    }
+
+    const std::string &line(void) const {
+        return m_line;
+    }
+
+    size_t lineNumber(void) const {
+        return m_lineNumber;
+    }
+
 protected:
     inline std::string slicedLine(void) const {
         return m_line.substr(0, 50) + (m_line.size() > 50 ? "..." : "");
@@ -80,19 +92,6 @@ private:
     std::string m_line;
     std::string m_filename;
     mutable std::string m_whatMsg;
-
-public:
-    const std::string &filename(void) const {
-        return m_filename;
-    }
-
-    const std::string &line(void) const {
-        return m_line;
-    }
-
-    size_t lineNumber(void) const {
-        return m_lineNumber;
-    }
 };
 
 } /* namespace Cynara */

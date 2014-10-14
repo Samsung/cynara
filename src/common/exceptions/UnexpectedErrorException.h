@@ -31,9 +31,6 @@
 namespace Cynara {
 
 class UnexpectedErrorException : public Exception {
-private:
-    std::string m_whatMessage;
-
 public:
     UnexpectedErrorException() = delete;
     UnexpectedErrorException(int errorCode, const char *errorMsg) {
@@ -49,11 +46,14 @@ public:
         m_whatMessage = stream.str();
     }
 
-    virtual ~UnexpectedErrorException() noexcept {};
+    virtual ~UnexpectedErrorException() {};
 
     virtual const std::string message(void) const {
         return m_whatMessage;
     }
+
+private:
+    std::string m_whatMessage;
 };
 
 } // namespace Cynara

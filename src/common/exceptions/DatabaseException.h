@@ -27,7 +27,8 @@
 namespace Cynara {
 
 class DatabaseException : public Exception {
-
+public:
+    virtual ~DatabaseException() {};
 };
 
 } /* namespace Cynara */

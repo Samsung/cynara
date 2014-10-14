@@ -17,7 +17,7 @@
  * @file        src/common/exceptions/NullPointerException.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
- * @brief       Implementation of OutOfDataException
+ * @brief       Implementation of NullPointerException
  */
 
 #ifndef SRC_COMMON_EXCEPTIONS_NULLPOINTEREXCEPTION_H_
@@ -31,9 +31,6 @@
 namespace Cynara {
 
 class NullPointerException : public Exception {
-private:
-    std::string m_whatMsg;
-
 public:
     NullPointerException() = delete;
     NullPointerException(const char *varName) {
@@ -42,11 +39,14 @@ public:
                   + std::string(">");
     }
 
-    virtual ~NullPointerException() noexcept {};
+    virtual ~NullPointerException() {};
 
     virtual const std::string message(void) const {
         return m_whatMsg;
     }
+
+private:
+    std::string m_whatMsg;
 };
 
 } // namespace Cynara

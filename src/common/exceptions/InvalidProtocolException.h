@@ -38,11 +38,6 @@ public:
         Other
     };
 
-private:
-    std::string m_whatMessage;
-    ExceptionType m_exceptionType;
-
-public:
     InvalidProtocolException(ExceptionType exceptionType) :
         m_exceptionType(exceptionType) {
         switch(m_exceptionType) {
@@ -56,18 +51,21 @@ public:
                 m_whatMessage = "Unknown problem";
                 break;
         }
-
     }
 
-    virtual ~InvalidProtocolException() noexcept {};
+    virtual ~InvalidProtocolException() {};
 
     virtual const std::string message(void) const {
         return m_whatMessage;
     }
 
-    ExceptionType exceptionTyp(void) const {
+    ExceptionType exceptionType(void) const {
         return m_exceptionType;
     }
+
+private:
+    std::string m_whatMessage;
+    ExceptionType m_exceptionType;
 };
 
 } // namespace Cynara

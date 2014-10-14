@@ -86,11 +86,11 @@ public:
         return const_policy_iterator(m_policyCollection.end());
     }
 
-    PolicyMap::size_type size(void) const noexcept {
+    PolicyMap::size_type size(void) const {
         return m_policyCollection.size();
     }
 
-    bool empty(void) const noexcept {
+    bool empty(void) const {
         return m_policyCollection.empty();
     }
 

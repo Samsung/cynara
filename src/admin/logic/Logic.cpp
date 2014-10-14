@@ -23,7 +23,7 @@
 #include <cinttypes>
 #include <memory>
 
-#include <cynara-admin-error.h>
+#include <cynara-client-error.h>
 #include <common.h>
 #include <exceptions/Exception.h>
 #include <exceptions/UnexpectedErrorException.h>
@@ -65,7 +65,7 @@ int Logic::askCynaraAndInterpreteCodeResponse(Args... args) {
     try {
         if (!ensureConnection()) {
             LOGE("Cannot connect to cynara. Service not available.");
-            return CYNARA_ADMIN_API_SERVICE_NOT_AVAILABLE;
+            return CYNARA_API_SERVICE_NOT_AVAILABLE;
         }
 
         ProtocolFrameSequenceNumber sequenceNumber = generateSequenceNumber();
@@ -77,37 +77,37 @@ int Logic::askCynaraAndInterpreteCodeResponse(Args... args) {
         ResponsePtr response;
         while (!(response = m_socketClient->askCynaraServer(request))) {
             if (!m_socketClient->connect())
-                return CYNARA_ADMIN_API_SERVICE_NOT_AVAILABLE;
+                return CYNARA_API_SERVICE_NOT_AVAILABLE;
         }
 
         codeResponse = std::dynamic_pointer_cast<CodeResponse>(response);
         if (!codeResponse) {
             LOGC("Critical error. Casting Response to CodeResponse failed.");
-            return CYNARA_ADMIN_API_UNEXPECTED_CLIENT_ERROR;
+            return CYNARA_API_UNKNOWN_ERROR;
         }
 
         LOGD("codeResponse: code [%" PRIu16 "]", codeResponse->m_code);
         switch (codeResponse->m_code) {
             case CodeResponse::Code::OK:
                 LOGI("Policies set successfully.");
-                return CYNARA_ADMIN_API_SUCCESS;
+                return CYNARA_API_SUCCESS;
             case CodeResponse::Code::NOT_ALLOWED:
                 LOGE("Cynara service answered: Operation not allowed.");
-                return CYNARA_ADMIN_API_OPERATION_NOT_ALLOWED;
+                return CYNARA_API_OPERATION_NOT_ALLOWED;
             case CodeResponse::Code::NO_BUCKET:
                 LOGE("Trying to use unexisting bucket.");
-                return CYNARA_ADMIN_API_BUCKET_NOT_FOUND;
+                return CYNARA_API_BUCKET_NOT_FOUND;
             default:
                 LOGE("Unexpected response code from server: [%d]",
                      static_cast<int>(codeResponse->m_code));
-                return CYNARA_ADMIN_API_UNEXPECTED_CLIENT_ERROR;
+                return CYNARA_API_UNKNOWN_ERROR;
         }
     } catch (const std::bad_alloc &ex) {
         LOGE("Cynara admin client out of memory.");
-        return CYNARA_ADMIN_API_OUT_OF_MEMORY;
+        return CYNARA_API_OUT_OF_MEMORY;
     } catch (const std::exception &ex) {
         LOGE("Unexpected client error: <%s>", ex.what());
-        return CYNARA_ADMIN_API_UNEXPECTED_CLIENT_ERROR;
+        return CYNARA_API_UNKNOWN_ERROR;
     }
 }
 
@@ -130,7 +130,7 @@ int Logic::adminCheck(const PolicyBucketId &startBucket, bool recursive, const P
     try {
         if (!ensureConnection()) {
             LOGE("Cannot connect to cynara. Service not available.");
-            return CYNARA_ADMIN_API_SERVICE_NOT_AVAILABLE;
+            return CYNARA_API_SERVICE_NOT_AVAILABLE;
         }
 
         ProtocolFrameSequenceNumber sequenceNumber = generateSequenceNumber();
@@ -143,13 +143,13 @@ int Logic::adminCheck(const PolicyBucketId &startBucket, bool recursive, const P
         ResponsePtr response;
         while (!(response = m_socketClient->askCynaraServer(request))) {
             if (!m_socketClient->connect())
-                return CYNARA_ADMIN_API_SERVICE_NOT_AVAILABLE;
+                return CYNARA_API_SERVICE_NOT_AVAILABLE;
         }
 
         checkResponse = std::dynamic_pointer_cast<CheckResponse>(response);
         if (!checkResponse) {
             LOGC("Casting Response to CheckResponse failed.");
-            return CYNARA_ADMIN_API_UNEXPECTED_CLIENT_ERROR;
+            return CYNARA_API_UNKNOWN_ERROR;
         }
 
         LOGD("checkResponse: policyType [%" PRIu16 "], metadata <%s>",
@@ -157,16 +157,16 @@ int Logic::adminCheck(const PolicyBucketId &startBucket, bool recursive, const P
              checkResponse->m_resultRef.metadata().c_str());
 
         result = checkResponse->m_resultRef;
-        return CYNARA_ADMIN_API_SUCCESS;
+        return CYNARA_API_SUCCESS;
     } catch (const UnexpectedErrorException &ex) {
         LOGE(ex.what());
-        return CYNARA_ADMIN_API_UNEXPECTED_CLIENT_ERROR;
+        return CYNARA_API_UNKNOWN_ERROR;
     } catch (const std::bad_alloc &ex) {
         LOGE("Cynara admin client out of memory.");
-        return CYNARA_ADMIN_API_OUT_OF_MEMORY;
+        return CYNARA_API_OUT_OF_MEMORY;
     } catch (const std::exception &ex) {
         LOGE("Unexpected client error: <%s>", ex.what());
-        return CYNARA_ADMIN_API_UNEXPECTED_CLIENT_ERROR;
+        return CYNARA_API_UNKNOWN_ERROR;
     }
 }
 

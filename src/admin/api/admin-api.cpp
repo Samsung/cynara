@@ -37,7 +37,7 @@
 #include <types/PolicyType.h>
 
 #include <cynara-admin.h>
-#include <cynara-admin-error.h>
+#include <cynara-client-error.h>
 
 #include <api/ApiInterface.h>
 #include <logic/Logic.h>
@@ -55,35 +55,35 @@ struct cynara_admin {
 CYNARA_API
 int cynara_admin_initialize(struct cynara_admin **pp_cynara_admin) {
     if (!pp_cynara_admin)
-        return CYNARA_ADMIN_API_INVALID_PARAM;
+        return CYNARA_API_INVALID_PARAM;
 
     try {
         *pp_cynara_admin = new cynara_admin(new Cynara::Logic);
     } catch (const std::bad_alloc &ex) {
-        return CYNARA_ADMIN_API_OUT_OF_MEMORY;
+        return CYNARA_API_OUT_OF_MEMORY;
     }
 
     init_log();
 
     LOGD("Cynara admin initialized");
 
-    return CYNARA_ADMIN_API_SUCCESS;
+    return CYNARA_API_SUCCESS;
 }
 
 CYNARA_API
 int cynara_admin_finish(struct cynara_admin *p_cynara_admin) {
     delete p_cynara_admin;
 
-    return CYNARA_ADMIN_API_SUCCESS;
+    return CYNARA_API_SUCCESS;
 }
 
 CYNARA_API
 int cynara_admin_set_policies(struct cynara_admin *p_cynara_admin,
                               const struct cynara_admin_policy *const *policies) {
     if (!p_cynara_admin || !p_cynara_admin->impl)
-        return CYNARA_ADMIN_API_INVALID_PARAM;
+        return CYNARA_API_INVALID_PARAM;
     if (!policies)
-        return CYNARA_ADMIN_API_INVALID_PARAM;
+        return CYNARA_API_INVALID_PARAM;
 
     std::map<Cynara::PolicyBucketId, std::vector<Cynara::Policy>> insertOrUpdate;
     std::map<Cynara::PolicyBucketId, std::vector<Cynara::PolicyKey>> remove;
@@ -106,7 +106,7 @@ int cynara_admin_set_policies(struct cynara_admin *p_cynara_admin,
         for (auto i = policies; *i; i++) {
             const cynara_admin_policy *policy = *i;
             if(!policy->bucket || !policy->client || !policy->user || !policy->privilege)
-                return CYNARA_ADMIN_API_INVALID_PARAM;
+                return CYNARA_API_INVALID_PARAM;
 
             switch (policy->result) {
                 case CYNARA_ADMIN_DELETE:
@@ -122,7 +122,7 @@ int cynara_admin_set_policies(struct cynara_admin *p_cynara_admin,
                     break;
                 case CYNARA_ADMIN_BUCKET:
                     if (!policy->result_extra)
-                        return CYNARA_ADMIN_API_INVALID_PARAM;
+                        return CYNARA_API_INVALID_PARAM;
                     insertOrUpdate[policy->bucket].push_back(Cynara::Policy(key(policy),
                                                         Cynara::PolicyResult(
                                                         Cynara::PredefinedPolicyType::BUCKET,
@@ -130,11 +130,11 @@ int cynara_admin_set_policies(struct cynara_admin *p_cynara_admin,
                     break;
                 case CYNARA_ADMIN_NONE:
                 default:
-                    return CYNARA_ADMIN_API_INVALID_PARAM;
+                    return CYNARA_API_INVALID_PARAM;
             }
         }
     } catch (const std::bad_alloc &ex) {
-        return CYNARA_ADMIN_API_OUT_OF_MEMORY;
+        return CYNARA_API_OUT_OF_MEMORY;
     }
 
     return p_cynara_admin->impl->setPolicies(insertOrUpdate, remove);
@@ -144,15 +144,15 @@ CYNARA_API
 int cynara_admin_set_bucket(struct cynara_admin *p_cynara_admin, const char *bucket,
                             int operation, const char *extra) {
     if (!p_cynara_admin || !p_cynara_admin->impl)
-        return CYNARA_ADMIN_API_INVALID_PARAM;
+        return CYNARA_API_INVALID_PARAM;
     if (!bucket)
-        return CYNARA_ADMIN_API_INVALID_PARAM;
+        return CYNARA_API_INVALID_PARAM;
 
     std::string extraStr;
     try {
          extraStr = extra ? extra : "";
     } catch (const std::bad_alloc &ex) {
-        return CYNARA_ADMIN_API_OUT_OF_MEMORY;
+        return CYNARA_API_OUT_OF_MEMORY;
     }
     switch (operation) {
         case CYNARA_ADMIN_DELETE:
@@ -168,10 +168,10 @@ int cynara_admin_set_bucket(struct cynara_admin *p_cynara_admin, const char *buc
                 return p_cynara_admin->impl->insertOrUpdateBucket(bucket,
                     Cynara::PolicyResult(Cynara::PredefinedPolicyType::NONE));
             }
-            return CYNARA_ADMIN_API_OPERATION_NOT_ALLOWED;
+            return CYNARA_API_OPERATION_NOT_ALLOWED;
         case CYNARA_ADMIN_BUCKET:
         default:
-            return CYNARA_ADMIN_API_INVALID_PARAM;
+            return CYNARA_API_INVALID_PARAM;
     }
 }
 
@@ -181,13 +181,13 @@ int cynara_admin_check(struct cynara_admin *p_cynara_admin,
                        const char *client, const char *user, const char *privilege,
                        int *result, char **result_extra) {
     if (!p_cynara_admin || !p_cynara_admin->impl)
-        return CYNARA_ADMIN_API_INVALID_PARAM;
+        return CYNARA_API_INVALID_PARAM;
     if (!start_bucket)
-        return CYNARA_ADMIN_API_INVALID_PARAM;
+        return CYNARA_API_INVALID_PARAM;
     if (!client || !user || !privilege)
-        return CYNARA_ADMIN_API_INVALID_PARAM;
+        return CYNARA_API_INVALID_PARAM;
     if (!result || !result_extra)
-        return CYNARA_ADMIN_API_INVALID_PARAM;
+        return CYNARA_API_INVALID_PARAM;
 
     Cynara::PolicyResult policyResult;
 
@@ -195,22 +195,22 @@ int cynara_admin_check(struct cynara_admin *p_cynara_admin,
         int ret = p_cynara_admin->impl->adminCheck(start_bucket, recursive != 0,
                                                    Cynara::PolicyKey(client, user, privilege),
                                                    policyResult);
-        if (ret != CYNARA_ADMIN_API_SUCCESS)
+        if (ret != CYNARA_API_SUCCESS)
             return ret;
     } catch (const std::bad_alloc &ex) {
-        return CYNARA_ADMIN_API_OUT_OF_MEMORY;
+        return CYNARA_API_OUT_OF_MEMORY;
     } catch (const std::length_error &ex) {
-        return CYNARA_ADMIN_API_INVALID_PARAM;
+        return CYNARA_API_INVALID_PARAM;
     }
 
     char *str = nullptr;
     if (!policyResult.metadata().empty()) {
         str = strdup(policyResult.metadata().c_str());
         if (!str)
-            return CYNARA_ADMIN_API_OUT_OF_MEMORY;
+            return CYNARA_API_OUT_OF_MEMORY;
     }
     *result = static_cast<int>(policyResult.policyType());
     *result_extra = str;
 
-    return CYNARA_ADMIN_API_SUCCESS;
+    return CYNARA_API_SUCCESS;
 }

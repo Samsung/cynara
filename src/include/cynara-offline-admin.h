@@ -25,8 +25,8 @@
 #ifndef CYNARA_OFFLINE_ADMIN_H
 #define CYNARA_OFFLINE_ADMIN_H
 
-#include <cynara-admin-error.h>
 #include <cynara-admin-types.h>
+#include <cynara-client-error.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -66,7 +66,7 @@ struct cynara_offline_admin;
  * \param[out] pp_cynara_offline_admin address of pointer for created cynara_offline_admin
  *             structure.
  *
- * \return CYNARA_ADMIN_API_SUCCESS on success, or negative error code otherwise.
+ * \return CYNARA_API_SUCCESS on success, or negative error code otherwise.
  *
  * \brief Initialize cynara-offline-admin library.
  */
@@ -96,7 +96,7 @@ int cynara_offline_admin_initialize(struct cynara_offline_admin **pp_cynara_offl
  * \param[in] p_cynara_offline_admin cynara_offline_admin structure created
  *            in cynara_offline_admin_initialize.
  *
- * \return CYNARA_ADMIN_API_SUCCESS on success, or negative error code otherwise.
+ * \return CYNARA_API_SUCCESS on success, or negative error code otherwise.
  *
  * \brief Release cynara-offline-admin library.
  */
@@ -146,7 +146,7 @@ int cynara_offline_admin_finish(struct cynara_offline_admin *p_cynara_offline_ad
  * \param[in] p_cynara_offline_admin cynara offline admin structure.
  * \param[in] policies NULL terminated array of pointers to policy structures.
  *
- * \return CYNARA_ADMIN_API_SUCCESS on success, or negative error code otherwise.
+ * \return CYNARA_API_SUCCESS on success, or negative error code otherwise.
  *
  * \brief Insert, update or delete policies in cynara database.
  */
@@ -193,7 +193,7 @@ int cynara_offline_admin_set_policies(struct cynara_offline_admin *p_cynara_offl
  * \param[in] operation type of operation (default policy or CYNARA_ADMIN_DELETE)
  * \param[in] extra additional data for default policy (will be available with cynara extensions)
  *
- * \return CYNARA_ADMIN_API_SUCCESS on success, or negative error code otherwise.
+ * \return CYNARA_API_SUCCESS on success, or negative error code otherwise.
  *
  * \brief Add, remove or update buckets in cynara database.
  */
@@ -240,7 +240,7 @@ int cynara_offline_admin_set_bucket(struct cynara_offline_admin *p_cynara_offlin
  * \param[out] result placeholder for matched policy type
  * \param[out] result_extra placeholder for matched policy additional data (see Important Notes!)
  *
- * \return CYNARA_ADMIN_API_SUCCESS on success, or error code otherwise.
+ * \return CYNARA_API_SUCCESS on success, or error code otherwise.
  *
  * \brief Raw check client, user access for given privilege without using plugins extensions.
  */

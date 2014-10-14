@@ -106,6 +106,7 @@ admin client library for setting, listing and removing policies
 %package -n libcynara-admin-devel
 Summary:    Cynara - admin client library (devel)
 Requires:   libcynara-admin = %{version}-%{release}
+Requires:   libcynara-commons-devel = %{version}-%{release}
 
 %description -n libcynara-admin-devel
 admin client library (devel) for setting, listing and removing policies
@@ -440,7 +441,6 @@ fi
 
 %files -n libcynara-admin-devel
 %{_includedir}/cynara/cynara-admin.h
-%{_includedir}/cynara/cynara-admin-error.h
 %{_includedir}/cynara/cynara-admin-types.h
 %{_libdir}/libcynara-admin.so
 %{_libdir}/pkgconfig/cynara-admin.pc

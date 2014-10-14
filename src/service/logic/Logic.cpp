@@ -20,10 +20,11 @@
  * @brief       This file implements main class of logic layer in cynara service
  */
 
-#include <signal.h>
+#include <csignal>
+#include <memory>
 
-#include <log/log.h>
 #include <common.h>
+#include <log/log.h>
 #include <exceptions/BucketNotExistsException.h>
 #include <exceptions/DatabaseException.h>
 #include <exceptions/DefaultBucketDeletionException.h>
@@ -32,11 +33,8 @@
 #include <exceptions/PluginErrorException.h>
 #include <exceptions/PluginNotFoundException.h>
 #include <exceptions/UnexpectedErrorException.h>
-
-#include <cynara-plugin.h>
-
-#include <main/Cynara.h>
 #include <request/AdminCheckRequest.h>
+#include <request/AgentRegisterRequest.h>
 #include <request/CancelRequest.h>
 #include <request/CheckRequest.h>
 #include <request/InsertOrUpdateBucketRequest.h>
@@ -44,11 +42,16 @@
 #include <request/RequestContext.h>
 #include <request/SetPoliciesRequest.h>
 #include <request/SignalRequest.h>
+#include <response/AgentRegisterResponse.h>
 #include <response/CancelResponse.h>
 #include <response/CheckResponse.h>
 #include <response/CodeResponse.h>
+
+#include <main/Cynara.h>
 #include <sockets/SocketManager.h>
 #include <storage/Storage.h>
+
+#include <cynara-plugin.h>
 
 #include "Logic.h"
 
@@ -76,6 +79,12 @@ void Logic::execute(RequestContextPtr context, AdminCheckRequestPtr request) {
 
     context->returnResponse(context, std::make_shared<CheckResponse>(result,
                             request->sequenceNumber()));
+}
+
+void Logic::execute(RequestContextPtr context, AgentRegisterRequestPtr request) {
+    // MOCKUP
+    context->returnResponse(context, std::make_shared<AgentRegisterResponse>(
+                            AgentRegisterResponse::DONE, request->sequenceNumber()));
 }
 
 void Logic::execute(RequestContextPtr context, CancelRequestPtr request) {

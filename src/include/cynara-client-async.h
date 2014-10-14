@@ -86,7 +86,7 @@ typedef enum {
  *    - probably cynara is unoperational (CYNARA_CALL_CAUSE_SERVICE_NOT_AVAILABLE)
  *
  * \param[in] check_id Number identifying check request. Number is generated in
- *            cynara_async_cancel_request() and returned to user. It can be used to match
+ *            cynara_async_create_request() and returned to user. It can be used to match
  *            response with sent request.
  *            Number is valid since cynara_async_create_request() call till callback call.
  *            After that the number can be reused by cynara to run new request.

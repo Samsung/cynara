@@ -30,7 +30,7 @@
 #include <exceptions/NoMemoryException.h>
 #include <log/log.h>
 
-#include <cynara-client-error.h>
+#include <cynara-error.h>
 
 namespace Cynara {
 

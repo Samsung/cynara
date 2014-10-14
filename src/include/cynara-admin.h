@@ -24,7 +24,7 @@
 #define CYNARA_ADMIN_H
 
 #include <cynara-admin-types.h>
-#include <cynara-client-error.h>
+#include <cynara-error.h>
 
 #ifdef __cplusplus
 extern "C" {

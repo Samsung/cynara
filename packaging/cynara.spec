@@ -431,7 +431,7 @@ fi
 %{_libdir}/libcynara-client-commons.so.*
 
 %files -n libcynara-client-commons-devel
-%{_includedir}/cynara/cynara-client-error.h
+%{_includedir}/cynara/cynara-error.h
 %{_libdir}/libcynara-client-commons.so
 
 %files -n libcynara-admin

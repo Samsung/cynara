@@ -37,7 +37,7 @@
 #include <types/PolicyType.h>
 
 #include <cynara-admin.h>
-#include <cynara-client-error.h>
+#include <cynara-error.h>
 
 #include <api/ApiInterface.h>
 #include <logic/Logic.h>

@@ -27,7 +27,7 @@
 
 #include <stdint.h>
 
-#include <cynara-client-error.h>
+#include <cynara-error.h>
 
 #ifdef __cplusplus
 extern "C" {

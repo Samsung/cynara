@@ -24,7 +24,7 @@
 
 #include <cache/CapacityCache.h>
 #include <common.h>
-#include <cynara-client-error.h>
+#include <cynara-error.h>
 #include <exceptions/Exception.h>
 #include <exceptions/UnexpectedErrorException.h>
 #include <log/log.h>

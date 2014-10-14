@@ -29,9 +29,9 @@
 
 #include <creds-socket-inner.h>
 
-#include <cynara-client-error.h>
 #include <cynara-creds-commons.h>
 #include <cynara-creds-socket.h>
+#include <cynara-error.h>
 
 CYNARA_API
 int cynara_creds_socket_get_client(int socket_fd, enum cynara_client_creds method, char **client) {

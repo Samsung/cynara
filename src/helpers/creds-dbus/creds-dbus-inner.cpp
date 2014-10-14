@@ -26,7 +26,7 @@
 #include <string>
 #include <string.h>
 
-#include <cynara-client-error.h>
+#include <cynara-error.h>
 
 #include "creds-dbus-inner.h"
 

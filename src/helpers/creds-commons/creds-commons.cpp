@@ -24,8 +24,8 @@
 
 #include <attributes/attributes.h>
 
-#include <cynara-client-error.h>
 #include <cynara-creds-commons.h>
+#include <cynara-error.h>
 
 CYNARA_API
 int cynara_creds_get_default_client_method(enum cynara_client_creds *method) {

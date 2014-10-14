@@ -26,7 +26,7 @@
 #ifndef CYNARA_CREDS_COMMONS_H
 #define CYNARA_CREDS_COMMONS_H
 
-#include <cynara-client-error.h>
+#include <cynara-error.h>
 
 enum cynara_client_creds {
     CLIENT_METHOD_SMACK,

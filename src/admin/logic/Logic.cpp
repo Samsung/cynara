@@ -23,7 +23,7 @@
 #include <cinttypes>
 #include <memory>
 
-#include <cynara-client-error.h>
+#include <cynara-error.h>
 #include <common.h>
 #include <exceptions/Exception.h>
 #include <exceptions/UnexpectedErrorException.h>

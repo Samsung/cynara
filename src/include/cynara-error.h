@@ -14,15 +14,15 @@
  *  limitations under the License
  */
 /**
- * @file        src/include/cynara-client-error.h
+ * @file        src/include/cynara-error.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @author      Zofia Abramowska <z.abramowska@samsung.com>
  * @version     1.0
- * @brief       This file contains error codes returned by client APIs of Cynara.
+ * @brief       This file contains error codes returned by APIs of Cynara.
  */
 
-#ifndef CYNARA_CLIENT_ERROR_H
-#define CYNARA_CLIENT_ERROR_H
+#ifndef CYNARA_ERROR_H
+#define CYNARA_ERROR_H
 
 /**
  * \name Return Codes
@@ -69,4 +69,4 @@
 
 /** @}*/
 
-#endif /* CYNARA_CLIENT_ERROR_H */
+#endif /* CYNARA_ERROR_H */

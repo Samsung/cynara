@@ -30,7 +30,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 
-#include <cynara-client-error.h>
+#include <cynara-error.h>
 
 #include "creds-socket-inner.h"
 

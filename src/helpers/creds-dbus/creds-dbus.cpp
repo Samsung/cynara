@@ -27,9 +27,9 @@
 
 #include <creds-dbus-inner.h>
 
-#include <cynara-client-error.h>
 #include <cynara-creds-commons.h>
 #include <cynara-creds-dbus.h>
+#include <cynara-error.h>
 
 CYNARA_API
 int cynara_creds_dbus_get_client(DBusConnection *connection, const char *uniqueName,

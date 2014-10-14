@@ -122,8 +122,7 @@ void InMemoryStorageBackend::insertPolicy(const PolicyBucketId &bucketId, Policy
 
 void InMemoryStorageBackend::createBucket(const PolicyBucketId &bucketId,
                                           const PolicyResult &defaultPolicy) {
-    PolicyBucket newBucket;
-    newBucket.setDefaultPolicy(defaultPolicy);
+    PolicyBucket newBucket(bucketId, defaultPolicy);
     buckets().insert({ bucketId, newBucket });
 }
 

@@ -53,6 +53,14 @@ PluginManager::PluginManager(const std::string &pluginDir) : m_dir(pluginDir) {
     loadPlugins();
 }
 
+PluginManager::~PluginManager(void) {
+    // We have to be sure, that external objects will be destroyed
+    // before handles to libraries are closed.
+    for (auto &plugin : m_plugins) {
+        plugin.second.reset();
+    }
+}
+
 ExternalPluginPtr PluginManager::getPlugin(PolicyType pType) {
     return m_plugins[pType];
 }
@@ -90,7 +98,7 @@ void PluginManager::openPlugin(const std::string &path) {
 
     //Flush any previous errors
     dlerror();
-    createPlugin func = reinterpret_cast<createPlugin>(dlsym(handle, "create"));
+    create_t creator = reinterpret_cast<create_t>(dlsym(handle, "create"));
 
     char *error;
     if ((error = dlerror()) != NULL) {
@@ -98,7 +106,13 @@ void PluginManager::openPlugin(const std::string &path) {
         return;
     }
 
-    ExternalPluginPtr pluginPtr(func());
+    destroy_t destroyer = reinterpret_cast<destroy_t>(dlsym(handle, "destroy"));
+    if ((error = dlerror()) != NULL) {
+        LOGE("Couldn't resolve symbol <destroy> from lib <%s> : <%s>", path.c_str(), error);
+        return;
+    }
+
+    ExternalPluginPtr pluginPtr(creator(), destroyer);
 
     if (!pluginPtr) {
         LOGE("Couldn't create plugin for <%s>", path.c_str());

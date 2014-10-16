@@ -34,11 +34,20 @@ namespace Cynara {
 
 class ExternalPluginInterface;
 
-extern "C" {
-typedef ExternalPluginInterface *(*createPlugin)(void);
-}
+/**
+ * Type of function used for creating objects implementing ExternalPluginInterface.
+ * Inside plugin library function with create_t signature should have symbol
+ * named "create".
+ */
+typedef ExternalPluginInterface *(*create_t)(void);
+/**
+ * Type of function used for destroying objects created with "create".
+ * Inside plugin library function with destroy_t signature should have symbol
+ * named "destroy".
+ */
+typedef void (*destroy_t)(ExternalPluginInterface *);
 
-//These typedefs will be defined in external headers
+// These typedefs will be defined in external headers
 typedef std::string PluginData;
 typedef std::string AgentType;
 typedef std::vector<PolicyType> PolicyTypes;

@@ -23,6 +23,7 @@
 #ifndef SRC_SERVICE_PLUGIN_PLUGINMANAGER_H_
 #define SRC_SERVICE_PLUGIN_PLUGINMANAGER_H_
 
+#include <functional>
 #include <list>
 #include <map>
 #include <memory>
@@ -37,7 +38,7 @@ class PluginManager {
 public:
     PluginManager(const std::string &pluginDir);
     ExternalPluginPtr getPlugin(PolicyType pType);
-    ~PluginManager() {}
+    ~PluginManager();
 
 private:
     typedef std::unique_ptr<void, std::function<void (void*)>> PluginLibPtr;

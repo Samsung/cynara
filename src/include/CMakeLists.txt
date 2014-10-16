@@ -21,6 +21,7 @@ INSTALL(FILES
     ${CYNARA_PATH}/include/cynara-admin-types.h
     ${CYNARA_PATH}/include/cynara-client.h
     ${CYNARA_PATH}/include/cynara-client-async.h
+    ${CYNARA_PATH}/include/cynara-client-plugin.h
     ${CYNARA_PATH}/include/cynara-creds-commons.h
     ${CYNARA_PATH}/include/cynara-creds-dbus.h
     ${CYNARA_PATH}/include/cynara-creds-socket.h

@@ -91,3 +91,7 @@ INSTALL(FILES
     ${COMMON_PATH}/types/PolicyType.h
     DESTINATION ${INCLUDE_INSTALL_DIR}/cynara/types
     )
+INSTALL(FILES
+    ${COMMON_PATH}/plugin/ExternalPluginInterface.h
+    DESTINATION ${INCLUDE_INSTALL_DIR}/cynara/plugin
+    )

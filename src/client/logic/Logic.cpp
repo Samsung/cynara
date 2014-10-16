@@ -52,9 +52,9 @@ Logic::Logic() {
                                               std::make_shared<ProtocolClient>());
     m_cache = std::make_shared<CapacityCache>();
     auto naiveInterpreter = std::make_shared<NaiveInterpreter>();
-    m_cache->registerPlugin(PredefinedPolicyType::ALLOW, naiveInterpreter);
-    m_cache->registerPlugin(PredefinedPolicyType::DENY, naiveInterpreter);
-    m_cache->registerPlugin(PredefinedPolicyType::BUCKET, naiveInterpreter);
+    for (auto &type : naiveInterpreter->getSupportedPolicyTypes()) {
+        m_cache->registerPlugin(type, naiveInterpreter);
+    }
 }
 
 int Logic::check(const std::string &client, const ClientSession &session, const std::string &user,

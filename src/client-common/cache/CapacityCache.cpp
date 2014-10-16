@@ -55,7 +55,7 @@ int CapacityCache::get(const ClientSession &session, const PolicyKey &key) {
         }
 
         //Is it still usable?
-        InterpreterInterfacePtr plugin = pluginIt->second;
+        ClientPluginInterfacePtr plugin = pluginIt->second;
         auto &prevSession = std::get<1>(cachedValue);
         auto usageIt = std::get<2>(cachedValue);
         bool updateSession = false;

@@ -119,7 +119,7 @@ void PluginManager::openPlugin(const std::string &path) {
         return;
     }
 
-    PolicyTypes policies = pluginPtr->getSupportedPolicyTypes();
+    auto policies = pluginPtr->getSupportedPolicyTypes();
     if (policies.empty()) {
         LOGE("Plugin <%s> does not support any type!", path.c_str());
         return;

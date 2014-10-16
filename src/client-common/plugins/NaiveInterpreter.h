@@ -28,7 +28,8 @@
 
 namespace Cynara {
 
-class NaiveInterpreter : public InterpreterInterface {
+class NaiveInterpreter : public ClientPluginInterface {
+public:
     bool isUsable(const ClientSession &session UNUSED, const ClientSession &prevSession UNUSED,
                   bool &updateSession UNUSED, PolicyResult &result UNUSED) {
         return true;
@@ -43,6 +44,12 @@ class NaiveInterpreter : public InterpreterInterface {
         else
             return CYNARA_API_ACCESS_DENIED;
     }
+
+    const std::vector<PolicyType> &getSupportedPolicyTypes(void) {
+        return s_supportedTypes;
+    }
+private:
+    static const std::vector<PolicyType> s_supportedTypes;
 };
 
 } // namespace Cynara

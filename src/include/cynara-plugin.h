@@ -17,7 +17,8 @@
  * @file        src/include/cynara-plugin.h
  * @author      Zofia Abramowska <z.abramowska@samsung.com>
  * @version     1.0
- * @brief       This file defines cynara side external plugin interface
+ * @brief       This file defines cynara service side  of external plugin interface -
+ *              ServicePluginInterface
  */
 
 #ifndef CYNARA_PLUGIN_H_
@@ -27,30 +28,18 @@
 #include <string>
 #include <vector>
 
+#include <plugin/ExternalPluginInterface.h>
 #include <types/PolicyResult.h>
 #include <types/PolicyType.h>
 
 namespace Cynara {
 
-class ExternalPluginInterface;
-
-/**
- * Type of function used for creating objects implementing ExternalPluginInterface.
- * Inside plugin library function with create_t signature should have symbol
- * named "create".
- */
-typedef ExternalPluginInterface *(*create_t)(void);
-/**
- * Type of function used for destroying objects created with "create".
- * Inside plugin library function with destroy_t signature should have symbol
- * named "destroy".
- */
-typedef void (*destroy_t)(ExternalPluginInterface *);
-
-// These typedefs will be defined in external headers
+//These typedefs will be defined in external headers
 typedef std::string PluginData;
 typedef std::string AgentType;
-typedef std::vector<PolicyType> PolicyTypes;
+
+class ServicePluginInterface;
+typedef std::shared_ptr<ServicePluginInterface> ServicePluginInterfacePtr;
 
 /**
  * A class defining external plugins interface.
@@ -58,9 +47,13 @@ typedef std::vector<PolicyType> PolicyTypes;
  * response through check instantly or require communication
  * with given type of agent. Agent must be registered through
  * cynara-agent API.
+ *
+ * Plugin implementing ServicePluginInterface must implement ExternalPluginInterface.
+ * Creation/destruction functions with signatures compatible to Cynara::create_t and
+ * Cynara::destroy_t must be provided as factories of ServicePluginInterface.
  */
 
-class ExternalPluginInterface {
+class ServicePluginInterface : public ExternalPluginInterface {
 public:
     /**
      * Enum indicating status of calling plugin method.
@@ -72,11 +65,6 @@ public:
                                     < communication with agent is required */
         ERROR                   /** < either check() or update() fails */
     };
-
-    /**
-     * Policy type supported by plugin.
-     */
-    virtual PolicyTypes getSupportedPolicyTypes(void) = 0;
 
     /**
      * Asks plugin, what kind of permission does client, user and privilege has.
@@ -107,7 +95,7 @@ public:
                                 const std::string &privilege, const PluginData &agentData,
                                 PolicyResult &result) noexcept = 0;
 
-    virtual ~ExternalPluginInterface() {};
+    virtual ~ServicePluginInterface() {};
 
 };
 

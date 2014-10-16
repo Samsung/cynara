@@ -28,6 +28,7 @@
 #include <vector>
 
 #include <common.h>
+#include <exceptions/TryCatch.h>
 #include <log/log.h>
 #include <types/Policy.h>
 #include <types/PolicyBucket.h>
@@ -57,17 +58,15 @@ int cynara_admin_initialize(struct cynara_admin **pp_cynara_admin) {
     if (!pp_cynara_admin)
         return CYNARA_API_INVALID_PARAM;
 
-    try {
+    return Cynara::tryCatch([&]() {
         *pp_cynara_admin = new cynara_admin(new Cynara::Logic);
-    } catch (const std::bad_alloc &ex) {
-        return CYNARA_API_OUT_OF_MEMORY;
-    }
 
-    init_log();
+        init_log();
 
-    LOGD("Cynara admin initialized");
+        LOGD("Cynara admin initialized");
 
-    return CYNARA_API_SUCCESS;
+        return CYNARA_API_SUCCESS;
+    });
 }
 
 CYNARA_API
@@ -85,24 +84,24 @@ int cynara_admin_set_policies(struct cynara_admin *p_cynara_admin,
     if (!policies)
         return CYNARA_API_INVALID_PARAM;
 
-    std::map<Cynara::PolicyBucketId, std::vector<Cynara::Policy>> insertOrUpdate;
-    std::map<Cynara::PolicyBucketId, std::vector<Cynara::PolicyKey>> remove;
+    return Cynara::tryCatch([&]() {
+        std::map<Cynara::PolicyBucketId, std::vector<Cynara::Policy>> insertOrUpdate;
+        std::map<Cynara::PolicyBucketId, std::vector<Cynara::PolicyKey>> remove;
 
-    auto key = ([](const cynara_admin_policy *policy)->Cynara::PolicyKey {
-        std::string wildcard(CYNARA_ADMIN_WILDCARD);
+        auto key = ([](const cynara_admin_policy *policy)->Cynara::PolicyKey {
+            std::string wildcard(CYNARA_ADMIN_WILDCARD);
 
-        auto feature = ([&wildcard] (const char *str)->Cynara::PolicyKeyFeature {
-            if (wildcard.compare(str))
-                return Cynara::PolicyKeyFeature::create(str);
-            else
-                return Cynara::PolicyKeyFeature::createWildcard();
+            auto feature = ([&wildcard] (const char *str)->Cynara::PolicyKeyFeature {
+                if (wildcard.compare(str))
+                    return Cynara::PolicyKeyFeature::create(str);
+                else
+                    return Cynara::PolicyKeyFeature::createWildcard();
+            });
+
+            return Cynara::PolicyKey(feature(policy->client), feature(policy->user),
+                                     feature(policy->privilege));
         });
 
-        return Cynara::PolicyKey(feature(policy->client), feature(policy->user),
-                                 feature(policy->privilege));
-    });
-
-    try {
         for (auto i = policies; *i; i++) {
             const cynara_admin_policy *policy = *i;
             if(!policy->bucket || !policy->client || !policy->user || !policy->privilege)
@@ -133,11 +132,9 @@ int cynara_admin_set_policies(struct cynara_admin *p_cynara_admin,
                     return CYNARA_API_INVALID_PARAM;
             }
         }
-    } catch (const std::bad_alloc &ex) {
-        return CYNARA_API_OUT_OF_MEMORY;
-    }
 
-    return p_cynara_admin->impl->setPolicies(insertOrUpdate, remove);
+        return p_cynara_admin->impl->setPolicies(insertOrUpdate, remove);
+    });
 }
 
 CYNARA_API
@@ -148,31 +145,29 @@ int cynara_admin_set_bucket(struct cynara_admin *p_cynara_admin, const char *buc
     if (!bucket)
         return CYNARA_API_INVALID_PARAM;
 
-    std::string extraStr;
-    try {
-         extraStr = extra ? extra : "";
-    } catch (const std::bad_alloc &ex) {
-        return CYNARA_API_OUT_OF_MEMORY;
-    }
-    switch (operation) {
-        case CYNARA_ADMIN_DELETE:
-            return p_cynara_admin->impl->removeBucket(bucket);
-        case CYNARA_ADMIN_DENY:
-            return p_cynara_admin->impl->insertOrUpdateBucket(bucket,
-                Cynara::PolicyResult(Cynara::PredefinedPolicyType::DENY, extraStr));
-        case CYNARA_ADMIN_ALLOW:
-            return p_cynara_admin->impl->insertOrUpdateBucket(bucket,
-                Cynara::PolicyResult(Cynara::PredefinedPolicyType::ALLOW, extraStr));
-        case CYNARA_ADMIN_NONE:
-            if (bucket != Cynara::defaultPolicyBucketId) {
+    return Cynara::tryCatch([&]() {
+        std::string extraStr = extra ? extra : "";
+
+        switch (operation) {
+            case CYNARA_ADMIN_DELETE:
+                return p_cynara_admin->impl->removeBucket(bucket);
+            case CYNARA_ADMIN_DENY:
                 return p_cynara_admin->impl->insertOrUpdateBucket(bucket,
-                    Cynara::PolicyResult(Cynara::PredefinedPolicyType::NONE));
-            }
-            return CYNARA_API_OPERATION_NOT_ALLOWED;
-        case CYNARA_ADMIN_BUCKET:
-        default:
-            return CYNARA_API_INVALID_PARAM;
-    }
+                    Cynara::PolicyResult(Cynara::PredefinedPolicyType::DENY, extraStr));
+            case CYNARA_ADMIN_ALLOW:
+                return p_cynara_admin->impl->insertOrUpdateBucket(bucket,
+                    Cynara::PolicyResult(Cynara::PredefinedPolicyType::ALLOW, extraStr));
+            case CYNARA_ADMIN_NONE:
+                if (bucket != Cynara::defaultPolicyBucketId) {
+                    return p_cynara_admin->impl->insertOrUpdateBucket(bucket,
+                        Cynara::PolicyResult(Cynara::PredefinedPolicyType::NONE));
+                }
+                return CYNARA_API_OPERATION_NOT_ALLOWED;
+            case CYNARA_ADMIN_BUCKET:
+            default:
+                return CYNARA_API_INVALID_PARAM;
+        }
+    });
 }
 
 CYNARA_API
@@ -189,28 +184,38 @@ int cynara_admin_check(struct cynara_admin *p_cynara_admin,
     if (!result || !result_extra)
         return CYNARA_API_INVALID_PARAM;
 
-    Cynara::PolicyResult policyResult;
+    return Cynara::tryCatch([&]() {
+        Cynara::PolicyResult policyResult;
+        Cynara::PolicyBucketId startBucket;
+        std::string clientStr;
+        std::string userStr;
+        std::string privilegeStr;
 
-    try {
-        int ret = p_cynara_admin->impl->adminCheck(start_bucket, recursive != 0,
-                                                   Cynara::PolicyKey(client, user, privilege),
-                                                   policyResult);
+        try {
+            startBucket = start_bucket;
+            clientStr = client;
+            userStr = user;
+            privilegeStr = privilege;
+        } catch (const std::length_error &e) {
+            LOGE(e.what());
+            return CYNARA_API_INVALID_PARAM;
+        }
+
+        int ret = p_cynara_admin->impl->adminCheck(startBucket, recursive != 0,
+                                                   Cynara::PolicyKey(clientStr, userStr,
+                                                   privilegeStr), policyResult);
         if (ret != CYNARA_API_SUCCESS)
             return ret;
-    } catch (const std::bad_alloc &ex) {
-        return CYNARA_API_OUT_OF_MEMORY;
-    } catch (const std::length_error &ex) {
-        return CYNARA_API_INVALID_PARAM;
-    }
 
-    char *str = nullptr;
-    if (!policyResult.metadata().empty()) {
-        str = strdup(policyResult.metadata().c_str());
-        if (!str)
-            return CYNARA_API_OUT_OF_MEMORY;
-    }
-    *result = static_cast<int>(policyResult.policyType());
-    *result_extra = str;
+        char *str = nullptr;
+        if (!policyResult.metadata().empty()) {
+            str = strdup(policyResult.metadata().c_str());
+            if (!str)
+                return CYNARA_API_OUT_OF_MEMORY;
+        }
+        *result = static_cast<int>(policyResult.policyType());
+        *result_extra = str;
 
-    return CYNARA_API_SUCCESS;
+        return CYNARA_API_SUCCESS;
+    });
 }

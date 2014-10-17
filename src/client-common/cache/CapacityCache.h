@@ -29,6 +29,9 @@
 
 #include <cache/CacheInterface.h>
 
+#include <config/PathConfig.h>
+#include <plugin/PluginManager.h>
+
 namespace Cynara {
 
 class CapacityCache : public PluginCache {
@@ -36,7 +39,7 @@ public:
     static const std::size_t CACHE_DEFAULT_CAPACITY = 10000;
 
     CapacityCache(std::size_t capacity = CACHE_DEFAULT_CAPACITY) :
-        m_capacity(capacity) {}
+        m_capacity(capacity), m_pluginManager(PathConfig::PluginPath::clientDir) {}
 
     int get(const ClientSession &session, const PolicyKey &key);
     int update(const ClientSession& session,
@@ -57,6 +60,7 @@ private:
 
     KeyUsageList m_keyUsage;
     KeyValueMap m_keyValue;
+    PluginManager m_pluginManager;
 };
 
 } //namespace Cynara

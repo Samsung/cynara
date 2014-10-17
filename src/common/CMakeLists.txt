@@ -29,6 +29,7 @@ SET(COMMON_SOURCES
     ${COMMON_PATH}/config/PathConfig.cpp
     ${COMMON_PATH}/containers/BinaryQueue.cpp
     ${COMMON_PATH}/log/log.cpp
+    ${COMMON_PATH}/plugin/PluginManager.cpp
     ${COMMON_PATH}/protocol/ProtocolAdmin.cpp
     ${COMMON_PATH}/protocol/ProtocolClient.cpp
     ${COMMON_PATH}/protocol/ProtocolFrame.cpp

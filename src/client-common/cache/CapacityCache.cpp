@@ -47,15 +47,22 @@ int CapacityCache::get(const ClientSession &session, const PolicyKey &key) {
         auto &cachedValue = resultIt->second;
         auto &policyResult = std::get<0>(cachedValue);
 
+        ClientPluginInterfacePtr plugin;
         auto pluginIt = m_plugins.find(policyResult.policyType());
-        if (pluginIt == m_plugins.end()) {
-            LOGE("No plugin registered for given PolicyType : %" PRIu16,
-                    policyResult.policyType());
-            return CYNARA_API_ACCESS_DENIED;
+        if (pluginIt != m_plugins.end()) {
+            plugin = pluginIt->second;
+        } else {
+            plugin = std::dynamic_pointer_cast<ClientPluginInterface>(
+                              m_pluginManager.getPlugin(policyResult.policyType()));
+            if (!plugin) {
+                LOGE("No plugin registered for given PolicyType : %" PRIu16,
+                        policyResult.policyType());
+                return CYNARA_API_ACCESS_DENIED;
+            }
         }
 
         //Is it still usable?
-        ClientPluginInterfacePtr plugin = pluginIt->second;
+
         auto &prevSession = std::get<1>(cachedValue);
         auto usageIt = std::get<2>(cachedValue);
         bool updateSession = false;

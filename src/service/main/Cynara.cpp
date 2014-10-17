@@ -23,6 +23,7 @@
 #include <memory>
 #include <stddef.h>
 
+#include <config/PathConfig.h>
 #include <log/log.h>
 #include <exceptions/InitException.h>
 
@@ -45,38 +46,11 @@ Cynara::~Cynara() {
     finalize();
 }
 
-const std::string Cynara::storageDir(void) {
-    std::string dir("/var/lib/cynara/");
-
-#ifdef CYNARA_STATE_PATH
-    dir = CYNARA_STATE_PATH;
-#else
-    LOGW("Cynara compiled without CYNARA_STATE_PATH flag. Using default database directory.");
-#endif
-
-    dir += "db/";
-    LOGI("Cynara database path <%s>", dir.c_str());
-    return dir;
-}
-
-const std::string Cynara::pluginDir(void) {
-    std::string dir("/usr/lib/cynara/");
-
-#ifdef CYNARA_LIB_PATH
-    dir = CYNARA_LIB_PATH;
-#else
-    LOGW("Cynara compiled without CYNARA_LIB_PATH flag. Using default plugin directory.");
-#endif
-    dir += "plugin/";
-    LOGI("Cynara plugin path <%s>", dir.c_str());
-    return dir;
-}
-
 void Cynara::init(void) {
     m_logic = std::make_shared<Logic>();
-    m_pluginManager = std::make_shared<PluginManager>(pluginDir());
+    m_pluginManager = std::make_shared<PluginManager>(PathConfig::PluginPath::serviceDir);
     m_socketManager = std::make_shared<SocketManager>();
-    m_storageBackend = std::make_shared<InMemoryStorageBackend>(storageDir());
+    m_storageBackend = std::make_shared<InMemoryStorageBackend>(PathConfig::StoragePath::dbDir);
     m_storage = std::make_shared<Storage>(*m_storageBackend);
 
     m_logic->bindPluginManager(m_pluginManager);

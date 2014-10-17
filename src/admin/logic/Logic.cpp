@@ -25,6 +25,7 @@
 
 #include <cynara-error.h>
 #include <common.h>
+#include <config/PathConfig.h>
 #include <exceptions/Exception.h>
 #include <exceptions/UnexpectedErrorException.h>
 #include <log/log.h>
@@ -39,7 +40,6 @@
 #include <response/CodeResponse.h>
 #include <response/pointers.h>
 #include <sockets/SocketClient.h>
-#include <sockets/SocketPath.h>
 #include <types/ProtocolFields.h>
 
 #include "Logic.h"
@@ -47,7 +47,7 @@
 namespace Cynara {
 
 Logic::Logic() {
-    m_socketClient = std::make_shared<SocketClient>(SocketPath::admin,
+    m_socketClient = std::make_shared<SocketClient>(PathConfig::SocketPath::admin,
                                                     std::make_shared<ProtocolAdmin>());
 }
 

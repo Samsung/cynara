@@ -28,16 +28,6 @@
 namespace Cynara {
 
 class Cynara {
-private:
-    LogicPtr m_logic;
-    PluginManagerPtr m_pluginManager;
-    SocketManagerPtr m_socketManager;
-    StoragePtr m_storage;
-    StorageBackendPtr m_storageBackend;
-
-    static const std::string pluginDir(void);
-    static const std::string storageDir(void);
-
 public:
     Cynara();
     ~Cynara();
@@ -45,6 +35,13 @@ public:
     void init(void);
     void run(void);
     void finalize(void);
+
+private:
+    LogicPtr m_logic;
+    PluginManagerPtr m_pluginManager;
+    SocketManagerPtr m_socketManager;
+    StoragePtr m_storage;
+    StorageBackendPtr m_storageBackend;
 };
 
 } // namespace Cynara

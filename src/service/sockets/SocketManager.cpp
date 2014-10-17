@@ -37,10 +37,10 @@
 
 #include <log/log.h>
 #include <common.h>
+#include <config/PathConfig.h>
 #include <exceptions/DescriptorNotExistsException.h>
 #include <exceptions/InitException.h>
 #include <exceptions/UnexpectedErrorException.h>
-#include <sockets/SocketPath.h>
 
 #include <logic/Logic.h>
 #include <main/Cynara.h>
@@ -73,10 +73,10 @@ void SocketManager::init(void) {
     const mode_t clientSocketUMask(0);
     const mode_t adminSocketUMask(0077);
 
-    createDomainSocket(std::make_shared<ProtocolClient>(), SocketPath::client, clientSocketUMask,
-                       true);
-    createDomainSocket(std::make_shared<ProtocolAdmin>(), SocketPath::admin, adminSocketUMask,
-                       false);
+    createDomainSocket(std::make_shared<ProtocolClient>(), PathConfig::SocketPath::client,
+                       clientSocketUMask, true);
+    createDomainSocket(std::make_shared<ProtocolAdmin>(), PathConfig::SocketPath::admin,
+                       adminSocketUMask, false);
     createSignalSocket(std::make_shared<ProtocolSignal>());
     LOGI("SocketManger init done");
 }

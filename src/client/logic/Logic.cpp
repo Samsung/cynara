@@ -24,6 +24,7 @@
 
 #include <cache/CapacityCache.h>
 #include <common.h>
+#include <config/PathConfig.h>
 #include <cynara-error.h>
 #include <exceptions/Exception.h>
 #include <exceptions/UnexpectedErrorException.h>
@@ -36,7 +37,6 @@
 #include <response/CheckResponse.h>
 #include <response/pointers.h>
 #include <sockets/SocketClient.h>
-#include <sockets/SocketPath.h>
 
 #include <logic/Logic.h>
 
@@ -48,7 +48,8 @@ static ProtocolFrameSequenceNumber generateSequenceNumber(void) {
 }
 
 Logic::Logic() {
-    m_socket = std::make_shared<SocketClient>(SocketPath::client, std::make_shared<ProtocolClient>());
+    m_socket = std::make_shared<SocketClient>(PathConfig::SocketPath::client,
+                                              std::make_shared<ProtocolClient>());
     m_cache = std::make_shared<CapacityCache>();
     auto naiveInterpreter = std::make_shared<NaiveInterpreter>();
     m_cache->registerPlugin(PredefinedPolicyType::ALLOW, naiveInterpreter);

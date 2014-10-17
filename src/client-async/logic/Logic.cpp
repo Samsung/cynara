@@ -25,6 +25,7 @@
 
 #include <cache/CapacityCache.h>
 #include <common.h>
+#include <config/PathConfig.h>
 #include <exceptions/Exception.h>
 #include <exceptions/NoMemoryException.h>
 #include <exceptions/UnexpectedErrorException.h>
@@ -36,7 +37,6 @@
 #include <response/CancelResponse.h>
 #include <response/CheckResponse.h>
 #include <sockets/Socket.h>
-#include <sockets/SocketPath.h>
 
 #include "Logic.h"
 
@@ -45,7 +45,7 @@ namespace Cynara {
 Logic::Logic(cynara_status_callback callback, void *userStatusData)
     : m_statusCallback(callback, userStatusData) {
     m_socketClient = std::make_shared<SocketClientAsync>(
-        SocketPath::client, std::make_shared<ProtocolClient>());
+        PathConfig::SocketPath::client, std::make_shared<ProtocolClient>());
 
     m_cache = std::make_shared<CapacityCache>();
     auto naiveInterpreter = std::make_shared<NaiveInterpreter>();

@@ -14,6 +14,7 @@
 #
 # @file        CMakeLists.txt
 # @author      Aleksander Zdyb <a.zdyb@samsung.com>
+# @author      Radoslaw Bartosiak <r.bartosiak@samsung.com>
 # @brief       Cmake for tests
 #
 PKG_CHECK_MODULES(PKGS REQUIRED gmock)
@@ -27,6 +28,8 @@ SET(CYNARA_SOURCES_FOR_TESTS
     ${CYNARA_SRC}/common/types/PolicyKeyHelpers.cpp
     ${CYNARA_SRC}/common/types/PolicyResult.cpp
     ${CYNARA_SRC}/common/types/PolicyType.cpp
+    ${CYNARA_SRC}/helpers/creds-commons/CredsCommonsInner.cpp
+    ${CYNARA_SRC}/helpers/creds-commons/creds-commons.cpp
     ${CYNARA_SRC}/storage/BucketDeserializer.cpp
     ${CYNARA_SRC}/storage/InMemoryStorageBackend.cpp
     ${CYNARA_SRC}/storage/Storage.cpp
@@ -35,8 +38,11 @@ SET(CYNARA_SOURCES_FOR_TESTS
 )
 
 SET(CYNARA_TESTS_SOURCES
+    TestEventListenerProxy.cpp
     common/exceptions/bucketrecordcorrupted.cpp
-    types/policykey.cpp
+    common/types/policybucket.cpp
+    credsCommons/parser/Parser.cpp
+    helpers.cpp
     storage/performance/bucket.cpp
     storage/storage/policies.cpp
     storage/storage/check.cpp
@@ -49,10 +55,8 @@ SET(CYNARA_TESTS_SOURCES
     storage/serializer/dump.cpp
     storage/serializer/dump_load.cpp
     storage/serializer/serialize.cpp
-    common/types/policybucket.cpp
-    helpers.cpp
-    TestEventListenerProxy.cpp
     tests.cpp
+    types/policykey.cpp
 )
 
 INCLUDE_DIRECTORIES(
@@ -60,6 +64,7 @@ INCLUDE_DIRECTORIES(
     ${CYNARA_SRC}/common
     ${CYNARA_SRC}/include
     ${CYNARA_SRC}
+    credsCommons/parser
 )
 
 ADD_EXECUTABLE(${TARGET_CYNARA_TESTS}

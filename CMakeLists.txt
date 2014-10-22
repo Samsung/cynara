@@ -40,6 +40,11 @@ SET(BIN_INSTALL_DIR
     CACHE PATH
     "Binary installation directory")
 
+SET(SBIN_INSTALL_DIR
+    "${CMAKE_INSTALL_PREFIX}/sbin"
+    CACHE PATH
+    "Administrative binary installation directory")
+
 SET(INCLUDE_INSTALL_DIR
     "${CMAKE_INSTALL_PREFIX}/include"
     CACHE PATH
@@ -92,6 +97,7 @@ SET(TARGET_LIB_CYNARA_STORAGE "cynara-storage")
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(pkgconfig)
 ADD_SUBDIRECTORY(systemd)
+ADD_SUBDIRECTORY(migration)
 
 IF (BUILD_TESTS)
 ADD_SUBDIRECTORY(test)

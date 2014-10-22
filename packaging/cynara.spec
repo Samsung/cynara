@@ -85,7 +85,6 @@ asynchronous client library (devel) for checking policies
 #######################################################
 %package -n libcynara-client-commons
 Summary:    Cynara - client commons library
-Requires:   cynara = %{version}-%{release}
 
 %description -n libcynara-client-commons
 client commons library with common functionalities
@@ -116,7 +115,6 @@ admin client library (devel) for setting, listing and removing policies
 #######################################################
 %package -n libcynara-storage
 Summary:    Cynara - storage
-Requires:   cynara = %{version}-%{release}
 
 %description -n libcynara-storage
 cynara common storage library with common storage functionalities
@@ -131,7 +129,6 @@ cynara common storage library (devel) with common storage functionalities
 #######################################################
 %package -n libcynara-commons
 Summary:    Cynara - cynara commons library
-Requires:   cynara = %{version}-%{release}
 
 %description -n libcynara-commons
 cynara common library with common functionalities

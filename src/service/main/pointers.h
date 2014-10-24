@@ -27,6 +27,9 @@
 
 namespace Cynara {
 
+class AgentManager;
+typedef std::shared_ptr<AgentManager> AgentManagerPtr;
+
 class Logic;
 typedef std::shared_ptr<Logic> LogicPtr;
 

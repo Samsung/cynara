@@ -48,6 +48,7 @@
 #include <response/CodeResponse.h>
 
 #include <main/Cynara.h>
+#include <agent/AgentManager.h>
 #include <sockets/SocketManager.h>
 #include <storage/Storage.h>
 
@@ -82,9 +83,9 @@ void Logic::execute(RequestContextPtr context, AdminCheckRequestPtr request) {
 }
 
 void Logic::execute(RequestContextPtr context, AgentRegisterRequestPtr request) {
-    // MOCKUP
+    auto result = m_agentManager->registerAgent(request->agentType(), context->responseQueue());
     context->returnResponse(context, std::make_shared<AgentRegisterResponse>(
-                            AgentRegisterResponse::DONE, request->sequenceNumber()));
+                            result, request->sequenceNumber()));
 }
 
 void Logic::execute(RequestContextPtr context, CancelRequestPtr request) {

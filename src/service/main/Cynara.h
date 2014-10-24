@@ -37,6 +37,7 @@ public:
     void finalize(void);
 
 private:
+    AgentManagerPtr m_agentManager;
     LogicPtr m_logic;
     PluginManagerPtr m_pluginManager;
     SocketManagerPtr m_socketManager;

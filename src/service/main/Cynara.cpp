@@ -27,6 +27,7 @@
 #include <log/log.h>
 #include <exceptions/InitException.h>
 
+#include <agent/AgentManager.h>
 #include <logic/Logic.h>
 #include <plugin/PluginManager.h>
 #include <sockets/SocketManager.h>
@@ -47,12 +48,14 @@ Cynara::~Cynara() {
 }
 
 void Cynara::init(void) {
+    m_agentManager = std::make_shared<AgentManager>();
     m_logic = std::make_shared<Logic>();
     m_pluginManager = std::make_shared<PluginManager>(PathConfig::PluginPath::serviceDir);
     m_socketManager = std::make_shared<SocketManager>();
     m_storageBackend = std::make_shared<InMemoryStorageBackend>(PathConfig::StoragePath::dbDir);
     m_storage = std::make_shared<Storage>(*m_storageBackend);
 
+    m_logic->bindAgentManager(m_agentManager);
     m_logic->bindPluginManager(m_pluginManager);
     m_logic->bindStorage(m_storage);
     m_logic->bindSocketManager(m_socketManager);
@@ -79,6 +82,7 @@ void Cynara::finalize(void) {
         m_socketManager->unbindAll();
     }
 
+    m_agentManager.reset();
     m_logic.reset();
     m_pluginManager.reset();
     m_socketManager.reset();

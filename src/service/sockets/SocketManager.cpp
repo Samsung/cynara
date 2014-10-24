@@ -112,6 +112,9 @@ void SocketManager::mainLoop(void) {
                     readyForWrite(i);
                     --ret;
                 }
+            }
+
+            for (int i = 0; i < m_maxDesc + 1; ++i) {
                 if (m_fds[i].isUsed() && m_fds[i].hasDataToWrite())
                     addWriteSocket(i);
             }

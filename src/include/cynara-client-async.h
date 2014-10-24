@@ -386,6 +386,8 @@ int cynara_async_process(cynara_async *p_cynara);
  * cynara_status_callback callback may be triggered to be able to send cancel to cynara.
  * cynara_response_callback callback will be triggered with with
  * cynara_async_call_cause::CYNARA_CALL_CAUSE_CANCEL as cause param.
+ * If given id is not valid (was not requested or response callback was already delivered)
+ * cynara_async_cancel_request() returns CYNARA_API_INVALID_PARAM.
  *
  * \par Sync (or) Async:
  * This is a synchronous API.

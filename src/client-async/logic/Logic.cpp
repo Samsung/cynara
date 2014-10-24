@@ -112,7 +112,7 @@ int Logic::cancelRequest(cynara_check_id checkId) {
 
     auto it = m_checks.find(checkId);
     if (it == m_checks.end() || it->second.cancelled())
-        return CYNARA_API_SUCCESS;
+        return CYNARA_API_INVALID_PARAM;
 
     m_socketClient->appendRequest(std::make_shared<CancelRequest>(it->first));
 

@@ -95,18 +95,6 @@ void InMemoryStorageBackend::load(void) {
 }
 
 void InMemoryStorageBackend::save(void) {
-
-    //create directory
-    int ret = mkdir(m_dbPath.c_str(), S_IRWXU);
-    if (ret < 0) {
-        int err = errno;
-        if (err != EEXIST) {
-            LOGE("Cannot create directory <%s>. Error [%d] : <%s>.",
-                 m_dbPath.c_str(), err, strerror(err));
-            throw UnexpectedErrorException(err, strerror(err));
-        }
-    }
-
     auto indexStream = std::make_shared<std::ofstream>();
     std::string indexFilename = m_dbPath + m_indexFilename;
     openDumpFileStream(indexStream, indexFilename + m_backupFilenameSuffix);

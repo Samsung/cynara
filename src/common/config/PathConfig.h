@@ -16,6 +16,7 @@
 /**
  * @file        src/common/config/PathConfig.h
  * @author      Zofia Abramowska <z.abramowska@samsung.com>
+ * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       This file specifies PathConfig namespace containing default cynara paths
  */
@@ -40,6 +41,7 @@ extern const std::string agent;
 
 namespace StoragePath {
 extern const std::string dbDir;
+extern const std::string lockFile;
 } // namespace StoragePath
 
 namespace PluginPath {

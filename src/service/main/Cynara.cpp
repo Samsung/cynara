@@ -16,6 +16,7 @@
 /**
  * @file        src/service/main/Cynara.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       This file implements main class of cynara service
  */
@@ -40,7 +41,8 @@
 namespace Cynara {
 
 Cynara::Cynara()
-    : m_logic(nullptr), m_socketManager(nullptr), m_storage(nullptr), m_storageBackend(nullptr) {
+    : m_logic(nullptr), m_socketManager(nullptr), m_storage(nullptr), m_storageBackend(nullptr),
+      m_lockFile(PathConfig::StoragePath::lockFile), m_databaseLock(m_lockFile) {
 }
 
 Cynara::~Cynara() {
@@ -62,6 +64,7 @@ void Cynara::init(void) {
 
     m_socketManager->bindLogic(m_logic);
 
+    m_databaseLock.lock(); // Wait until database lock can be acquired
     m_storage->load();
 }
 

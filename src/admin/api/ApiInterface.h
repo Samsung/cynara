@@ -38,15 +38,18 @@ namespace Cynara {
 
 class ApiInterface {
 public:
+
+    typedef std::map<PolicyBucketId, std::vector<Policy>> PoliciesByBucket;
+    typedef std::map<PolicyBucketId, std::vector<PolicyKey>> KeysByBucket;
+
     ApiInterface() = default;
     virtual ~ApiInterface() {};
 
-    virtual int setPolicies(const std::map<PolicyBucketId, std::vector<Policy>> &insertOrUpdate,
-                            const std::map<PolicyBucketId, std::vector<PolicyKey>> &remove) = 0;
+    virtual int setPolicies(const PoliciesByBucket &insertOrUpdate,
+                            const KeysByBucket &remove) = 0;
     virtual int insertOrUpdateBucket(const PolicyBucketId &bucket,
                                      const PolicyResult &policyResult) = 0;
     virtual int removeBucket(const PolicyBucketId &bucket) = 0;
-
     virtual int adminCheck(const PolicyBucketId &startBucket, bool recursive,
                            const PolicyKey &key, PolicyResult &result) = 0;
 

@@ -106,8 +106,8 @@ int Logic::askCynaraAndInterpreteCodeResponse(Args... args) {
     }
 }
 
-int Logic::setPolicies(const std::map<PolicyBucketId, std::vector<Policy>> &insertOrUpdate,
-                       const std::map<PolicyBucketId, std::vector<PolicyKey>> &remove) {
+int Logic::setPolicies(const ApiInterface::PoliciesByBucket &insertOrUpdate,
+                       const ApiInterface::KeysByBucket &remove) {
     return askCynaraAndInterpreteCodeResponse<SetPoliciesRequest>(insertOrUpdate, remove);
 }
 

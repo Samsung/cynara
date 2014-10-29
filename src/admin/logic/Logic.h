@@ -43,8 +43,8 @@ public:
     Logic();
     virtual ~Logic() {};
 
-    virtual int setPolicies(const std::map<PolicyBucketId, std::vector<Policy>> &insertOrUpdate,
-                            const std::map<PolicyBucketId, std::vector<PolicyKey>> &remove);
+    virtual int setPolicies(const ApiInterface::PoliciesByBucket &insertOrUpdate,
+                            const ApiInterface::KeysByBucket &remove);
     virtual int insertOrUpdateBucket(const PolicyBucketId &bucket,
                                      const PolicyResult &policyResult);
     virtual int removeBucket(const PolicyBucketId &bucket);

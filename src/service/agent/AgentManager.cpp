@@ -77,7 +77,7 @@ AgentTalkerPtr AgentManager::createTalker(const AgentType &agentType) {
             return talker;
         }
     } catch (const std::out_of_range &) {
-        LOGE("Proper agent not found: <%s>", agentType.c_str());
+        LOGE("Required agent is not registered: <%s>", agentType.c_str());
     }
 
     return AgentTalkerPtr();

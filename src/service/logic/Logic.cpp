@@ -21,8 +21,11 @@
  */
 
 #include <csignal>
+#include <cinttypes>
+#include <functional>
 #include <memory>
 
+#include <log/log.h>
 #include <common.h>
 #include <log/log.h>
 #include <exceptions/BucketNotExistsException.h>
@@ -95,14 +98,20 @@ void Logic::execute(RequestContextPtr context, CancelRequestPtr request) {
 
 void Logic::execute(RequestContextPtr context, CheckRequestPtr request) {
     PolicyResult result(PredefinedPolicyType::DENY);
-    if (check(context, request->key(), result)) {
+    if (check(context, request->key(), request->sequenceNumber(), result)) {
         context->returnResponse(context, std::make_shared<CheckResponse>(result,
                                 request->sequenceNumber()));
     }
 }
 
-bool Logic::check(RequestContextPtr context UNUSED, const PolicyKey &key,
-                  PolicyResult& result) {
+bool Logic::check(const RequestContextPtr &context, const PolicyKey &key,
+                  ProtocolFrameSequenceNumber checkId, PolicyResult &result) {
+
+    if (m_checkRequestManager.getContext(context->responseQueue(), checkId)) {
+        LOGE("Check request for checkId: [%" PRIu16 "] is already processing", checkId);
+        return false;
+    }
+
     result = m_storage->checkPolicy(key);
 
     switch (result.policyType()) {
@@ -114,9 +123,19 @@ bool Logic::check(RequestContextPtr context UNUSED, const PolicyKey &key,
             return true;
     }
 
+    return pluginCheck(context, key, checkId, result);
+}
+
+bool Logic::pluginCheck(const RequestContextPtr &context, const PolicyKey &key,
+                        ProtocolFrameSequenceNumber checkId, PolicyResult &result) {
+
+    LOGD("Trying to check policy: <%s> in plugin.", key.toString().c_str());
+
     ExternalPluginPtr plugin = m_pluginManager->getPlugin(result.policyType());
     if (!plugin) {
-        throw PluginNotFoundException(result);
+        LOGE("Plugin not found for policy: [0x%x]", result.policyType());
+        result = PolicyResult(PredefinedPolicyType::DENY);
+        return true;
     }
 
     ServicePluginInterfacePtr servicePlugin =
@@ -134,12 +153,27 @@ bool Logic::check(RequestContextPtr context UNUSED, const PolicyKey &key,
     switch (ret) {
         case ServicePluginInterface::PluginStatus::ANSWER_READY:
             return true;
-        case ServicePluginInterface::PluginStatus::ANSWER_NOTREADY:
-            //todo send request to agent
-            //context should be saved in plugin in order to return answer when ready
+        case ServicePluginInterface::PluginStatus::ANSWER_NOTREADY: {
+                result = PolicyResult(PredefinedPolicyType::DENY);
+                AgentTalkerPtr agentTalker = m_agentManager->createTalker(requiredAgent);
+                if (!agentTalker) {
+                    LOGE("Required agent talker for: <%s> could not be created.",
+                         requiredAgent.c_str());
+                    return true;
+                }
+
+                if (!m_checkRequestManager.createContext(key, context, checkId, servicePlugin,
+                                                         agentTalker)) {
+                    LOGE("Check context for checkId: [%" PRIu16 "] could not be created.",
+                         checkId);
+                    m_agentManager->removeTalker(agentTalker);
+                    return true;
+                }
+                agentTalker->send(pluginData);
+            }
             return false;
         default:
-            throw PluginErrorException(key);
+            throw PluginErrorException(key); // This 'throw' should be removed or handled properly.
     }
 }
 

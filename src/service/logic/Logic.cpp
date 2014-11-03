@@ -92,7 +92,21 @@ void Logic::execute(RequestContextPtr context, AgentRegisterRequestPtr request) 
 }
 
 void Logic::execute(RequestContextPtr context, CancelRequestPtr request) {
-    // MOCKUP
+    CheckContextPtr checkContextPtr = m_checkRequestManager.getContext(context->responseQueue(),
+                                                                       request->sequenceNumber());
+    if (!checkContextPtr) {
+        LOGD("Cancel request id: [%" PRIu16 "] with no matching request in progress.",
+             request->sequenceNumber());
+        return;
+    }
+
+    if (checkContextPtr->cancelled())
+        return;
+
+    checkContextPtr->cancel();
+    checkContextPtr->m_agentTalker->cancel();
+
+    LOGD("Returning response for cancel request id: [%" PRIu16 "].", request->sequenceNumber());
     context->returnResponse(context, std::make_shared<CancelResponse>(request->sequenceNumber()));
 }
 

@@ -84,6 +84,7 @@ private:
                ProtocolFrameSequenceNumber checkId, PolicyResult &result);
     bool pluginCheck(const RequestContextPtr &context, const PolicyKey &key,
                      ProtocolFrameSequenceNumber checkId, PolicyResult &result);
+
     void onPoliciesChanged(void);
 };
 

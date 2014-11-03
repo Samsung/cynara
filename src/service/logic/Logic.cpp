@@ -37,6 +37,7 @@
 #include <exceptions/PluginNotFoundException.h>
 #include <exceptions/UnexpectedErrorException.h>
 #include <request/AdminCheckRequest.h>
+#include <request/AgentActionRequest.h>
 #include <request/AgentRegisterRequest.h>
 #include <request/CancelRequest.h>
 #include <request/CheckRequest.h>
@@ -56,6 +57,8 @@
 #include <storage/Storage.h>
 
 #include <cynara-plugin.h>
+
+#include <cynara-agent.h>
 
 #include "Logic.h"
 
@@ -83,6 +86,40 @@ void Logic::execute(RequestContextPtr context, AdminCheckRequestPtr request) {
 
     context->returnResponse(context, std::make_shared<CheckResponse>(result,
                             request->sequenceNumber()));
+}
+
+void Logic::execute(RequestContextPtr context, AgentActionRequestPtr request) {
+    AgentTalkerPtr talkerPtr = m_agentManager->getTalker(context->responseQueue(),
+                                                         request->sequenceNumber());
+    if (!talkerPtr) {
+        LOGD("Received response from agent with invalid request id: [%" PRIu16 "]",
+             request->sequenceNumber());
+        return;
+    }
+
+    CheckContextPtr checkContextPtr = m_checkRequestManager.getContext(talkerPtr);
+    if (!checkContextPtr) {
+        LOGE("No matching check context for agent talker.");
+        m_agentManager->removeTalker(talkerPtr);
+        return;
+    }
+
+    if (!checkContextPtr->cancelled()) {
+        PluginData data(request->data().begin(), request->data().end());
+        if (request->type() == CYNARA_MSG_TYPE_CANCEL) {
+            // Nothing to do for now
+        } else if (request->type() == CYNARA_MSG_TYPE_ACTION) {
+            update(checkContextPtr->m_key, checkContextPtr->m_checkId, data,
+                   checkContextPtr->m_requestContext, checkContextPtr->m_plugin);
+        } else {
+            LOGE("Invalid response type [%d] in response from agent <%s>",
+                 static_cast<int>(request->type()), talkerPtr->agentType().c_str());
+            // TODO: disconnect agent
+        }
+    }
+
+    m_agentManager->removeTalker(talkerPtr);
+    m_checkRequestManager.removeRequest(checkContextPtr);
 }
 
 void Logic::execute(RequestContextPtr context, AgentRegisterRequestPtr request) {
@@ -189,6 +226,36 @@ bool Logic::pluginCheck(const RequestContextPtr &context, const PolicyKey &key,
         default:
             throw PluginErrorException(key); // This 'throw' should be removed or handled properly.
     }
+}
+
+bool Logic::update(const PolicyKey &key, ProtocolFrameSequenceNumber checkId,
+                   const PluginData &agentData, const RequestContextPtr &context,
+                   const ServicePluginInterfacePtr &plugin) {
+
+    LOGD("Check update: <%s>:[%" PRIu16 "]", key.toString().c_str(), checkId);
+
+    PolicyResult result;
+    bool answerReady = false;
+    auto ret = plugin->update(key.client().toString(), key.user().toString(),
+                              key.privilege().toString(), agentData, result);
+    switch (ret) {
+        case ServicePluginInterface::PluginStatus::SUCCESS:
+            answerReady = true;
+            break;
+        case ServicePluginInterface::PluginStatus::ERROR:
+            result = PolicyResult(PredefinedPolicyType::DENY);
+            answerReady = true;
+            break;
+        default:
+            throw PluginErrorException(key);
+    }
+
+    if (answerReady && context->responseQueue()) {
+        context->returnResponse(context, std::make_shared<CheckResponse>(result, checkId));
+        return true;
+    }
+
+    return false;
 }
 
 void Logic::execute(RequestContextPtr context, InsertOrUpdateBucketRequestPtr request) {

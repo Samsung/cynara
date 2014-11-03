@@ -26,7 +26,6 @@
 #ifndef CYNARA_CREDS_COMMONS_H
 #define CYNARA_CREDS_COMMONS_H
 
-#include <attributes/attributes.h>
 #include <cynara-error.h>
 
 enum cynara_client_creds {
@@ -78,7 +77,6 @@ extern "C" {
  *         CYNARA_API_UNKNOWN_ERROR if there is other error.
  *
  */
-CYNARA_API
 int cynara_creds_get_default_client_method(enum cynara_client_creds *method);
 
 /**
@@ -115,7 +113,6 @@ int cynara_creds_get_default_client_method(enum cynara_client_creds *method);
  *         CYNARA_API_OUT_OF_MEMORY if there is error in memory allocation.
  *         CYNARA_API_UNKNOWN_ERROR if there is other error.
  */
-CYNARA_API
 int cynara_creds_get_default_user_method(enum cynara_user_creds *method);
 
 #ifdef __cplusplus

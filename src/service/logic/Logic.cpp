@@ -63,6 +63,7 @@
 #include "Logic.h"
 
 namespace Cynara {
+
 Logic::Logic() {
 }
 
@@ -307,14 +308,48 @@ void Logic::execute(RequestContextPtr context, SetPoliciesRequestPtr request) {
                             request->sequenceNumber()));
 }
 
-void Logic::contextClosed(RequestContextPtr context UNUSED) {
-    //We don't care now, but we will
+void Logic::contextClosed(RequestContextPtr context) {
+    LOGD("context closed");
+
+    LinkId linkId = context->responseQueue();
+
+    m_agentManager->cleanupAgent(linkId, [&](const AgentTalkerPtr &talker) -> void {
+                                 handleAgentTalkerDisconnection(talker); });
+
+    m_checkRequestManager.cancelRequests(linkId,
+                                         [&](const CheckContextPtr &checkContextPtr) -> void {
+                                         handleClientDisconnection(checkContextPtr); });
 }
 
 void Logic::onPoliciesChanged(void) {
     m_storage->save();
     m_socketManager->disconnectAllClients();
     //todo remove all saved contexts (if there will be any saved contexts)
+}
+
+void Logic::handleAgentTalkerDisconnection(const AgentTalkerPtr &agentTalkerPtr) {
+    CheckContextPtr checkContextPtr = m_checkRequestManager.getContext(agentTalkerPtr);
+    if (checkContextPtr == nullptr) {
+        LOGE("No matching check context for agent talker.");
+        return;
+    }
+
+    if (!checkContextPtr->cancelled() && checkContextPtr->m_requestContext->responseQueue()) {
+        PolicyResult result(PredefinedPolicyType::DENY);
+        checkContextPtr->m_requestContext->returnResponse(checkContextPtr->m_requestContext,
+                std::make_shared<CheckResponse>(result, checkContextPtr->m_checkId));
+    }
+
+    m_checkRequestManager.removeRequest(checkContextPtr);
+}
+
+void Logic::handleClientDisconnection(const CheckContextPtr &checkContextPtr) {
+    LOGD("Handle client disconnection");
+
+    if (!checkContextPtr->cancelled()) {
+        checkContextPtr->cancel();
+        checkContextPtr->m_agentTalker->cancel();
+    }
 }
 
 } // namespace Cynara

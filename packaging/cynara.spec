@@ -2,7 +2,7 @@ Name:       cynara
 Summary:    Cynara service with client libraries
 Version:    0.3.0
 Release:    1
-Group:      Security/Access Control
+Group:      Security/Application Privilege
 License:    Apache-2.0
 Source0:    %{name}-%{version}.tar.gz
 Source1001:    cynara.manifest

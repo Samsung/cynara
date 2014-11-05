@@ -269,6 +269,9 @@ bool Socket::receiveFromServer(BinaryQueue &queue) {
                 case EWOULDBLOCK:
 #endif
                     return true;
+                case ECONNRESET:
+                    LOGW("read returned -1 with ECONNRESET / Connection closed by server.");
+                    return false;
                 default:
                     LOGE("'read' function error [%d] : <%s>", err, strerror(err));
                     throw UnexpectedErrorException(err, strerror(err));

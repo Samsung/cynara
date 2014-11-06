@@ -5,6 +5,7 @@ Release:    1
 Group:      Security/Application Privilege
 License:    Apache-2.0
 Source0:    %{name}-%{version}.tar.gz
+Source1000:    %{name}-rpmlintrc
 Source1001:    cynara.manifest
 Source1002:    libcynara-client.manifest
 Source1003:    libcynara-client-async.manifest

@@ -197,7 +197,7 @@ int cynara_admin_check(struct cynara_admin *p_cynara_admin,
             userStr = user;
             privilegeStr = privilege;
         } catch (const std::length_error &e) {
-            LOGE(e.what());
+            LOGE("%s", e.what());
             return CYNARA_API_INVALID_PARAM;
         }
 

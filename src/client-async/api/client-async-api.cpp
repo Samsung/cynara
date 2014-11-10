@@ -84,7 +84,7 @@ int cynara_async_check_cache(cynara_async *p_cynara, const char *client, const c
             userStr = user;
             privilegeStr = privilege;
         } catch (const std::length_error &e) {
-            LOGE(e.what());
+            LOGE("%s", e.what());
             return CYNARA_API_INVALID_PARAM;
         }
         return p_cynara->impl->checkCache(clientStr, clientSessionStr, userStr, privilegeStr);
@@ -113,7 +113,7 @@ int cynara_async_create_request(cynara_async *p_cynara, const char *client,
             userStr = user;
             privilegeStr = privilege;
         } catch (const std::length_error &e) {
-            LOGE(e.what());
+            LOGE("%s", e.what());
             return CYNARA_API_INVALID_PARAM;
         }
         cynara_check_id checkId;

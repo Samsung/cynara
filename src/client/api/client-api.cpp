@@ -88,7 +88,7 @@ int cynara_check(cynara *p_cynara, const char *client, const char *client_sessio
             userStr = user;
             privilegeStr = privilege;
         } catch (const std::length_error &e) {
-            LOGE(e.what());
+            LOGE("%s", e.what());
             return CYNARA_API_INVALID_PARAM;
         }
         return p_cynara->impl->check(clientStr, clientSessionStr, userStr, privilegeStr);

@@ -47,13 +47,13 @@ public:
     virtual void execute(RequestContextPtr context, CodeResponsePtr response);
 
 private:
-    RequestPtr deserializeAdminCheckRequest(ProtocolFrameHeader &frame);
-    RequestPtr deserializeInsertOrUpdateBucketRequest(ProtocolFrameHeader &frame);
-    RequestPtr deserializeRemoveBucketRequest(ProtocolFrameHeader &frame);
-    RequestPtr deserializeSetPoliciesRequest(ProtocolFrameHeader &frame);
+    RequestPtr deserializeAdminCheckRequest(void);
+    RequestPtr deserializeInsertOrUpdateBucketRequest(void);
+    RequestPtr deserializeRemoveBucketRequest(void);
+    RequestPtr deserializeSetPoliciesRequest(void);
 
-    ResponsePtr deserializeCheckResponse(ProtocolFrameHeader &frame);
-    ResponsePtr deserializeCodeResponse(ProtocolFrameHeader &frame);
+    ResponsePtr deserializeCheckResponse(void);
+    ResponsePtr deserializeCodeResponse(void);
 };
 
 } // namespace Cynara

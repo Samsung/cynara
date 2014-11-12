@@ -54,23 +54,23 @@ ProtocolPtr ProtocolClient::clone(void) {
     return std::make_shared<ProtocolClient>();
 }
 
-RequestPtr ProtocolClient::deserializeCancelRequest(ProtocolFrameHeader &frame) {
+RequestPtr ProtocolClient::deserializeCancelRequest(void) {
     LOGD("Deserialized CancelRequest");
-    return std::make_shared<CancelRequest>(frame.sequenceNumber());
+    return std::make_shared<CancelRequest>(m_frameHeader.sequenceNumber());
 }
 
-RequestPtr ProtocolClient::deserializeCheckRequest(ProtocolFrameHeader &frame) {
+RequestPtr ProtocolClient::deserializeCheckRequest(void) {
     std::string clientId, userId, privilegeId;
 
-    ProtocolDeserialization::deserialize(frame, clientId);
-    ProtocolDeserialization::deserialize(frame, userId);
-    ProtocolDeserialization::deserialize(frame, privilegeId);
+    ProtocolDeserialization::deserialize(m_frameHeader, clientId);
+    ProtocolDeserialization::deserialize(m_frameHeader, userId);
+    ProtocolDeserialization::deserialize(m_frameHeader, privilegeId);
 
     LOGD("Deserialized CheckRequest: client <%s>, user <%s>, privilege <%s>",
          clientId.c_str(), userId.c_str(), privilegeId.c_str());
 
     return std::make_shared<CheckRequest>(PolicyKey(clientId, userId, privilegeId),
-            frame.sequenceNumber());
+                                          m_frameHeader.sequenceNumber());
 }
 
 RequestPtr ProtocolClient::extractRequestFromBuffer(BinaryQueue &bufferQueue) {
@@ -85,9 +85,9 @@ RequestPtr ProtocolClient::extractRequestFromBuffer(BinaryQueue &bufferQueue) {
         LOGD("Deserialized opCode [%" PRIu8 "]", opCode);
         switch (opCode) {
         case OpCheckPolicyRequest:
-            return deserializeCheckRequest(m_frameHeader);
+            return deserializeCheckRequest();
         case OpCancelRequest:
-            return deserializeCancelRequest(m_frameHeader);
+            return deserializeCancelRequest();
         default:
             throw InvalidProtocolException(InvalidProtocolException::WrongOpCode);
             break;
@@ -97,24 +97,24 @@ RequestPtr ProtocolClient::extractRequestFromBuffer(BinaryQueue &bufferQueue) {
     return nullptr;
 }
 
-ResponsePtr ProtocolClient::deserializeCancelResponse(ProtocolFrameHeader &frame) {
+ResponsePtr ProtocolClient::deserializeCancelResponse(void) {
     LOGD("Deserialized CancelResponse");
-    return std::make_shared<CancelResponse>(frame.sequenceNumber());
+    return std::make_shared<CancelResponse>(m_frameHeader.sequenceNumber());
 }
 
-ResponsePtr ProtocolClient::deserializeCheckResponse(ProtocolFrameHeader &frame) {
+ResponsePtr ProtocolClient::deserializeCheckResponse(void) {
     PolicyType result;
     PolicyResult::PolicyMetadata additionalInfo;
 
-    ProtocolDeserialization::deserialize(frame, result);
-    ProtocolDeserialization::deserialize(frame, additionalInfo);
+    ProtocolDeserialization::deserialize(m_frameHeader, result);
+    ProtocolDeserialization::deserialize(m_frameHeader, additionalInfo);
 
     const PolicyResult policyResult(result, additionalInfo);
 
     LOGD("Deserialized CheckResponse: result [%" PRIu16 "], metadata <%s>",
          policyResult.policyType(), policyResult.metadata().c_str());
 
-    return std::make_shared<CheckResponse>(policyResult, frame.sequenceNumber());
+    return std::make_shared<CheckResponse>(policyResult, m_frameHeader.sequenceNumber());
 }
 
 ResponsePtr ProtocolClient::extractResponseFromBuffer(BinaryQueue &bufferQueue) {
@@ -128,9 +128,9 @@ ResponsePtr ProtocolClient::extractResponseFromBuffer(BinaryQueue &bufferQueue) 
         LOGD("Deserialized opCode [%" PRIu8 "]", opCode);
         switch (opCode) {
         case OpCheckPolicyResponse:
-            return deserializeCheckResponse(m_frameHeader);
+            return deserializeCheckResponse();
         case OpCancelResponse:
-            return deserializeCancelResponse(m_frameHeader);
+            return deserializeCancelResponse();
         default:
             throw InvalidProtocolException(InvalidProtocolException::WrongOpCode);
             break;

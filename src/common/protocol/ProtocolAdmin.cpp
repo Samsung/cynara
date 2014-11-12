@@ -50,53 +50,54 @@ ProtocolPtr ProtocolAdmin::clone(void) {
     return std::make_shared<ProtocolAdmin>();
 }
 
-RequestPtr ProtocolAdmin::deserializeAdminCheckRequest(ProtocolFrameHeader &frame) {
+RequestPtr ProtocolAdmin::deserializeAdminCheckRequest(void) {
     std::string clientId, userId, privilegeId;
     PolicyBucketId startBucket;
     bool recursive;
 
-    ProtocolDeserialization::deserialize(frame, clientId);
-    ProtocolDeserialization::deserialize(frame, userId);
-    ProtocolDeserialization::deserialize(frame, privilegeId);
-    ProtocolDeserialization::deserialize(frame, startBucket);
-    ProtocolDeserialization::deserialize(frame, recursive);
+    ProtocolDeserialization::deserialize(m_frameHeader, clientId);
+    ProtocolDeserialization::deserialize(m_frameHeader, userId);
+    ProtocolDeserialization::deserialize(m_frameHeader, privilegeId);
+    ProtocolDeserialization::deserialize(m_frameHeader, startBucket);
+    ProtocolDeserialization::deserialize(m_frameHeader, recursive);
 
     LOGD("Deserialized AdminCheckRequest: clientId <%s>, userId <%s>, privilegeId <%s>, "
          "startBucket <%s>, recursive [%d]", clientId.c_str(), userId.c_str(),
          privilegeId.c_str(), startBucket.c_str(), recursive);
 
     return std::make_shared<AdminCheckRequest>(PolicyKey(clientId, userId, privilegeId),
-                                               startBucket, recursive, frame.sequenceNumber());
+                                               startBucket, recursive,
+                                               m_frameHeader.sequenceNumber());
 }
 
-RequestPtr ProtocolAdmin::deserializeInsertOrUpdateBucketRequest(ProtocolFrameHeader &frame) {
+RequestPtr ProtocolAdmin::deserializeInsertOrUpdateBucketRequest(void) {
     PolicyBucketId policyBucketId;
     PolicyType policyType;
     PolicyResult::PolicyMetadata policyMetaData;
 
-    ProtocolDeserialization::deserialize(frame, policyBucketId);
-    ProtocolDeserialization::deserialize(frame, policyType);
-    ProtocolDeserialization::deserialize(frame, policyMetaData);
+    ProtocolDeserialization::deserialize(m_frameHeader, policyBucketId);
+    ProtocolDeserialization::deserialize(m_frameHeader, policyType);
+    ProtocolDeserialization::deserialize(m_frameHeader, policyMetaData);
 
     LOGD("Deserialized InsertOrUpdateBucketRequest: bucketId <%s>, "
          "result.type [%" PRIu16 "], result.meta <%s>", policyBucketId.c_str(),
          policyType, policyMetaData.c_str());
 
     return std::make_shared<InsertOrUpdateBucketRequest>(policyBucketId,
-            PolicyResult(policyType, policyMetaData), frame.sequenceNumber());
+            PolicyResult(policyType, policyMetaData), m_frameHeader.sequenceNumber());
 }
 
-RequestPtr ProtocolAdmin::deserializeRemoveBucketRequest(ProtocolFrameHeader &frame) {
+RequestPtr ProtocolAdmin::deserializeRemoveBucketRequest(void) {
     PolicyBucketId policyBucketId;
 
-    ProtocolDeserialization::deserialize(frame, policyBucketId);
+    ProtocolDeserialization::deserialize(m_frameHeader, policyBucketId);
 
     LOGD("Deserialized RemoveBucketRequest: bucketId <%s>", policyBucketId.c_str());
 
-    return std::make_shared<RemoveBucketRequest>(policyBucketId, frame.sequenceNumber());
+    return std::make_shared<RemoveBucketRequest>(policyBucketId, m_frameHeader.sequenceNumber());
 }
 
-RequestPtr ProtocolAdmin::deserializeSetPoliciesRequest(ProtocolFrameHeader &frame) {
+RequestPtr ProtocolAdmin::deserializeSetPoliciesRequest(void) {
     ProtocolFrameFieldsCount toBeInsertedOrUpdatedCount, toBeRemovedCount;
     ProtocolFrameFieldsCount policyCount;
     PolicyKeyFeature::ValueType clientId, user, privilege;
@@ -105,19 +106,19 @@ RequestPtr ProtocolAdmin::deserializeSetPoliciesRequest(ProtocolFrameHeader &fra
     std::map<PolicyBucketId, std::vector<Policy>> toBeInsertedOrUpdatedPolicies;
     std::map<PolicyBucketId, std::vector<PolicyKey>> toBeRemovedPolicies;
 
-    ProtocolDeserialization::deserialize(frame, toBeInsertedOrUpdatedCount);
+    ProtocolDeserialization::deserialize(m_frameHeader, toBeInsertedOrUpdatedCount);
     for (ProtocolFrameFieldsCount b = 0; b < toBeInsertedOrUpdatedCount; ++b) {
         PolicyBucketId policyBucketId;
-        ProtocolDeserialization::deserialize(frame, policyBucketId);
-        ProtocolDeserialization::deserialize(frame, policyCount);
+        ProtocolDeserialization::deserialize(m_frameHeader, policyBucketId);
+        ProtocolDeserialization::deserialize(m_frameHeader, policyCount);
         for (ProtocolFrameFieldsCount p = 0; p < policyCount; ++p) {
             // PolicyKey
-            ProtocolDeserialization::deserialize(frame, clientId);
-            ProtocolDeserialization::deserialize(frame, user);
-            ProtocolDeserialization::deserialize(frame, privilege);
+            ProtocolDeserialization::deserialize(m_frameHeader, clientId);
+            ProtocolDeserialization::deserialize(m_frameHeader, user);
+            ProtocolDeserialization::deserialize(m_frameHeader, privilege);
             // PolicyResult
-            ProtocolDeserialization::deserialize(frame, policyType);
-            ProtocolDeserialization::deserialize(frame, metadata);
+            ProtocolDeserialization::deserialize(m_frameHeader, policyType);
+            ProtocolDeserialization::deserialize(m_frameHeader, metadata);
 
             toBeInsertedOrUpdatedPolicies[policyBucketId].push_back(
                     Policy(PolicyKey(clientId, user, privilege),
@@ -125,16 +126,16 @@ RequestPtr ProtocolAdmin::deserializeSetPoliciesRequest(ProtocolFrameHeader &fra
         }
     }
 
-    ProtocolDeserialization::deserialize(frame, toBeRemovedCount);
+    ProtocolDeserialization::deserialize(m_frameHeader, toBeRemovedCount);
     for (ProtocolFrameFieldsCount b = 0; b < toBeRemovedCount; ++b) {
         PolicyBucketId policyBucketId;
-        ProtocolDeserialization::deserialize(frame, policyBucketId);
-        ProtocolDeserialization::deserialize(frame, policyCount);
+        ProtocolDeserialization::deserialize(m_frameHeader, policyBucketId);
+        ProtocolDeserialization::deserialize(m_frameHeader, policyCount);
         for (ProtocolFrameFieldsCount p = 0; p < policyCount; ++p) {
             // PolicyKey
-            ProtocolDeserialization::deserialize(frame, clientId);
-            ProtocolDeserialization::deserialize(frame, user);
-            ProtocolDeserialization::deserialize(frame, privilege);
+            ProtocolDeserialization::deserialize(m_frameHeader, clientId);
+            ProtocolDeserialization::deserialize(m_frameHeader, user);
+            ProtocolDeserialization::deserialize(m_frameHeader, privilege);
 
             toBeRemovedPolicies[policyBucketId].push_back(PolicyKey(clientId, user, privilege));
         }
@@ -144,7 +145,8 @@ RequestPtr ProtocolAdmin::deserializeSetPoliciesRequest(ProtocolFrameHeader &fra
          "remove count [%" PRIu16 "]", toBeInsertedOrUpdatedCount, toBeRemovedCount);
 
     return std::make_shared<SetPoliciesRequest>(toBeInsertedOrUpdatedPolicies,
-                                                toBeRemovedPolicies, frame.sequenceNumber());
+                                                toBeRemovedPolicies,
+                                                m_frameHeader.sequenceNumber());
 }
 
 RequestPtr ProtocolAdmin::extractRequestFromBuffer(BinaryQueue &bufferQueue) {
@@ -158,13 +160,13 @@ RequestPtr ProtocolAdmin::extractRequestFromBuffer(BinaryQueue &bufferQueue) {
         LOGD("Deserialized opCode [%" PRIu8 "]", opCode);
         switch (opCode) {
         case OpAdminCheckRequest:
-            return deserializeAdminCheckRequest(m_frameHeader);
+            return deserializeAdminCheckRequest();
         case OpInsertOrUpdateBucket:
-            return deserializeInsertOrUpdateBucketRequest(m_frameHeader);
+            return deserializeInsertOrUpdateBucketRequest();
         case OpRemoveBucket:
-            return deserializeRemoveBucketRequest(m_frameHeader);
+            return deserializeRemoveBucketRequest();
         case OpSetPolicies:
-            return deserializeSetPoliciesRequest(m_frameHeader);
+            return deserializeSetPoliciesRequest();
         default:
             throw InvalidProtocolException(InvalidProtocolException::WrongOpCode);
             break;
@@ -174,29 +176,29 @@ RequestPtr ProtocolAdmin::extractRequestFromBuffer(BinaryQueue &bufferQueue) {
     return nullptr;
 }
 
-ResponsePtr ProtocolAdmin::deserializeCheckResponse(ProtocolFrameHeader &frame) {
+ResponsePtr ProtocolAdmin::deserializeCheckResponse(void) {
     PolicyType result;
     PolicyResult::PolicyMetadata additionalInfo;
 
-    ProtocolDeserialization::deserialize(frame, result);
-    ProtocolDeserialization::deserialize(frame, additionalInfo);
+    ProtocolDeserialization::deserialize(m_frameHeader, result);
+    ProtocolDeserialization::deserialize(m_frameHeader, additionalInfo);
 
     const PolicyResult policyResult(result, additionalInfo);
 
     LOGD("Deserialized CheckResponse: result [%" PRIu16 "], metadata <%s>",
          policyResult.policyType(), policyResult.metadata().c_str());
 
-    return std::make_shared<CheckResponse>(policyResult, frame.sequenceNumber());
+    return std::make_shared<CheckResponse>(policyResult, m_frameHeader.sequenceNumber());
 }
 
-ResponsePtr ProtocolAdmin::deserializeCodeResponse(ProtocolFrameHeader &frame) {
+ResponsePtr ProtocolAdmin::deserializeCodeResponse(void) {
     ProtocolResponseCode responseCode;
-    ProtocolDeserialization::deserialize(frame, responseCode);
+    ProtocolDeserialization::deserialize(m_frameHeader, responseCode);
 
     LOGD("Deserialized CodeResponse: code [%" PRIu16 "], ", responseCode);
 
     return std::make_shared<CodeResponse>(static_cast<CodeResponse::Code>(responseCode),
-                                          frame.sequenceNumber());
+                                          m_frameHeader.sequenceNumber());
 }
 
 ResponsePtr ProtocolAdmin::extractResponseFromBuffer(BinaryQueue &bufferQueue) {
@@ -210,9 +212,9 @@ ResponsePtr ProtocolAdmin::extractResponseFromBuffer(BinaryQueue &bufferQueue) {
         LOGD("Deserialized opCode [%" PRIu8 "]", opCode);
         switch (opCode) {
         case OpCheckPolicyResponse:
-            return deserializeCheckResponse(m_frameHeader);
+            return deserializeCheckResponse();
         case OpCodeResponse:
-            return deserializeCodeResponse(m_frameHeader);
+            return deserializeCodeResponse();
         default:
             throw InvalidProtocolException(InvalidProtocolException::WrongOpCode);
             break;

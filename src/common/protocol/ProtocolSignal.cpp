@@ -46,17 +46,17 @@ ProtocolPtr ProtocolSignal::clone(void) {
     return std::make_shared<ProtocolSignal>();
 }
 
-RequestPtr ProtocolSignal::extractRequestFromBuffer(BinaryQueue &bufferQueue) {
-    if (bufferQueue.size() >= sizeof(struct signalfd_siginfo)) {
+RequestPtr ProtocolSignal::extractRequestFromBuffer(BinaryQueuePtr bufferQueue) {
+    if (bufferQueue->size() >= sizeof(struct signalfd_siginfo)) {
         struct signalfd_siginfo sigInfo;
-        bufferQueue.flattenConsume(&sigInfo, sizeof(sigInfo));
+        bufferQueue->flattenConsume(&sigInfo, sizeof(sigInfo));
         return std::make_shared<SignalRequest>(sigInfo);
     }
 
     return nullptr;
 }
 
-ResponsePtr ProtocolSignal::extractResponseFromBuffer(BinaryQueue &bufferQueue UNUSED) {
+ResponsePtr ProtocolSignal::extractResponseFromBuffer(BinaryQueuePtr bufferQueue UNUSED) {
     throw NotImplementedException();
 }
 

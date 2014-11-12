@@ -26,6 +26,7 @@
 #include <memory>
 
 #include <containers/BinaryQueue.h>
+#include <exceptions/ContextErrorException.h>
 #include <request/pointers.h>
 #include <response/pointers.h>
 #include <response/Response.h>
@@ -36,10 +37,10 @@ namespace Cynara {
 class RequestContext {
 private:
     ResponseTakerWeakPtr m_responseTaker;
-    BinaryQueue &m_responseQueue;
+    BinaryQueueWeakPtr m_responseQueue;
 
 public:
-    RequestContext(ResponseTakerPtr responseTaker, BinaryQueue &responseQueue)
+    RequestContext(ResponseTakerPtr responseTaker, BinaryQueuePtr responseQueue)
         : m_responseTaker(responseTaker), m_responseQueue(responseQueue) {
     }
 
@@ -49,8 +50,11 @@ public:
             response->execute(response, taker, self);
     }
 
-    BinaryQueue &responseQueue(void) const {
-        return m_responseQueue;
+    BinaryQueuePtr responseQueue(void) const {
+        auto bbqPtr = m_responseQueue.lock();
+        if (bbqPtr)
+            return bbqPtr;
+        throw ContextErrorException();
     }
 };
 

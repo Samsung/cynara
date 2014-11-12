@@ -149,7 +149,7 @@ RequestPtr ProtocolAdmin::deserializeSetPoliciesRequest(void) {
                                                 m_frameHeader.sequenceNumber());
 }
 
-RequestPtr ProtocolAdmin::extractRequestFromBuffer(BinaryQueue &bufferQueue) {
+RequestPtr ProtocolAdmin::extractRequestFromBuffer(BinaryQueuePtr bufferQueue) {
     ProtocolFrameSerializer::deserializeHeader(m_frameHeader, bufferQueue);
 
     if (m_frameHeader.isFrameComplete()) {
@@ -201,7 +201,7 @@ ResponsePtr ProtocolAdmin::deserializeCodeResponse(void) {
                                           m_frameHeader.sequenceNumber());
 }
 
-ResponsePtr ProtocolAdmin::extractResponseFromBuffer(BinaryQueue &bufferQueue) {
+ResponsePtr ProtocolAdmin::extractResponseFromBuffer(BinaryQueuePtr bufferQueue) {
     ProtocolFrameSerializer::deserializeHeader(m_frameHeader, bufferQueue);
 
     if (m_frameHeader.isFrameComplete()) {
@@ -239,7 +239,7 @@ void ProtocolAdmin::execute(RequestContextPtr context, AdminCheckRequestPtr requ
     ProtocolSerialization::serialize(frame, request->startBucket());
     ProtocolSerialization::serialize(frame, request->recursive());
 
-    ProtocolFrameSerializer::finishSerialization(frame, context->responseQueue());
+    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
 }
 
 void ProtocolAdmin::execute(RequestContextPtr context, InsertOrUpdateBucketRequestPtr request) {
@@ -255,7 +255,7 @@ void ProtocolAdmin::execute(RequestContextPtr context, InsertOrUpdateBucketReque
     ProtocolSerialization::serialize(frame, request->result().policyType());
     ProtocolSerialization::serialize(frame, request->result().metadata());
 
-    ProtocolFrameSerializer::finishSerialization(frame, context->responseQueue());
+    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
 }
 
 void ProtocolAdmin::execute(RequestContextPtr context, RemoveBucketRequestPtr request) {
@@ -267,7 +267,7 @@ void ProtocolAdmin::execute(RequestContextPtr context, RemoveBucketRequestPtr re
     ProtocolSerialization::serialize(frame, OpRemoveBucket);
     ProtocolSerialization::serialize(frame, request->bucketId());
 
-    ProtocolFrameSerializer::finishSerialization(frame, context->responseQueue());
+    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
 }
 
 void ProtocolAdmin::execute(RequestContextPtr context, SetPoliciesRequestPtr request) {
@@ -311,7 +311,7 @@ void ProtocolAdmin::execute(RequestContextPtr context, SetPoliciesRequestPtr req
         }
     }
 
-    ProtocolFrameSerializer::finishSerialization(frame, context->responseQueue());
+    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
 }
 
 void ProtocolAdmin::execute(RequestContextPtr context, CheckResponsePtr response) {
@@ -327,7 +327,7 @@ void ProtocolAdmin::execute(RequestContextPtr context, CheckResponsePtr response
     ProtocolSerialization::serialize(frame, response->m_resultRef.policyType());
     ProtocolSerialization::serialize(frame, response->m_resultRef.metadata());
 
-    ProtocolFrameSerializer::finishSerialization(frame, context->responseQueue());
+    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
 }
 
 void ProtocolAdmin::execute(RequestContextPtr context, CodeResponsePtr response) {
@@ -340,7 +340,7 @@ void ProtocolAdmin::execute(RequestContextPtr context, CodeResponsePtr response)
     ProtocolSerialization::serialize(frame, OpCodeResponse);
     ProtocolSerialization::serialize(frame, static_cast<ProtocolResponseCode>(response->m_code));
 
-    ProtocolFrameSerializer::finishSerialization(frame, context->responseQueue());
+    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
 }
 
 } // namespace Cynara

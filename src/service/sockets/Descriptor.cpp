@@ -27,8 +27,17 @@ namespace Cynara {
 Descriptor::Descriptor() : m_listen(false), m_used(false), m_client(false), m_protocol(nullptr) {
 }
 
+void Descriptor::checkQueues(void) {
+    if (!m_writeQueue)
+        m_writeQueue = std::make_shared<BinaryQueue>();
+    if (!m_readQueue)
+        m_readQueue = std::make_shared<BinaryQueue>();
+}
+
 bool Descriptor::hasDataToWrite(void) const {
-    return !(m_writeQueue.empty() && m_writeBuffer.empty());
+    if (m_writeQueue)
+        return !(m_writeQueue->empty() && m_writeBuffer.empty());
+    return false;
 }
 
 ResponseTakerPtr Descriptor::responseTaker(void) const {
@@ -36,19 +45,22 @@ ResponseTakerPtr Descriptor::responseTaker(void) const {
 }
 
 void Descriptor::pushReadBuffer(const RawBuffer &readbuffer) {
-    m_readQueue.appendCopy(readbuffer.data(), readbuffer.size());
+    checkQueues();
+    m_readQueue->appendCopy(readbuffer.data(), readbuffer.size());
 }
 
 RequestPtr Descriptor::extractRequest(void) {
+    checkQueues();
     return m_protocol->extractRequestFromBuffer(m_readQueue);
 }
 
 RawBuffer &Descriptor::prepareWriteBuffer(void) {
-    size_t queuedDataSize = m_writeQueue.size();
+    checkQueues();
+    size_t queuedDataSize = m_writeQueue->size();
     size_t bufferDataSize = m_writeBuffer.size();
 
     m_writeBuffer.resize(queuedDataSize + bufferDataSize);
-    m_writeQueue.flattenConsume(m_writeBuffer.data() + bufferDataSize, queuedDataSize);
+    m_writeQueue->flattenConsume(m_writeBuffer.data() + bufferDataSize, queuedDataSize);
 
     return m_writeBuffer;
 }
@@ -57,8 +69,8 @@ void Descriptor::clear(void) {
     m_listen = false;
     m_used = false;
     m_client = false;
-    m_readQueue.clear();
-    m_writeQueue.clear();
+    m_readQueue.reset();
+    m_writeQueue.reset();
     m_writeBuffer.clear();
     m_protocol.reset();
 }

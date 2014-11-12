@@ -30,6 +30,8 @@ namespace Cynara {
 
 SocketClientAsync::SocketClientAsync(const std::string &socketPath, ProtocolPtr protocol)
     : m_socket(socketPath, 0), m_protocol(protocol) {
+    m_readQueue = std::make_shared<BinaryQueue>();
+    m_writeQueue = std::make_shared<BinaryQueue>();
 }
 
 Socket::ConnectionStatus SocketClientAsync::connect(void) {
@@ -54,15 +56,15 @@ void SocketClientAsync::appendRequest(RequestPtr request) {
 }
 
 bool SocketClientAsync::isDataToSend(void) {
-    return m_socket.isDataToSend() || !m_writeQueue.empty();
+    return m_socket.isDataToSend() || !m_writeQueue->empty();
 }
 
 Socket::SendStatus SocketClientAsync::sendToCynara(void) {
-    return m_socket.sendToServer(m_writeQueue);
+    return m_socket.sendToServer(*m_writeQueue);
 }
 
 bool SocketClientAsync::receiveFromCynara(void) {
-    return m_socket.receiveFromServer(m_readQueue);
+    return m_socket.receiveFromServer(*m_readQueue);
 }
 
 ResponsePtr SocketClientAsync::getResponse(void) {

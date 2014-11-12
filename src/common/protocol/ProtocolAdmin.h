@@ -35,8 +35,8 @@ public:
 
     virtual ProtocolPtr clone(void);
 
-    virtual RequestPtr extractRequestFromBuffer(BinaryQueue &bufferQueue);
-    virtual ResponsePtr extractResponseFromBuffer(BinaryQueue &bufferQueue);
+    virtual RequestPtr extractRequestFromBuffer(BinaryQueuePtr bufferQueue);
+    virtual ResponsePtr extractResponseFromBuffer(BinaryQueuePtr bufferQueue);
 
     virtual void execute(RequestContextPtr context, AdminCheckRequestPtr request);
     virtual void execute(RequestContextPtr context, InsertOrUpdateBucketRequestPtr request);

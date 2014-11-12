@@ -31,15 +31,15 @@
 namespace Cynara {
 
 void ProtocolFrameSerializer::deserializeHeader(ProtocolFrameHeader &frameHeader,
-                                                BinaryQueue &data) {
+                                                BinaryQueuePtr data) {
     if (!frameHeader.isHeaderComplete()) {
-        if ((data.size() < ProtocolFrameHeader::frameHeaderLength())) {
+        if ((data->size() < ProtocolFrameHeader::frameHeaderLength())) {
             return;
         }
 
         LOGD("Deserializing frameHeader");
 
-        frameHeader.setHeaderContent(BinaryQueuePtr(&data, [=] (BinaryQueue *) {}));
+        frameHeader.setHeaderContent(data);
 
         ProtocolFrameSignature signature;
         ProtocolDeserialization::deserialize(frameHeader, frameHeader.m_signature.length(),
@@ -60,7 +60,7 @@ void ProtocolFrameSerializer::deserializeHeader(ProtocolFrameHeader &frameHeader
         frameHeader.setHeaderComplete();
     }
 
-    if (data.size() >= (frameHeader.frameLength() - ProtocolFrameHeader::frameHeaderLength())) {
+    if (data->size() >= (frameHeader.frameLength() - ProtocolFrameHeader::frameHeaderLength())) {
         frameHeader.setBodyComplete();
     }
 }

@@ -33,52 +33,20 @@ namespace Cynara {
  */
 class BinaryQueue;
 typedef std::shared_ptr<BinaryQueue> BinaryQueuePtr;
+typedef std::weak_ptr<BinaryQueue> BinaryQueueWeakPtr;
 
 /**
  * Binary stream implemented as constant size bucket list
  *
  * @todo Add optimized implementation for FlattenConsume
  */
-class BinaryQueue
-{
-  public:
+class BinaryQueue {
+public:
     typedef void (*BufferDeleter)(const void *buffer, size_t bufferSize,
                                   void *userParam);
     static void bufferDeleterFree(const void *buffer,
                                   size_t bufferSize,
                                   void *userParam);
-
-  private:
-    struct Bucket
-    {
-        const void *buffer;
-        const void *ptr;
-        size_t size;
-        size_t left;
-
-        BufferDeleter deleter;
-        void *param;
-
-        Bucket(const void *buffer,
-               size_t bufferSize,
-               BufferDeleter deleter,
-               void *userParam);
-        ~Bucket();
-        // make it noncopyable
-        Bucket(const Bucket &) = delete;
-        const Bucket &operator=(const Bucket &) = delete;
-        // make it nonmoveable
-        Bucket(Bucket &&) = delete;
-        Bucket &operator=(Bucket &&) = delete;
-    };
-
-    typedef std::list<Bucket *> BucketList;
-    BucketList m_buckets;
-    size_t m_size;
-
-    static void deleteBucket(Bucket *bucket);
-
-  public:
     /**
      * Construct empty binary queue
      */
@@ -239,6 +207,35 @@ class BinaryQueue
      *            is larger than available bytes in binary queue
      */
     void flattenConsume(void *buffer, size_t bufferSize);
+
+private:
+      struct Bucket {
+          const void *buffer;
+          const void *ptr;
+          size_t size;
+          size_t left;
+
+          BufferDeleter deleter;
+          void *param;
+
+          Bucket(const void *buffer,
+                 size_t bufferSize,
+                 BufferDeleter deleter,
+                 void *userParam);
+          ~Bucket();
+          // make it noncopyable
+          Bucket(const Bucket &) = delete;
+          const Bucket &operator=(const Bucket &) = delete;
+          // make it nonmoveable
+          Bucket(Bucket &&) = delete;
+          Bucket &operator=(Bucket &&) = delete;
+      };
+
+      typedef std::list<Bucket *> BucketList;
+      BucketList m_buckets;
+      size_t m_size;
+
+      static void deleteBucket(Bucket *bucket);
 };
 
 } // namespace Cynara

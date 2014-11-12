@@ -41,8 +41,8 @@ class SocketClient {
 private:
     Socket m_socket;
     ProtocolPtr m_protocol;
-    BinaryQueue m_readQueue;
-    BinaryQueue m_writeQueue;
+    BinaryQueuePtr m_readQueue;
+    BinaryQueuePtr m_writeQueue;
 
 public:
     SocketClient(const std::string &socketPath, ProtocolPtr protocol);

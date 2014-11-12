@@ -37,6 +37,8 @@ namespace Cynara {
 
 SocketClient::SocketClient(const std::string &socketPath, ProtocolPtr protocol)
         : m_socket(socketPath), m_protocol(protocol) {
+    m_writeQueue = std::make_shared<BinaryQueue>();
+    m_readQueue = std::make_shared<BinaryQueue>();
 }
 
 bool SocketClient::connect(void) {
@@ -64,14 +66,14 @@ ResponsePtr SocketClient::askCynaraServer(RequestPtr request) {
     request->execute(request, m_protocol, context);
 
     //send request to cynara
-    if (m_socket.sendToServer(m_writeQueue) == Socket::SendStatus::CONNECTION_LOST) {
+    if (m_socket.sendToServer(*m_writeQueue) == Socket::SendStatus::CONNECTION_LOST) {
         LOGW("Disconnected while sending request to Cynara.");
         return nullptr;
     }
 
     // receive response from cynara
     while (true) {
-        if (!m_socket.receiveFromServer(m_readQueue)) {
+        if (!m_socket.receiveFromServer(*m_readQueue)) {
             LOGW("Disconnected while receiving response from Cynara.");
             return nullptr;
         }

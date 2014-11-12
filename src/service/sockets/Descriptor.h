@@ -34,17 +34,6 @@
 namespace Cynara {
 
 class Descriptor {
-private:
-    bool m_listen;
-    bool m_used;
-    bool m_client;
-
-    BinaryQueue m_readQueue;
-    BinaryQueue m_writeQueue;
-    RawBuffer m_writeBuffer;
-
-    ProtocolPtr m_protocol;
-
 public:
     Descriptor();
 
@@ -68,7 +57,7 @@ public:
 
     ResponseTakerPtr responseTaker(void) const;
 
-    BinaryQueue &writeQueue(void) {
+    BinaryQueuePtr writeQueue(void) {
         return m_writeQueue;
     }
 
@@ -94,6 +83,19 @@ public:
     RawBuffer &prepareWriteBuffer(void);
 
     void clear(void);
+
+private:
+    bool m_listen;
+    bool m_used;
+    bool m_client;
+
+    BinaryQueuePtr m_readQueue;
+    BinaryQueuePtr m_writeQueue;
+    RawBuffer m_writeBuffer;
+
+    ProtocolPtr m_protocol;
+
+    void checkQueues(void);
 };
 
 } // namespace Cynara

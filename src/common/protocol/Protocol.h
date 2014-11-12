@@ -44,8 +44,8 @@ public:
 
     virtual ProtocolPtr clone(void) = 0;
 
-    virtual RequestPtr extractRequestFromBuffer(BinaryQueue &bufferQueue) = 0;
-    virtual ResponsePtr extractResponseFromBuffer(BinaryQueue &bufferQueue) = 0;
+    virtual RequestPtr extractRequestFromBuffer(BinaryQueuePtr bufferQueue) = 0;
+    virtual ResponsePtr extractResponseFromBuffer(BinaryQueuePtr bufferQueue) = 0;
 
     ProtocolFrameHeader &frameHeader(void) {
         return m_frameHeader;

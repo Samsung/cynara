@@ -73,7 +73,7 @@ RequestPtr ProtocolClient::deserializeCheckRequest(void) {
                                           m_frameHeader.sequenceNumber());
 }
 
-RequestPtr ProtocolClient::extractRequestFromBuffer(BinaryQueue &bufferQueue) {
+RequestPtr ProtocolClient::extractRequestFromBuffer(BinaryQueuePtr bufferQueue) {
     ProtocolFrameSerializer::deserializeHeader(m_frameHeader, bufferQueue);
 
     if (m_frameHeader.isFrameComplete()) {
@@ -117,7 +117,7 @@ ResponsePtr ProtocolClient::deserializeCheckResponse(void) {
     return std::make_shared<CheckResponse>(policyResult, m_frameHeader.sequenceNumber());
 }
 
-ResponsePtr ProtocolClient::extractResponseFromBuffer(BinaryQueue &bufferQueue) {
+ResponsePtr ProtocolClient::extractResponseFromBuffer(BinaryQueuePtr bufferQueue) {
     ProtocolFrameSerializer::deserializeHeader(m_frameHeader, bufferQueue);
 
     if (m_frameHeader.isFrameComplete()) {
@@ -147,7 +147,7 @@ void ProtocolClient::execute(RequestContextPtr context, CancelRequestPtr request
 
     ProtocolSerialization::serialize(frame, OpCancelRequest);
 
-    ProtocolFrameSerializer::finishSerialization(frame, context->responseQueue());
+    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
 }
 
 void ProtocolClient::execute(RequestContextPtr context, CheckRequestPtr request) {
@@ -162,7 +162,7 @@ void ProtocolClient::execute(RequestContextPtr context, CheckRequestPtr request)
     ProtocolSerialization::serialize(frame, request->key().user().value());
     ProtocolSerialization::serialize(frame, request->key().privilege().value());
 
-    ProtocolFrameSerializer::finishSerialization(frame, context->responseQueue());
+    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
 }
 
 void ProtocolClient::execute(RequestContextPtr context, CancelResponsePtr response) {
@@ -173,7 +173,7 @@ void ProtocolClient::execute(RequestContextPtr context, CancelResponsePtr respon
 
     ProtocolSerialization::serialize(frame, OpCancelResponse);
 
-    ProtocolFrameSerializer::finishSerialization(frame, context->responseQueue());
+    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
 }
 
 void ProtocolClient::execute(RequestContextPtr context, CheckResponsePtr response) {
@@ -188,7 +188,7 @@ void ProtocolClient::execute(RequestContextPtr context, CheckResponsePtr respons
     ProtocolSerialization::serialize(frame, response->m_resultRef.policyType());
     ProtocolSerialization::serialize(frame, response->m_resultRef.metadata());
 
-    ProtocolFrameSerializer::finishSerialization(frame, context->responseQueue());
+    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
 }
 
 } // namespace Cynara

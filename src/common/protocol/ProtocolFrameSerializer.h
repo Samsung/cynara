@@ -33,7 +33,7 @@ namespace Cynara {
 class ProtocolFrameSerializer {
 
 public:
-    static void deserializeHeader(ProtocolFrameHeader &frameHeader, BinaryQueue &data);
+    static void deserializeHeader(ProtocolFrameHeader &frameHeader, BinaryQueuePtr data);
     static ProtocolFrame startSerialization(ProtocolFrameSequenceNumber sequenceNumber);
     static void finishSerialization(ProtocolFrame &frame, BinaryQueue &data);
 };

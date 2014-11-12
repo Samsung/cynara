@@ -36,6 +36,9 @@ class PolicyKeyFeature {
 friend class PolicyKey;
 
 public:
+    PolicyKeyFeature(const PolicyKeyFeature &) = default;
+    PolicyKeyFeature(PolicyKeyFeature &&) = default;
+
     typedef std::string ValueType;
 
     static PolicyKeyFeature create(ValueType value) {
@@ -97,6 +100,9 @@ public:
             const PolicyKeyFeature::ValueType &userId,
             const PolicyKeyFeature::ValueType &privilegeId)
         : m_client(clientId), m_user(userId), m_privilege(privilegeId) {};
+
+    PolicyKey(const PolicyKey &) = default;
+    PolicyKey(PolicyKey &&) = default;
 
     bool operator==(const PolicyKey &other) const {
         return std::tie(m_client, m_user, m_privilege)

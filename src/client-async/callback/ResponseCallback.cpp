@@ -28,6 +28,12 @@ ResponseCallback::ResponseCallback(cynara_response_callback callback, void *user
     : m_callback(callback), m_userData(userData) {
 }
 
+ResponseCallback::ResponseCallback(ResponseCallback &&other)
+    : m_callback(other.m_callback), m_userData(other.m_userData) {
+    other.m_callback = nullptr;
+    other.m_userData = nullptr;
+}
+
 void ResponseCallback::onAnswer(cynara_check_id checkId, int response) const {
     if (!m_callback)
         return;

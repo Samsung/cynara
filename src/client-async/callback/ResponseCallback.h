@@ -31,6 +31,7 @@ class ResponseCallback {
 public:
     ResponseCallback(cynara_response_callback callback, void *userData);
     ResponseCallback(const ResponseCallback&) = default;
+    ResponseCallback(ResponseCallback &&other);
     ~ResponseCallback() {};
 
     void onAnswer(cynara_check_id checkId, int response) const;

@@ -166,10 +166,12 @@ void Logic::processCheckResponse(CheckResponsePtr checkResponse) {
     }
     int result = m_cache->update(it->second.session(), it->second.key(),
                                  checkResponse->m_resultRef);
-    if (!it->second.cancelled())
-        it->second.callback().onAnswer(static_cast<cynara_check_id>(it->first), result);
+    CheckData checkData(std::move(it->second));
     m_sequenceContainer.release(it->first);
     m_checks.erase(it);
+    if (!checkData.cancelled())
+        checkData.callback().onAnswer(
+            static_cast<cynara_check_id>(checkResponse->sequenceNumber()), result);
 }
 
 void Logic::processCancelResponse(CancelResponsePtr cancelResponse) {

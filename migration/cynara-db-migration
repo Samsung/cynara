@@ -14,7 +14,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 #
-# @file        migration/cynara-db-migration.sh
+# @file        migration/cynara-db-migration
 # @author      Pawel Wieczorek <p.wieczorek2@samsung.com>
 # @brief       Migration tool for Cynara's database
 #

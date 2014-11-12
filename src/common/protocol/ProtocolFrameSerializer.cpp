@@ -65,19 +65,19 @@ void ProtocolFrameSerializer::deserializeHeader(ProtocolFrameHeader &frameHeader
     }
 }
 
-ProtocolFramePtr ProtocolFrameSerializer::startSerialization(ProtocolFrameSequenceNumber sequenceNumber) {
+ProtocolFrame ProtocolFrameSerializer::startSerialization(ProtocolFrameSequenceNumber sequenceNumber) {
     LOGD("Serialization started");
 
     BinaryQueuePtr headerQueue = std::make_shared<BinaryQueue>();
     BinaryQueuePtr bodyQueue = std::make_shared<BinaryQueue>();
-    ProtocolFrameHeaderPtr header = std::make_shared<ProtocolFrameHeader>(headerQueue);
-    header->setSequenceNumber(sequenceNumber);
-    header->increaseFrameLength(ProtocolFrameHeader::frameHeaderLength());
-    return std::make_shared<ProtocolFrame>(header, bodyQueue);
+    ProtocolFrameHeader header(headerQueue);
+    header.setSequenceNumber(sequenceNumber);
+    header.increaseFrameLength(ProtocolFrameHeader::frameHeaderLength());
+    return ProtocolFrame(header, bodyQueue);
 }
 
-void ProtocolFrameSerializer::finishSerialization(ProtocolFramePtr frame, BinaryQueue &data) {
-    ProtocolFrameHeader &frameHeader = *frame->frameHeader();
+void ProtocolFrameSerializer::finishSerialization(ProtocolFrame &frame, BinaryQueue &data) {
+    ProtocolFrameHeader &frameHeader = frame.frameHeader();
     ProtocolSerialization::serializeNoSize(frameHeader, ProtocolFrameHeader::m_signature);
     ProtocolSerialization::serialize(frameHeader, frameHeader.m_frameLength);
     ProtocolSerialization::serialize(frameHeader, frameHeader.m_sequenceNumber);
@@ -87,7 +87,7 @@ void ProtocolFrameSerializer::finishSerialization(ProtocolFramePtr frame, Binary
          (int)frameHeader.m_sequenceNumber);
 
     data.appendMoveFrom(frameHeader.headerContent());
-    data.appendMoveFrom(frame->bodyContent());
+    data.appendMoveFrom(frame.bodyContent());
 }
 
 } /* namespace Cynara */

@@ -107,8 +107,6 @@ private:
     friend class ProtocolFrameSerializer;
 };
 
-typedef std::shared_ptr<ProtocolFrameHeader> ProtocolFrameHeaderPtr;
-
 } /* namespace Cynara */
 
 #endif /* SRC_COMMON_PROTOCOL_PROTOCOLFRAMEHEADER_H_ */

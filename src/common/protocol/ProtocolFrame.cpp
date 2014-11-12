@@ -28,7 +28,7 @@
 
 namespace Cynara {
 
-ProtocolFrame::ProtocolFrame(ProtocolFrameHeaderPtr frameHeader, BinaryQueuePtr data) :
+ProtocolFrame::ProtocolFrame(ProtocolFrameHeader frameHeader, BinaryQueuePtr data) :
         m_frameHeader(frameHeader), m_frameBodyContent(data) {
 }
 
@@ -38,7 +38,7 @@ void ProtocolFrame::read(size_t num, void *bytes) {
 
 void ProtocolFrame::write(size_t num, const void *bytes) {
     m_frameBodyContent->appendCopy(bytes, num);
-    m_frameHeader->increaseFrameLength(num);
+    m_frameHeader.increaseFrameLength(num);
 }
 
 } /* namespace Cynara */

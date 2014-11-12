@@ -39,10 +39,10 @@ class ProtocolFrameSerializer;
 class ProtocolFrame: public IStream {
 
 public:
-    ProtocolFrame(ProtocolFrameHeaderPtr frameHeader, BinaryQueuePtr headerContent);
+    ProtocolFrame(ProtocolFrameHeader frameHeader, BinaryQueuePtr headerContent);
     virtual ~ProtocolFrame() {};
 
-    ProtocolFrameHeaderPtr frameHeader(void) {
+    ProtocolFrameHeader &frameHeader(void) {
         return m_frameHeader;
     }
 
@@ -50,7 +50,7 @@ public:
     virtual void write(size_t num, const void *bytes);
 
 private:
-    ProtocolFrameHeaderPtr m_frameHeader;
+    ProtocolFrameHeader m_frameHeader;
     BinaryQueuePtr m_frameBodyContent;
 
     BinaryQueue &bodyContent(void) {
@@ -59,8 +59,6 @@ private:
 
     friend class ProtocolFrameSerializer;
 };
-
-typedef std::shared_ptr<ProtocolFrame> ProtocolFramePtr;
 
 } /* namespace Cynara */
 

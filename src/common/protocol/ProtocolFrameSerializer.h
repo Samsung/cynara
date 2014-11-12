@@ -34,8 +34,8 @@ class ProtocolFrameSerializer {
 
 public:
     static void deserializeHeader(ProtocolFrameHeader &frameHeader, BinaryQueue &data);
-    static ProtocolFramePtr startSerialization(ProtocolFrameSequenceNumber sequenceNumber);
-    static void finishSerialization(ProtocolFramePtr frame, BinaryQueue &data);
+    static ProtocolFrame startSerialization(ProtocolFrameSequenceNumber sequenceNumber);
+    static void finishSerialization(ProtocolFrame &frame, BinaryQueue &data);
 };
 
 } /* namespace Cynara */

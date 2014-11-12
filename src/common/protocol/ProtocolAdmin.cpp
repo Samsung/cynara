@@ -228,14 +228,14 @@ void ProtocolAdmin::execute(RequestContextPtr context, AdminCheckRequestPtr requ
          request->key().user().value().c_str(), request->key().privilege().value().c_str(),
          request->startBucket().c_str(), request->recursive());
 
-    ProtocolFramePtr frame = ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
+    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
 
-    ProtocolSerialization::serialize(*frame, OpAdminCheckRequest);
-    ProtocolSerialization::serialize(*frame, request->key().client().value());
-    ProtocolSerialization::serialize(*frame, request->key().user().value());
-    ProtocolSerialization::serialize(*frame, request->key().privilege().value());
-    ProtocolSerialization::serialize(*frame, request->startBucket());
-    ProtocolSerialization::serialize(*frame, request->recursive());
+    ProtocolSerialization::serialize(frame, OpAdminCheckRequest);
+    ProtocolSerialization::serialize(frame, request->key().client().value());
+    ProtocolSerialization::serialize(frame, request->key().user().value());
+    ProtocolSerialization::serialize(frame, request->key().privilege().value());
+    ProtocolSerialization::serialize(frame, request->startBucket());
+    ProtocolSerialization::serialize(frame, request->recursive());
 
     ProtocolFrameSerializer::finishSerialization(frame, context->responseQueue());
 }
@@ -246,12 +246,12 @@ void ProtocolAdmin::execute(RequestContextPtr context, InsertOrUpdateBucketReque
          request->bucketId().c_str(), request->result().policyType(),
          request->result().metadata().c_str());
 
-    ProtocolFramePtr frame = ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
+    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
 
-    ProtocolSerialization::serialize(*frame, OpInsertOrUpdateBucket);
-    ProtocolSerialization::serialize(*frame, request->bucketId());
-    ProtocolSerialization::serialize(*frame, request->result().policyType());
-    ProtocolSerialization::serialize(*frame, request->result().metadata());
+    ProtocolSerialization::serialize(frame, OpInsertOrUpdateBucket);
+    ProtocolSerialization::serialize(frame, request->bucketId());
+    ProtocolSerialization::serialize(frame, request->result().policyType());
+    ProtocolSerialization::serialize(frame, request->result().metadata());
 
     ProtocolFrameSerializer::finishSerialization(frame, context->responseQueue());
 }
@@ -260,10 +260,10 @@ void ProtocolAdmin::execute(RequestContextPtr context, RemoveBucketRequestPtr re
     LOGD("Serializing RemoveBucketRequest: sequenceNumber [%" PRIu16 "], bucketId <%s>",
          request->sequenceNumber(), request->bucketId().c_str());
 
-    ProtocolFramePtr frame = ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
+    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
 
-    ProtocolSerialization::serialize(*frame, OpRemoveBucket);
-    ProtocolSerialization::serialize(*frame, request->bucketId());
+    ProtocolSerialization::serialize(frame, OpRemoveBucket);
+    ProtocolSerialization::serialize(frame, request->bucketId());
 
     ProtocolFrameSerializer::finishSerialization(frame, context->responseQueue());
 }
@@ -273,39 +273,39 @@ void ProtocolAdmin::execute(RequestContextPtr context, SetPoliciesRequestPtr req
          "insertOrUpdate count [%zu], remove count [%zu]", request->sequenceNumber(),
          request->policiesToBeInsertedOrUpdated().size(), request->policiesToBeRemoved().size());
 
-    ProtocolFramePtr frame =
+    ProtocolFrame frame =
             ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
 
-    ProtocolSerialization::serialize(*frame, OpSetPolicies);
+    ProtocolSerialization::serialize(frame, OpSetPolicies);
 
-    ProtocolSerialization::serialize(*frame,
+    ProtocolSerialization::serialize(frame,
             static_cast<ProtocolFrameFieldsCount>(request->policiesToBeInsertedOrUpdated().size()));
     for (auto policyBucket : request->policiesToBeInsertedOrUpdated()) {
-        ProtocolSerialization::serialize(*frame, policyBucket.first);
-        ProtocolSerialization::serialize(*frame,
+        ProtocolSerialization::serialize(frame, policyBucket.first);
+        ProtocolSerialization::serialize(frame,
                     static_cast<ProtocolFrameFieldsCount>(policyBucket.second.size()));
         for (auto policy : policyBucket.second) {
             // PolicyKey
-            ProtocolSerialization::serialize(*frame, policy.key().client().value());
-            ProtocolSerialization::serialize(*frame, policy.key().user().value());
-            ProtocolSerialization::serialize(*frame, policy.key().privilege().value());
+            ProtocolSerialization::serialize(frame, policy.key().client().value());
+            ProtocolSerialization::serialize(frame, policy.key().user().value());
+            ProtocolSerialization::serialize(frame, policy.key().privilege().value());
             // PolicyResult
-            ProtocolSerialization::serialize(*frame, policy.result().policyType());
-            ProtocolSerialization::serialize(*frame, policy.result().metadata());
+            ProtocolSerialization::serialize(frame, policy.result().policyType());
+            ProtocolSerialization::serialize(frame, policy.result().metadata());
         }
     }
 
-    ProtocolSerialization::serialize(*frame,
+    ProtocolSerialization::serialize(frame,
             static_cast<ProtocolFrameFieldsCount>(request->policiesToBeRemoved().size()));
     for (auto policyBucket : request->policiesToBeRemoved()) {
-        ProtocolSerialization::serialize(*frame, policyBucket.first);
-        ProtocolSerialization::serialize(*frame,
+        ProtocolSerialization::serialize(frame, policyBucket.first);
+        ProtocolSerialization::serialize(frame,
                     static_cast<ProtocolFrameFieldsCount>(policyBucket.second.size()));
         for (auto policyKey : policyBucket.second) {
             // PolicyKey
-            ProtocolSerialization::serialize(*frame, policyKey.client().value());
-            ProtocolSerialization::serialize(*frame, policyKey.user().value());
-            ProtocolSerialization::serialize(*frame, policyKey.privilege().value());
+            ProtocolSerialization::serialize(frame, policyKey.client().value());
+            ProtocolSerialization::serialize(frame, policyKey.user().value());
+            ProtocolSerialization::serialize(frame, policyKey.privilege().value());
         }
     }
 
@@ -318,12 +318,12 @@ void ProtocolAdmin::execute(RequestContextPtr context, CheckResponsePtr response
          response->sequenceNumber(), response->m_resultRef.policyType(),
          response->m_resultRef.metadata().c_str());
 
-    ProtocolFramePtr frame = ProtocolFrameSerializer::startSerialization(
+    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(
             response->sequenceNumber());
 
-    ProtocolSerialization::serialize(*frame, OpCheckPolicyResponse);
-    ProtocolSerialization::serialize(*frame, response->m_resultRef.policyType());
-    ProtocolSerialization::serialize(*frame, response->m_resultRef.metadata());
+    ProtocolSerialization::serialize(frame, OpCheckPolicyResponse);
+    ProtocolSerialization::serialize(frame, response->m_resultRef.policyType());
+    ProtocolSerialization::serialize(frame, response->m_resultRef.metadata());
 
     ProtocolFrameSerializer::finishSerialization(frame, context->responseQueue());
 }
@@ -332,11 +332,11 @@ void ProtocolAdmin::execute(RequestContextPtr context, CodeResponsePtr response)
     LOGD("Serializing CodeResponse: op [%" PRIu8 "], sequenceNumber [%" PRIu16 "], "
          "code [%" PRIu16 "]", OpCodeResponse, response->sequenceNumber(), response->m_code);
 
-    ProtocolFramePtr frame = ProtocolFrameSerializer::startSerialization(
+    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(
             response->sequenceNumber());
 
-    ProtocolSerialization::serialize(*frame, OpCodeResponse);
-    ProtocolSerialization::serialize(*frame, static_cast<ProtocolResponseCode>(response->m_code));
+    ProtocolSerialization::serialize(frame, OpCodeResponse);
+    ProtocolSerialization::serialize(frame, static_cast<ProtocolResponseCode>(response->m_code));
 
     ProtocolFrameSerializer::finishSerialization(frame, context->responseQueue());
 }

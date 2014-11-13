@@ -48,8 +48,8 @@ public:
 // Fake StorageSerializer for Cynara::PolicyBucket
 class FakeStorageSerializer : public Cynara::StorageSerializer {
 public:
-    FakeStorageSerializer() : Cynara::StorageSerializer(outStream),
-                              outStream(new std::ostringstream()) {}
+    FakeStorageSerializer(std::shared_ptr<std::ostringstream> o) : Cynara::StorageSerializer(o),
+                              outStream(o) {}
     MOCK_METHOD1(dump, void(const Cynara::PolicyBucket &bucket));
     std::shared_ptr<std::ostringstream> outStream;
 };
@@ -82,7 +82,8 @@ TEST_F(StorageSerializerFixture, dump_buckets) {
     using ::testing::UnorderedElementsAreArray;
 
     // Will be returned as serializer for buckets
-    auto fakeBucketSerializer = std::make_shared<FakeStorageSerializer>();
+    auto fakeBucketSerializer = std::make_shared<FakeStorageSerializer>(
+            std::make_shared<std::ostringstream>());
 
     buckets = {
         { "bucket1", PolicyBucket("bucket1", PredefinedPolicyType::DENY) },

@@ -94,9 +94,10 @@ migrate_db() {
         failure
     fi
 
-    :
-    # : is a null command, as functions may not be empty.
-    # Actual body will be added if database structure changes.
+    # Create minimal database if there was none:
+    if [ ! -d "${STATE_PATH}/${DB_DIR}" ]; then
+        create_db
+    fi
 }
 
 remove_db() {

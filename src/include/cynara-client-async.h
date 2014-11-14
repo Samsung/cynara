@@ -84,6 +84,8 @@ typedef enum {
  *    (CYNARA_CALL_CAUSE_FINISH)
  * 4) when connection to cynara service was broken and cannot be established again
  *    - probably cynara is unoperational (CYNARA_CALL_CAUSE_SERVICE_NOT_AVAILABLE)
+ * Api functions called during this callback with CYNARA_CALL_CAUSE_SERVICE_NOT_AVAILABLE
+ * or CYNARA_CALL_CAUSE_FINISH cause will return CYNARA_API_OPERATION_NOT_ALLOWED.
  *
  * \param[in] check_id Number identifying check request. Number is generated in
  *            cynara_async_create_request() and returned to user. It can be used to match
@@ -113,6 +115,7 @@ typedef void (*cynara_response_callback) (cynara_check_id check_id, cynara_async
  * Note, that provided file descriptor is used internally by libcynara
  * so user should not use it in other way than waiting on it in event loop.
  * In particular user should not write to, read from or close this fd.
+ * CYNARA_API_OPERATION_NOT_ALLOWED will be returned for every api function called in this callback.
  *
  * \param[in] old_fd Old descriptor which should be unregistered from event loop,
  *            Special value -1 is used when callback is called after first
@@ -240,7 +243,10 @@ void cynara_async_finish(cynara_async *p_cynara);
  *
  * \par Important notes:
  * Call to cynara_async_check_cache() needs cynara_async structure to be created first.
- * Use cynara_async_initialize() before calling this function.
+ * Use cynara_async_initialize() before calling this function. cynara_async_check_cache() called
+ * from within cynara_status_callback or cynara_response_callback with
+ * CYNARA_CALL_CAUSE_SERVICE_NOT_AVAILABLE or CYNARA_CALL_CAUSE_FINISH cause will return
+ * CYNARA_API_OPERATION_NOT_ALLOWED.
  *
  * \param[in] p_cynara cynara_async structure.
  * \param[in] client Application or process identifier.
@@ -306,6 +312,9 @@ int cynara_async_check_cache(cynara_async *p_cynara, const char *client, const c
  * If function fails (returns negative error code) request won't be generated and won't be pending,
  * callback function won't be ever called and user_response_data won't be remembered by library.
  * Also no check_id will be generated and *p_check_id value should be ignored.
+ * cynara_async_create_request() called from within cynara_status_callback or
+ * cynara_response_callback with CYNARA_CALL_CAUSE_SERVICE_NOT_AVAILABLE or CYNARA_CALL_CAUSE_FINISH
+ * cause will return CYNARA_API_OPERATION_NOT_ALLOWED.
  *
  * \param[in] p_cynara cynara_async structure.
  * \param[in] client Application or process identifier.
@@ -359,7 +368,9 @@ int cynara_async_create_request(cynara_async *p_cynara, const char *client,
  *
  * \par Important notes:
  * Call to cynara_async_process() requires initialized cynara_async structure. For this use
- * cynara_async_initialize().
+ * cynara_async_initialize(). cynara_async_process() called from within cynara_status_callback or
+ * cynara_response_callback with CYNARA_CALL_CAUSE_SERVICE_NOT_AVAILABLE or CYNARA_CALL_CAUSE_FINISH
+ * cause will return CYNARA_API_OPERATION_NOT_ALLOWED.
  *
  * \param[in] p_cynara cynara_async structure.
  *
@@ -398,7 +409,9 @@ int cynara_async_process(cynara_async *p_cynara);
  *
  * \par Important notes:
  * Call to cynara_async_cancel_request() needs cynara_async structure to be created first. For this
- * use cynara_async_initialize().
+ * use cynara_async_initialize(). cynara_async_cancel_request() called from within
+ * cynara_status_callback or cynara_response_callback with CYNARA_CALL_CAUSE_SERVICE_NOT_AVAILABLE
+ * or CYNARA_CALL_CAUSE_FINISH cause will return CYNARA_API_OPERATION_NOT_ALLOWED.
  *
  * \param[in] p_cynara cynara_async structure.
  * \param[in] check_id Check id to be cancelled

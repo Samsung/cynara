@@ -59,6 +59,7 @@ private:
     SocketClientAsyncPtr m_socketClient;
     CheckMap m_checks;
     SequenceContainer m_sequenceContainer;
+    bool m_operationPermitted;
 
     bool checkCacheValid(void);
     void prepareRequestsToSend(void);
@@ -71,6 +72,7 @@ private:
     bool ensureConnection(void);
     bool connect(void);
     int completeConnection(bool &completed);
+    void onStatusChange(int sock, cynara_async_status status);
     void onServiceNotAvailable(void);
     void onDisconnected(void);
 };

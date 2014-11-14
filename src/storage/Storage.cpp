@@ -101,7 +101,13 @@ void Storage::insertPolicies(const std::map<PolicyBucketId, std::vector<Policy>>
     // TODO: Rewrite, when transactions are supported
     // Check if all of buckets exist
     for (const auto &group : policiesByBucketId) {
+        const auto &bucketId = group.first;
         const auto &policies = group.second;
+
+        if (m_backend.hasBucket(bucketId) == false) {
+            throw BucketNotExistsException(bucketId);
+        }
+
         std::for_each(policies.cbegin(), policies.cend(), pointedBucketExists);
     }
 

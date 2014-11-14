@@ -86,8 +86,12 @@ TEST(storage, insertPolicies) {
     FakeStorageBackend backend;
     Storage storage(backend);
 
-    PolicyBucketId testBucket1 = "test-bucket-1";
-    PolicyBucketId testBucket2 = "test-bucket-2";
+    std::vector<PolicyBucketId> testBuckets = {
+        PolicyBucketId("test-bucket-1"),
+        PolicyBucketId("test-bucket-2"),
+    };
+
+    PolicyResult defaultPolicy(PredefinedPolicyType::DENY);
 
     typedef std::pair<PolicyBucketId, std::vector<Policy>> BucketPolicyPair;
 
@@ -96,18 +100,26 @@ TEST(storage, insertPolicies) {
     };
 
     std::map<PolicyBucketId, std::vector<Policy>> policiesToInsert = {
-        BucketPolicyPair(testBucket1, {
+        BucketPolicyPair(testBuckets[0], {
             createPolicy("1", ALLOW),
             createPolicy("2", DENY),
             createPolicy("3", DENY)
         }),
-        BucketPolicyPair(testBucket2, {
-            createPolicy("4", { BUCKET, testBucket1 }),
+        BucketPolicyPair(testBuckets[1], {
+            createPolicy("4", { BUCKET, testBuckets[0] }),
             createPolicy("5", PredefinedPolicyType::ALLOW)
         })
     };
 
-    EXPECT_CALL(backend, hasBucket(testBucket1)).WillOnce(Return(true));
+    for (const auto &bucket: testBuckets) {
+        EXPECT_CALL(backend, hasBucket(bucket)).WillOnce(Return(false));
+        EXPECT_CALL(backend, createBucket(bucket, defaultPolicy)).WillOnce(Return());
+
+        storage.addOrUpdateBucket(bucket, defaultPolicy);
+    }
+
+    EXPECT_CALL(backend, hasBucket(testBuckets[0])).WillRepeatedly(Return(true));
+    EXPECT_CALL(backend, hasBucket(testBuckets[1])).WillOnce(Return(true));
 
     for (const auto &group : policiesToInsert) {
         const auto &bucketId = group.first;
@@ -130,6 +142,8 @@ TEST(storage, insertPointingToNonexistentBucket) {
     PolicyBucketId testBucketId = "test-bucket-1";
     PolicyBucketId nonexistentBucketId = "nonexistent";
 
+    PolicyResult defaultPolicy(PredefinedPolicyType::DENY);
+
     typedef std::pair<PolicyBucketId, std::vector<Policy>> BucketPolicyPair;
 
     auto createPolicy = [] (const std::string &keySuffix, const PolicyResult &result) -> Policy {
@@ -143,6 +157,12 @@ TEST(storage, insertPointingToNonexistentBucket) {
         }),
     };
 
+    EXPECT_CALL(backend, hasBucket(testBucketId)).WillOnce(Return(false));
+    EXPECT_CALL(backend, createBucket(testBucketId, defaultPolicy)).WillOnce(Return());
+
+    storage.addOrUpdateBucket(testBucketId, defaultPolicy);
+
+    EXPECT_CALL(backend, hasBucket(testBucketId)).WillOnce(Return(true));
     EXPECT_CALL(backend, hasBucket(nonexistentBucketId)).WillOnce(Return(false));
 
     ASSERT_THROW(storage.insertPolicies(policiesToInsert), BucketNotExistsException);

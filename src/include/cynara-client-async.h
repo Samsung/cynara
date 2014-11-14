@@ -86,6 +86,7 @@ typedef enum {
  *    - probably cynara is unoperational (CYNARA_CALL_CAUSE_SERVICE_NOT_AVAILABLE)
  * Api functions called during this callback with CYNARA_CALL_CAUSE_SERVICE_NOT_AVAILABLE
  * or CYNARA_CALL_CAUSE_FINISH cause will return CYNARA_API_OPERATION_NOT_ALLOWED.
+ * cynara_async_finish() will be ignored if called from within this callback.
  *
  * \param[in] check_id Number identifying check request. Number is generated in
  *            cynara_async_create_request() and returned to user. It can be used to match
@@ -116,6 +117,7 @@ typedef void (*cynara_response_callback) (cynara_check_id check_id, cynara_async
  * so user should not use it in other way than waiting on it in event loop.
  * In particular user should not write to, read from or close this fd.
  * CYNARA_API_OPERATION_NOT_ALLOWED will be returned for every api function called in this callback.
+ * cynara_async_finish() will be ignored if called from within this callback.
  *
  * \param[in] old_fd Old descriptor which should be unregistered from event loop,
  *            Special value -1 is used when callback is called after first
@@ -207,6 +209,8 @@ int cynara_async_initialize(cynara_async **pp_cynara, const cynara_async_configu
  *
  * \par Important notes:
  * No other call to cynara-async-client library should be made after call to cynara_async_finish().
+ * cynara_async_finish() called from within cynara_response_callback or cynara_status_callback will
+ * be ignored.
  *
  * \param[in] p_cynara cynara_async structure. If NULL, then the call has no effect.
  */

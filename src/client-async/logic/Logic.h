@@ -49,6 +49,7 @@ public:
                               void *userResponseData);
     virtual int process(void);
     virtual int cancelRequest(cynara_check_id checkId);
+    virtual bool isFinishPermitted(void);
 
 private:
     typedef std::map<ProtocolFrameSequenceNumber, CheckData> CheckMap;
@@ -60,6 +61,7 @@ private:
     CheckMap m_checks;
     SequenceContainer m_sequenceContainer;
     bool m_operationPermitted;
+    bool m_inAnswerCancelResponseCallback;
 
     bool checkCacheValid(void);
     void prepareRequestsToSend(void);

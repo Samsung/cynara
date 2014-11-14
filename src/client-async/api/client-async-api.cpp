@@ -61,6 +61,9 @@ int cynara_async_initialize(cynara_async **pp_cynara,
 
 CYNARA_API
 void cynara_async_finish(cynara_async *p_cynara) {
+    if (!p_cynara->impl->isFinishPermitted())
+        return;
+
     delete p_cynara;
 }
 

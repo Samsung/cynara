@@ -210,9 +210,12 @@ void SocketManager::readyForAccept(int fd) {
 
 void SocketManager::closeSocket(int fd) {
     LOGD("SocketManger closeSocket fd [%d] start", fd);
+    Descriptor &desc = m_fds[fd];
+    requestTaker()->contextClosed(std::make_shared<RequestContext>(nullptr,
+                                                                   desc.writeQueue()));
     removeReadSocket(fd);
     removeWriteSocket(fd);
-    m_fds[fd].clear();
+    desc.clear();
     close(fd);
     LOGD("SocketManger closeSocket fd [%d] done", fd);
 }

@@ -174,6 +174,10 @@ void Logic::execute(RequestContextPtr context, SetPoliciesRequestPtr request) {
                             request->sequenceNumber()));
 }
 
+void Logic::contextClosed(RequestContextPtr context UNUSED) {
+    //We don't care now, but we will
+}
+
 void Logic::onPoliciesChanged(void) {
     m_storage->save();
     m_socketManager->disconnectAllClients();

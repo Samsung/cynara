@@ -39,6 +39,8 @@ public:
     virtual void execute(RequestContextPtr context, RemoveBucketRequestPtr request);
     virtual void execute(RequestContextPtr context, SetPoliciesRequestPtr request);
     virtual void execute(RequestContextPtr context, SignalRequestPtr request);
+
+    virtual void contextClosed(RequestContextPtr context);
 };
 
 } // namespace Cynara

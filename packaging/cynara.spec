@@ -522,6 +522,7 @@ fi
 %files -n libcynara-commons-devel
 %{_includedir}/cynara/cynara-policy-types.h
 %{_includedir}/cynara/plugin/ExternalPluginInterface.h
+%{_includedir}/cynara/types/ClientSession.h
 %{_includedir}/cynara/types/PolicyResult.h
 %{_includedir}/cynara/types/PolicyType.h
 %{_libdir}/libcynara-commons.so

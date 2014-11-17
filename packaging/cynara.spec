@@ -112,6 +112,7 @@ admin client library for setting, listing and removing policies
 %package -n libcynara-admin-devel
 Summary:    Cynara - admin client library (devel)
 Requires:   libcynara-admin = %{version}-%{release}
+Requires:   libcynara-client-commons-devel = %{version}-%{release}
 Requires:   libcynara-commons-devel = %{version}-%{release}
 
 %description -n libcynara-admin-devel

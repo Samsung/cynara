@@ -36,6 +36,7 @@ BuildRequires: pkgconfig(libsystemd-journal)
 %global group_name %{name}
 
 %global state_path %{_localstatedir}/%{name}/
+%global lib_path %{_libdir}/%{name}/
 %global tests_dir %{_datarootdir}/%{name}/tests/
 %global conf_path %{_sysconfdir}/%{name}/
 
@@ -282,6 +283,7 @@ export CXXFLAGS="$CXXFLAGS -Wp,-U_FORTIFY_SOURCE"
 %endif
 
 export CXXFLAGS="$CXXFLAGS -DCYNARA_STATE_PATH=\\\"%{state_path}\\\" \
+                           -DCYNARA_LIB_PATH=\\\"%{lib_path}\\\" \
                            -DCYNARA_TESTS_DIR=\\\"%{tests_dir}\\\" \
                            -DCYNARA_CONFIGURATION_DIR=\\\"%{conf_path}\\\""
 export LDFLAGS+="-Wl,--rpath=%{_libdir}"
@@ -302,6 +304,9 @@ cp ./conf/creds.conf %{buildroot}/%{conf_path}/creds.conf
 mkdir -p %{buildroot}/usr/lib/systemd/system/sockets.target.wants
 mkdir -p %{buildroot}/%{state_path}
 mkdir -p %{buildroot}/%{tests_dir}/empty_db
+mkdir -p %{buildroot}/%{lib_path}/plugin/client
+mkdir -p %{buildroot}/%{lib_path}/plugin/service
+
 cp -a db* %{buildroot}/%{tests_dir}
 ln -s ../cynara.socket %{buildroot}/usr/lib/systemd/system/sockets.target.wants/cynara.socket
 ln -s ../cynara-admin.socket %{buildroot}/usr/lib/systemd/system/sockets.target.wants/cynara-admin.socket
@@ -455,6 +460,7 @@ fi
 %attr(-,root,root) /usr/lib/systemd/system/sockets.target.wants/cynara-agent.socket
 %attr(-,root,root) /usr/lib/systemd/system/cynara-agent.socket
 %dir %attr(700,cynara,cynara) %{state_path}
+%dir %attr(755,cynara,cynara) %{lib_path}/plugin/service
 
 %files -n libcynara-client
 %manifest libcynara-client.manifest
@@ -480,6 +486,7 @@ fi
 %manifest libcynara-client-commons.manifest
 %license LICENSE
 %{_libdir}/libcynara-client-commons.so.*
+%dir %attr(755,cynara,cynara) %{lib_path}/plugin/client
 
 %files -n libcynara-client-commons-devel
 %{_includedir}/cynara/cynara-error.h

@@ -1,5 +1,28 @@
 ##############################
 
+Release: 0.4.1
+Date:    2014.11.17
+Name:    Fix packaging problems
+
+Libraries:
+libcynara-admin.0.4.1
+libcynara-agent.0.4.1
+libcynara-client-async.0.4.1
+libcynara-client-commmons.0.4.1
+libcynara-client.0.4.1
+libcynara-commons.0.4.1
+libcynara-creds-commons.0.4.1
+libcynara-creds-dbus.0.4.1
+libcynara-creds-socket.0.4.1
+libcynara-session.0.4.1
+libcynara-storage.0.4.1
+
+Description:
+Fix problems with packages dependencies
+Create missing plugin directories
+
+##############################
+
 Release: 0.4.0
 Date:    2014.11.15
 Name:    Asynchronous client and extensions API

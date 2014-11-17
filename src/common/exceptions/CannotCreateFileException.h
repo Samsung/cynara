@@ -31,13 +31,12 @@ namespace Cynara {
 
 class CannotCreateFileException : public DatabaseException {
 public:
-    CannotCreateFileException(const std::string &filename) : m_filename(filename) {};
+    CannotCreateFileException(const std::string &file) : m_filename(file) {
+        m_message = "File " + filename() + " cannot be created";
+    };
     virtual ~CannotCreateFileException() {};
 
-    const std::string message(void) const {
-        if (m_message.empty()) {
-            m_message = "File " + filename() + " cannot be created";
-        }
+    const std::string &message(void) const {
         return m_message;
     }
 
@@ -46,7 +45,7 @@ public:
     }
 
 private:
-    mutable std::string m_message;
+    std::string m_message;
     std::string m_filename;
 };
 

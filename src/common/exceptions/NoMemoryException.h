@@ -34,17 +34,17 @@ class NoMemoryException : public Exception {
 public:
     NoMemoryException() = delete;
     NoMemoryException(const std::string &errorMsg) {
-        m_whatMessage = "NoMemoryException with message <" + errorMsg + ">";
+        m_message = "NoMemoryException with message <" + errorMsg + ">";
     }
 
     virtual ~NoMemoryException() {};
 
-    virtual const std::string message(void) const {
-        return m_whatMessage;
+    virtual const std::string &message(void) const {
+        return m_message;
     }
 
 private:
-    std::string m_whatMessage;
+    std::string m_message;
 };
 
 } // namespace Cynara

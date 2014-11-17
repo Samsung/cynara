@@ -46,7 +46,7 @@ public:
         return m_whatMessage.c_str();
     }
 
-    virtual const std::string message(void) const = 0;
+    virtual const std::string &message(void) const = 0;
 
 private:
     std::string m_backtrace;

@@ -31,12 +31,15 @@ namespace Cynara {
 
 class InitException : public Exception {
 public:
-    InitException() = default;
+    InitException() : m_message("InitException") {}
     virtual ~InitException() {};
 
-    virtual const std::string message(void) const {
-        return "InitException";
+    virtual const std::string &message(void) const {
+        return m_message;
     }
+
+private:
+    std::string m_message;
 };
 
 } /* namespace Cynara */

@@ -34,26 +34,21 @@ class UnexpectedErrorException : public Exception {
 public:
     UnexpectedErrorException() = delete;
     UnexpectedErrorException(int errorCode, const char *errorMsg) {
-        std::ostringstream stream;
-        stream << "UnexpectedErrorException with errorCode =[" << errorCode << "] and message <";
-        stream << errorMsg << ">";
-        m_whatMessage = stream.str();
+        m_message = "UnexpectedErrorException with errorCode =[" + std::to_string(errorCode)
+                      + "] and message <" + errorMsg + ">";
     }
     UnexpectedErrorException(const char *errorMsg) {
-        std::ostringstream stream;
-        stream << "UnexpectedErrorException with message <";
-        stream << errorMsg << ">";
-        m_whatMessage = stream.str();
+        m_message = "UnexpectedErrorException with message <" + std::string(errorMsg) + ">";
     }
 
     virtual ~UnexpectedErrorException() {};
 
-    virtual const std::string message(void) const {
-        return m_whatMessage;
+    virtual const std::string &message(void) const {
+        return m_message;
     }
 
 private:
-    std::string m_whatMessage;
+    std::string m_message;
 };
 
 } // namespace Cynara

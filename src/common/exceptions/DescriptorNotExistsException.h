@@ -35,19 +35,17 @@ class DescriptorNotExistsException : public Exception {
 public:
     DescriptorNotExistsException() = delete;
     DescriptorNotExistsException(int desc) {
-        std::ostringstream stream;
-        stream << "trying access not existing descriptor [" << desc << "]";
-        m_whatMsg = stream.str();
+        m_message = "trying access not existing descriptor [" + std::to_string(desc) + "]";
     }
 
     virtual ~DescriptorNotExistsException() {};
 
-    virtual const std::string message(void) const {
-        return m_whatMsg;
+    virtual const std::string &message(void) const {
+        return m_message;
     }
 
 private:
-    std::string m_whatMsg;
+    std::string m_message;
 };
 
 } // namespace Cynara

@@ -35,20 +35,18 @@ class OutOfDataException : public Exception {
 public:
     OutOfDataException() = delete;
     OutOfDataException(size_t dataRange, size_t accessTry) {
-        std::ostringstream stream;
-        stream << "trying access [" << accessTry << "]";
-        stream << " which exceeds data range [" << dataRange << "]";
-        m_whatMsg = stream.str();
+        m_message = "trying access [" + std::to_string(accessTry) + "]"
+                  + " which exceeds data range [" + std::to_string(dataRange) + "]";
     }
 
     virtual ~OutOfDataException() {};
 
-    virtual const std::string message(void) const {
-        return m_whatMsg;
+    virtual const std::string &message(void) const {
+        return m_message;
     }
 
 private:
-    std::string m_whatMsg;
+    std::string m_message;
 };
 
 } // namespace Cynara

@@ -33,11 +33,13 @@ namespace Cynara {
 class BucketNotExistsException : public Exception {
 public:
     BucketNotExistsException() = delete;
-    BucketNotExistsException(const PolicyBucketId &bucketId) : m_bucketId(bucketId) {}
+    BucketNotExistsException(const PolicyBucketId &bucketId)
+        : m_bucketId(bucketId), m_message("BucketNotExistsException") {
+    }
     virtual ~BucketNotExistsException() {};
 
-    virtual const std::string message(void) const {
-        return "BucketNotExistsException";
+    virtual const std::string &message(void) const {
+        return m_message;
     }
 
     const PolicyBucketId &bucketId(void) const {
@@ -46,6 +48,7 @@ public:
 
 private:
     PolicyBucketId m_bucketId;
+    std::string m_message;
 };
 
 } /* namespace Cynara */

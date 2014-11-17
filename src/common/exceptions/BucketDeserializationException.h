@@ -29,13 +29,12 @@ namespace Cynara {
 
 class BucketDeserializationException : public DatabaseException {
 public:
-    BucketDeserializationException(const PolicyBucketId &bucketId) : m_bucketId(bucketId) {}
+    BucketDeserializationException(const PolicyBucketId &bucket) : m_bucketId(bucket) {
+        m_message = "Could not deserialize bucket " + bucketId();
+    }
     virtual ~BucketDeserializationException() {};
 
-    const std::string message(void) const {
-        if (m_message.empty()) {
-            m_message = "Could not deserialize bucket " + m_bucketId;
-        }
+    const std::string &message(void) const {
         return m_message;
     }
 
@@ -44,7 +43,7 @@ public:
     }
 
 private:
-    mutable std::string m_message;
+    std::string m_message;
     PolicyBucketId m_bucketId;
 };
 

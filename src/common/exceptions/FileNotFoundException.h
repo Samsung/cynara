@@ -31,13 +31,12 @@ namespace Cynara {
 
 class FileNotFoundException : public DatabaseException {
 public:
-    FileNotFoundException(const std::string &filename) : m_filename(filename) {};
-    virtual ~FileNotFoundException() {};
+    FileNotFoundException(const std::string &file) : m_filename(file) {
+        m_message = "File " + filename() + " not found or corrupted badly";
+    }
+    virtual ~FileNotFoundException() {}
 
-    const std::string message(void) const {
-        if (m_message.empty()) {
-            m_message = "File " + filename() + " not found or corrupted badly";
-        }
+    const std::string &message(void) const {
         return m_message;
     }
 
@@ -46,7 +45,7 @@ public:
     }
 
 private:
-    mutable std::string m_message;
+    std::string m_message;
     std::string m_filename;
 };
 

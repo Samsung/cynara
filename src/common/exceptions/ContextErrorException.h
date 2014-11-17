@@ -29,12 +29,15 @@ namespace Cynara {
 
 class ContextErrorException : public Exception {
 public:
-    ContextErrorException() = default;
+    ContextErrorException() : m_message("ContextErrorException") {}
     virtual ~ContextErrorException() {};
 
-    virtual const std::string message(void) const {
-        return "ContextErrorException";
+    virtual const std::string &message(void) const {
+        return m_message;
     }
+
+private:
+    std::string m_message;
 };
 
 } /* namespace Cynara */

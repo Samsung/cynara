@@ -42,21 +42,21 @@ public:
         m_exceptionType(exceptionType) {
         switch(m_exceptionType) {
             case InvalidSignature:
-                m_whatMessage = "No valid signature found";
+                m_message = "No valid signature found";
                 break;
             case WrongOpCode:
-                m_whatMessage = "Wrong request code";
+                m_message = "Wrong request code";
                 break;
             case Other:
-                m_whatMessage = "Unknown problem";
+                m_message = "Unknown problem";
                 break;
         }
     }
 
     virtual ~InvalidProtocolException() {};
 
-    virtual const std::string message(void) const {
-        return m_whatMessage;
+    virtual const std::string &message(void) const {
+        return m_message;
     }
 
     ExceptionType exceptionType(void) const {
@@ -64,7 +64,7 @@ public:
     }
 
 private:
-    std::string m_whatMessage;
+    std::string m_message;
     ExceptionType m_exceptionType;
 };
 

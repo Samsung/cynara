@@ -35,21 +35,19 @@ class PluginNotFoundException : public Exception {
 public:
     PluginNotFoundException() = delete;
     PluginNotFoundException(const PolicyResult &result) {
-        std::ostringstream stream;
-        stream << "No proper plugin found to interprete PolicyResult {type = ["
-                  << result.policyType() << "], metadata = <"
-                  << result.metadata().substr(0, 20) << ">}";
-        m_whatMessage = stream.str();
+        m_message = "No proper plugin found to interprete PolicyResult {type = ["
+                  + std::to_string(result.policyType()) + "], metadata = <"
+                  + result.metadata().substr(0, 20) + ">}";
     }
 
     virtual ~PluginNotFoundException() {};
 
-    virtual const std::string message(void) const {
-        return m_whatMessage;
+    virtual const std::string &message(void) const {
+        return m_message;
     }
 
 private:
-    std::string m_whatMessage;
+    std::string m_message;
 };
 
 } // namespace Cynara

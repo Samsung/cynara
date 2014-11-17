@@ -34,19 +34,17 @@ class NullPointerException : public Exception {
 public:
     NullPointerException() = delete;
     NullPointerException(const char *varName) {
-        m_whatMsg = std::string("unexpected null value in variable <")
-                  + std::string(varName)
-                  + std::string(">");
+        m_message = "unexpected null value in variable <" + std::string(varName) + ">";
     }
 
     virtual ~NullPointerException() {};
 
-    virtual const std::string message(void) const {
-        return m_whatMsg;
+    virtual const std::string &message(void) const {
+        return m_message;
     }
 
 private:
-    std::string m_whatMsg;
+    std::string m_message;
 };
 
 } // namespace Cynara

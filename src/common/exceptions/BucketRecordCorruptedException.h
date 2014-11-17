@@ -39,25 +39,25 @@ public:
     BucketRecordCorruptedException withLineNumber(const size_t &lineNumber) const {
         BucketRecordCorruptedException copy(*this);
         copy.m_lineNumber = lineNumber;
-        copy.m_whatMsg.clear();
+        copy.m_message.clear();
         return copy;
     }
 
     BucketRecordCorruptedException withFilename(const std::string &filename) const {
         BucketRecordCorruptedException copy(*this);
         copy.m_filename = filename;
-        copy.m_whatMsg.clear();
+        copy.m_message.clear();
         return copy;
     }
 
-    virtual const std::string message(void) const {
-        if (m_whatMsg.empty()) {
-            m_whatMsg = "Bucket record corrupted at"
+    virtual const std::string &message(void) const {
+        if (m_message.empty()) {
+            m_message = "Bucket record corrupted at"
                 + formatedFilename()
                 + formatedLineNumber()
                 + ": <" + slicedLine() + ">";
         }
-        return m_whatMsg;
+        return m_message;
     }
 
     const std::string &filename(void) const {
@@ -91,7 +91,7 @@ private:
     size_t m_lineNumber;
     std::string m_line;
     std::string m_filename;
-    mutable std::string m_whatMsg;
+    mutable std::string m_message;
 };
 
 } /* namespace Cynara */

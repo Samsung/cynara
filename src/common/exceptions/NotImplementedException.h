@@ -31,12 +31,15 @@ namespace Cynara {
 
 class NotImplementedException : public Exception {
 public:
-    NotImplementedException() = default;
+    NotImplementedException() :m_message("NotImplementedException") {}
     virtual ~NotImplementedException() {};
 
-    virtual const std::string message(void) const {
-        return "NotImplementedException";
+    virtual const std::string &message(void) const {
+        return m_message;
     }
+
+private:
+    std::string m_message;
 };
 
 } /* namespace Cynara */

@@ -35,7 +35,7 @@ public:
                     "privilege <" + key.privilege().toString() + ">";
     }
 
-    const std::string message(void) const {
+    const std::string &message(void) const {
         return m_message;
     }
 

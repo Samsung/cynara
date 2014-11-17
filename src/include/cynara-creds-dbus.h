@@ -28,7 +28,7 @@
 #include <dbus/dbus.h>
 #include <sys/types.h>
 
-#include "cynara-creds-commons.h"
+#include <cynara-creds-commons.h>
 
 #ifdef __cplusplus
 extern "C" {

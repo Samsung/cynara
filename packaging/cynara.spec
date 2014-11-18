@@ -64,6 +64,18 @@ Requires:   libcynara-creds-dbus = %{version}-%{release}
 Requires:   libcynara-creds-socket = %{version}-%{release}
 Requires:   libcynara-session = %{version}-%{release}
 Requires:   pkgconfig(dbus-1)
+Obsoletes:  libcynara-admin-devel
+Obsoletes:  libcynara-agent-devel
+Obsoletes:  libcynara-client-async-devel
+Obsoletes:  libcynara-client-commons-devel
+Obsoletes:  libcynara-client-devel
+Obsoletes:  libcynara-commons-devel
+Obsoletes:  libcynara-creds-commons-devel
+Obsoletes:  libcynara-creds-dbus-devel
+Obsoletes:  libcynara-creds-socket-devel
+Obsoletes:  libcynara-plugin-devel
+Obsoletes:  libcynara-session-devel
+Obsoletes:  libcynara-storage-devel
 
 %description devel
 Cynara development files

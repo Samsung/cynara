@@ -52,6 +52,13 @@ public:
      * Policy type supported by plugin.
      */
     virtual const std::vector<PolicyType> &getSupportedPolicyTypes(void) = 0;
+
+    /**
+     * Informs, that every data stored based on previously given input
+     * should be invalidated.
+     */
+    virtual void invalidate(void) = 0;
+
     virtual ~ExternalPluginInterface() {}
 };
 

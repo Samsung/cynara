@@ -48,6 +48,8 @@ public:
     const std::vector<PolicyType> &getSupportedPolicyTypes(void) {
         return s_supportedTypes;
     }
+
+    void invalidate(void) {}
 private:
     static const std::vector<PolicyType> s_supportedTypes;
 };

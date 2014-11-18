@@ -324,6 +324,7 @@ void Logic::contextClosed(RequestContextPtr context) {
 void Logic::onPoliciesChanged(void) {
     m_storage->save();
     m_socketManager->disconnectAllClients();
+    m_pluginManager->invalidateAll();
     //todo remove all saved contexts (if there will be any saved contexts)
 }
 

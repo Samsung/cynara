@@ -65,6 +65,12 @@ ExternalPluginPtr PluginManager::getPlugin(PolicyType pType) {
     return m_plugins[pType];
 }
 
+void PluginManager::invalidateAll(void) {
+    for (auto &plugin : m_plugins) {
+        plugin.second->invalidate();
+    }
+}
+
 void PluginManager::loadPlugins(void) {
     struct dirent **nameList = NULL;
     int fileAmount = scandir(m_dir.c_str(), &nameList, pluginFilter, alphasort);

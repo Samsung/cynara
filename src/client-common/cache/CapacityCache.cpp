@@ -87,6 +87,10 @@ int CapacityCache::get(const ClientSession &session, const PolicyKey &key) {
 void CapacityCache::clear(void) {
     m_keyUsage.clear();
     m_keyValue.clear();
+    m_pluginManager.invalidateAll();
+    for (auto &plugin : m_plugins) {
+        plugin.second->invalidate();
+    }
 }
 
 std::string CapacityCache::keyToString(const PolicyKey &key) {

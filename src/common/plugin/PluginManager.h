@@ -38,6 +38,7 @@ class PluginManager {
 public:
     PluginManager(const std::string &pluginDir);
     ExternalPluginPtr getPlugin(PolicyType pType);
+    void invalidateAll(void);
     ~PluginManager();
 
 private:

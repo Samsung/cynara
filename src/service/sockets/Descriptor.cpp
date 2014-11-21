@@ -34,6 +34,11 @@ void Descriptor::checkQueues(void) {
         m_readQueue = std::make_shared<BinaryQueue>();
 }
 
+BinaryQueuePtr Descriptor::writeQueue(void) {
+    checkQueues();
+    return m_writeQueue;
+}
+
 bool Descriptor::hasDataToWrite(void) const {
     if (m_writeQueue)
         return !(m_writeQueue->empty() && m_writeBuffer.empty());

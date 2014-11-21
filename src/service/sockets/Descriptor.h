@@ -57,9 +57,7 @@ public:
 
     ResponseTakerPtr responseTaker(void) const;
 
-    BinaryQueuePtr writeQueue(void) {
-        return m_writeQueue;
-    }
+    BinaryQueuePtr writeQueue(void);
 
     void setProtocol(ProtocolPtr protocol) {
         m_protocol = protocol;

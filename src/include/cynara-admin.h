@@ -139,9 +139,6 @@ int cynara_admin_finish(struct cynara_admin *p_cynara_admin);
  * Numerical values of defines CYNARA_ADMIN_... may change, so usage of defines names is strongly
  * recommended.
  *
- * In case of error, database may end up in a state, where changes are partially applied. This is
- * going to be fixed along with introduction of transactions in future releases.
- *
  * \param[in] p_cynara_admin cynara admin structure.
  * \param[in] policies NULL terminated array of pointers to policy structures.
  *

@@ -63,6 +63,17 @@ struct cynara_admin_policy {
  */
 #define CYNARA_ADMIN_DEFAULT_BUCKET ""
 
+/**
+ * \name Any
+ * definition of ANY, that can replace client, user or privilege name.
+ * ANY matches any string (including WILDCARD) during:
+ * * policy removal (setPolicies with CYNARA_ADMIN_DELETE)
+ * * listing policies from a single bucket.
+ * Using ANY as default policy for bucket or as policy type of inserted policy record
+ * is forbidden and will cause CYNARA_API_INVALID_PARAM error.
+ */
+#define CYNARA_ADMIN_ANY "#"
+
 #ifdef __cplusplus
 }
 #endif

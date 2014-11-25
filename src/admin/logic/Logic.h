@@ -48,9 +48,10 @@ public:
     virtual int insertOrUpdateBucket(const PolicyBucketId &bucket,
                                      const PolicyResult &policyResult);
     virtual int removeBucket(const PolicyBucketId &bucket);
-
     virtual int adminCheck(const PolicyBucketId &startBucket, bool recursive,
                            const PolicyKey &key, PolicyResult &result);
+    virtual int listPolicies(const PolicyBucketId &bucket, const PolicyKey &filter,
+                             std::vector<Policy> &policies);
 };
 
 } // namespace Cynara

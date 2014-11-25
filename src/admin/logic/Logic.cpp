@@ -154,4 +154,10 @@ int Logic::adminCheck(const PolicyBucketId &startBucket, bool recursive, const P
     return CYNARA_API_SUCCESS;
 }
 
+int Logic::listPolicies(const PolicyBucketId &bucket UNUSED, const PolicyKey &filter UNUSED,
+                        std::vector<Policy> &policies UNUSED) {
+    //stub
+    return CYNARA_API_SUCCESS;
+}
+
 } // namespace Cynara

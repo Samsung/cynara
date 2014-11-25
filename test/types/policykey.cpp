@@ -20,14 +20,13 @@
  * @brief       Tests for Cynara::PolicyKey
  */
 
-
-
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
 #include "../helpers.h"
 
-#include "types/PolicyKey.h"
+#include <types/PolicyKey.h>
+#include <cynara-admin-types.h>
 
 using namespace Cynara;
 
@@ -38,8 +37,15 @@ TEST(PolicyKey, to_string) {
     ASSERT_EQ("c\tu\tp", pk1.toString());
 
     PolicyKey pk2(PKF::createWildcard(), PKF::createWildcard(), PKF::createWildcard());
-    ASSERT_EQ("*\t*\t*", pk2.toString());
+    ASSERT_EQ(CYNARA_ADMIN_WILDCARD "\t" CYNARA_ADMIN_WILDCARD "\t" CYNARA_ADMIN_WILDCARD,
+              pk2.toString());
 
     PolicyKey pk3(PKF::createWildcard(), PKF::create("u"), PKF::createWildcard());
-    ASSERT_EQ("*\tu\t*", pk3.toString());
+    ASSERT_EQ(CYNARA_ADMIN_WILDCARD "\tu\t" CYNARA_ADMIN_WILDCARD, pk3.toString());
+
+    PolicyKey pk4(PKF::createAny(), PKF::createAny(), PKF::createAny());
+    ASSERT_EQ(CYNARA_ADMIN_ANY "\t" CYNARA_ADMIN_ANY "\t" CYNARA_ADMIN_ANY, pk4.toString());
+
+    PolicyKey pk5(PKF::createWildcard(), PKF::create("u"), PKF::createAny());
+    ASSERT_EQ(CYNARA_ADMIN_WILDCARD "\tu\t" CYNARA_ADMIN_ANY, pk5.toString());
 }

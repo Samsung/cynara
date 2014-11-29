@@ -58,6 +58,8 @@ public:
     virtual bool hasBucket(const PolicyBucketId &bucketId);
     virtual void deletePolicy(const PolicyBucketId &bucketId, const PolicyKey &key);
     virtual void deleteLinking(const PolicyBucketId &bucketId);
+    virtual PolicyBucket::Policies listPolicies(const PolicyBucketId &bucketId,
+                                                const PolicyKey &filter) const;
 
 protected:
     InMemoryStorageBackend() {}
@@ -78,6 +80,9 @@ private:
 
 protected:
     virtual Buckets &buckets(void) {
+        return m_buckets;
+    }
+    virtual const Buckets &buckets(void) const {
         return m_buckets;
     }
 };

@@ -42,8 +42,8 @@ public:
     MOCK_METHOD2(deletePolicy, void(const PolicyBucketId &bucketId, const PolicyKey &key));
     MOCK_METHOD1(deleteLinking, void(const PolicyBucketId &bucket));
     MOCK_METHOD2(insertPolicy, void(const PolicyBucketId &bucketId, PolicyPtr policy));
+    MOCK_CONST_METHOD2(listPolicies, PolicyBucket::Policies(const PolicyBucketId &bucketId,
+                                                            const PolicyKey &filter));
 };
-
-
 
 #endif /* FAKESTORAGEBACKEND_H_ */

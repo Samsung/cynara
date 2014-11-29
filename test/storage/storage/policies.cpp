@@ -167,3 +167,40 @@ TEST(storage, insertPointingToNonexistentBucket) {
 
     ASSERT_THROW(storage.insertPolicies(policiesToInsert), BucketNotExistsException);
 }
+
+TEST(storage, listPolicies) {
+    using ::testing::Return;
+    using PredefinedPolicyType::DENY;
+
+    FakeStorageBackend backend;
+    Storage storage(backend);
+
+    PolicyBucketId testBucket("test-bucket");
+    PolicyResult defaultPolicy(PredefinedPolicyType::DENY);
+
+    EXPECT_CALL(backend, hasBucket(testBucket)).WillOnce(Return(false));
+    EXPECT_CALL(backend, createBucket(testBucket, defaultPolicy)).WillOnce(Return());
+    storage.addOrUpdateBucket(testBucket, defaultPolicy);
+
+    PolicyKey filter = Helpers::generatePolicyKey("1");
+    EXPECT_CALL(backend, listPolicies(testBucket, filter))
+    .WillOnce(Return(PolicyBucket::Policies()));
+
+    storage.listPolicies(testBucket, filter);
+}
+
+TEST(storage, listPoliciesFromNonexistentBucket) {
+    using ::testing::Return;
+    using PredefinedPolicyType::DENY;
+
+    FakeStorageBackend backend;
+    Storage storage(backend);
+
+    PolicyBucketId testBucket("test-bucket");
+    PolicyResult defaultPolicy(PredefinedPolicyType::DENY);
+    PolicyKey filter = Helpers::generatePolicyKey("1");
+    EXPECT_CALL(backend, listPolicies(testBucket, filter))
+    .WillOnce(Return(PolicyBucket::Policies()));
+
+    storage.listPolicies(testBucket, filter);
+}

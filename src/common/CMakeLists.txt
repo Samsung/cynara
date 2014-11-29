@@ -45,6 +45,7 @@ SET(COMMON_SOURCES
     ${COMMON_PATH}/request/CancelRequest.cpp
     ${COMMON_PATH}/request/CheckRequest.cpp
     ${COMMON_PATH}/request/InsertOrUpdateBucketRequest.cpp
+    ${COMMON_PATH}/request/ListRequest.cpp
     ${COMMON_PATH}/request/RemoveBucketRequest.cpp
     ${COMMON_PATH}/request/RequestTaker.cpp
     ${COMMON_PATH}/request/SetPoliciesRequest.cpp

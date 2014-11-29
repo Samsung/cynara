@@ -45,6 +45,9 @@ typedef std::shared_ptr<CheckRequest> CheckRequestPtr;
 class InsertOrUpdateBucketRequest;
 typedef std::shared_ptr<InsertOrUpdateBucketRequest> InsertOrUpdateBucketRequestPtr;
 
+class ListRequest;
+typedef std::shared_ptr<ListRequest> ListRequestPtr;
+
 class RemoveBucketRequest;
 typedef std::shared_ptr<RemoveBucketRequest> RemoveBucketRequestPtr;
 

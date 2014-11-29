@@ -54,6 +54,10 @@ void RequestTaker::execute(RequestContextPtr context UNUSED,
     throw NotImplementedException();
 }
 
+void RequestTaker::execute(RequestContextPtr context UNUSED, ListRequestPtr request UNUSED) {
+    throw NotImplementedException();
+}
+
 void RequestTaker::execute(RequestContextPtr context UNUSED,
                            RemoveBucketRequestPtr request UNUSED) {
     throw NotImplementedException();

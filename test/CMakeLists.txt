@@ -23,6 +23,21 @@ ADD_DEFINITIONS("-DCYNARA_NO_LOGS")
 SET(CYNARA_SRC ${PROJECT_SOURCE_DIR}/src)
 
 SET(CYNARA_SOURCES_FOR_TESTS
+    ${CYNARA_SRC}/common/containers/BinaryQueue.cpp
+    ${CYNARA_SRC}/common/protocol/ProtocolAdmin.cpp
+    ${CYNARA_SRC}/common/protocol/ProtocolFrame.cpp
+    ${CYNARA_SRC}/common/protocol/ProtocolFrameHeader.cpp
+    ${CYNARA_SRC}/common/protocol/ProtocolFrameSerializer.cpp
+    ${CYNARA_SRC}/common/request/AdminCheckRequest.cpp
+    ${CYNARA_SRC}/common/request/InsertOrUpdateBucketRequest.cpp
+    ${CYNARA_SRC}/common/request/ListRequest.cpp
+    ${CYNARA_SRC}/common/request/RemoveBucketRequest.cpp
+    ${CYNARA_SRC}/common/request/RequestTaker.cpp
+    ${CYNARA_SRC}/common/request/SetPoliciesRequest.cpp
+    ${CYNARA_SRC}/common/response/CheckResponse.cpp
+    ${CYNARA_SRC}/common/response/CodeResponse.cpp
+    ${CYNARA_SRC}/common/response/ListResponse.cpp
+    ${CYNARA_SRC}/common/response/ResponseTaker.cpp
     ${CYNARA_SRC}/common/types/PolicyBucket.cpp
     ${CYNARA_SRC}/common/types/PolicyKey.cpp
     ${CYNARA_SRC}/common/types/PolicyKeyHelpers.cpp
@@ -41,6 +56,8 @@ SET(CYNARA_SOURCES_FOR_TESTS
 SET(CYNARA_TESTS_SOURCES
     TestEventListenerProxy.cpp
     common/exceptions/bucketrecordcorrupted.cpp
+    common/protocols/admin/listrequest.cpp
+    common/protocols/admin/listresponse.cpp
     common/types/policybucket.cpp
     credsCommons/parser/Parser.cpp
     helpers.cpp
@@ -66,6 +83,7 @@ INCLUDE_DIRECTORIES(
     ${CYNARA_SRC}/include
     ${CYNARA_SRC}
     credsCommons/parser
+    common/protocols
 )
 
 ADD_EXECUTABLE(${TARGET_CYNARA_TESTS}

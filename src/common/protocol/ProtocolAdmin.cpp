@@ -30,11 +30,13 @@
 #include <protocol/ProtocolFrameSerializer.h>
 #include <request/AdminCheckRequest.h>
 #include <request/InsertOrUpdateBucketRequest.h>
+#include <request/ListRequest.h>
 #include <request/RemoveBucketRequest.h>
 #include <request/RequestContext.h>
 #include <request/SetPoliciesRequest.h>
 #include <response/CheckResponse.h>
 #include <response/CodeResponse.h>
+#include <types/PolicyKey.h>
 
 #include "ProtocolAdmin.h"
 
@@ -85,6 +87,22 @@ RequestPtr ProtocolAdmin::deserializeInsertOrUpdateBucketRequest(void) {
 
     return std::make_shared<InsertOrUpdateBucketRequest>(policyBucketId,
             PolicyResult(policyType, policyMetaData), m_frameHeader.sequenceNumber());
+}
+
+RequestPtr ProtocolAdmin::deserializeListRequest(void) {
+    PolicyBucketId bucketId;
+    PolicyKeyFeature::ValueType client, user, privilege;
+
+    ProtocolDeserialization::deserialize(m_frameHeader, bucketId);
+    ProtocolDeserialization::deserialize(m_frameHeader, client);
+    ProtocolDeserialization::deserialize(m_frameHeader, user);
+    ProtocolDeserialization::deserialize(m_frameHeader, privilege);
+
+    LOGD("Deserialized ListRequest: bucketId <%s>, filter client <%s> filter user <%s>, filter "
+         "privilege <%s>", bucketId.c_str(), client.c_str(), user.c_str(), privilege.c_str());
+
+    return std::make_shared<ListRequest>(bucketId, PolicyKey(client, user, privilege),
+                                         m_frameHeader.sequenceNumber());
 }
 
 RequestPtr ProtocolAdmin::deserializeRemoveBucketRequest(void) {
@@ -163,6 +181,8 @@ RequestPtr ProtocolAdmin::extractRequestFromBuffer(BinaryQueuePtr bufferQueue) {
             return deserializeAdminCheckRequest();
         case OpInsertOrUpdateBucket:
             return deserializeInsertOrUpdateBucketRequest();
+        case OpListRequest:
+            return deserializeListRequest();
         case OpRemoveBucket:
             return deserializeRemoveBucketRequest();
         case OpSetPolicies:
@@ -254,6 +274,23 @@ void ProtocolAdmin::execute(RequestContextPtr context, InsertOrUpdateBucketReque
     ProtocolSerialization::serialize(frame, request->bucketId());
     ProtocolSerialization::serialize(frame, request->result().policyType());
     ProtocolSerialization::serialize(frame, request->result().metadata());
+
+    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
+}
+
+void ProtocolAdmin::execute(RequestContextPtr context, ListRequestPtr request) {
+    LOGD("Serializing ListRequest: sequenceNumber [%" PRIu16 "], bucketId <%s>, "
+         "filter client <%s> filter user <%s> filter privilege <%s>", request->sequenceNumber(),
+         request->bucket().c_str(), request->filter().client().value().c_str(),
+         request->filter().user().value().c_str(), request->filter().privilege().value().c_str());
+
+    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
+
+    ProtocolSerialization::serialize(frame, OpListRequest);
+    ProtocolSerialization::serialize(frame, request->bucket());
+    ProtocolSerialization::serialize(frame, request->filter().client().value());
+    ProtocolSerialization::serialize(frame, request->filter().user().value());
+    ProtocolSerialization::serialize(frame, request->filter().privilege().value());
 
     ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
 }

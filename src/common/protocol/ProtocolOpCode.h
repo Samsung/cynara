@@ -18,6 +18,7 @@
 /**
  * @file        src/common/protocol/ProtocolOpCode.h
  * @author      Adam Malinowski <a.malinowsk2@partner.samsung.com>
+ * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       Decalaration of protocol frame operation codes.
  */
@@ -44,8 +45,9 @@ enum ProtocolOpCode : uint8_t {
     OpSetPolicies,
     OpCodeResponse,
     OpAdminCheckRequest,
+    OpListRequest,
 
-    /** Opcodes 25 - 39 are reserved for future use */
+    /** Opcodes 26 - 39 are reserved for future use */
 
     /** Agent operations */
     OpAgentRegisterRequest = 40,

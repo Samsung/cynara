@@ -36,6 +36,7 @@
 #include <request/SetPoliciesRequest.h>
 #include <response/CheckResponse.h>
 #include <response/CodeResponse.h>
+#include <response/ListResponse.h>
 #include <types/PolicyKey.h>
 
 #include "ProtocolAdmin.h"
@@ -221,6 +222,38 @@ ResponsePtr ProtocolAdmin::deserializeCodeResponse(void) {
                                           m_frameHeader.sequenceNumber());
 }
 
+ResponsePtr ProtocolAdmin::deserializeListResponse(void) {
+    ProtocolFrameFieldsCount policiesCount;
+    PolicyKeyFeature::ValueType client, user, privilege;
+    PolicyType policyType;
+    PolicyResult::PolicyMetadata metadata;
+    std::vector<Policy> policies;
+
+    ProtocolDeserialization::deserialize(m_frameHeader, policiesCount);
+    policies.reserve(policiesCount);
+
+    for (ProtocolFrameFieldsCount p = 0; p < policiesCount; ++p) {
+        // PolicyKey
+        ProtocolDeserialization::deserialize(m_frameHeader, client);
+        ProtocolDeserialization::deserialize(m_frameHeader, user);
+        ProtocolDeserialization::deserialize(m_frameHeader, privilege);
+        // PolicyResult
+        ProtocolDeserialization::deserialize(m_frameHeader, policyType);
+        ProtocolDeserialization::deserialize(m_frameHeader, metadata);
+
+        policies.push_back(Policy(PolicyKey(client, user, privilege),
+                                        PolicyResult(policyType, metadata)));
+    }
+
+    bool isBucketValid;
+    ProtocolDeserialization::deserialize(m_frameHeader, isBucketValid);
+
+    LOGD("Deserialized ListResponse: number of policies [%" PRIu16 "], isBucketValid [%d]",
+         policiesCount, isBucketValid);
+
+    return std::make_shared<ListResponse>(policies, isBucketValid, m_frameHeader.sequenceNumber());
+}
+
 ResponsePtr ProtocolAdmin::extractResponseFromBuffer(BinaryQueuePtr bufferQueue) {
     ProtocolFrameSerializer::deserializeHeader(m_frameHeader, bufferQueue);
 
@@ -235,6 +268,8 @@ ResponsePtr ProtocolAdmin::extractResponseFromBuffer(BinaryQueuePtr bufferQueue)
             return deserializeCheckResponse();
         case OpCodeResponse:
             return deserializeCodeResponse();
+        case OpListResponse:
+            return deserializeListResponse();
         default:
             throw InvalidProtocolException(InvalidProtocolException::WrongOpCode);
             break;
@@ -376,6 +411,32 @@ void ProtocolAdmin::execute(RequestContextPtr context, CodeResponsePtr response)
 
     ProtocolSerialization::serialize(frame, OpCodeResponse);
     ProtocolSerialization::serialize(frame, static_cast<ProtocolResponseCode>(response->m_code));
+
+    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
+}
+
+void ProtocolAdmin::execute(RequestContextPtr context, ListResponsePtr response) {
+    ProtocolFrameFieldsCount policiesSize
+        = static_cast<ProtocolFrameFieldsCount>(response->policies().size());
+
+    LOGD("Serializing ListResponse: op [%" PRIu8 "], sequenceNumber [%" PRIu16 "], "
+         "number of policies [%" PRIu16 "], isBucketValid [%d]", OpListResponse,
+         response->sequenceNumber(), policiesSize, response->isBucketValid());
+
+    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(response->sequenceNumber());
+
+    ProtocolSerialization::serialize(frame, OpListResponse);
+    ProtocolSerialization::serialize(frame, policiesSize);
+    for (auto &policy : response->policies()) {
+        // PolicyKey
+        ProtocolSerialization::serialize(frame, policy.key().client().value());
+        ProtocolSerialization::serialize(frame, policy.key().user().value());
+        ProtocolSerialization::serialize(frame, policy.key().privilege().value());
+        // PolicyResult
+        ProtocolSerialization::serialize(frame, policy.result().policyType());
+        ProtocolSerialization::serialize(frame, policy.result().metadata());
+    }
+    ProtocolSerialization::serialize(frame, response->isBucketValid());
 
     ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
 }

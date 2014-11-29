@@ -55,6 +55,7 @@ SET(COMMON_SOURCES
     ${COMMON_PATH}/response/CancelResponse.cpp
     ${COMMON_PATH}/response/CheckResponse.cpp
     ${COMMON_PATH}/response/CodeResponse.cpp
+    ${COMMON_PATH}/response/ListResponse.cpp
     ${COMMON_PATH}/response/ResponseTaker.cpp
     ${COMMON_PATH}/sockets/Socket.cpp
     ${COMMON_PATH}/sockets/SocketClient.cpp

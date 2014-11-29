@@ -42,6 +42,9 @@ typedef std::shared_ptr<CheckResponse> CheckResponsePtr;
 class CodeResponse;
 typedef std::shared_ptr<CodeResponse> CodeResponsePtr;
 
+class ListResponse;
+typedef std::shared_ptr<ListResponse> ListResponsePtr;
+
 class Response;
 typedef std::shared_ptr<Response> ResponsePtr;
 

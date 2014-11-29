@@ -33,11 +33,13 @@
 #include <protocol/ProtocolAdmin.h>
 #include <request/AdminCheckRequest.h>
 #include <request/InsertOrUpdateBucketRequest.h>
+#include <request/ListRequest.h>
 #include <request/pointers.h>
 #include <request/RemoveBucketRequest.h>
 #include <request/SetPoliciesRequest.h>
 #include <response/CheckResponse.h>
 #include <response/CodeResponse.h>
+#include <response/ListResponse.h>
 #include <response/pointers.h>
 #include <sockets/SocketClient.h>
 #include <types/ProtocolFields.h>
@@ -154,9 +156,39 @@ int Logic::adminCheck(const PolicyBucketId &startBucket, bool recursive, const P
     return CYNARA_API_SUCCESS;
 }
 
-int Logic::listPolicies(const PolicyBucketId &bucket UNUSED, const PolicyKey &filter UNUSED,
-                        std::vector<Policy> &policies UNUSED) {
-    //stub
+int Logic::listPolicies(const PolicyBucketId &bucket, const PolicyKey &filter,
+                        std::vector<Policy> &policies) {
+    if (!ensureConnection()) {
+        LOGE("Cannot connect to cynara. Service not available.");
+        return CYNARA_API_SERVICE_NOT_AVAILABLE;
+    }
+
+    ProtocolFrameSequenceNumber sequenceNumber = generateSequenceNumber();
+
+    //Ask cynara service
+    ListResponsePtr listResponse;
+
+    RequestPtr request = std::make_shared<ListRequest>(bucket, filter, sequenceNumber);
+    ResponsePtr response;
+    while (!(response = m_socketClient->askCynaraServer(request))) {
+        if (!m_socketClient->connect())
+            return CYNARA_API_SERVICE_NOT_AVAILABLE;
+    }
+
+    listResponse = std::dynamic_pointer_cast<ListResponse>(response);
+    if (!listResponse) {
+        LOGC("Casting Response to ListResponse failed.");
+        return CYNARA_API_UNKNOWN_ERROR;
+    }
+
+    LOGD("listResponse: number of policies [%zu], bucketValid [%d]",
+         listResponse->policies().size(), listResponse->isBucketValid());
+
+    if (!listResponse->isBucketValid()) {
+        return CYNARA_API_BUCKET_NOT_FOUND;
+    }
+
+    policies = listResponse->policies();
     return CYNARA_API_SUCCESS;
 }
 

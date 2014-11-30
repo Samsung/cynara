@@ -70,6 +70,7 @@ public:
     virtual void execute(RequestContextPtr context, CancelRequestPtr request);
     virtual void execute(RequestContextPtr context, CheckRequestPtr request);
     virtual void execute(RequestContextPtr context, InsertOrUpdateBucketRequestPtr request);
+    virtual void execute(RequestContextPtr context, ListRequestPtr request);
     virtual void execute(RequestContextPtr context, RemoveBucketRequestPtr request);
     virtual void execute(RequestContextPtr context, SetPoliciesRequestPtr request);
     virtual void execute(RequestContextPtr context, SignalRequestPtr request);

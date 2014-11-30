@@ -24,6 +24,7 @@
 #include <cinttypes>
 #include <functional>
 #include <memory>
+#include <vector>
 
 #include <log/log.h>
 #include <common.h>
@@ -42,6 +43,7 @@
 #include <request/CancelRequest.h>
 #include <request/CheckRequest.h>
 #include <request/InsertOrUpdateBucketRequest.h>
+#include <request/ListRequest.h>
 #include <request/RemoveBucketRequest.h>
 #include <request/RequestContext.h>
 #include <request/SetPoliciesRequest.h>
@@ -50,6 +52,8 @@
 #include <response/CancelResponse.h>
 #include <response/CheckResponse.h>
 #include <response/CodeResponse.h>
+#include <response/ListResponse.h>
+#include <types/Policy.h>
 
 #include <main/Cynara.h>
 #include <agent/AgentManager.h>
@@ -274,6 +278,20 @@ void Logic::execute(RequestContextPtr context, InsertOrUpdateBucketRequestPtr re
     }
 
     context->returnResponse(context, std::make_shared<CodeResponse>(code,
+                            request->sequenceNumber()));
+}
+
+void Logic::execute(RequestContextPtr context, ListRequestPtr request) {
+    bool bucketValid = true;
+
+    std::vector<Policy> policies;
+    try {
+        policies = m_storage->listPolicies(request->bucket(), request->filter());
+    } catch (const BucketNotExistsException &ex) {
+        bucketValid = false;
+    }
+
+    context->returnResponse(context, std::make_shared<ListResponse>(policies, bucketValid,
                             request->sequenceNumber()));
 }
 

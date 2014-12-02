@@ -18,7 +18,7 @@
 #
 
 INSTALL(FILES
-    ${CMAKE_BINARY_DIR}/migration/cynara-db-migration.sh
+    ${CMAKE_SOURCE_DIR}/migration/cynara-db-migration.sh
     DESTINATION
     ${SBIN_INSTALL_DIR}/cynara/
     )

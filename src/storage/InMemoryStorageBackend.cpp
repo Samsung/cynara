@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@
 #include <unordered_map>
 
 #include <log/log.h>
+#include <config/PathConfig.h>
 #include <exceptions/BucketNotExistsException.h>
 #include <exceptions/CannotCreateFileException.h>
 #include <exceptions/DatabaseException.h>
@@ -50,9 +51,11 @@
 
 namespace Cynara {
 
-const std::string InMemoryStorageBackend::m_indexFilename = "buckets";
-const std::string InMemoryStorageBackend::m_backupFilenameSuffix = "~";
-const std::string InMemoryStorageBackend::m_bucketFilenamePrefix = "_";
+const std::string InMemoryStorageBackend::m_indexFilename(PathConfig::StoragePath::indexFilename);
+const std::string InMemoryStorageBackend::m_backupFilenameSuffix(
+        PathConfig::StoragePath::backupFilenameSuffix);
+const std::string InMemoryStorageBackend::m_bucketFilenamePrefix(
+        PathConfig::StoragePath::bucketFilenamePrefix);
 
 void InMemoryStorageBackend::load(void) {
     Integrity integrity(m_dbPath, m_indexFilename, m_backupFilenameSuffix, m_bucketFilenamePrefix);

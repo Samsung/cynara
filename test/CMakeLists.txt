@@ -23,6 +23,7 @@ ADD_DEFINITIONS("-DCYNARA_NO_LOGS")
 SET(CYNARA_SRC ${PROJECT_SOURCE_DIR}/src)
 
 SET(CYNARA_SOURCES_FOR_TESTS
+    ${CYNARA_SRC}/common/config/PathConfig.cpp
     ${CYNARA_SRC}/common/containers/BinaryQueue.cpp
     ${CYNARA_SRC}/common/protocol/ProtocolAdmin.cpp
     ${CYNARA_SRC}/common/protocol/ProtocolFrame.cpp

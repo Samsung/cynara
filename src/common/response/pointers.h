@@ -27,6 +27,9 @@
 
 namespace Cynara {
 
+class AdminCheckResponse;
+typedef std::shared_ptr<AdminCheckResponse> AdminCheckResponsePtr;
+
 class AgentActionResponse;
 typedef std::shared_ptr<AgentActionResponse> AgentActionResponsePtr;
 

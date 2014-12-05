@@ -33,6 +33,7 @@ public:
     ResponseTaker() = default;
     virtual ~ResponseTaker() {};
 
+    virtual void execute(RequestContextPtr context, AdminCheckResponsePtr response);
     virtual void execute(RequestContextPtr context, AgentActionResponsePtr response);
     virtual void execute(RequestContextPtr context, AgentRegisterResponsePtr response);
     virtual void execute(RequestContextPtr context, CancelResponsePtr response);

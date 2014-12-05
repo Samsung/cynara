@@ -34,6 +34,7 @@ SET(CYNARA_SOURCES_FOR_TESTS
     ${CYNARA_SRC}/common/request/RemoveBucketRequest.cpp
     ${CYNARA_SRC}/common/request/RequestTaker.cpp
     ${CYNARA_SRC}/common/request/SetPoliciesRequest.cpp
+    ${CYNARA_SRC}/common/response/AdminCheckResponse.cpp
     ${CYNARA_SRC}/common/response/CheckResponse.cpp
     ${CYNARA_SRC}/common/response/CodeResponse.cpp
     ${CYNARA_SRC}/common/response/ListResponse.cpp

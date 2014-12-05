@@ -28,11 +28,18 @@
 
 namespace Cynara {
 
-void ResponseTaker::execute(RequestContextPtr context UNUSED, AgentActionResponsePtr response UNUSED) {
+void ResponseTaker::execute(RequestContextPtr context UNUSED,
+                            AdminCheckResponsePtr response UNUSED) {
     throw NotImplementedException();
 }
 
-void ResponseTaker::execute(RequestContextPtr context UNUSED, AgentRegisterResponsePtr response UNUSED) {
+void ResponseTaker::execute(RequestContextPtr context UNUSED,
+                            AgentActionResponsePtr response UNUSED) {
+    throw NotImplementedException();
+}
+
+void ResponseTaker::execute(RequestContextPtr context UNUSED,
+                            AgentRegisterResponsePtr response UNUSED) {
     throw NotImplementedException();
 }
 

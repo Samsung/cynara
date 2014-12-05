@@ -44,6 +44,7 @@ public:
     virtual void execute(RequestContextPtr context, RemoveBucketRequestPtr request);
     virtual void execute(RequestContextPtr context, SetPoliciesRequestPtr request);
 
+    virtual void execute(RequestContextPtr context, AdminCheckResponsePtr response);
     virtual void execute(RequestContextPtr context, CheckResponsePtr response);
     virtual void execute(RequestContextPtr context, CodeResponsePtr response);
     virtual void execute(RequestContextPtr context, ListResponsePtr response);
@@ -55,6 +56,7 @@ private:
     RequestPtr deserializeRemoveBucketRequest(void);
     RequestPtr deserializeSetPoliciesRequest(void);
 
+    ResponsePtr deserializeAdminCheckResponse(void);
     ResponsePtr deserializeCheckResponse(void);
     ResponsePtr deserializeCodeResponse(void);
     ResponsePtr deserializeListResponse(void);

@@ -109,9 +109,8 @@ void Integrity::deleteNonIndexedFiles(BucketPresenceTester tester) {
 
     while (errno = 0, (direntPtr = readdir(dirPtr)) != nullptr) {
         std::string filename = direntPtr->d_name;
-        //ignore all special files (working dir, parent dir, index)
-        if ("." == filename || ".." == filename ||
-            PathConfig::StoragePath::indexFilename == filename) {
+        //ignore all special files (working dir, parent dir, index, checksums)
+        if (isSpecialDirectory(filename) || isSpecialDatabaseEntry(filename)) {
             continue;
         }
 
@@ -234,6 +233,15 @@ void Integrity::deleteHardLink(const std::string &filename) {
             LOGN("Trying to unlink non-existent file: <%s>", filename.c_str());
         }
     }
+}
+
+bool Integrity::isSpecialDirectory(const std::string &filename) {
+    return "." == filename || ".." == filename;
+}
+
+bool Integrity::isSpecialDatabaseEntry(const std::string &filename) {
+    return PathConfig::StoragePath::indexFilename == filename ||
+           PathConfig::StoragePath::checksumFilename == filename;
 }
 
 } /* namespace Cynara */

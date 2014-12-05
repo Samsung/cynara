@@ -58,6 +58,9 @@ protected:
     static void createHardLink(const std::string &oldName, const std::string &newName);
     static void deleteHardLink(const std::string &filename);
 
+    static bool isSpecialDirectory(const std::string &filename);
+    static bool isSpecialDatabaseEntry(const std::string &filename);
+
 private:
     const std::string m_dbPath;
     static const std::string m_indexFilename;

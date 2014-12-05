@@ -37,7 +37,7 @@
 #include <request/pointers.h>
 #include <request/RemoveBucketRequest.h>
 #include <request/SetPoliciesRequest.h>
-#include <response/CheckResponse.h>
+#include <response/AdminCheckResponse.h>
 #include <response/CodeResponse.h>
 #include <response/ListResponse.h>
 #include <response/pointers.h>
@@ -132,7 +132,7 @@ int Logic::adminCheck(const PolicyBucketId &startBucket, bool recursive, const P
     ProtocolFrameSequenceNumber sequenceNumber = generateSequenceNumber();
 
     //Ask cynara service
-    CheckResponsePtr checkResponse;
+    AdminCheckResponsePtr adminCheckResponse;
 
     RequestPtr request = std::make_shared<AdminCheckRequest>(key, startBucket, recursive,
                                                              sequenceNumber);
@@ -142,17 +142,23 @@ int Logic::adminCheck(const PolicyBucketId &startBucket, bool recursive, const P
             return CYNARA_API_SERVICE_NOT_AVAILABLE;
     }
 
-    checkResponse = std::dynamic_pointer_cast<CheckResponse>(response);
-    if (!checkResponse) {
-        LOGC("Casting Response to CheckResponse failed.");
+    adminCheckResponse = std::dynamic_pointer_cast<AdminCheckResponse>(response);
+    if (!adminCheckResponse) {
+        LOGC("Casting Response to AdminCheckResponse failed.");
         return CYNARA_API_UNKNOWN_ERROR;
     }
 
-    LOGD("checkResponse: policyType [%" PRIu16 "], metadata <%s>",
-         checkResponse->m_resultRef.policyType(),
-         checkResponse->m_resultRef.metadata().c_str());
+    LOGD("AdminCheckResponse: policyType [%" PRIu16 "], metadata <%s>, bucketValid [%d]",
+         adminCheckResponse->result().policyType(), adminCheckResponse->result().metadata().c_str(),
+         static_cast<int>(adminCheckResponse->isBucketValid()));
 
-    result = checkResponse->m_resultRef;
+    if (!adminCheckResponse->isBucketValid()) {
+        LOGE("Bucket <%s> provided as startBucket in adminCheck does not exist in cynara database",
+             startBucket.c_str());
+        return CYNARA_API_BUCKET_NOT_FOUND;
+    }
+
+    result = adminCheckResponse->result();
     return CYNARA_API_SUCCESS;
 }
 

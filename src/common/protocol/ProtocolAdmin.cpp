@@ -35,7 +35,6 @@
 #include <request/RequestContext.h>
 #include <request/SetPoliciesRequest.h>
 #include <response/AdminCheckResponse.h>
-#include <response/CheckResponse.h>
 #include <response/CodeResponse.h>
 #include <response/ListResponse.h>
 #include <types/PolicyKey.h>
@@ -216,21 +215,6 @@ ResponsePtr ProtocolAdmin::deserializeAdminCheckResponse(void) {
                                                 m_frameHeader.sequenceNumber());
 }
 
-ResponsePtr ProtocolAdmin::deserializeCheckResponse(void) {
-    PolicyType result;
-    PolicyResult::PolicyMetadata additionalInfo;
-
-    ProtocolDeserialization::deserialize(m_frameHeader, result);
-    ProtocolDeserialization::deserialize(m_frameHeader, additionalInfo);
-
-    const PolicyResult policyResult(result, additionalInfo);
-
-    LOGD("Deserialized CheckResponse: result [%" PRIu16 "], metadata <%s>",
-         policyResult.policyType(), policyResult.metadata().c_str());
-
-    return std::make_shared<CheckResponse>(policyResult, m_frameHeader.sequenceNumber());
-}
-
 ResponsePtr ProtocolAdmin::deserializeCodeResponse(void) {
     ProtocolResponseCode responseCode;
     ProtocolDeserialization::deserialize(m_frameHeader, responseCode);
@@ -285,8 +269,6 @@ ResponsePtr ProtocolAdmin::extractResponseFromBuffer(BinaryQueuePtr bufferQueue)
         switch (opCode) {
         case OpAdminCheckPolicyResponse:
             return deserializeAdminCheckResponse();
-        case OpCheckPolicyResponse:
-            return deserializeCheckResponse();
         case OpCodeResponse:
             return deserializeCodeResponse();
         case OpListResponse:
@@ -420,22 +402,6 @@ void ProtocolAdmin::execute(RequestContextPtr context, AdminCheckResponsePtr res
     ProtocolSerialization::serialize(frame, response->result().policyType());
     ProtocolSerialization::serialize(frame, response->result().metadata());
     ProtocolSerialization::serialize(frame, response->isBucketValid());
-
-    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
-}
-
-void ProtocolAdmin::execute(RequestContextPtr context, CheckResponsePtr response) {
-    LOGD("Serializing CheckResponse: op [%" PRIu8 "], sequenceNumber [%" PRIu16 "], "
-         "policyType [%" PRIu16 "], metadata <%s>", OpCheckPolicyResponse,
-         response->sequenceNumber(), response->m_resultRef.policyType(),
-         response->m_resultRef.metadata().c_str());
-
-    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(
-            response->sequenceNumber());
-
-    ProtocolSerialization::serialize(frame, OpCheckPolicyResponse);
-    ProtocolSerialization::serialize(frame, response->m_resultRef.policyType());
-    ProtocolSerialization::serialize(frame, response->m_resultRef.metadata());
 
     ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
 }

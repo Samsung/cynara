@@ -48,6 +48,7 @@
 #include <request/RequestContext.h>
 #include <request/SetPoliciesRequest.h>
 #include <request/SignalRequest.h>
+#include <response/AdminCheckResponse.h>
 #include <response/AgentRegisterResponse.h>
 #include <response/CancelResponse.h>
 #include <response/CheckResponse.h>
@@ -86,10 +87,16 @@ void Logic::execute(RequestContextPtr context UNUSED, SignalRequestPtr request) 
 }
 
 void Logic::execute(RequestContextPtr context, AdminCheckRequestPtr request) {
-    PolicyResult result = m_storage->checkPolicy(request->key(), request->startBucket(),
-                                                 request->recursive());
+    PolicyResult result;
+    bool bucketValid = true;
+    try {
+        result = m_storage->checkPolicy(request->key(), request->startBucket(),
+                                        request->recursive());
+    } catch (const BucketNotExistsException &ex) {
+        bucketValid = false;
+    }
 
-    context->returnResponse(context, std::make_shared<CheckResponse>(result,
+    context->returnResponse(context, std::make_shared<AdminCheckResponse>(result, bucketValid,
                             request->sequenceNumber()));
 }
 

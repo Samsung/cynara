@@ -38,8 +38,6 @@ public:
     }
 
     PolicyCollection loadPolicies(void);
-
-protected:
     static PolicyKey parseKey(const std::string &line, std::size_t &beginToken);
 
 private:

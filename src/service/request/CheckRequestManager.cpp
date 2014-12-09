@@ -68,10 +68,12 @@ CheckContextPtr CheckRequestManager::getContext(const AgentTalkerPtr &talker) {
 }
 
 void CheckRequestManager::removeRequest(const CheckContextPtr &checkContextPtr) {
-    m_checks[checkContextPtr->m_requestContext->responseQueue()].erase(checkContextPtr->m_checkId);
     auto it = m_checks.find(checkContextPtr->m_requestContext->responseQueue());
-    if (it->second.empty()) {
-        m_checks.erase(it);
+    if (it != m_checks.end()) {
+        it->second.erase(checkContextPtr->m_checkId);
+        if (it->second.empty()) {
+            m_checks.erase(it);
+        }
     }
 }
 

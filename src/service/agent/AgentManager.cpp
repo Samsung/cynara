@@ -101,19 +101,25 @@ AgentTalkerPtr AgentManager::getTalker(const LinkId &linkId, ProtocolFrameSequen
 }
 
 void AgentManager::removeTalker(const AgentTalkerPtr &agentTalker) {
-    m_talkers[agentTalker->linkId()].erase(agentTalker->checkId());
+    auto it = m_talkers.find(agentTalker->linkId());
+    if (it != m_talkers.end()) {
+        it->second.erase(agentTalker->checkId());
+        if (it->second.empty()) {
+            m_talkers.erase(it);
+        }
+    }
 }
 
 void AgentManager::cleanupAgent(const LinkId &linkId, TalkerCleanupFunction cleanupFunction) {
     auto talkerMap = m_talkers.find(linkId);
-    if (talkerMap == m_talkers.end())
-        return;
-
-    if (cleanupFunction) {
-        for (auto p : talkerMap->second) {
-            cleanupFunction(p.second);
+    if (talkerMap != m_talkers.end()) {
+        if (cleanupFunction) {
+            for (auto p : talkerMap->second) {
+                cleanupFunction(p.second);
+            }
         }
     }
+
     unregisterAgent(linkId);
 }
 

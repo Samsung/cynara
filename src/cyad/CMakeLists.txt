@@ -19,6 +19,7 @@
 SET(CYAD_PATH ${CYNARA_PATH}/cyad)
 
 SET(CYAD_SOURCES
+    ${CYAD_PATH}/AdminApiWrapper.cpp
     ${CYAD_PATH}/main.cpp
     )
 

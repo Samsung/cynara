@@ -23,10 +23,24 @@
 #ifndef TEST_CYAD_HELPERS_H_
 #define TEST_CYAD_HELPERS_H_
 
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
+
 struct cynara_admin_policy;
 
 bool operator==(const cynara_admin_policy &lhs, const cynara_admin_policy &rhs);
 bool operator!=(const cynara_admin_policy &lhs, const cynara_admin_policy &rhs);
+
+
+MATCHER_P(AdmPolicyListEq, policies, "") {
+    unsigned i = 0;
+    while (policies[i] != nullptr && arg[i] != nullptr) {
+        if (*policies[i] != *arg[i])
+            return false;
+        ++i;
+    }
+    return policies[i] == nullptr && arg[i] == nullptr;
+}
 
 namespace Cynara {
 

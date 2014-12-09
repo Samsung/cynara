@@ -17,6 +17,7 @@ Source1008:    libcynara-creds-dbus.manifest
 Source1009:    libcynara-creds-socket.manifest
 Source1010:    libcynara-session.manifest
 Source1011:    cynara-db-migration.manifest
+Source1012:    cyad.manifest
 Requires:      default-ac-domains
 Requires(pre): pwdutils
 Requires(pre): cynara-db-migration >= %{version}-%{release}
@@ -149,6 +150,12 @@ Summary:    Migration tools for Cynara's database
 %description -n cynara-db-migration
 Migration tools for Cynara's database
 
+%package -n cyad
+Summary: Cynara's command-line tool
+
+%description -n cyad
+Command-line tool to manage Cynara's database
+
 %prep
 %setup -q
 cp -a %{SOURCE1001} .
@@ -162,6 +169,7 @@ cp -a %{SOURCE1008} .
 cp -a %{SOURCE1009} .
 cp -a %{SOURCE1010} .
 cp -a %{SOURCE1011} .
+cp -a %{SOURCE1012} .
 cp -a test/db/db* .
 
 %build
@@ -358,3 +366,7 @@ fi
 %files -n cynara-db-migration
 %manifest cynara-db-migration.manifest
 %attr(700,root,root) %{_sbindir}/cynara/cynara-db-migration.sh
+
+%files -n cyad
+%manifest cyad.manifest
+%attr(700,root,root) %{_sbindir}/cyad

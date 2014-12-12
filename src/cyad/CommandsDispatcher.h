@@ -42,6 +42,7 @@ public:
     virtual int execute(ErrorCyadCommand &);
     virtual int execute(DeleteBucketCyadCommand &);
     virtual int execute(SetBucketCyadCommand &);
+    virtual int execute(SetPolicyCyadCommand &);
 
 private:
     // TODO: Get argv[0] instead of hardcoded name
@@ -53,6 +54,13 @@ private:
                                     "\n"
                                     "Bucket delete options (with -d or --delete-bucket)\n"
                                     "  -d, --delete-bucket=<name>     name of bucket to delete\n"
+                                    "\n"
+                                    "Policy set options (with -s or --set-policy)\n"
+                                    "  -l, --client=<client>          client value\n"
+                                    "  -u, --user=<user>              user value\n"
+                                    "  -r, --privilege=<privilege>    privilege value\n"
+                                    "  -p, --policy=<policy>          policy\n"
+                                    "  -m, --metadata=<metadata>      metadata for policy\n"
                                     "\n"
                                     "Help options:\n"
                                     "  -h, --help                     print help message";

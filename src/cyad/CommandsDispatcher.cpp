@@ -24,6 +24,7 @@
 #include <cynara-policy-types.h>
 
 #include <cyad/AdminLibraryInitializationFailedException.h>
+#include <cyad/CynaraAdminPolicies.h>
 
 #include "CommandsDispatcher.h"
 
@@ -71,6 +72,15 @@ int CommandsDispatcher::execute(SetBucketCyadCommand &result) {
     return m_adminApiWrapper.cynara_admin_set_bucket(m_cynaraAdmin,
                                                      result.bucketId().c_str(),
                                                      policyResult.policyType(), metadata);
+}
+
+int CommandsDispatcher::execute(SetPolicyCyadCommand &result) {
+    CynaraAdminPolicies policies;
+
+    policies.add(result.bucketId(), result.policyResult(), result.policyKey());
+    policies.seal();
+
+    return m_adminApiWrapper.cynara_admin_set_policies(m_cynaraAdmin, policies.data());
 }
 
 } /* namespace Cynara */

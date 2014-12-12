@@ -31,11 +31,13 @@
 
 #include <common/types/PolicyKey.h>
 #include <common/types/PolicyResult.h>
+#include <cyad/CynaraAdminPolicies.h>
 #include <cyad/CommandlineParser/CyadCommand.h>
 #include <cyad/CommandsDispatcher.h>
 
 #include "CyadCommandlineDispatcherTest.h"
 #include "FakeAdminApiWrapper.h"
+#include "helpers.h"
 
 /**
  * @brief   Dispatcher should not touch admin API on help or error
@@ -130,4 +132,52 @@ TEST_F(CyadCommandlineDispatcherTest, setBucket) {
 
         dispatcher.execute(result);
     }
+}
+
+TEST_F(CyadCommandlineDispatcherTest, setPolicy) {
+    using ::testing::_;
+    using ::testing::Return;
+
+    FakeAdminApiWrapper adminApi;
+
+    EXPECT_CALL(adminApi, cynara_admin_initialize(_)).WillOnce(Return(CYNARA_API_SUCCESS));
+    EXPECT_CALL(adminApi, cynara_admin_finish(_)).WillOnce(Return(CYNARA_API_SUCCESS));
+
+    Cynara::CommandsDispatcher dispatcher(m_io, adminApi);
+    Cynara::SetPolicyCyadCommand result("test-bucket", { CYNARA_ADMIN_ALLOW, "" },
+                                        { "client", "user", "privilege" });
+
+    Cynara::CynaraAdminPolicies expectedPolicies;
+    expectedPolicies.add("test-bucket", { CYNARA_ADMIN_ALLOW, "" },
+                         { "client", "user", "privilege"} );
+    expectedPolicies.seal();
+
+    EXPECT_CALL(adminApi, cynara_admin_set_policies(_, AdmPolicyListEq(expectedPolicies.data())))
+        .WillOnce(Return(CYNARA_API_SUCCESS));
+
+    dispatcher.execute(result);
+}
+
+TEST_F(CyadCommandlineDispatcherTest, setPolicyWithMetadata) {
+    using ::testing::_;
+    using ::testing::Return;
+
+    FakeAdminApiWrapper adminApi;
+
+    EXPECT_CALL(adminApi, cynara_admin_initialize(_)).WillOnce(Return(CYNARA_API_SUCCESS));
+    EXPECT_CALL(adminApi, cynara_admin_finish(_)).WillOnce(Return(CYNARA_API_SUCCESS));
+
+    Cynara::CommandsDispatcher dispatcher(m_io, adminApi);
+    Cynara::SetPolicyCyadCommand result("test-bucket", { CYNARA_ADMIN_ALLOW, "metadata" },
+                                        Cynara::PolicyKey("client", "user", "privilege"));
+
+    Cynara::CynaraAdminPolicies expectedPolicies;
+    expectedPolicies.add("test-bucket", { CYNARA_ADMIN_ALLOW, "metadata" },
+                         { "client", "user", "privilege"} );
+    expectedPolicies.seal();
+
+    EXPECT_CALL(adminApi, cynara_admin_set_policies(_, AdmPolicyListEq(expectedPolicies.data())))
+        .WillOnce(Return(CYNARA_API_SUCCESS));
+
+    dispatcher.execute(result);
 }

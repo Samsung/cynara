@@ -137,6 +137,22 @@ private:
     PolicyKey m_policyKey;
 };
 
+class SetPolicyBulkCyadCommand : public CyadCommand {
+public:
+    SetPolicyBulkCyadCommand(const std::string &filename) : m_filename(filename) {}
+
+    virtual ~SetPolicyBulkCyadCommand() {}
+
+    virtual int run(CommandsDispatcher &dispatcher);
+
+    const std::string &filename(void) const {
+        return m_filename;
+    }
+
+private:
+    std::string m_filename;
+};
+
 } /* namespace Cynara */
 
 #endif /* SRC_CYAD_COMMANDLINEPARSER_CYADCOMMAND_H_ */

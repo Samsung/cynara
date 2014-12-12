@@ -23,8 +23,11 @@
 #include <cynara-error.h>
 #include <cynara-policy-types.h>
 
+#include <exceptions/BucketRecordCorruptedException.h>
+
 #include <cyad/AdminLibraryInitializationFailedException.h>
 #include <cyad/CynaraAdminPolicies.h>
+#include <cyad/AdminPolicyParser.h>
 
 #include "CommandsDispatcher.h"
 
@@ -81,6 +84,18 @@ int CommandsDispatcher::execute(SetPolicyCyadCommand &result) {
     policies.seal();
 
     return m_adminApiWrapper.cynara_admin_set_policies(m_cynaraAdmin, policies.data());
+}
+
+int CommandsDispatcher::execute(SetPolicyBulkCyadCommand &result) {
+    auto input = m_io.openFile(result.filename());
+
+    try {
+        auto policies = Cynara::AdminPolicyParser::parse(input);
+        return m_adminApiWrapper.cynara_admin_set_policies(m_cynaraAdmin, policies.data());
+    } catch (const BucketRecordCorruptedException &ex) {
+        m_io.cerr() << ex.message();
+        return CYNARA_API_INVALID_COMMANDLINE_PARAM;
+    }
 }
 
 } /* namespace Cynara */

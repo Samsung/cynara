@@ -43,6 +43,7 @@ public:
     virtual int execute(DeleteBucketCyadCommand &);
     virtual int execute(SetBucketCyadCommand &);
     virtual int execute(SetPolicyCyadCommand &);
+    virtual int execute(SetPolicyBulkCyadCommand &);
 
 private:
     // TODO: Get argv[0] instead of hardcoded name
@@ -61,6 +62,7 @@ private:
                                     "  -r, --privilege=<privilege>    privilege value\n"
                                     "  -p, --policy=<policy>          policy\n"
                                     "  -m, --metadata=<metadata>      metadata for policy\n"
+                                    "  -f, --bulk=<filename>          path or - for stdin\n"
                                     "\n"
                                     "Help options:\n"
                                     "  -h, --help                     print help message";

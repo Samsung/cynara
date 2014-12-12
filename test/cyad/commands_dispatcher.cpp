@@ -20,6 +20,7 @@
  * @brief       Tests for CommandsDispatcher
  */
 
+#include <ostream>
 #include <tuple>
 #include <vector>
 
@@ -180,4 +181,51 @@ TEST_F(CyadCommandlineDispatcherTest, setPolicyWithMetadata) {
         .WillOnce(Return(CYNARA_API_SUCCESS));
 
     dispatcher.execute(result);
+}
+
+TEST_F(CyadCommandlineDispatcherTest, setPoliciesBulk) {
+    using ::testing::_;
+    using ::testing::Return;
+
+    FakeAdminApiWrapper adminApi;
+
+    EXPECT_CALL(adminApi, cynara_admin_initialize(_)).WillOnce(Return(CYNARA_API_SUCCESS));
+    EXPECT_CALL(adminApi, cynara_admin_finish(_)).WillOnce(Return(CYNARA_API_SUCCESS));
+
+    Cynara::CommandsDispatcher dispatcher(m_io, adminApi);
+    Cynara::SetPolicyBulkCyadCommand result("-");
+
+    // fake stdin ;)
+    m_io.file() << "bucket;cli;usr;privilege;0;metadata" << std::endl;
+    m_io.file() << "bucket-2;cli;usr;privilege;0xFFFF";
+
+    Cynara::CynaraAdminPolicies expectedPolicies;
+    expectedPolicies.add("bucket", { CYNARA_ADMIN_DENY, "metadata" }, {"cli", "usr", "privilege"} );
+    expectedPolicies.add("bucket-2", { CYNARA_ADMIN_ALLOW, "" }, {"cli", "usr", "privilege"} );
+    expectedPolicies.seal();
+
+    EXPECT_CALL(adminApi, cynara_admin_set_policies(_, AdmPolicyListEq(expectedPolicies.data())))
+        .WillOnce(Return(CYNARA_API_SUCCESS));
+
+    dispatcher.execute(result);
+}
+
+TEST_F(CyadCommandlineDispatcherTest, setPoliciesBulkInputError) {
+    using ::testing::_;
+    using ::testing::Return;
+
+    FakeAdminApiWrapper adminApi;
+
+    EXPECT_CALL(adminApi, cynara_admin_initialize(_)).WillOnce(Return(CYNARA_API_SUCCESS));
+    EXPECT_CALL(adminApi, cynara_admin_finish(_)).WillOnce(Return(CYNARA_API_SUCCESS));
+
+    Cynara::CommandsDispatcher dispatcher(m_io, adminApi);
+    Cynara::SetPolicyBulkCyadCommand result("-");
+
+    // fake stdin ;)
+    m_io.file() << "invalid input" << std::endl;
+
+    dispatcher.execute(result);
+
+    ASSERT_FALSE(m_io.cerrRaw().str().empty());
 }

@@ -48,3 +48,45 @@ TEST_F(CyadCommandlineTest, unknownOption) {
     Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
     ASSERT_ERROR_MSG(Cynara::CyadCmdlineErrors::UNKNOWN_OPTION, parser.parseMain());
 }
+
+TEST_F(CyadCommandlineTest, deleteBucketNoBucket) {
+    prepare_argv({ "./cyad", "--delete-bucket" });
+    Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
+    ASSERT_ERROR_MSG(Cynara::CyadCmdlineErrors::NO_BUCKET, parser.parseMain());
+}
+
+TEST_F(CyadCommandlineTest, deleteBucketUnknownOption) {
+    prepare_argv({ "./cyad", "--delete-bucket=bucket", "--unknown" });
+    Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
+    ASSERT_ERROR_MSG(Cynara::CyadCmdlineErrors::UNKNOWN_OPTION_DELETE_BUCKET, parser.parseMain());
+}
+
+TEST_F(CyadCommandlineTest, setBucketNoBucket) {
+    prepare_argv({ "./cyad", "--set-bucket" });
+    Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
+    ASSERT_ERROR_MSG(Cynara::CyadCmdlineErrors::NO_BUCKET, parser.parseMain());
+}
+
+TEST_F(CyadCommandlineTest, setBucketNoPolicy) {
+    prepare_argv({ "./cyad", "--set-bucket=bucket" });
+    Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
+    ASSERT_ERROR_MSG(Cynara::CyadCmdlineErrors::NO_POLICY, parser.parseMain());
+}
+
+TEST_F(CyadCommandlineTest, setBucketInvalidPolicy) {
+    prepare_argv({ "./cyad", "--set-bucket=bucket", "--policy=NaN" });
+    Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
+    ASSERT_ERROR_MSG(Cynara::CyadCmdlineErrors::INVALID_POLICY, parser.parseMain());
+}
+
+TEST_F(CyadCommandlineTest, setBucketUnknownOption) {
+    prepare_argv({ "./cyad", "--set-bucket=bucket", "--unknown", "--policy=42" });
+    Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
+    ASSERT_ERROR_MSG(Cynara::CyadCmdlineErrors::UNKNOWN_OPTION_SET_BUCKET, parser.parseMain());
+}
+
+TEST_F(CyadCommandlineTest, setBucketMetadataNoPolicy) {
+    prepare_argv({ "./cyad", "--set-bucket=bucket", "--metadata=some-meta" });
+    Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
+    ASSERT_ERROR_MSG(Cynara::CyadCmdlineErrors::NO_POLICY, parser.parseMain());
+}

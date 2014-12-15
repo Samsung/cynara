@@ -23,6 +23,7 @@ SET(CYAD_SOURCES
     ${CYAD_PATH}/AdminPolicyParser.cpp
     ${CYAD_PATH}/CynaraAdminPolicies.cpp
     ${CYAD_PATH}/CommandlineParser/CyadCommand.cpp
+    ${CYAD_PATH}/CommandlineParser/CyadCommandlineParser.cpp
     ${CYAD_PATH}/CommandsDispatcher.cpp
     ${CYAD_PATH}/DispatcherIO.cpp
     ${CYAD_PATH}/main.cpp

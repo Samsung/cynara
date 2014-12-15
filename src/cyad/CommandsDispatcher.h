@@ -57,7 +57,7 @@ private:
                                     "  -d, --delete-bucket=<name>     name of bucket to delete\n"
                                     "\n"
                                     "Policy set options (with -s or --set-policy)\n"
-                                    "  -l, --client=<client>          client value\n"
+                                    "  -c, --client=<client>          client value\n"
                                     "  -u, --user=<user>              user value\n"
                                     "  -r, --privilege=<privilege>    privilege value\n"
                                     "  -p, --policy=<policy>          policy\n"

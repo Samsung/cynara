@@ -73,6 +73,64 @@ TEST_F(CyadCommandlineTest, setBucketWithMetadata) {
     ASSERT_EQ(ultimateAnswer, result->policyResult().metadata());
 }
 
+TEST_F(CyadCommandlineTest, setPolicy) {
+    prepare_argv({ "./cyad", "--set-policy", "--bucket=some-bucket",
+                   "--client=client", "--user=user", "--privilege=privilege",
+                   "--policy=42" });
+    Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
+
+    auto result = std::dynamic_pointer_cast<Cynara::SetPolicyCyadCommand>(parser.parseMain());
+    ASSERT_NE(nullptr, result);
+    ASSERT_EQ("some-bucket", result->bucketId());
+
+    ASSERT_EQ(Cynara::PolicyKey("client", "user", "privilege"), result->policyKey());
+    ASSERT_EQ(42, result->policyResult().policyType());
+    ASSERT_TRUE(result->policyResult().metadata().empty());
+}
+
+TEST_F(CyadCommandlineTest, setPolicyWithMetadata) {
+    prepare_argv({ "./cyad", "--set-policy", "--bucket=some-bucket",
+                   "--client=client", "--user=user", "--privilege=privilege",
+                   "--policy=42", "--metadata=some-metadata" });
+    Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
+
+    auto result = std::dynamic_pointer_cast<Cynara::SetPolicyCyadCommand>(parser.parseMain());
+    ASSERT_NE(nullptr, result);
+    ASSERT_EQ("some-bucket", result->bucketId());
+
+    ASSERT_EQ(Cynara::PolicyKey("client", "user", "privilege"), result->policyKey());
+    ASSERT_EQ(42, result->policyResult().policyType());
+    ASSERT_EQ("some-metadata", result->policyResult().metadata());
+}
+
+TEST_F(CyadCommandlineTest, setPolicyInDefaultBucket) {
+    prepare_argv({ "./cyad", "--set-policy", "--bucket=",
+                   "--client=client", "--user=user", "--privilege=privilege",
+                   "--policy=ALLOW", "--metadata=some-metadata" });
+    Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
+
+    auto result = std::dynamic_pointer_cast<Cynara::SetPolicyCyadCommand>(parser.parseMain());
+    ASSERT_NE(nullptr, result);
+    ASSERT_EQ("", result->bucketId());
+    ASSERT_EQ(Cynara::PolicyKey("client", "user", "privilege"), result->policyKey());
+    ASSERT_EQ(CYNARA_ADMIN_ALLOW, result->policyResult().policyType());
+    ASSERT_EQ("some-metadata", result->policyResult().metadata());
+}
+
+TEST_F(CyadCommandlineTest, setPolicyInDefaultBucketNoOption) {
+    prepare_argv({ "./cyad", "--set-policy",
+                   "--client=client", "--user=user", "--privilege=privilege",
+                   "--policy=ALLOW", "--metadata=some-metadata" });
+    Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
+
+    auto result = std::dynamic_pointer_cast<Cynara::SetPolicyCyadCommand>(parser.parseMain());
+    ASSERT_NE(nullptr, result);
+    ASSERT_EQ("", result->bucketId());
+    ASSERT_EQ(Cynara::PolicyKey("client", "user", "privilege"), result->policyKey());
+    ASSERT_EQ(CYNARA_ADMIN_ALLOW, result->policyResult().policyType());
+    ASSERT_EQ("some-metadata", result->policyResult().metadata());
+}
+
 TEST_F(CyadCommandlineTest, parsePolicyTypeBase10) {
     auto parsePolicyType = [] (const char *rawPolicy) -> Cynara::PolicyType {
         return Cynara::CyadCommandlineParser::parsePolicyType(rawPolicy);
@@ -104,4 +162,22 @@ TEST_F(CyadCommandlineTest, parsePolicyTypeHuman) {
     ASSERT_EQ(CYNARA_ADMIN_NONE,   parsePolicyType("NONE"));
     ASSERT_EQ(CYNARA_ADMIN_BUCKET, parsePolicyType("BUCKET"));
     ASSERT_EQ(CYNARA_ADMIN_ALLOW,  parsePolicyType("ALLOW"));
+}
+
+TEST_F(CyadCommandlineTest, setPoliciesBulkFilename) {
+    prepare_argv({ "./cyad", "--set-policy", "--bulk=/tmp/input_file" });
+    Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
+
+    auto result = std::dynamic_pointer_cast<Cynara::SetPolicyBulkCyadCommand>(parser.parseMain());
+    ASSERT_NE(nullptr, result);
+    ASSERT_EQ("/tmp/input_file", result->filename());
+}
+
+TEST_F(CyadCommandlineTest, setPoliciesBulkStdin) {
+    prepare_argv({ "./cyad", "--set-policy", "--bulk=-" });
+    Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
+
+    auto result = std::dynamic_pointer_cast<Cynara::SetPolicyBulkCyadCommand>(parser.parseMain());
+    ASSERT_NE(nullptr, result);
+    ASSERT_EQ("-", result->filename());
 }

@@ -90,3 +90,29 @@ TEST_F(CyadCommandlineTest, setBucketMetadataNoPolicy) {
     Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
     ASSERT_ERROR_MSG(Cynara::CyadCmdlineErrors::NO_POLICY, parser.parseMain());
 }
+
+TEST_F(CyadCommandlineTest, setPolicyNoOption) {
+    prepare_argv({ "./cyad", "--set-policy" });
+    Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
+    ASSERT_ERROR_MSG(Cynara::CyadCmdlineErrors::OPTION_MISSING_SET_POLICY, parser.parseMain());
+}
+
+TEST_F(CyadCommandlineTest, setPolicyUnknownOption) {
+    prepare_argv({ "./cyad", "--set-policy", "--unknown-option" });
+    Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
+    ASSERT_ERROR_MSG(Cynara::CyadCmdlineErrors::UNKNOWN_OPTION_SET_POLICY, parser.parseMain());
+}
+
+TEST_F(CyadCommandlineTest, setPolicyArgumentMissing) {
+    prepare_argv({ "./cyad", "--set-policy", "--bucket" });
+    Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
+    ASSERT_ERROR_MSG(Cynara::CyadCmdlineErrors::ARGUMENT_MISSING_SET_POLICY, parser.parseMain());
+}
+
+TEST_F(CyadCommandlineTest, setPolicyNoPolicy) {
+    // TODO: In the future, we can identify actual options being missed
+    prepare_argv({ "./cyad", "--set-policy", "--bucket=some-bucket",
+                   "--client=client", "--user=user", "--privilege=privilege" });
+    Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
+    ASSERT_ERROR_MSG(Cynara::CyadCmdlineErrors::OPTION_MISSING_SET_POLICY, parser.parseMain());
+}

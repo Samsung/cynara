@@ -54,6 +54,8 @@ public:
                            const PolicyKey &key, PolicyResult &result) = 0;
     virtual int listPolicies(const PolicyBucketId &bucket, const PolicyKey &filter,
                              std::vector<Policy> &policies) = 0;
+    virtual int erasePolicies(const PolicyBucketId &startBucket, bool recursive,
+                              const PolicyKey &filter) = 0;
 
 };
 

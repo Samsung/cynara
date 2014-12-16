@@ -302,11 +302,41 @@ int cynara_admin_list_policies(struct cynara_admin *p_cynara_admin, const char *
         }
 
         std::vector<Cynara::Policy> policiesVector;
-        int ret = p_cynara_admin->impl->listPolicies(bucket, Cynara::PolicyKey(clientStr, userStr,
+        int ret = p_cynara_admin->impl->listPolicies(bucketId, Cynara::PolicyKey(clientStr, userStr,
                                                      privilegeStr), policiesVector);
         if (ret != CYNARA_API_SUCCESS)
             return ret;
 
         return createPoliciesArray(bucket, policiesVector, policies);
+    });
+}
+
+CYNARA_API
+int cynara_admin_erase(struct cynara_admin *p_cynara_admin,
+                       const char *start_bucket, const int recursive,
+                       const char *client, const char *user, const char *privilege) {
+    if (!p_cynara_admin || !p_cynara_admin->impl)
+        return CYNARA_API_INVALID_PARAM;
+    if (!start_bucket || !client || !user || !privilege)
+        return CYNARA_API_INVALID_PARAM;
+
+    return Cynara::tryCatch([&]() {
+        Cynara::PolicyKeyFeature::ValueType clientStr;
+        Cynara::PolicyKeyFeature::ValueType userStr;
+        Cynara::PolicyKeyFeature::ValueType privilegeStr;
+        Cynara::PolicyBucketId startBucket;
+        try {
+            clientStr = client;
+            userStr = user;
+            privilegeStr = privilege;
+            startBucket = start_bucket;
+        } catch (const std::length_error &e) {
+            LOGE("%s", e.what());
+            return CYNARA_API_INVALID_PARAM;
+        }
+
+        return p_cynara_admin->impl->erasePolicies(startBucket, recursive != 0,
+                                                   Cynara::PolicyKey(clientStr, userStr,
+                                                   privilegeStr));
     });
 }

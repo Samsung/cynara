@@ -198,4 +198,10 @@ int Logic::listPolicies(const PolicyBucketId &bucket, const PolicyKey &filter,
     return CYNARA_API_SUCCESS;
 }
 
+int Logic::erasePolicies(const PolicyBucketId &startBucket UNUSED, bool recursive UNUSED,
+                         const PolicyKey &filter UNUSED) {
+    //todo implement erase
+    return CYNARA_API_SUCCESS;
+}
+
 } // namespace Cynara

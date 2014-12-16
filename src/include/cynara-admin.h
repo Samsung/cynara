@@ -257,16 +257,16 @@ int cynara_admin_check(struct cynara_admin *p_cynara_admin,
  *
  * \par Method of function operation:
  * Policies are arranged into buckets. Every bucket contains set of policies. Each of policies are
- * identified with tripple {client, user, privilege}. Function lists all policies from single bucket
+ * identified with triple {client, user, privilege}. Function lists all policies from single bucket
  * with matching client, user and privilege names.
  *
  * CYNARA_ADMIN_ANY can be used to match any client, user or privilege, e.g.
  *
- * List with paramaters: {client = CYNARA_ADMIN_ANY, user = "alice", privilege = CYNARA_ADMIN_ANY}
+ * List with parameters: {client = CYNARA_ADMIN_ANY, user = "alice", privilege = CYNARA_ADMIN_ANY}
  * will match all policies related to "alice", so will match {"app1", "alice", "gps"} and
  * {CYNARA_ADMIN_WILDCARD, "alice", "sms"}, but won't match {"app3", CYNARA_ADMIN_WILDCARD, "call"}.
  *
- * List with paramaters: {client = "calculator", user = CYNARA_ADMIN_WILDCARD,
+ * List with parameters: {client = "calculator", user = CYNARA_ADMIN_WILDCARD,
  * privilege = CYNARA_ADMIN_ANY} will match {"calculator", CYNARA_ADMIN_WILDCARD, "sms"} but won't
  * match {CYNARA_ADMIN_WILDCARD, CYNARA_ADMIN_WILDCARD, "sms"} nor {"calculator", "bob", "sms"}
  *
@@ -302,6 +302,62 @@ int cynara_admin_check(struct cynara_admin *p_cynara_admin,
 int cynara_admin_list_policies(struct cynara_admin *p_cynara_admin, const char *bucket,
                                const char *client, const char *user, const char *privilege,
                                struct cynara_admin_policy ***policies);
+
+/**
+ * \par Description:
+ * Erase policies matching filter from cynara database.
+ *
+ * \par Purpose:
+ * This API should be used to erase multiple policies with some common key part,
+ * e.g. all policies related to given user.
+ *
+ * \par Typical use case:
+ * Erase all policies matching defined filter.
+ *
+ * \par Method of function operation:
+ * Policies are arranged into buckets. Every bucket contains set of policies. Each of policies are
+ * identified with triple {client, user, privilege}. Function erases all policies with matching
+ * client, user and privilege names.
+ *
+ * There are two modes:
+ * * non-recursive (recursive parameter set to 0) - when policies are erased only from single bucket
+ * * recursive (recursive parameter set to 1) when policies are removed from given start_bucket and
+ * all nested buckets.
+ *
+ * CYNARA_ADMIN_ANY can be used to match any client, user or privilege, e.g.
+ *
+ * Erase with parameters: {client = CYNARA_ADMIN_ANY, user = "alice", privilege = CYNARA_ADMIN_ANY}
+ * will match all policies related to "alice", so will match {"app1", "alice", "gps"} and
+ * {CYNARA_ADMIN_WILDCARD, "alice", "sms"}, but won't match {"app3", CYNARA_ADMIN_WILDCARD, "call"}.
+ *
+ * Erase with parameters: {client = "calculator", user = CYNARA_ADMIN_WILDCARD,
+ * privilege = CYNARA_ADMIN_ANY} will match {"calculator", CYNARA_ADMIN_WILDCARD, "sms"} but won't
+ * match {CYNARA_ADMIN_WILDCARD, CYNARA_ADMIN_WILDCARD, "sms"} nor {"calculator", "bob", "sms"}
+ *
+ * If any of: start_bucket, client, user, privilege, policies is NULL then CYNARA_API_INVALID_PARAM
+ * is returned.
+ * If there is no bucket with given name CYNARA_API_BUCKET_NOT_FOUND is returned.
+ *
+ * In case of successful call CYNARA_API_SUCCESS is returned.
+ *
+ * \par Sync (or) Async:
+ * This is a synchronous API.
+ *
+ * \param[in] p_cynara_admin cynara admin structure.
+ * \param[in] start_bucket name of bucket where erase would start.
+ * \param[in] recursive FALSE (== 0) : erase is not recursive (single bucket erase);
+ *                      TRUE  (!= 0) : erase follows all policies leading to nested buckets
+ * \param[in] client filter for client name.
+ * \param[in] user filter for user name.
+ * \param[in] privilege filter for privilege.
+ *
+ * \return CYNARA_API_SUCCESS on success, or error code otherwise.
+ *
+ * \brief Erase policies matching filter from cynara database.
+ */
+int cynara_admin_erase(struct cynara_admin *p_cynara_admin,
+                       const char *start_bucket, int recursive,
+                       const char *client, const char *user, const char *privilege);
 #ifdef __cplusplus
 }
 #endif

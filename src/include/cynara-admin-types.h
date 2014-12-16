@@ -67,7 +67,7 @@ struct cynara_admin_policy {
  * \name Any
  * definition of ANY, that can replace client, user or privilege name.
  * ANY matches any string (including WILDCARD) during:
- * * policy removal (setPolicies with CYNARA_ADMIN_DELETE)
+ * * policy removal with cynara_admin_erase() function
  * * listing policies from a single bucket.
  * Using ANY as default policy for bucket or as policy type of inserted policy record
  * is forbidden and will cause CYNARA_API_INVALID_PARAM error.

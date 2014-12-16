@@ -51,13 +51,12 @@ typedef std::shared_ptr<ClientPluginInterface> ClientPluginInterfacePtr;
  */
 class ClientPluginInterface : public ExternalPluginInterface {
 public:
-
     /**
      * Return entry cacheability
      */
     virtual bool isCacheable(const ClientSession &session, const PolicyResult &result) = 0;
     /**
-     * Return entry cacheability
+     * Return entry usability
      */
     virtual bool isUsable(const ClientSession &session, const ClientSession &prevSession,
                           bool &updateSession, PolicyResult &result) = 0;

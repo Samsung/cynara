@@ -28,8 +28,10 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <vector>
 
 #include <plugin/ExternalPluginInterface.h>
+#include <types/PolicyDescription.h>
 
 namespace Cynara {
 typedef std::shared_ptr<ExternalPluginInterface> ExternalPluginPtr;
@@ -38,6 +40,7 @@ class PluginManager {
 public:
     PluginManager(const std::string &pluginDir);
     ExternalPluginPtr getPlugin(PolicyType pType);
+    std::vector<PolicyDescription> getPolicyDescriptions(void) const;
     void invalidateAll(void);
     ~PluginManager();
 
@@ -46,7 +49,7 @@ private:
     typedef std::list<PluginLibPtr> PluginLibs;
 
     std::string m_dir;
-    std::map<PolicyType, ExternalPluginPtr> m_plugins;
+    std::map<PolicyDescription, ExternalPluginPtr> m_plugins;
     PluginLibs m_pluginLibs;
 
     void loadPlugins(void);

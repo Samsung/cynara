@@ -31,9 +31,9 @@
 #include <cynara-client.h>
 #include <cynara-client-plugin.h>
 #include <types/ClientSession.h>
+#include <types/PolicyDescription.h>
 #include <types/PolicyKey.h>
 #include <types/PolicyResult.h>
-#include <types/PolicyType.h>
 
 namespace Cynara {
 
@@ -48,8 +48,8 @@ public:
                        const PolicyKey &key,
                        const PolicyResult &result) = 0;
 
-    void registerPlugin(const PolicyType policyType, ClientPluginInterfacePtr plugin) {
-        m_plugins[policyType] = plugin;
+    void registerPlugin(const PolicyDescription &policyDescr, ClientPluginInterfacePtr plugin) {
+        m_plugins[policyDescr] = plugin;
     }
 
     virtual void clear(void) {
@@ -59,7 +59,7 @@ public:
     virtual ~PluginCache() {};
 
 protected:
-    std::map<PolicyType, ClientPluginInterfacePtr> m_plugins;
+    std::map<PolicyDescription, ClientPluginInterfacePtr> m_plugins;
 };
 
 } // namespace Cynara

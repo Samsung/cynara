@@ -25,7 +25,7 @@
 
 #include <vector>
 
-#include <types/PolicyType.h>
+#include <types/PolicyDescription.h>
 
 namespace Cynara {
 
@@ -47,11 +47,10 @@ typedef void (*destroy_t)(ExternalPluginInterface *);
 
 class ExternalPluginInterface {
 public:
-
     /**
-     * Policy type supported by plugin.
+     * Policy types supported by plugin.
      */
-    virtual const std::vector<PolicyType> &getSupportedPolicyTypes(void) = 0;
+    virtual const std::vector<PolicyDescription> &getSupportedPolicyDescr(void) = 0;
 
     /**
      * Informs, that every data stored based on previously given input

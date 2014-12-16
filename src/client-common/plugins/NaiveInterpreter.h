@@ -25,6 +25,7 @@
 #include <attributes/attributes.h>
 #include <cache/CacheInterface.h>
 #include <cynara-error.h>
+#include <cynara-client-plugin.h>
 
 namespace Cynara {
 
@@ -45,13 +46,11 @@ public:
             return CYNARA_API_ACCESS_DENIED;
     }
 
-    const std::vector<PolicyType> &getSupportedPolicyTypes(void) {
-        return s_supportedTypes;
+    const std::vector<PolicyDescription> &getSupportedPolicyDescr(void) {
+        return predefinedPolicyDescr;
     }
 
     void invalidate(void) {}
-private:
-    static const std::vector<PolicyType> s_supportedTypes;
 };
 
 } // namespace Cynara

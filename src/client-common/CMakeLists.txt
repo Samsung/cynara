@@ -28,7 +28,6 @@ INCLUDE_DIRECTORIES(
 
 SET(LIB_CYNARA_COMMON_SOURCES
     ${LIB_CYNARA_COMMON_PATH}/cache/CapacityCache.cpp
-    ${LIB_CYNARA_COMMON_PATH}/plugins/NaiveInterpreter.cpp
     )
 
 ADD_DEFINITIONS("-fvisibility=default")

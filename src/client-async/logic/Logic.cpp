@@ -50,8 +50,8 @@ Logic::Logic(cynara_status_callback callback, void *userStatusData)
 
     m_cache = std::make_shared<CapacityCache>();
     auto naiveInterpreter = std::make_shared<NaiveInterpreter>();
-    for (auto &type : naiveInterpreter->getSupportedPolicyTypes()) {
-        m_cache->registerPlugin(type, naiveInterpreter);
+    for (auto &descr : naiveInterpreter->getSupportedPolicyDescr()) {
+        m_cache->registerPlugin(descr, naiveInterpreter);
     }
 }
 

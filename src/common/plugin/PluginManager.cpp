@@ -65,6 +65,15 @@ ExternalPluginPtr PluginManager::getPlugin(PolicyType pType) {
     return m_plugins[pType];
 }
 
+std::vector<PolicyDescription> PluginManager::getPolicyDescriptions(void) const {
+    std::vector<PolicyDescription> descriptions;
+    descriptions.reserve(m_plugins.size());
+    for (auto &plugin : m_plugins) {
+        descriptions.push_back(plugin.first);
+    }
+    return descriptions;
+}
+
 void PluginManager::invalidateAll(void) {
     for (auto &plugin : m_plugins) {
         plugin.second->invalidate();
@@ -125,14 +134,15 @@ void PluginManager::openPlugin(const std::string &path) {
         return;
     }
 
-    auto policies = pluginPtr->getSupportedPolicyTypes();
+    auto policies = pluginPtr->getSupportedPolicyDescr();
     if (policies.empty()) {
         LOGE("Plugin <%s> does not support any type!", path.c_str());
         return;
     }
-    for (auto type : policies) {
-        if (!m_plugins.insert(std::make_pair(type, pluginPtr)).second) {
-            LOGW("policyType [%" PRIu16 "] was already supported.", type);
+    for (auto &desc : policies) {
+        if (!m_plugins.insert(std::make_pair(desc, pluginPtr)).second) {
+            LOGW("policy type: [%" PRIu16 "] name: <%s> was already supported.",
+                 desc.type, desc.name.c_str());
         }
     }
 

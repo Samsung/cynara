@@ -62,9 +62,11 @@ SET(COMMON_SOURCES
     ${COMMON_PATH}/sockets/Socket.cpp
     ${COMMON_PATH}/sockets/SocketClient.cpp
     ${COMMON_PATH}/types/PolicyBucket.cpp
+    ${COMMON_PATH}/types/PolicyDescription.cpp
     ${COMMON_PATH}/types/PolicyKey.cpp
     ${COMMON_PATH}/types/PolicyKeyHelpers.cpp
     ${COMMON_PATH}/types/PolicyResult.cpp
+    ${COMMON_PATH}/types/PolicyType.cpp
     )
 
 IF (CMAKE_BUILD_TYPE MATCHES "DEBUG")

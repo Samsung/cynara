@@ -29,6 +29,7 @@
 #include <protocol/ProtocolFrame.h>
 #include <protocol/ProtocolFrameSerializer.h>
 #include <request/AdminCheckRequest.h>
+#include <request/EraseRequest.h>
 #include <request/InsertOrUpdateBucketRequest.h>
 #include <request/ListRequest.h>
 #include <request/RemoveBucketRequest.h>
@@ -71,6 +72,26 @@ RequestPtr ProtocolAdmin::deserializeAdminCheckRequest(void) {
     return std::make_shared<AdminCheckRequest>(PolicyKey(clientId, userId, privilegeId),
                                                startBucket, recursive,
                                                m_frameHeader.sequenceNumber());
+}
+
+RequestPtr ProtocolAdmin::deserializeEraseRequest(void) {
+    PolicyBucketId startBucket;
+    bool recursive;
+    PolicyKeyFeature::ValueType client, user, privilege;
+
+    ProtocolDeserialization::deserialize(m_frameHeader, startBucket);
+    ProtocolDeserialization::deserialize(m_frameHeader, recursive);
+    ProtocolDeserialization::deserialize(m_frameHeader, client);
+    ProtocolDeserialization::deserialize(m_frameHeader, user);
+    ProtocolDeserialization::deserialize(m_frameHeader, privilege);
+
+    LOGD("Deserialized EraseRequest: startBucket <%s>, recursive [%d], filter client <%s> "
+         "filter user <%s>, filter privilege <%s>", startBucket.c_str(),
+         static_cast<int>(recursive), client.c_str(), user.c_str(), privilege.c_str());
+
+    return std::make_shared<EraseRequest>(startBucket, recursive,
+                                          PolicyKey(client, user, privilege),
+                                          m_frameHeader.sequenceNumber());
 }
 
 RequestPtr ProtocolAdmin::deserializeInsertOrUpdateBucketRequest(void) {
@@ -180,6 +201,8 @@ RequestPtr ProtocolAdmin::extractRequestFromBuffer(BinaryQueuePtr bufferQueue) {
         switch (opCode) {
         case OpAdminCheckRequest:
             return deserializeAdminCheckRequest();
+        case OpEraseRequest:
+            return deserializeEraseRequest();
         case OpInsertOrUpdateBucket:
             return deserializeInsertOrUpdateBucketRequest();
         case OpListRequest:
@@ -296,6 +319,25 @@ void ProtocolAdmin::execute(RequestContextPtr context, AdminCheckRequestPtr requ
     ProtocolSerialization::serialize(frame, request->key().privilege().value());
     ProtocolSerialization::serialize(frame, request->startBucket());
     ProtocolSerialization::serialize(frame, request->recursive());
+
+    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
+}
+
+void ProtocolAdmin::execute(RequestContextPtr context, EraseRequestPtr request) {
+    LOGD("Serializing EraseRequest: sequenceNumber [%" PRIu16 "], startBucket <%s>, "
+         "recursive [%d], filter client <%s> filter user <%s> filter privilege <%s>",
+         request->sequenceNumber(), request->startBucket().c_str(),
+         static_cast<int>(request->recursive()), request->filter().client().value().c_str(),
+         request->filter().user().value().c_str(), request->filter().privilege().value().c_str());
+
+    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
+
+    ProtocolSerialization::serialize(frame, OpEraseRequest);
+    ProtocolSerialization::serialize(frame, request->startBucket());
+    ProtocolSerialization::serialize(frame, request->recursive());
+    ProtocolSerialization::serialize(frame, request->filter().client().value());
+    ProtocolSerialization::serialize(frame, request->filter().user().value());
+    ProtocolSerialization::serialize(frame, request->filter().privilege().value());
 
     ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
 }

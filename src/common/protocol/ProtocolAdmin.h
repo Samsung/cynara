@@ -39,6 +39,7 @@ public:
     virtual ResponsePtr extractResponseFromBuffer(BinaryQueuePtr bufferQueue);
 
     virtual void execute(RequestContextPtr context, AdminCheckRequestPtr request);
+    virtual void execute(RequestContextPtr context, EraseRequestPtr request);
     virtual void execute(RequestContextPtr context, InsertOrUpdateBucketRequestPtr request);
     virtual void execute(RequestContextPtr context, ListRequestPtr request);
     virtual void execute(RequestContextPtr context, RemoveBucketRequestPtr request);
@@ -50,6 +51,7 @@ public:
 
 private:
     RequestPtr deserializeAdminCheckRequest(void);
+    RequestPtr deserializeEraseRequest(void);
     RequestPtr deserializeInsertOrUpdateBucketRequest(void);
     RequestPtr deserializeListRequest(void);
     RequestPtr deserializeRemoveBucketRequest(void);

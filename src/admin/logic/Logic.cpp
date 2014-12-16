@@ -32,6 +32,7 @@
 #include <protocol/Protocol.h>
 #include <protocol/ProtocolAdmin.h>
 #include <request/AdminCheckRequest.h>
+#include <request/EraseRequest.h>
 #include <request/InsertOrUpdateBucketRequest.h>
 #include <request/ListRequest.h>
 #include <request/pointers.h>
@@ -90,7 +91,7 @@ int Logic::askCynaraAndInterpreteCodeResponse(Args... args) {
     LOGD("codeResponse: code [%" PRIu16 "]", codeResponse->m_code);
     switch (codeResponse->m_code) {
         case CodeResponse::Code::OK:
-            LOGI("Policies set successfully.");
+            LOGI("Cynara command finished successfully.");
             return CYNARA_API_SUCCESS;
         case CodeResponse::Code::NOT_ALLOWED:
             LOGE("Cynara service answered: Operation not allowed.");
@@ -198,10 +199,9 @@ int Logic::listPolicies(const PolicyBucketId &bucket, const PolicyKey &filter,
     return CYNARA_API_SUCCESS;
 }
 
-int Logic::erasePolicies(const PolicyBucketId &startBucket UNUSED, bool recursive UNUSED,
-                         const PolicyKey &filter UNUSED) {
-    //todo implement erase
-    return CYNARA_API_SUCCESS;
+int Logic::erasePolicies(const PolicyBucketId &startBucket, bool recursive,
+                         const PolicyKey &filter) {
+    return askCynaraAndInterpreteCodeResponse<EraseRequest>(startBucket, recursive, filter);
 }
 
 } // namespace Cynara

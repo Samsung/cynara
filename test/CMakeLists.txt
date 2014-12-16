@@ -60,6 +60,7 @@ SET(CYNARA_TESTS_SOURCES
     common/exceptions/bucketrecordcorrupted.cpp
     common/protocols/admin/admincheckrequest.cpp
     common/protocols/admin/admincheckresponse.cpp
+    common/protocols/admin/eraserequest.cpp
     common/protocols/admin/listrequest.cpp
     common/protocols/admin/listresponse.cpp
     common/types/policybucket.cpp

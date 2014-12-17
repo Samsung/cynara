@@ -54,7 +54,7 @@ private:
 
     static std::string keyToString(const PolicyKey &key);
     void evict(void);
-
+    ClientPluginInterfacePtr findPlugin(PolicyType policyType);
 
     std::size_t m_capacity;
 

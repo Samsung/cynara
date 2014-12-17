@@ -48,10 +48,10 @@ int cynara_initialize(cynara **pp_cynara, const cynara_configuration *p_conf UNU
     if (!pp_cynara)
         return CYNARA_API_INVALID_PARAM;
 
+    init_log();
+
     return Cynara::tryCatch([&]() {
         *pp_cynara = new cynara(new Cynara::Logic);
-
-        init_log();
 
         LOGD("Cynara client initialized");
 

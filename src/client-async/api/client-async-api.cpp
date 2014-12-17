@@ -48,10 +48,10 @@ int cynara_async_initialize(cynara_async **pp_cynara,
     if (!pp_cynara)
         return CYNARA_API_INVALID_PARAM;
 
+    init_log();
+
     return Cynara::tryCatch([&]() {
         *pp_cynara = new cynara_async(new Cynara::Logic(callback, user_status_data));
-
-        init_log();
 
         LOGD("Cynara client async initialized");
 

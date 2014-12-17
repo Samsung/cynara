@@ -51,10 +51,10 @@ int cynara_agent_initialize(cynara_agent **pp_cynara_agent, const char *p_agent_
     if (!pp_cynara_agent)
         return CYNARA_API_INVALID_PARAM;
 
+    init_log();
+
     return Cynara::tryCatch([&]() {
         *pp_cynara_agent = new cynara_agent(new Cynara::Logic(p_agent_type));
-
-        init_log();
 
         LOGD("Cynara agent initialized");
 

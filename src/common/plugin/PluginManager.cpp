@@ -103,6 +103,8 @@ void PluginManager::loadPlugins(void) {
 }
 
 void PluginManager::openPlugin(const std::string &path) {
+    LOGD("Loading plugin: <%s>", path.c_str());
+
     void *handle = dlopen(path.c_str(), RTLD_LAZY);
 
     if (!handle) {
@@ -141,8 +143,10 @@ void PluginManager::openPlugin(const std::string &path) {
     }
     for (auto &desc : policies) {
         if (!m_plugins.insert(std::make_pair(desc, pluginPtr)).second) {
-            LOGW("policy type: [%" PRIu16 "] name: <%s> was already supported.",
+            LOGW("Policy: type [%" PRIu16 "] name <%s> was already supported.",
                  desc.type, desc.name.c_str());
+        } else {
+            LOGD("Supported policy: type [%" PRIu16 "] name <%s>", desc.type, desc.name.c_str());
         }
     }
 

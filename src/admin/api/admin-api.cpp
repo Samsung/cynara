@@ -43,7 +43,7 @@
 #include <cynara-error.h>
 
 #include <api/ApiInterface.h>
-#include <logic/Logic.h>
+#include <logic/OnlineLogic.h>
 
 struct cynara_admin {
     Cynara::ApiInterface *impl;
@@ -61,7 +61,7 @@ int cynara_admin_initialize(struct cynara_admin **pp_cynara_admin) {
         return CYNARA_API_INVALID_PARAM;
 
     return Cynara::tryCatch([&]() {
-        *pp_cynara_admin = new cynara_admin(new Cynara::Logic);
+        *pp_cynara_admin = new cynara_admin(new Cynara::OnlineLogic);
 
         init_log();
 

@@ -60,6 +60,8 @@ public:
     virtual void deleteLinking(const PolicyBucketId &bucketId);
     virtual PolicyBucket::Policies listPolicies(const PolicyBucketId &bucketId,
                                                 const PolicyKey &filter) const;
+    virtual void erasePolicies(const PolicyBucketId &bucketId, bool recursive,
+                               const PolicyKey &filter);
 
 protected:
     InMemoryStorageBackend() {}

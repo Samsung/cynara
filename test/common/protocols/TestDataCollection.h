@@ -39,13 +39,23 @@ typedef Cynara::PolicyKeyFeature PKF;
 namespace Keys {
     static const Cynara::PolicyKey k_nun(PKF::create(""), PKF::create("u"), PKF::create(""));
     static const Cynara::PolicyKey k_cup(PKF::create("c"), PKF::create("u"), PKF::create("p"));
-    static const Cynara::PolicyKey k_www(PKF::createWildcard(), PKF::createWildcard(),
+    static const Cynara::PolicyKey k_wup(PKF::createWildcard(), PKF::create("u"), PKF::create("p"));
+    static const Cynara::PolicyKey k_cwp(PKF::create("c"), PKF::createWildcard(), PKF::create("p"));
+    static const Cynara::PolicyKey k_cuw(PKF::create("c"), PKF::create("u"), PKF::createWildcard());
+    static const Cynara::PolicyKey k_cww(PKF::create("c"), PKF::createWildcard(),
                                          PKF::createWildcard());
     static const Cynara::PolicyKey k_wuw(PKF::createWildcard(), PKF::create("u"),
+                                         PKF::createWildcard());
+    static const Cynara::PolicyKey k_wwp(PKF::createWildcard(), PKF::createWildcard(),
+                                         PKF::create("p"));
+    static const Cynara::PolicyKey k_www(PKF::createWildcard(), PKF::createWildcard(),
                                          PKF::createWildcard());
     static const Cynara::PolicyKey k_aaa(PKF::createAny(), PKF::createAny(), PKF::createAny());
     static const Cynara::PolicyKey k_wua(PKF::createWildcard(), PKF::create("u"), PKF::createAny());
     static const Cynara::PolicyKey k_nua(PKF::create(""), PKF::create("u"), PKF::createAny());
+    static const Cynara::PolicyKey k_wwa(PKF::createWildcard(), PKF::createWildcard(),
+                                         PKF::createAny());
+    static const Cynara::PolicyKey k_aup(PKF::createAny(), PKF::create("u"), PKF::create("p"));
 } /* namespace Keys */
 
 namespace SN {

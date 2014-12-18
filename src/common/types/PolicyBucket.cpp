@@ -99,6 +99,16 @@ PolicyBucket::Policies PolicyBucket::listPolicies(const PolicyKey &filter) const
     return policies;
 }
 
+PolicyBucket::BucketIds PolicyBucket::getSubBuckets(void) const {
+    PolicyBucket::BucketIds buckets;
+    for (auto iter = m_policyCollection.begin(); iter != m_policyCollection.end(); ++iter) {
+        auto &policyPtr = iter->second;
+        if (policyPtr->result().policyType() == PredefinedPolicyType::BUCKET)
+            buckets.insert(policyPtr->result().metadata());
+    }
+    return buckets;
+}
+
 PolicyMap PolicyBucket::makePolicyMap(const PolicyCollection &policies) {
     PolicyMap result;
     for (const auto &policy : policies) {

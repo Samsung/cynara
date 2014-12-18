@@ -27,6 +27,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -49,6 +50,7 @@ public:
     typedef PolicyCollection::value_type value_type;
     typedef const_policy_iterator const_iterator;
     typedef std::vector<Policy> Policies;
+    typedef std::set<PolicyBucketId> BucketIds;
 
     // TODO: Review usefulness of ctors
     //delete default constructor in order to prevent creation of buckets with no id
@@ -65,6 +67,7 @@ public:
     void insertPolicy(PolicyPtr policy);
     void deletePolicy(const PolicyKey &key);
     Policies listPolicies(const PolicyKey &filter) const;
+    BucketIds getSubBuckets(void) const;
 
     // TODO: Try to change interface, so this method is not needed
     void deletePolicy(std::function<bool(PolicyPtr)> predicate);

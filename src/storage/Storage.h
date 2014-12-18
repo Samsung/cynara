@@ -56,6 +56,8 @@ public:
     PolicyBucket::Policies listPolicies(const PolicyBucketId &bucketId,
                                         const PolicyKey &filter) const;
 
+    void erasePolicies(const PolicyBucketId &bucketId, bool recursive, const PolicyKey &filter);
+
     void load(void);
     void save(void);
 

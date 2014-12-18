@@ -159,6 +159,11 @@ PolicyBucket::Policies Storage::listPolicies(const PolicyBucketId &bucketId,
     return m_backend.listPolicies(bucketId, filter);
 }
 
+void Storage::erasePolicies(const PolicyBucketId &bucketId, bool recursive,
+                            const PolicyKey &filter) {
+    return m_backend.erasePolicies(bucketId, recursive, filter);
+}
+
 void Storage::load(void) {
     m_backend.load();
 }

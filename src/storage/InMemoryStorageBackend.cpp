@@ -211,6 +211,29 @@ PolicyBucket::Policies InMemoryStorageBackend::listPolicies(const PolicyBucketId
     }
 }
 
+void InMemoryStorageBackend::erasePolicies(const PolicyBucketId &bucketId, bool recursive,
+                                           const PolicyKey &filter) {
+    PolicyBucket::BucketIds bucketIds = {bucketId};
+
+    while (!bucketIds.empty()) {
+        auto it = bucketIds.begin();
+        PolicyBucketId bucketId = *it;
+        bucketIds.erase(it);
+        try {
+            auto &policyBucket = buckets().at(bucketId);
+            if (recursive) {
+                auto subBuckets = policyBucket.getSubBuckets();
+                bucketIds.insert(subBuckets.begin(), subBuckets.end());
+            }
+            policyBucket.deletePolicy([&filter] (PolicyPtr policy) -> bool {
+                 return policy->key().matchFilter(filter);
+            });
+        } catch (const std::out_of_range &) {
+            throw BucketNotExistsException(bucketId);
+        }
+    }
+}
+
 void InMemoryStorageBackend::openFileStream(std::shared_ptr<std::ifstream> stream,
                                             const std::string &filename) {
     // TODO: Consider adding exceptions to streams and handling them:

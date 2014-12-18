@@ -44,6 +44,8 @@ public:
     MOCK_METHOD2(insertPolicy, void(const PolicyBucketId &bucketId, PolicyPtr policy));
     MOCK_CONST_METHOD2(listPolicies, PolicyBucket::Policies(const PolicyBucketId &bucketId,
                                                             const PolicyKey &filter));
+    MOCK_METHOD3(erasePolicies, void(const PolicyBucketId &bucketId, bool recursive,
+                                     const PolicyKey &filter));
 };
 
 #endif /* FAKESTORAGEBACKEND_H_ */

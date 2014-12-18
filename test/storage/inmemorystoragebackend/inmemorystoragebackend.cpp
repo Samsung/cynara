@@ -288,3 +288,248 @@ TEST_F(InMemeoryStorageBackendFixture, load_from_backup) {
         ASSERT_THAT(bucketPolicies, IsEmpty());
     }
 }
+
+/**
+ * @brief   Erase from non-exiting bucket should throw BucketNotExistsException
+ * @test    Scenario:
+ * - For different filter keys:
+ *     - try erase policies from "non-existing-bucket"
+ *     - expect BucketNotExistsException is thrown
+ */
+TEST_F(InMemeoryStorageBackendFixture, erasePoliciesEmptyBase) {
+    using ::testing::ReturnRef;
+
+    FakeInMemoryStorageBackend backend;
+    EXPECT_CALL(backend, buckets())
+        .WillRepeatedly(ReturnRef(m_buckets));
+
+    PolicyBucketId bucketId = "non-existing-bucket";
+    const bool NON_RECURSIVE = false;
+
+    for (const auto &filter : filters()) {
+        SCOPED_TRACE(filter.name());
+
+        EXPECT_THROW(backend.erasePolicies(bucketId, NON_RECURSIVE, filter.key()),
+                     BucketNotExistsException);
+    }
+}
+
+/**
+ * @brief   Erase from single bucket
+ * @test    Scenario:
+ * - For different filter keys:
+ *     - create "test-bucket"
+ *     - add all types of policies (fullPoliciesCollection) into "test-bucket"
+ *     - erase policies from "test-bucket"
+ *     - check if received results match expected
+ */
+TEST_F(InMemeoryStorageBackendFixture, erasePoliciesSingleBucket) {
+    using ::testing::ReturnRef;
+    using ::testing::UnorderedElementsAreArray;
+
+    PolicyBucketId bucketId = "test-bucket";
+    const bool NON_RECURSIVE = false;
+
+    for (const auto &filter : filters()) {
+        SCOPED_TRACE(filter.name());
+
+        FakeInMemoryStorageBackend backend;
+        EXPECT_CALL(backend, buckets()).WillRepeatedly(ReturnRef(m_buckets));
+
+        createBucket(bucketId);
+        addToBucket(bucketId, fullPoliciesCollection());
+
+        backend.erasePolicies(bucketId, NON_RECURSIVE, filter.key());
+        ASSERT_THAT(m_buckets.at(bucketId),
+                    UnorderedElementsAreArray(expectedEraseResult(filter.name())));
+    }
+}
+
+/**
+ * @brief   Verify if recursive erase doesn't propagate to not linked bucket
+ * @test    Scenario:
+ * - For different filter keys:
+ *     - create "test-bucket"
+ *     - add all types of policies (fullPoliciesCollection) into "test-bucket"
+ *     - create "test-bucket2"
+ *     - add all types of policies (fullPoliciesCollection) into "test-bucket2"
+ *     - erase policies from "test-bucket"
+ *     - check if received results match expected in case of "test-bucket"
+ *     - check if policies in "test-bucket2" remain unaffected
+ */
+TEST_F(InMemeoryStorageBackendFixture, erasePoliciesRecursiveNotLinkedBuckets) {
+    using ::testing::ReturnRef;
+    using ::testing::UnorderedElementsAreArray;
+
+    PolicyBucketId bucketId = "test-bucket";
+    PolicyBucketId bucketId2 = "test-bucket2";
+    const bool RECURSIVE = true;
+
+    for (const auto &filter : filters()) {
+        SCOPED_TRACE(filter.name());
+
+        FakeInMemoryStorageBackend backend;
+        EXPECT_CALL(backend, buckets()).WillRepeatedly(ReturnRef(m_buckets));
+
+        createBucket(bucketId);
+        addToBucket(bucketId, fullPoliciesCollection());
+
+        createBucket(bucketId2);
+        addToBucket(bucketId2, fullPoliciesCollection());
+
+        backend.erasePolicies(bucketId, RECURSIVE, filter.key());
+        ASSERT_THAT(m_buckets.at(bucketId),
+                    UnorderedElementsAreArray(expectedEraseResult(filter.name())));
+        ASSERT_THAT(m_buckets.at(bucketId2),
+                    UnorderedElementsAreArray(fullPoliciesCollection()));
+    }
+}
+
+/**
+ * @brief   Verify if recursive erase does propagate to linked bucket
+ * @test    Scenario:
+ * - For different filter keys:
+ *     - create "test-bucket"
+ *     - add all types of policies (fullPoliciesCollection) into "test-bucket"
+ *     - create "test-bucket2"
+ *     - add all types of policies (fullPoliciesCollection) into "test-bucket2"
+ *     - add policy linking test buckets
+ *     - erase policies from "test-bucket"
+ *     - check if received results match expected in case of "test-bucket"
+ *     - check if received results match expected in case of "test-bucket2"
+ */
+TEST_F(InMemeoryStorageBackendFixture, erasePoliciesRecursiveLinkedBuckets) {
+    using ::testing::ReturnRef;
+    using ::testing::UnorderedElementsAreArray;
+
+    PolicyBucketId bucketId = "test-bucket";
+    PolicyBucketId bucketId2 = "test-bucket2";
+    PolicyKey linkKey = Helpers::generatePolicyKey("link");
+    PolicyCollection linkPolicy = {Policy::bucketWithKey(linkKey, bucketId2)};
+    const bool RECURSIVE = true;
+
+    for (const auto &filter : filters()) {
+        SCOPED_TRACE(filter.name());
+
+        FakeInMemoryStorageBackend backend;
+        EXPECT_CALL(backend, buckets()).WillRepeatedly(ReturnRef(m_buckets));
+
+        createBucket(bucketId);
+        addToBucket(bucketId, fullPoliciesCollection());
+
+        createBucket(bucketId2);
+        addToBucket(bucketId2, fullPoliciesCollection());
+
+        addToBucket(bucketId, linkPolicy);
+
+        backend.erasePolicies(bucketId, RECURSIVE, filter.key());
+
+        PolicyCollection expectedResult = expectedEraseResult(filter.name());
+        if (!isLinkPolicyErased(filter.name())) {
+            expectedResult.insert(expectedResult.end(), linkPolicy.begin(), linkPolicy.end());
+        }
+        ASSERT_THAT(m_buckets.at(bucketId),
+                    UnorderedElementsAreArray(expectedResult));
+        ASSERT_THAT(m_buckets.at(bucketId2),
+                    UnorderedElementsAreArray(expectedEraseResult(filter.name())));
+    }
+}
+
+/**
+ * @brief   Verify if recursive erase doesn't propagate backwards to linked bucket
+ * @test    Scenario:
+ * - For different filter keys:
+ *     - create "test-bucket"
+ *     - add all types of policies (fullPoliciesCollection) into "test-bucket"
+ *     - create "test-bucket2"
+ *     - add all types of policies (fullPoliciesCollection) into "test-bucket2"
+ *     - add policy linking test buckets
+ *     - erase policies from "test-bucket2"
+ *     - check if policies in "test-bucket" remain unaffected
+ *     - check if received results match expected in case of "test-bucket2"
+ */
+TEST_F(InMemeoryStorageBackendFixture, erasePoliciesRecursiveLinkedBucketsNoBackwardPropagation) {
+    using ::testing::ReturnRef;
+    using ::testing::UnorderedElementsAreArray;
+
+    PolicyBucketId bucketId = "test-bucket";
+    PolicyBucketId bucketId2 = "test-bucket2";
+    PolicyKey linkKey = Helpers::generatePolicyKey("link");
+    PolicyCollection linkPolicy = {Policy::bucketWithKey(linkKey, bucketId2)};
+    const bool RECURSIVE = true;
+
+    for (const auto &filter : filters()) {
+        SCOPED_TRACE(filter.name());
+
+        FakeInMemoryStorageBackend backend;
+        EXPECT_CALL(backend, buckets()).WillRepeatedly(ReturnRef(m_buckets));
+
+        createBucket(bucketId);
+        addToBucket(bucketId, fullPoliciesCollection());
+
+        createBucket(bucketId2);
+        addToBucket(bucketId2, fullPoliciesCollection());
+
+        addToBucket(bucketId, linkPolicy);
+
+        backend.erasePolicies(bucketId2, RECURSIVE, filter.key());
+
+        PolicyCollection expectedResult = fullPoliciesCollection();
+        expectedResult.insert(expectedResult.end(), linkPolicy.begin(), linkPolicy.end());
+
+        ASSERT_THAT(m_buckets.at(bucketId),
+                    UnorderedElementsAreArray(expectedResult));
+        ASSERT_THAT(m_buckets.at(bucketId2),
+                    UnorderedElementsAreArray(expectedEraseResult(filter.name())));
+    }
+}
+
+/**
+ * @brief   Verify if non-recursive erase doesn't propagate to linked bucket
+ * @test    Scenario:
+ * - For different filter keys:
+ *     - create "test-bucket"
+ *     - add all types of policies (fullPoliciesCollection) into "test-bucket"
+ *     - create "test-bucket2"
+ *     - add all types of policies (fullPoliciesCollection) into "test-bucket2"
+ *     - add policy linking test buckets
+ *     - erase policies from "test-bucket"
+ *     - check if received results match expected in case of "test-bucket"
+ *     - check if policies in "test-bucket2" remain unaffected
+ */
+TEST_F(InMemeoryStorageBackendFixture, erasePoliciesNonRecursiveLinkedBuckets) {
+    using ::testing::ReturnRef;
+    using ::testing::UnorderedElementsAreArray;
+
+    PolicyBucketId bucketId = "test-bucket";
+    PolicyBucketId bucketId2 = "test-bucket2";
+    PolicyKey linkKey = Helpers::generatePolicyKey("link");
+    PolicyCollection linkPolicy = {Policy::bucketWithKey(linkKey, bucketId2)};
+    const bool NON_RECURSIVE = false;
+
+    for (const auto &filter : filters()) {
+        SCOPED_TRACE(filter.name());
+
+        FakeInMemoryStorageBackend backend;
+        EXPECT_CALL(backend, buckets()).WillRepeatedly(ReturnRef(m_buckets));
+
+        createBucket(bucketId);
+        addToBucket(bucketId, fullPoliciesCollection());
+
+        createBucket(bucketId2);
+        addToBucket(bucketId2, fullPoliciesCollection());
+
+        addToBucket(bucketId, linkPolicy);
+
+        backend.erasePolicies(bucketId, NON_RECURSIVE, filter.key());
+
+        PolicyCollection expectedResult = expectedEraseResult(filter.name());
+        if (!isLinkPolicyErased(filter.name())) {
+            expectedResult.insert(expectedResult.end(), linkPolicy.begin(), linkPolicy.end());
+        }
+        ASSERT_THAT(m_buckets.at(bucketId),
+                    UnorderedElementsAreArray(expectedResult));
+        ASSERT_THAT(m_buckets.at(bucketId2),
+                    UnorderedElementsAreArray(fullPoliciesCollection()));
+    }
+}

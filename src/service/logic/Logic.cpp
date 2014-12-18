@@ -42,6 +42,7 @@
 #include <request/AgentRegisterRequest.h>
 #include <request/CancelRequest.h>
 #include <request/CheckRequest.h>
+#include <request/EraseRequest.h>
 #include <request/InsertOrUpdateBucketRequest.h>
 #include <request/ListRequest.h>
 #include <request/RemoveBucketRequest.h>
@@ -268,6 +269,22 @@ bool Logic::update(const PolicyKey &key, ProtocolFrameSequenceNumber checkId,
     }
 
     return false;
+}
+
+void Logic::execute(RequestContextPtr context, EraseRequestPtr request) {
+    auto code = CodeResponse::Code::OK;
+
+    try {
+        m_storage->erasePolicies(request->startBucket(), request->recursive(), request->filter());
+        onPoliciesChanged();
+    } catch (const DatabaseException &ex) {
+        code = CodeResponse::Code::FAILED;
+    } catch (const BucketNotExistsException &ex) {
+        code = CodeResponse::Code::NO_BUCKET;
+    }
+
+    context->returnResponse(context, std::make_shared<CodeResponse>(code,
+                            request->sequenceNumber()));
 }
 
 void Logic::execute(RequestContextPtr context, InsertOrUpdateBucketRequestPtr request) {

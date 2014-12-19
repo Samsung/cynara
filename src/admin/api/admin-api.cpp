@@ -233,14 +233,13 @@ static int createPoliciesArray(const char *bucket,
         return CYNARA_API_OUT_OF_MEMORY;
     std::unique_ptr<Elem*, std::function<void(Elem**)>> plumber(tab,
         [](Elem **tab) {
-            Elem *elem = *tab;
-            while (elem) {
-                free(elem->bucket);
-                free(elem->client);
-                free(elem->user);
-                free(elem->privilege);
-                free(elem->result_extra);
-                free(elem++);
+            for (int i = 0; tab[i] != nullptr; i++) {
+                free(tab[i]->bucket);
+                free(tab[i]->client);
+                free(tab[i]->user);
+                free(tab[i]->privilege);
+                free(tab[i]->result_extra);
+                free(tab[i]);
             }
             free(tab);
         });

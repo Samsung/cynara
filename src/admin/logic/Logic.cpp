@@ -66,6 +66,11 @@ int Logic::adminCheck(const PolicyBucketId &startBucket, bool recursive, const P
                            recursive, std::cref(key), std::ref(result)));
 }
 
+int Logic::listDescriptions(std::vector<PolicyDescription> &descriptions) {
+    using std::placeholders::_1;
+    return callApiFunction(std::bind(&ApiInterface::listDescriptions, _1, std::ref(descriptions)));
+}
+
 int Logic::listPolicies(const PolicyBucketId &bucket, const PolicyKey &filter,
                         std::vector<Policy> &policies) {
     using std::placeholders::_1;

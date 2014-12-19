@@ -22,11 +22,9 @@
 
 #include <functional>
 #include <map>
-#include <memory>
-#include <new>
 #include <stdexcept>
 #include <string>
-#include <string.h>
+#include <cstring>
 #include <vector>
 
 #include <common.h>
@@ -36,6 +34,7 @@
 #include <types/Policy.h>
 #include <types/PolicyBucket.h>
 #include <types/PolicyBucketId.h>
+#include <types/PolicyDescription.h>
 #include <types/PolicyKey.h>
 #include <types/PolicyResult.h>
 #include <types/PolicyType.h>
@@ -45,6 +44,8 @@
 
 #include <api/ApiInterface.h>
 #include <logic/Logic.h>
+#include <logic/OnlineLogic.h>
+#include <logic/Utility.h>
 
 struct cynara_admin {
     Cynara::ApiInterface *impl;
@@ -228,57 +229,38 @@ int cynara_admin_check(struct cynara_admin *p_cynara_admin,
     });
 }
 
-static int createPoliciesArray(const char *bucket,
-                               const std::vector<Cynara::Policy> &policiesVector,
-                               struct cynara_admin_policy ***policies) {
-    typedef struct cynara_admin_policy Elem;
-    size_t elems = policiesVector.size();
-
-    Elem **tab = reinterpret_cast<Elem**>(calloc(elems + 1U, sizeof(Elem*)));
-    if (!tab)
+static int copyPolicy(const char *bucket, const Cynara::Policy &from, cynara_admin_policy *&to) {
+    to = reinterpret_cast<cynara_admin_policy*>(calloc(1, sizeof(cynara_admin_policy)));
+    if (!to)
         return CYNARA_API_OUT_OF_MEMORY;
-    std::unique_ptr<Elem*, std::function<void(Elem**)>> plumber(tab,
-        [](Elem **tab) {
-            for (int i = 0; tab[i] != nullptr; i++) {
-                free(tab[i]->bucket);
-                free(tab[i]->client);
-                free(tab[i]->user);
-                free(tab[i]->privilege);
-                free(tab[i]->result_extra);
-                free(tab[i]);
-            }
-            free(tab);
-        });
-
-    for (size_t i = 0U; i < elems; ++i) {
-        tab[i] = reinterpret_cast<Elem*>(calloc(1U, sizeof(Elem)));
-        if (!tab[i])
+    to->bucket = strdup(bucket);
+    if (!to->bucket)
+        return CYNARA_API_OUT_OF_MEMORY;
+    to->client = strdup(from.key().client().value().c_str());
+    if (!to->client)
             return CYNARA_API_OUT_OF_MEMORY;
-
-        tab[i]->bucket = strdup(bucket);
-        if (!tab[i]->bucket)
+    to->user = strdup(from.key().user().value().c_str());
+    if (!to->user)
             return CYNARA_API_OUT_OF_MEMORY;
-
-        tab[i]->client = strdup(policiesVector[i].key().client().value().c_str());
-        if (!tab[i]->client)
+    to->privilege = strdup(from.key().privilege().value().c_str());
+    if (!to->privilege)
             return CYNARA_API_OUT_OF_MEMORY;
-        tab[i]->user = strdup(policiesVector[i].key().user().value().c_str());
-        if (!tab[i]->user)
+    to->result = static_cast<int>(from.result().policyType());
+    if (!from.result().metadata().empty()) {
+        to->result_extra = strdup(from.result().metadata().c_str());
+        if (!to->result_extra)
             return CYNARA_API_OUT_OF_MEMORY;
-        tab[i]->privilege = strdup(policiesVector[i].key().privilege().value().c_str());
-        if (!tab[i]->privilege)
-            return CYNARA_API_OUT_OF_MEMORY;
-
-        tab[i]->result = static_cast<int>(policiesVector[i].result().policyType());
-        if (!policiesVector[i].result().metadata().empty()) {
-            tab[i]->result_extra = strdup(policiesVector[i].result().metadata().c_str());
-            if (!tab[i]->result_extra)
-                return CYNARA_API_OUT_OF_MEMORY;
-        }
     }
-    *policies = tab;
-    plumber.release();
     return CYNARA_API_SUCCESS;
+}
+
+static void freeElem(struct cynara_admin_policy *policyPtr) {
+    free(policyPtr->bucket);
+    free(policyPtr->client);
+    free(policyPtr->user);
+    free(policyPtr->privilege);
+    free(policyPtr->result_extra);
+    free(policyPtr);
 }
 
 CYNARA_API
@@ -313,7 +295,45 @@ int cynara_admin_list_policies(struct cynara_admin *p_cynara_admin, const char *
         if (ret != CYNARA_API_SUCCESS)
             return ret;
 
-        return createPoliciesArray(bucket, policiesVector, policies);
+        auto copyFun = std::bind(copyPolicy, bucket, std::placeholders::_1, std::placeholders::_2);
+        return Cynara::createNullTerminatedArray<Cynara::Policy, cynara_admin_policy>
+                            (policiesVector, policies, copyFun);
+    });
+}
+
+static int copyDescr(const Cynara::PolicyDescription &from, cynara_admin_policy_descr *&to) {
+    to = reinterpret_cast<cynara_admin_policy_descr*>(calloc(1, sizeof(cynara_admin_policy_descr)));
+    if (!to)
+        return CYNARA_API_OUT_OF_MEMORY;
+    to->result = static_cast<int>(from.type);
+    to->name = strdup(from.name.c_str());
+    if (!to->name)
+        return CYNARA_API_OUT_OF_MEMORY;
+    return CYNARA_API_SUCCESS;
+}
+
+static void freeElem(struct cynara_admin_policy_descr *descrPtr) {
+    free(descrPtr->name);
+    free(descrPtr);
+}
+
+CYNARA_API
+int cynara_admin_list_policies_descriptions(struct cynara_admin *p_cynara_admin,
+                                            struct cynara_admin_policy_descr ***descriptions) {
+    if (!p_cynara_admin || !p_cynara_admin->impl)
+        return CYNARA_API_INVALID_PARAM;
+    if (!descriptions)
+        return CYNARA_API_INVALID_PARAM;
+
+    return Cynara::tryCatch([&p_cynara_admin, &descriptions] () {
+        std::vector<Cynara::PolicyDescription> descriptionsVector;
+        int ret = p_cynara_admin->impl->listDescriptions(descriptionsVector);
+
+        if (ret != CYNARA_API_SUCCESS)
+            return ret;
+        return Cynara::createNullTerminatedArray<Cynara::PolicyDescription,
+                                                 cynara_admin_policy_descr>
+                (descriptionsVector, descriptions, copyDescr);
     });
 }
 

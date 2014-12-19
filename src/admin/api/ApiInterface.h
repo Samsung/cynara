@@ -29,6 +29,7 @@
 
 #include <types/Policy.h>
 #include <types/PolicyBucketId.h>
+#include <types/PolicyDescription.h>
 #include <types/PolicyKey.h>
 #include <types/PolicyResult.h>
 
@@ -56,6 +57,7 @@ public:
                              std::vector<Policy> &policies) = 0;
     virtual int erasePolicies(const PolicyBucketId &startBucket, bool recursive,
                               const PolicyKey &filter) = 0;
+    virtual int listDescriptions(std::vector<PolicyDescription> &descriptions) = 0;
 
 };
 

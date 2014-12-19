@@ -17,6 +17,7 @@
  * \file        src/include/cynara-admin-types.h
  * \author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * \author      Aleksander Zdyb <a.zdyb@samsung.com>
+ * \author      Zofia Abramowska <z.abramowska@samsung.com>
  * \version     1.0
  * \brief       This file contains structs and consts for cynara admin.
  */
@@ -46,6 +47,18 @@ struct cynara_admin_policy {
 
     int result;
     char *result_extra;
+};
+
+/**
+ * \name cynara_admin_policy_descr
+ * describes policy of type given with result
+ * result - result of policy to describe
+ * name - name of given policy result
+ */
+
+struct cynara_admin_policy_descr {
+    int result;
+    char *name;
 };
 
 /**

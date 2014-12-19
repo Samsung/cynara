@@ -48,6 +48,7 @@ public:
     virtual int removeBucket(const PolicyBucketId &bucket);
     virtual int adminCheck(const PolicyBucketId &startBucket, bool recursive,
                            const PolicyKey &key, PolicyResult &result);
+    virtual int listDescriptions(std::vector<PolicyDescription> &descriptions);
     virtual int listPolicies(const PolicyBucketId &bucket, const PolicyKey &filter,
                              std::vector<Policy> &policies);
     virtual int erasePolicies(const PolicyBucketId &startBucket, bool recursive,

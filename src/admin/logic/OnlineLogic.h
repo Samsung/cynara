@@ -52,7 +52,7 @@ public:
                              std::vector<Policy> &policies);
     virtual int erasePolicies(const PolicyBucketId &startBucket, bool recursive,
                               const PolicyKey &filter);
-
+    virtual int listDescriptions(std::vector<PolicyDescription> &descriptions);
 };
 
 } // namespace Cynara

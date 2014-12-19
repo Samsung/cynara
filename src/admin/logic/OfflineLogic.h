@@ -47,6 +47,7 @@ public:
     int removeBucket(const PolicyBucketId &bucket);
     int adminCheck(const PolicyBucketId &startBucket, bool recursive,
                    const PolicyKey &key, PolicyResult &result);
+    int listDescriptions(std::vector<PolicyDescription> &descriptions);
     int listPolicies(const PolicyBucketId &bucket, const PolicyKey &filter,
                      std::vector<Policy> &policies);
     int erasePolicies(const PolicyBucketId &startBucket, bool recursive,

@@ -205,4 +205,9 @@ int OnlineLogic::erasePolicies(const PolicyBucketId &startBucket, bool recursive
     return askCynaraAndInterpreteCodeResponse<EraseRequest>(startBucket, recursive, filter);
 }
 
+int OnlineLogic::listDescriptions(std::vector<PolicyDescription> &descriptions) {
+    (void) descriptions;
+    return CYNARA_API_SUCCESS;
+}
+
 } // namespace Cynara

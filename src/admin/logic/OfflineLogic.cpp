@@ -103,6 +103,11 @@ int OfflineLogic::adminCheck(const PolicyBucketId &startBucket, bool recursive,
     return CYNARA_API_SUCCESS;
 }
 
+int OfflineLogic::listDescriptions(std::vector<PolicyDescription> &descriptions) {
+    (void) descriptions;
+    return CYNARA_API_SUCCESS;
+}
+
 int OfflineLogic::listPolicies(const PolicyBucketId &bucket, const PolicyKey &filter,
                                std::vector<Policy> &policies) {
     try {

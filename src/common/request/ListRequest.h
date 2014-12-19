@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        src/common/list/ListRequest.h
+ * @file        src/common/request/ListRequest.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file defines policies list request class

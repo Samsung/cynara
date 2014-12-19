@@ -37,7 +37,8 @@ void RequestTaker::execute(RequestContextPtr context UNUSED, AgentActionRequestP
     throw NotImplementedException();
 }
 
-void RequestTaker::execute(RequestContextPtr context UNUSED, AgentRegisterRequestPtr request UNUSED) {
+void RequestTaker::execute(RequestContextPtr context UNUSED,
+                           AgentRegisterRequestPtr request UNUSED) {
     throw NotImplementedException();
 }
 

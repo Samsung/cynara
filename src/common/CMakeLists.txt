@@ -44,6 +44,7 @@ SET(COMMON_SOURCES
     ${COMMON_PATH}/request/AgentRegisterRequest.cpp
     ${COMMON_PATH}/request/CancelRequest.cpp
     ${COMMON_PATH}/request/CheckRequest.cpp
+    ${COMMON_PATH}/request/EraseRequest.cpp
     ${COMMON_PATH}/request/InsertOrUpdateBucketRequest.cpp
     ${COMMON_PATH}/request/ListRequest.cpp
     ${COMMON_PATH}/request/RemoveBucketRequest.cpp

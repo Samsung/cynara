@@ -29,6 +29,7 @@ SET(CYNARA_SOURCES_FOR_TESTS
     ${CYNARA_SRC}/common/protocol/ProtocolFrameHeader.cpp
     ${CYNARA_SRC}/common/protocol/ProtocolFrameSerializer.cpp
     ${CYNARA_SRC}/common/request/AdminCheckRequest.cpp
+    ${CYNARA_SRC}/common/request/EraseRequest.cpp
     ${CYNARA_SRC}/common/request/InsertOrUpdateBucketRequest.cpp
     ${CYNARA_SRC}/common/request/ListRequest.cpp
     ${CYNARA_SRC}/common/request/RemoveBucketRequest.cpp

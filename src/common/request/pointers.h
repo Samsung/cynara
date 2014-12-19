@@ -42,6 +42,9 @@ typedef std::shared_ptr<CancelRequest> CancelRequestPtr;
 class CheckRequest;
 typedef std::shared_ptr<CheckRequest> CheckRequestPtr;
 
+class EraseRequest;
+typedef std::shared_ptr<EraseRequest> EraseRequestPtr;
+
 class InsertOrUpdateBucketRequest;
 typedef std::shared_ptr<InsertOrUpdateBucketRequest> InsertOrUpdateBucketRequestPtr;
 

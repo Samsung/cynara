@@ -50,6 +50,10 @@ void RequestTaker::execute(RequestContextPtr context UNUSED, CheckRequestPtr req
     throw NotImplementedException();
 }
 
+void RequestTaker::execute(RequestContextPtr context UNUSED, EraseRequestPtr request UNUSED) {
+    throw NotImplementedException();
+}
+
 void RequestTaker::execute(RequestContextPtr context UNUSED,
                            InsertOrUpdateBucketRequestPtr request UNUSED) {
     throw NotImplementedException();

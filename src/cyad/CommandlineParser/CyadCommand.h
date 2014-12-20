@@ -25,6 +25,9 @@
 
 #include <string>
 
+#include <types/PolicyBucketId.h>
+#include <types/PolicyResult.h>
+
 namespace Cynara {
 
 class CommandsDispatcher;
@@ -65,6 +68,44 @@ public:
     using CyadCommand::CyadCommand;
 
     virtual int run(CommandsDispatcher &dispatcher);
+};
+
+class SetBucketCyadCommand : public CyadCommand {
+public:
+    SetBucketCyadCommand(const PolicyBucketId &bucketId, const PolicyResult &policyResult)
+        : m_bucketId(bucketId), m_policyResult(policyResult) {}
+
+    virtual ~SetBucketCyadCommand() {}
+
+    virtual int run(CommandsDispatcher &dispatcher);
+
+    const PolicyBucketId &bucketId(void) const {
+        return m_bucketId;
+    }
+
+    const PolicyResult &policyResult(void) const {
+        return m_policyResult;
+    }
+
+private:
+    PolicyBucketId m_bucketId;
+    PolicyResult m_policyResult;
+};
+
+class DeleteBucketCyadCommand : public CyadCommand {
+public:
+    explicit DeleteBucketCyadCommand(const PolicyBucketId &bucketId) : m_bucketId(bucketId) {}
+
+    virtual ~DeleteBucketCyadCommand() {}
+
+    virtual int run(CommandsDispatcher &dispatcher);
+
+    const PolicyBucketId &bucketId(void) const {
+        return m_bucketId;
+    }
+
+private:
+    PolicyBucketId m_bucketId;
 };
 
 } /* namespace Cynara */

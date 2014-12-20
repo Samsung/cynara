@@ -40,10 +40,20 @@ public:
     virtual int execute(CyadCommand &);
     virtual int execute(HelpCyadCommand &);
     virtual int execute(ErrorCyadCommand &);
+    virtual int execute(DeleteBucketCyadCommand &);
+    virtual int execute(SetBucketCyadCommand &);
 
 private:
     // TODO: Get argv[0] instead of hardcoded name
     const std::string helpMessage = "Usage: cyad [OPTIONS]\n\n"
+                                    "Bucket set options (with -b or --set-bucket)\n"
+                                    "  -b, --set-bucket=<name>        name of bucket\n"
+                                    "  -p, --policy=<policy>          default policy\n"
+                                    "  -m, --metadata=<metadata>      metadata for default policy\n"
+                                    "\n"
+                                    "Bucket delete options (with -d or --delete-bucket)\n"
+                                    "  -d, --delete-bucket=<name>     name of bucket to delete\n"
+                                    "\n"
                                     "Help options:\n"
                                     "  -h, --help                     print help message";
     BaseDispatcherIO &m_io;

@@ -20,11 +20,17 @@
  * @brief       Tests for CommandsDispatcher
  */
 
+#include <tuple>
+#include <vector>
+
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include <cynara-error.h>
+#include <cynara-policy-types.h>
 
+#include <common/types/PolicyKey.h>
+#include <common/types/PolicyResult.h>
 #include <cyad/CommandlineParser/CyadCommand.h>
 #include <cyad/CommandsDispatcher.h>
 
@@ -55,4 +61,73 @@ TEST_F(CyadCommandlineDispatcherTest, noApi) {
     dispatcher.execute(result);
     dispatcher.execute(helpResult);
     dispatcher.execute(errorResult);
+}
+
+TEST_F(CyadCommandlineDispatcherTest, deleteBucket) {
+    using ::testing::_;
+    using ::testing::Return;
+    using ::testing::StrEq;
+    using ::testing::IsNull;
+
+    FakeAdminApiWrapper adminApi;
+
+    EXPECT_CALL(adminApi, cynara_admin_initialize(_)).WillOnce(Return(CYNARA_API_SUCCESS));
+    EXPECT_CALL(adminApi, cynara_admin_finish(_)).WillOnce(Return(CYNARA_API_SUCCESS));
+
+    Cynara::CommandsDispatcher dispatcher(m_io, adminApi);
+    Cynara::DeleteBucketCyadCommand result("test-bucket");
+
+    EXPECT_CALL(adminApi,
+            cynara_admin_set_bucket(_, StrEq("test-bucket"), CYNARA_ADMIN_DELETE, IsNull()))
+        .WillOnce(Return(CYNARA_API_SUCCESS));
+
+    dispatcher.execute(result);
+}
+
+TEST_F(CyadCommandlineDispatcherTest, setBucket) {
+    using ::testing::_;
+    using ::testing::Return;
+    using ::testing::StrEq;
+    using ::testing::IsNull;
+    using Cynara::PolicyBucketId;
+    using Cynara::PolicyType;
+    using Cynara::PolicyResult;
+
+    FakeAdminApiWrapper adminApi;
+
+    EXPECT_CALL(adminApi, cynara_admin_initialize(_)).WillOnce(Return(CYNARA_API_SUCCESS));
+    EXPECT_CALL(adminApi, cynara_admin_finish(_)).WillOnce(Return(CYNARA_API_SUCCESS));
+
+    Cynara::CommandsDispatcher dispatcher(m_io, adminApi);
+
+    typedef std::tuple<PolicyBucketId, PolicyResult> BucketData;
+    typedef std::vector<BucketData> Buckets;
+    const Buckets buckets = { BucketData("test-bucket-1", { CYNARA_ADMIN_ALLOW, "" }),
+                              BucketData("test-bucket-2", { CYNARA_ADMIN_DENY, "" }),
+                              BucketData("test-bucket-3", { CYNARA_ADMIN_BUCKET, "other-bucket" }),
+                              BucketData("test-bucket-2", { CYNARA_ADMIN_NONE, "" }),
+                              BucketData("test-bucket-4", { 42, "douglas-noel-adams" }) };
+
+    for (const auto &bucket : buckets) {
+        const auto &bucketId = std::get<0>(bucket);
+        const auto &policyResult = std::get<1>(bucket);
+
+        SCOPED_TRACE(bucketId);
+
+        Cynara::SetBucketCyadCommand result(bucketId, policyResult);
+
+        if (policyResult.metadata().empty() == false) {
+            EXPECT_CALL(adminApi,
+                    cynara_admin_set_bucket(_, StrEq(bucketId.c_str()), policyResult.policyType(),
+                                            StrEq(policyResult.metadata().c_str())))
+                .WillOnce(Return(CYNARA_API_SUCCESS));
+        } else {
+            EXPECT_CALL(adminApi,
+                    cynara_admin_set_bucket(_, StrEq(bucketId.c_str()), policyResult.policyType(),
+                                           IsNull()))
+                .WillOnce(Return(CYNARA_API_SUCCESS));
+        }
+
+        dispatcher.execute(result);
+    }
 }

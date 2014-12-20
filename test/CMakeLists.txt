@@ -49,6 +49,8 @@ SET(CYNARA_SOURCES_FOR_TESTS
     ${CYNARA_SRC}/common/types/PolicyResult.cpp
     ${CYNARA_SRC}/common/types/PolicyType.cpp
     ${CYNARA_SRC}/cyad/AdminPolicyParser.cpp
+    ${CYNARA_SRC}/cyad/CommandlineParser/CyadCommand.cpp
+    ${CYNARA_SRC}/cyad/CommandsDispatcher.cpp
     ${CYNARA_SRC}/cyad/CynaraAdminPolicies.cpp
     ${CYNARA_SRC}/helpers/creds-commons/CredsCommonsInner.cpp
     ${CYNARA_SRC}/helpers/creds-commons/creds-commons.cpp
@@ -72,6 +74,7 @@ SET(CYNARA_TESTS_SOURCES
     common/protocols/admin/listresponse.cpp
     common/types/policybucket.cpp
     credsCommons/parser/Parser.cpp
+    cyad/commands_dispatcher.cpp
     cyad/helpers.cpp
     cyad/policy_collection.cpp
     cyad/policy_parser.cpp

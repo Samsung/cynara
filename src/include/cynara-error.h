@@ -18,6 +18,7 @@
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @author      Zofia Abramowska <z.abramowska@samsung.com>
  * @author      Radoslaw Bartosiak <r.bartosiak@samsung.com>
+ * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       This file contains error codes returned by APIs of Cynara.
  */
@@ -33,46 +34,49 @@
 */
 
 /*! \brief   indicating access that was checked is allowed */
-#define CYNARA_API_ACCESS_ALLOWED         2
+#define CYNARA_API_ACCESS_ALLOWED               2
 
 /*! \brief   indicating that access that was checked is denied */
-#define CYNARA_API_ACCESS_DENIED          1
+#define CYNARA_API_ACCESS_DENIED                1
 
 /*! \brief   indicating the result of the one specific API is successful */
-#define CYNARA_API_SUCCESS                0
+#define CYNARA_API_SUCCESS                      0
 
 /*! \brief   indicating that value is not present in cache */
-#define CYNARA_API_CACHE_MISS            -1
+#define CYNARA_API_CACHE_MISS                   -1
 
 /*! \brief   indicating that pending requests reached maximum */
-#define CYNARA_API_MAX_PENDING_REQUESTS  -2
+#define CYNARA_API_MAX_PENDING_REQUESTS         -2
 
 /*! \brief   indicating system is running out of memory state */
-#define CYNARA_API_OUT_OF_MEMORY         -3
+#define CYNARA_API_OUT_OF_MEMORY                -3
 
 /*! \brief   indicating the API's parameter is malformed */
-#define CYNARA_API_INVALID_PARAM         -4
+#define CYNARA_API_INVALID_PARAM                -4
 
 /*! \brief   indicating that service is not available */
-#define CYNARA_API_SERVICE_NOT_AVAILABLE -5
+#define CYNARA_API_SERVICE_NOT_AVAILABLE        -5
 
 /*! \brief   indicating that provided method is not supported by library */
-#define CYNARA_API_METHOD_NOT_SUPPORTED  -6
+#define CYNARA_API_METHOD_NOT_SUPPORTED         -6
 
 /*! \brief   cynara service does not allow to perform requested operation */
-#define CYNARA_API_OPERATION_NOT_ALLOWED -7
+#define CYNARA_API_OPERATION_NOT_ALLOWED        -7
 
 /*! \brief   cynara service failed to perform requested operation */
-#define CYNARA_API_OPERATION_FAILED      -8
+#define CYNARA_API_OPERATION_FAILED             -8
 
 /*! \brief   cynara service hasn't found requested bucket */
-#define CYNARA_API_BUCKET_NOT_FOUND      -9
+#define CYNARA_API_BUCKET_NOT_FOUND             -9
 
 /*! \brief   indicating an unknown error */
-#define CYNARA_API_UNKNOWN_ERROR         -10
+#define CYNARA_API_UNKNOWN_ERROR                -10
 
 /*! \brief   indicating configuration error */
-#define CYNARA_API_CONFIGURATION_ERROR   -11
+#define CYNARA_API_CONFIGURATION_ERROR          -11
+
+/*! \brief   indicating invalid parameter in command-line */
+#define CYNARA_API_INVALID_COMMANDLINE_PARAM    -12
 /** @}*/
 
 #endif /* CYNARA_ERROR_H */

@@ -14,15 +14,40 @@
  *    limitations under the License.
  */
 /**
- * @file        src/cyad/main.cpp
+ * @file        src/cyad/Cyad.h
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
- * @brief       A command-line tool for managing Cynara's database
+ * @brief       A command-line tool to manage Cynara's database
  */
 
-#include <cyad/Cyad.h>
+#ifndef SRC_CYAD_CYAD_H_
+#define SRC_CYAD_CYAD_H_
 
-int main(int argc, char **argv) {
-    Cynara::Cyad cyad(argc, argv);
-    return cyad.run();
-}
+#include <memory>
+
+#include <cyad/AdminApiWrapper.h>
+#include <cyad/CommandlineParser/CyadCommandlineParser.h>
+#include <cyad/CommandsDispatcher.h>
+#include <cyad/DispatcherIO.h>
+
+namespace Cynara {
+
+class Cyad {
+public:
+    Cyad(int argc, char **argv);
+    ~Cyad();
+
+    int run(void);
+    bool cynaraOperational(void) const;
+
+private:
+    AdminApiWrapper m_adminApiWrapper;
+    DispatcherIO m_io;
+    std::unique_ptr<CommandsDispatcher> m_dispatcher;
+    CyadCommandlineParser m_parser;
+    int m_cynaraInitError;
+};
+
+} /* namespace Cynara */
+
+#endif /* SRC_CYAD_CYAD_H_ */

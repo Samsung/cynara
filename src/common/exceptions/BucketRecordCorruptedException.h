@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,82 +16,48 @@
 /**
  * @file        src/common/exceptions/BucketRecordCorruptedException.h
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
+ * @author      Pawel Wieczorek <p.wieczorek2@samsung.com>
  * @version     1.0
  * @brief       Implementation of BucketRecordCorruptedException
  */
+
 #ifndef SRC_COMMON_EXCEPTIONS_BUCKETRECORDCORRUPTEDEXCEPTION_H_
 #define SRC_COMMON_EXCEPTIONS_BUCKETRECORDCORRUPTEDEXCEPTION_H_
 
 #include <string>
 
-#include <exceptions/DatabaseException.h>
+#include <exceptions/RecordCorruptedException.h>
 
 namespace Cynara {
 
-class BucketRecordCorruptedException : public DatabaseException {
+class BucketRecordCorruptedException : public RecordCorruptedException {
 public:
-    BucketRecordCorruptedException(void) = delete;
+    BucketRecordCorruptedException() = delete;
     virtual ~BucketRecordCorruptedException() {};
 
-    BucketRecordCorruptedException(const std::string &line)
-        : m_lineNumber(0), m_line(line)  {}
+    BucketRecordCorruptedException(const std::string &line) : RecordCorruptedException(line) {
+        setMessage(subtype());
+    }
 
     BucketRecordCorruptedException withLineNumber(const size_t &lineNumber) const {
         BucketRecordCorruptedException copy(*this);
         copy.m_lineNumber = lineNumber;
-        copy.m_message.clear();
+        copy.setMessage(copy.subtype());
         return copy;
     }
 
     BucketRecordCorruptedException withFilename(const std::string &filename) const {
         BucketRecordCorruptedException copy(*this);
         copy.m_filename = filename;
-        copy.m_message.clear();
+        copy.setMessage(copy.subtype());
         return copy;
     }
 
-    virtual const std::string &message(void) const {
-        if (m_message.empty()) {
-            m_message = "Bucket record corrupted at"
-                + formatedFilename()
-                + formatedLineNumber()
-                + ": <" + slicedLine() + ">";
-        }
-        return m_message;
-    }
-
-    const std::string &filename(void) const {
-        return m_filename;
-    }
-
-    const std::string &line(void) const {
-        return m_line;
-    }
-
-    size_t lineNumber(void) const {
-        return m_lineNumber;
-    }
-
-protected:
-    inline std::string slicedLine(void) const {
-        return m_line.substr(0, 50) + (m_line.size() > 50 ? "..." : "");
-    }
-
-    inline std::string formatedFilename(void) const {
-        return m_filename.empty() ? " line" : " " + m_filename;
-    }
-
-    inline std::string formatedLineNumber(void) const {
-        return m_lineNumber <= 0 ? ""
-                : (m_filename.empty() ? " " : ":")
-                  + std::to_string(static_cast<long int>(m_lineNumber));
-    }
-
 private:
-    size_t m_lineNumber;
-    std::string m_line;
-    std::string m_filename;
-    mutable std::string m_message;
+    const std::string &subtype(void) {
+        static const std::string subtype("Bucket");
+        return subtype;
+    }
 };
 
 } /* namespace Cynara */

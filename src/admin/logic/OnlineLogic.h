@@ -34,8 +34,8 @@ private:
     SocketClientPtr m_socketClient;
 
     bool ensureConnection(void);
-    template<typename T, typename... Args>
-    int askCynaraAndInterpreteCodeResponse(Args... args);
+    template<typename Req, typename Res, typename... ReqArgs>
+    int getResponse(std::shared_ptr<Res> &retResponse, ReqArgs... args);
 
 public:
     OnlineLogic();

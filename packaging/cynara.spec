@@ -357,4 +357,4 @@ fi
 
 %files -n cynara-db-migration
 %manifest cynara-db-migration.manifest
-%attr(744,root,root) %{_sbindir}/cynara/cynara-db-migration.sh
+%attr(700,root,root) %{_sbindir}/cynara/cynara-db-migration.sh

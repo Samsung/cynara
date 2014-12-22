@@ -55,6 +55,11 @@ void ResponseTaker::execute(RequestContextPtr context UNUSED, CodeResponsePtr re
     throw NotImplementedException();
 }
 
+void ResponseTaker::execute(RequestContextPtr context UNUSED,
+                            DescriptionListResponsePtr response UNUSED) {
+    throw NotImplementedException();
+}
+
 void ResponseTaker::execute(RequestContextPtr context UNUSED, ListResponsePtr response UNUSED) {
     throw NotImplementedException();
 }

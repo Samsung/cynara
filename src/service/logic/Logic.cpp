@@ -42,6 +42,7 @@
 #include <request/AgentRegisterRequest.h>
 #include <request/CancelRequest.h>
 #include <request/CheckRequest.h>
+#include <request/DescriptionListRequest.h>
 #include <request/EraseRequest.h>
 #include <request/InsertOrUpdateBucketRequest.h>
 #include <request/ListRequest.h>
@@ -54,6 +55,7 @@
 #include <response/CancelResponse.h>
 #include <response/CheckResponse.h>
 #include <response/CodeResponse.h>
+#include <response/DescriptionListResponse.h>
 #include <response/ListResponse.h>
 #include <types/Policy.h>
 
@@ -269,6 +271,15 @@ bool Logic::update(const PolicyKey &key, ProtocolFrameSequenceNumber checkId,
     }
 
     return false;
+}
+
+void Logic::execute(RequestContextPtr context, DescriptionListRequestPtr request) {
+    auto descriptions = m_pluginManager->getPolicyDescriptions();
+    descriptions.insert(descriptions.begin(), predefinedPolicyDescr.begin(),
+                        predefinedPolicyDescr.end());
+
+    context->returnResponse(context, std::make_shared<DescriptionListResponse>(descriptions,
+                            request->sequenceNumber()));
 }
 
 void Logic::execute(RequestContextPtr context, EraseRequestPtr request) {

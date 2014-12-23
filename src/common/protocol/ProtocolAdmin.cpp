@@ -29,6 +29,7 @@
 #include <protocol/ProtocolFrame.h>
 #include <protocol/ProtocolFrameSerializer.h>
 #include <request/AdminCheckRequest.h>
+#include <request/DescriptionListRequest.h>
 #include <request/EraseRequest.h>
 #include <request/InsertOrUpdateBucketRequest.h>
 #include <request/ListRequest.h>
@@ -37,6 +38,7 @@
 #include <request/SetPoliciesRequest.h>
 #include <response/AdminCheckResponse.h>
 #include <response/CodeResponse.h>
+#include <response/DescriptionListResponse.h>
 #include <response/ListResponse.h>
 #include <types/PolicyKey.h>
 
@@ -72,6 +74,11 @@ RequestPtr ProtocolAdmin::deserializeAdminCheckRequest(void) {
     return std::make_shared<AdminCheckRequest>(PolicyKey(clientId, userId, privilegeId),
                                                startBucket, recursive,
                                                m_frameHeader.sequenceNumber());
+}
+
+RequestPtr ProtocolAdmin::deserializeDescriptionListRequest(void) {
+    LOGD("Deserialized DescriptionListRequest");
+    return std::make_shared<DescriptionListRequest>(m_frameHeader.sequenceNumber());
 }
 
 RequestPtr ProtocolAdmin::deserializeEraseRequest(void) {
@@ -201,6 +208,8 @@ RequestPtr ProtocolAdmin::extractRequestFromBuffer(BinaryQueuePtr bufferQueue) {
         switch (opCode) {
         case OpAdminCheckRequest:
             return deserializeAdminCheckRequest();
+        case OpDescriptionListRequest:
+            return deserializeDescriptionListRequest();
         case OpEraseRequest:
             return deserializeEraseRequest();
         case OpInsertOrUpdateBucket:
@@ -246,6 +255,24 @@ ResponsePtr ProtocolAdmin::deserializeCodeResponse(void) {
 
     return std::make_shared<CodeResponse>(static_cast<CodeResponse::Code>(responseCode),
                                           m_frameHeader.sequenceNumber());
+}
+
+ResponsePtr ProtocolAdmin::deserializeDescriptionListResponse(void) {
+    ProtocolFrameFieldsCount descriptionsCount;
+
+    ProtocolDeserialization::deserialize(m_frameHeader, descriptionsCount);
+    std::vector<PolicyDescription> descriptions(descriptionsCount,
+                                                PolicyDescription(PredefinedPolicyType::NONE));
+
+    for (ProtocolFrameFieldsCount fields = 0; fields < descriptionsCount; fields++) {
+        ProtocolDeserialization::deserialize(m_frameHeader, descriptions[fields].type);
+        ProtocolDeserialization::deserialize(m_frameHeader, descriptions[fields].name);
+    }
+
+    LOGD("Deserialized DescriptionListResponse: number of descriptions [%" PRIu16 "]",
+         descriptionsCount);
+
+    return std::make_shared<DescriptionListResponse>(descriptions, m_frameHeader.sequenceNumber());
 }
 
 ResponsePtr ProtocolAdmin::deserializeListResponse(void) {
@@ -294,6 +321,8 @@ ResponsePtr ProtocolAdmin::extractResponseFromBuffer(BinaryQueuePtr bufferQueue)
             return deserializeAdminCheckResponse();
         case OpCodeResponse:
             return deserializeCodeResponse();
+        case OpDescriptionListResponse:
+            return deserializeDescriptionListResponse();
         case OpListResponse:
             return deserializeListResponse();
         default:
@@ -319,6 +348,15 @@ void ProtocolAdmin::execute(RequestContextPtr context, AdminCheckRequestPtr requ
     ProtocolSerialization::serialize(frame, request->key().privilege().value());
     ProtocolSerialization::serialize(frame, request->startBucket());
     ProtocolSerialization::serialize(frame, request->recursive());
+
+    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
+}
+
+void ProtocolAdmin::execute(RequestContextPtr context, DescriptionListRequestPtr request) {
+    LOGD("Serializing DescriptionListRequest");
+    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
+
+    ProtocolSerialization::serialize(frame, OpDescriptionListRequest);
 
     ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
 }
@@ -458,6 +496,25 @@ void ProtocolAdmin::execute(RequestContextPtr context, CodeResponsePtr response)
     ProtocolSerialization::serialize(frame, OpCodeResponse);
     ProtocolSerialization::serialize(frame, static_cast<ProtocolResponseCode>(response->m_code));
 
+    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
+}
+
+void ProtocolAdmin::execute(RequestContextPtr context, DescriptionListResponsePtr response) {
+    ProtocolFrameFieldsCount descriptionsSize
+        = static_cast<ProtocolFrameFieldsCount>(response->descriptions().size());
+
+    LOGD("Serializing DescriptionListResponse: op [%" PRIu8 "], sequenceNumber [%" PRIu16 "], "
+         "number of descriptions [%" PRIu16 "]", OpDescriptionListResponse,
+         response->sequenceNumber(), descriptionsSize);
+
+    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(response->sequenceNumber());
+
+    ProtocolSerialization::serialize(frame, OpDescriptionListResponse);
+    ProtocolSerialization::serialize(frame, descriptionsSize);
+    for (auto &desc : response->descriptions()) {
+        ProtocolSerialization::serialize(frame, desc.type);
+        ProtocolSerialization::serialize(frame, desc.name);
+    }
     ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
 }
 

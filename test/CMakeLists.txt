@@ -29,6 +29,7 @@ SET(CYNARA_SOURCES_FOR_TESTS
     ${CYNARA_SRC}/common/protocol/ProtocolFrameHeader.cpp
     ${CYNARA_SRC}/common/protocol/ProtocolFrameSerializer.cpp
     ${CYNARA_SRC}/common/request/AdminCheckRequest.cpp
+    ${CYNARA_SRC}/common/request/DescriptionListRequest.cpp
     ${CYNARA_SRC}/common/request/EraseRequest.cpp
     ${CYNARA_SRC}/common/request/InsertOrUpdateBucketRequest.cpp
     ${CYNARA_SRC}/common/request/ListRequest.cpp
@@ -36,6 +37,7 @@ SET(CYNARA_SOURCES_FOR_TESTS
     ${CYNARA_SRC}/common/request/RequestTaker.cpp
     ${CYNARA_SRC}/common/request/SetPoliciesRequest.cpp
     ${CYNARA_SRC}/common/response/AdminCheckResponse.cpp
+    ${CYNARA_SRC}/common/response/DescriptionListResponse.cpp
     ${CYNARA_SRC}/common/response/CheckResponse.cpp
     ${CYNARA_SRC}/common/response/CodeResponse.cpp
     ${CYNARA_SRC}/common/response/ListResponse.cpp
@@ -43,6 +45,7 @@ SET(CYNARA_SOURCES_FOR_TESTS
     ${CYNARA_SRC}/common/types/PolicyBucket.cpp
     ${CYNARA_SRC}/common/types/PolicyKey.cpp
     ${CYNARA_SRC}/common/types/PolicyKeyHelpers.cpp
+    ${CYNARA_SRC}/common/types/PolicyDescription.cpp
     ${CYNARA_SRC}/common/types/PolicyResult.cpp
     ${CYNARA_SRC}/common/types/PolicyType.cpp
     ${CYNARA_SRC}/helpers/creds-commons/CredsCommonsInner.cpp

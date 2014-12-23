@@ -49,8 +49,10 @@ enum ProtocolOpCode : uint8_t {
     OpListResponse,
     OpAdminCheckPolicyResponse,
     OpEraseRequest,
+    OpDescriptionListRequest,
+    OpDescriptionListResponse,
 
-    /** Opcodes 29 - 39 are reserved for future use */
+    /** Opcodes 31 - 39 are reserved for future use */
 
     /** Agent operations */
     OpAgentRegisterRequest = 40,

@@ -277,7 +277,6 @@ void Logic::execute(RequestContextPtr context, DescriptionListRequestPtr request
     auto descriptions = m_pluginManager->getPolicyDescriptions();
     descriptions.insert(descriptions.begin(), predefinedPolicyDescr.begin(),
                         predefinedPolicyDescr.end());
-
     context->returnResponse(context, std::make_shared<DescriptionListResponse>(descriptions,
                             request->sequenceNumber()));
 }

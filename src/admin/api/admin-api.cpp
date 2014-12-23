@@ -30,6 +30,7 @@
 #include <vector>
 
 #include <common.h>
+#include <exceptions/FileLockAcquiringException.h>
 #include <exceptions/TryCatch.h>
 #include <log/log.h>
 #include <types/Policy.h>
@@ -43,7 +44,7 @@
 #include <cynara-error.h>
 
 #include <api/ApiInterface.h>
-#include <logic/OnlineLogic.h>
+#include <logic/Logic.h>
 
 struct cynara_admin {
     Cynara::ApiInterface *impl;
@@ -61,7 +62,12 @@ int cynara_admin_initialize(struct cynara_admin **pp_cynara_admin) {
         return CYNARA_API_INVALID_PARAM;
 
     return Cynara::tryCatch([&]() {
-        *pp_cynara_admin = new cynara_admin(new Cynara::OnlineLogic);
+        try {
+            *pp_cynara_admin = new cynara_admin(new Cynara::Logic);
+        } catch (const Cynara::FileLockAcquiringException &ex) {
+            LOGE("%s", ex.what());
+            return CYNARA_API_OPERATION_FAILED;
+        }
 
         init_log();
 

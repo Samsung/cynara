@@ -35,6 +35,7 @@
 
 #include <storage/BucketDeserializer.h>
 #include <storage/Buckets.h>
+#include <storage/ChecksumValidator.h>
 #include <storage/Integrity.h>
 #include <storage/StorageBackend.h>
 #include <storage/StorageSerializer.h>
@@ -65,9 +66,11 @@ public:
                                const PolicyKey &filter);
 
 protected:
-    void openFileStream(std::shared_ptr<std::ifstream> stream, const std::string &filename);
+    void openFileStream(std::shared_ptr<std::ifstream> stream, const std::string &filename,
+                        bool isBackupValid);
     std::shared_ptr<BucketDeserializer> bucketStreamOpener(const PolicyBucketId &bucketId,
-                                                           const std::string &fileNameSuffix);
+                                                           const std::string &fileNameSuffix,
+                                                           bool isBackupValid);
 
     virtual void openDumpFileStream(std::shared_ptr<std::ofstream> stream,
                                     const std::string &filename);
@@ -79,7 +82,9 @@ protected:
 private:
     std::string m_dbPath;
     Buckets m_buckets;
+    ChecksumValidator m_checksum;
     Integrity m_integrity;
+    static const std::string m_chsFilename;
     static const std::string m_indexFilename;
     static const std::string m_backupFilenameSuffix;
     static const std::string m_bucketFilenamePrefix;

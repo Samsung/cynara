@@ -27,16 +27,26 @@
 
 namespace Cynara {
 
+class FileLock;
+
+class Lockable {
+    friend FileLock;
+public:
+    explicit Lockable(const std::string &lockFilename);
+    ~Lockable();
+private:
+    int m_fd;
+};
+
 class FileLock {
 public:
-    explicit FileLock(const std::string &lockFilename);
+    explicit FileLock(Lockable &lockable);
     ~FileLock();
     bool tryLock(void);
     void lock(void);
-
+    void unlock(void);
 private:
-    std::string m_lockFilename;
-    int m_fd;
+    Lockable &m_lockable;
 };
 
 } /* namespace Cynara */

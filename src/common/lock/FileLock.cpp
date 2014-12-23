@@ -36,8 +36,8 @@
 
 namespace Cynara {
 
-FileLock::FileLock(const std::string &lockFilename) : m_lockFilename(lockFilename) {
-    m_fd = ::open(m_lockFilename.c_str(), O_RDONLY);
+Lockable::Lockable(const std::string &lockFilename) {
+    m_fd = TEMP_FAILURE_RETRY(::open(lockFilename.c_str(), O_RDONLY));
 
     if (m_fd < 0) {
         LOGE("Could not open lock file <%s>", lockFilename.c_str());
@@ -47,12 +47,18 @@ FileLock::FileLock(const std::string &lockFilename) : m_lockFilename(lockFilenam
     LOGD("File lock file opened");
 }
 
-FileLock::~FileLock() {
+Lockable::~Lockable() {
     ::close(m_fd);
 }
 
+FileLock::FileLock(Lockable &lockable) : m_lockable(lockable) {}
+
+FileLock::~FileLock() {
+    unlock();
+}
+
 bool FileLock::tryLock(void) {
-    int lock = TEMP_FAILURE_RETRY(::flock(m_fd, LOCK_EX | LOCK_NB));
+    int lock = TEMP_FAILURE_RETRY(::flock(m_lockable.m_fd, LOCK_EX | LOCK_NB));
 
     if (lock == 0) {
         LOGI("File lock acquired");
@@ -66,12 +72,17 @@ bool FileLock::tryLock(void) {
 }
 
 void FileLock::lock(void) {
-    int lock = TEMP_FAILURE_RETRY(::flock(m_fd, LOCK_EX));
+    int lock = TEMP_FAILURE_RETRY(::flock(m_lockable.m_fd, LOCK_EX));
 
     if (lock == -1)
         throw FileLockAcquiringException(errno);
 
     LOGI("File lock acquired");
+}
+
+void FileLock::unlock(void) {
+    LOGI("Releasing file lock");
+    TEMP_FAILURE_RETRY(::flock(m_lockable.m_fd, LOCK_UN));
 }
 
 } /* namespace Cynara */

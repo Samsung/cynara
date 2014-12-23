@@ -30,12 +30,13 @@
 
 namespace Cynara {
 
-class FileLockAcquiringException {
+class FileLockAcquiringException : public Exception {
 public:
     FileLockAcquiringException(const int errNumber) : m_errno(errNumber) {
         m_message = "File lock acquiring error [" + std::to_string(errorNumber()) + "]"
                     + " <" + errorString() + ">";
     };
+
     virtual ~FileLockAcquiringException() {};
 
     const std::string &message(void) const {

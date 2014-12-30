@@ -66,6 +66,7 @@ void Cynara::init(void) {
 
     m_databaseLock.lock(); // Wait until database lock can be acquired
     m_storage->load();
+    m_pluginManager->loadPlugins();
 }
 
 void Cynara::run(void) {

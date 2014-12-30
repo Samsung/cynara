@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
- * @file        src/service/plugin/PluginManager.cpp
+ * @file        src/common/plugin/PluginManager.cpp
  * @author      Zofia Abramowska <z.abramowska@samsung.com>
  * @version     1.0
  * @brief       Definition of PluginManager class
@@ -50,7 +50,6 @@ namespace {
 namespace Cynara {
 
 PluginManager::PluginManager(const std::string &pluginDir) : m_dir(pluginDir) {
-    loadPlugins();
 }
 
 PluginManager::~PluginManager(void) {

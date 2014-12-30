@@ -28,6 +28,7 @@
 #include <string>
 #include <vector>
 
+#include <log/log.h>
 #include <plugin/ExternalPluginInterface.h>
 #include <types/PolicyResult.h>
 #include <types/PolicyType.h>

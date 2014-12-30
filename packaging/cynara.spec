@@ -65,6 +65,7 @@ Requires:   libcynara-creds-dbus = %{version}-%{release}
 Requires:   libcynara-creds-socket = %{version}-%{release}
 Requires:   libcynara-session = %{version}-%{release}
 Requires:   pkgconfig(dbus-1)
+Requires:   pkgconfig(libsystemd-journal)
 Obsoletes:  libcynara-admin-devel
 Obsoletes:  libcynara-agent-devel
 Obsoletes:  libcynara-client-async-devel
@@ -307,6 +308,7 @@ fi
 
 %files -n cynara-devel
 %{_includedir}/cynara/*.h
+%{_includedir}/cynara/log/*.h
 %{_includedir}/cynara/plugin/*.h
 %{_includedir}/cynara/types/*.h
 %{_libdir}/pkgconfig/*.pc

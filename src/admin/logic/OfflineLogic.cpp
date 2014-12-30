@@ -28,6 +28,7 @@
 #include <exceptions/DefaultBucketDeletionException.h>
 #include <exceptions/DefaultBucketSetNoneException.h>
 #include <exceptions/InvalidBucketIdException.h>
+#include <plugin/PluginManager.h>
 
 #include <storage/InMemoryStorageBackend.h>
 #include <storage/Storage.h>
@@ -44,6 +45,11 @@ void OfflineLogic::acquireDatabase(void) {
     m_storageBackend.reset(new InMemoryStorageBackend(PathConfig::StoragePath::dbDir));
     m_storage.reset(new Storage(*m_storageBackend));
     m_storage->load();
+}
+
+void OfflineLogic::acquirePlugins(void) {
+    m_pluginManager.reset(new PluginManager(PathConfig::PluginPath::serviceDir));
+    m_pluginManager->loadPlugins();
 }
 
 int OfflineLogic::setPolicies(const ApiInterface::PoliciesByBucket &insertOrUpdate,
@@ -108,7 +114,8 @@ int OfflineLogic::adminCheck(const PolicyBucketId &startBucket, bool recursive,
 }
 
 int OfflineLogic::listDescriptions(std::vector<PolicyDescription> &descriptions) {
-    (void) descriptions;
+    acquirePlugins();
+    descriptions = m_pluginManager->getPolicyDescriptions();
     return CYNARA_API_SUCCESS;
 }
 

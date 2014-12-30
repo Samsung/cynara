@@ -26,6 +26,7 @@
 #include <memory>
 
 #include <lock/FileLock.h>
+#include <plugin/PluginManager.h>
 
 #include <storage/Storage.h>
 #include <storage/StorageBackend.h>
@@ -53,14 +54,17 @@ public:
 
 protected:
     void acquireDatabase(void);
+    void acquirePlugins(void);
     void onPoliciesChanged(void);
 
 private:
     typedef std::unique_ptr<Storage> StorageUniquePtr;
     typedef std::unique_ptr<StorageBackend> StorageBackendUniquePtr;
+    typedef std::unique_ptr<PluginManager> PluginManagerUniquePtr;
 
     StorageUniquePtr m_storage;
     StorageBackendUniquePtr m_storageBackend;
+    PluginManagerUniquePtr m_pluginManager;
 };
 
 } /* namespace Cynara */

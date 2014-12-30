@@ -49,6 +49,7 @@ void OfflineLogic::acquireDatabase(void) {
 int OfflineLogic::setPolicies(const ApiInterface::PoliciesByBucket &insertOrUpdate,
                               const ApiInterface::KeysByBucket &remove) {
     try {
+        acquireDatabase();
         m_storage->insertPolicies(insertOrUpdate);
         m_storage->deletePolicies(remove);
         onPoliciesChanged();
@@ -64,6 +65,7 @@ int OfflineLogic::setPolicies(const ApiInterface::PoliciesByBucket &insertOrUpda
 int OfflineLogic::insertOrUpdateBucket(const PolicyBucketId &bucket,
                                        const PolicyResult &policyResult) {
     try {
+        acquireDatabase();
         m_storage->addOrUpdateBucket(bucket, policyResult);
         onPoliciesChanged();
     } catch (const DefaultBucketSetNoneException &) {
@@ -79,6 +81,7 @@ int OfflineLogic::insertOrUpdateBucket(const PolicyBucketId &bucket,
 
 int OfflineLogic::removeBucket(const PolicyBucketId &bucket) {
     try {
+        acquireDatabase();
         m_storage->deleteBucket(bucket);
         onPoliciesChanged();
     } catch (const BucketNotExistsException &) {
@@ -95,6 +98,7 @@ int OfflineLogic::removeBucket(const PolicyBucketId &bucket) {
 int OfflineLogic::adminCheck(const PolicyBucketId &startBucket, bool recursive,
                              const PolicyKey &key, PolicyResult &result) {
     try {
+        acquireDatabase();
         result = m_storage->checkPolicy(key, startBucket, recursive);
     } catch (const BucketNotExistsException &ex) {
         return CYNARA_API_BUCKET_NOT_FOUND;
@@ -111,6 +115,7 @@ int OfflineLogic::listDescriptions(std::vector<PolicyDescription> &descriptions)
 int OfflineLogic::listPolicies(const PolicyBucketId &bucket, const PolicyKey &filter,
                                std::vector<Policy> &policies) {
     try {
+        acquireDatabase();
         policies = m_storage->listPolicies(bucket, filter);
     } catch (const BucketNotExistsException &ex) {
         return CYNARA_API_BUCKET_NOT_FOUND;
@@ -122,6 +127,7 @@ int OfflineLogic::listPolicies(const PolicyBucketId &bucket, const PolicyKey &fi
 int OfflineLogic::erasePolicies(const PolicyBucketId &startBucket, bool recursive,
                                 const PolicyKey &filter) {
     try {
+        acquireDatabase();
         m_storage->erasePolicies(startBucket, recursive, filter);
         onPoliciesChanged();
     } catch (const BucketNotExistsException &) {

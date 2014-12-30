@@ -38,8 +38,6 @@ class OfflineLogic : public ApiInterface {
 public:
     OfflineLogic();
 
-    void acquireDatabase(void);
-
     int setPolicies(const ApiInterface::PoliciesByBucket &insertOrUpdate,
                     const ApiInterface::KeysByBucket &remove);
     int insertOrUpdateBucket(const PolicyBucketId &bucket,
@@ -54,6 +52,7 @@ public:
                       const PolicyKey &filter);
 
 protected:
+    void acquireDatabase(void);
     void onPoliciesChanged(void);
 
 private:

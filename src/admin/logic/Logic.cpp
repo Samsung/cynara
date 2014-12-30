@@ -88,7 +88,6 @@ int Logic::erasePolicies(const PolicyBucketId &startBucket, bool recursive,
 int Logic::callApiFunction(std::function<int(ApiInterface *api)> apiCall) {
     FileLock lock(m_lockable);
     if (lock.tryLock() == true) {
-        m_offlineLogic->acquireDatabase();
         LOGI("Admin uses offline API");
         return apiCall(m_offlineLogic);
     } else {

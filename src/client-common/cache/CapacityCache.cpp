@@ -29,6 +29,11 @@
 
 namespace Cynara {
 
+CapacityCache::CapacityCache(std::size_t capacity) : m_capacity(capacity),
+    m_pluginManager(PathConfig::PluginPath::clientDir) {
+    m_pluginManager.loadPlugins();
+}
+
 int CapacityCache::get(const ClientSession &session, const PolicyKey &key) {
     auto resultIt = m_keyValue.find(keyToString(key));
     //Do we have entry in cache?

@@ -28,6 +28,7 @@
 #include <common/types/PolicyKey.h>
 #include <cyad/CommandlineParser/CyadCommand.h>
 #include <cyad/CommandlineParser/CyadCommandlineParser.h>
+#include <cyad/CommandlineParser/HumanReadableParser.h>
 
 #include "CyadCommandlineTest.h"
 
@@ -133,7 +134,7 @@ TEST_F(CyadCommandlineTest, setPolicyInDefaultBucketNoOption) {
 
 TEST_F(CyadCommandlineTest, parsePolicyTypeBase10) {
     auto parsePolicyType = [] (const char *rawPolicy) -> Cynara::PolicyType {
-        return Cynara::CyadCommandlineParser::parsePolicyType(rawPolicy);
+        return Cynara::HumanReadableParser::policyType(rawPolicy);
     };
 
     ASSERT_EQ(CYNARA_ADMIN_DENY,   parsePolicyType("0"));
@@ -144,7 +145,7 @@ TEST_F(CyadCommandlineTest, parsePolicyTypeBase10) {
 
 TEST_F(CyadCommandlineTest, parsePolicyTypeBase16) {
     auto parsePolicyType = [] (const char *rawPolicy) -> Cynara::PolicyType {
-        return Cynara::CyadCommandlineParser::parsePolicyType(rawPolicy);
+        return Cynara::HumanReadableParser::policyType(rawPolicy);
     };
 
     ASSERT_EQ(CYNARA_ADMIN_DENY,   parsePolicyType("0x0"));
@@ -155,7 +156,7 @@ TEST_F(CyadCommandlineTest, parsePolicyTypeBase16) {
 
 TEST_F(CyadCommandlineTest, parsePolicyTypeHuman) {
     auto parsePolicyType = [] (const char *rawPolicy) -> Cynara::PolicyType {
-        return Cynara::CyadCommandlineParser::parsePolicyType(rawPolicy);
+        return Cynara::HumanReadableParser::policyType(rawPolicy);
     };
 
     ASSERT_EQ(CYNARA_ADMIN_DENY,   parsePolicyType("DENY"));

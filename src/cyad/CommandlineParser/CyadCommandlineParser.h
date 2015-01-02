@@ -81,7 +81,6 @@ public:
     virtual ~CyadCommandlineParser();
 
     std::shared_ptr<CyadCommand> parseMain(void);
-    static PolicyType parsePolicyType(const std::string &rawPolicy);
 
 protected:
     std::shared_ptr<CyadCommand> parseSetBucket(const std::string &bucketId);

@@ -26,6 +26,7 @@
 #include <sstream>
 #include <string>
 
+#include <cyad/CommandlineParser/HumanReadableParser.h>
 #include <cyad/CommandlineParser/PolicyParsingException.h>
 
 #include "CyadCommandlineParser.h"
@@ -175,7 +176,7 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseSetBucket(const std::st
         return std::make_shared<ErrorCyadCommand>(Errors::NO_POLICY);
 
     try {
-        auto policyType = parsePolicyType(policy);
+        auto policyType = HumanReadableParser::policyType(policy);
         return std::make_shared<SetBucketCyadCommand>(bucketId, PolicyResult(policyType, metadata));
     } catch (const PolicyParsingException &) {
         return std::make_shared<ErrorCyadCommand>(Errors::INVALID_POLICY);
@@ -263,7 +264,7 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseSetPolicy(void) {
     }
 
     try {
-        auto policyType = parsePolicyType(values[Args::TYPE]);
+        auto policyType = HumanReadableParser::policyType(values[Args::TYPE]);
         auto policyResult = PolicyResult(policyType, metadata);
         return std::make_shared<SetPolicyCyadCommand>(bucket, policyResult,
                                                       PolicyKey(values[Args::CLIENT],
@@ -274,24 +275,6 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseSetPolicy(void) {
     }
 
     return std::make_shared<ErrorCyadCommand>(Errors::UNKNOWN_ERROR);
-}
-
-PolicyType CyadCommandlineParser::parsePolicyType(const std::string &rawPolicy) {
-    if (rawPolicy == "DENY")
-        return CYNARA_ADMIN_DENY;
-    if (rawPolicy == "NONE")
-        return CYNARA_ADMIN_NONE;
-    if (rawPolicy == "BUCKET")
-        return CYNARA_ADMIN_BUCKET;
-    if (rawPolicy == "ALLOW")
-        return CYNARA_ADMIN_ALLOW;
-
-    // If base for std::stoi is set to 0, it detects base by itself from the format of the sequence
-    try {
-        return std::stoi(rawPolicy, nullptr, 0);
-    } catch (const std::logic_error &) {
-        throw PolicyParsingException();
-    }
 }
 
 } /* namespace Cynara */

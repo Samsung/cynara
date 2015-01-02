@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+# Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -51,6 +51,7 @@ SET(CYNARA_SOURCES_FOR_TESTS
     ${CYNARA_SRC}/cyad/AdminPolicyParser.cpp
     ${CYNARA_SRC}/cyad/CommandlineParser/CyadCommand.cpp
     ${CYNARA_SRC}/cyad/CommandlineParser/CyadCommandlineParser.cpp
+    ${CYNARA_SRC}/cyad/CommandlineParser/HumanReadableParser.cpp
     ${CYNARA_SRC}/cyad/CommandsDispatcher.cpp
     ${CYNARA_SRC}/cyad/CynaraAdminPolicies.cpp
     ${CYNARA_SRC}/helpers/creds-commons/CredsCommonsInner.cpp

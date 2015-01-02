@@ -182,3 +182,27 @@ TEST_F(CyadCommandlineTest, setPoliciesBulkStdin) {
     ASSERT_NE(nullptr, result);
     ASSERT_EQ("-", result->filename());
 }
+
+TEST_F(CyadCommandlineTest, eraseRecursive) {
+    prepare_argv({ "./cyad", "--erase=bucket", "--recursive=yes",
+                   "--client=client", "--user=user", "--privilege=privilege" });
+    Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
+
+    auto result = std::dynamic_pointer_cast<Cynara::EraseCyadCommand>(parser.parseMain());
+    ASSERT_NE(nullptr, result);
+    ASSERT_EQ("bucket", result->bucketId());
+    ASSERT_TRUE(result->recursive());
+    ASSERT_EQ(Cynara::PolicyKey("client", "user", "privilege"), result->policyKey());
+}
+
+TEST_F(CyadCommandlineTest, eraseNonrecursive) {
+    prepare_argv({ "./cyad", "--erase=bucket", "--recursive=no",
+                   "--client=client", "--user=user", "--privilege=privilege" });
+    Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
+
+    auto result = std::dynamic_pointer_cast<Cynara::EraseCyadCommand>(parser.parseMain());
+    ASSERT_NE(nullptr, result);
+    ASSERT_EQ("bucket", result->bucketId());
+    ASSERT_FALSE(result->recursive());
+    ASSERT_EQ(Cynara::PolicyKey("client", "user", "privilege"), result->policyKey());
+}

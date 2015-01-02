@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -54,6 +54,12 @@ int AdminApiWrapper::cynara_admin_check(struct cynara_admin *p_cynara_admin,
                                         int *result, char **result_extra) {
     return ::cynara_admin_check(p_cynara_admin, start_bucket, recursive, client, user, privilege,
                                 result, result_extra);
+}
+
+int AdminApiWrapper::cynara_admin_erase(struct cynara_admin *p_cynara_admin,
+                                        const char *start_bucket, int recursive, const char *client,
+                                        const char *user, const char *privilege) {
+    return ::cynara_admin_erase(p_cynara_admin, start_bucket, recursive, client, user, privilege);
 }
 
 } /* namespace Cynara */

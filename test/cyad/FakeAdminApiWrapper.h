@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -32,16 +32,23 @@ class FakeAdminApiWrapper : public Cynara::BaseAdminApiWrapper {
 public:
     using BaseAdminApiWrapper::BaseAdminApiWrapper;
 
-    MOCK_METHOD1(cynara_admin_initialize, int(struct cynara_admin **pp_cynara_admin));
-    MOCK_METHOD1(cynara_admin_finish, int(struct cynara_admin *p_cynara_admin));
-    MOCK_METHOD2(cynara_admin_set_policies, int(struct cynara_admin *p_cynara_admin,
-                 const struct cynara_admin_policy *const *policies));
-    MOCK_METHOD4(cynara_admin_set_bucket, int(struct cynara_admin *p_cynara_admin,
-                 const char *bucket, int operation, const char *extra));
-    MOCK_METHOD8(cynara_admin_check, int(struct cynara_admin *p_cynara_admin,
-                 const char *start_bucket, const int recursive,
-                 const char *client, const char *user, const char *privilege,
-                 int *result, char **result_extra));
+    MOCK_METHOD1(cynara_admin_initialize,
+                 int(struct cynara_admin **pp_cynara_admin));
+    MOCK_METHOD1(cynara_admin_finish,
+                 int(struct cynara_admin *p_cynara_admin));
+    MOCK_METHOD2(cynara_admin_set_policies,
+                 int(struct cynara_admin *p_cynara_admin,
+                     const struct cynara_admin_policy *const *policies));
+    MOCK_METHOD4(cynara_admin_set_bucket,
+                 int(struct cynara_admin *p_cynara_admin, const char *bucket, int operation,
+                     const char *extra));
+    MOCK_METHOD8(cynara_admin_check,
+                 int(struct cynara_admin *p_cynara_admin, const char *start_bucket,
+                     const int recursive, const char *client, const char *user,
+                     const char *privilege, int *result, char **result_extra));
+    MOCK_METHOD6(cynara_admin_erase,
+                 int(struct cynara_admin *p_cynara_admin, const char *start_bucket, int recursive,
+                     const char *client, const char *user, const char *privilege));
 };
 
 #endif /* TEST_CYAD_FAKEADMINAPIWRAPPER_H_ */

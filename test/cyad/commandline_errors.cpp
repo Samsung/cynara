@@ -116,3 +116,10 @@ TEST_F(CyadCommandlineTest, setPolicyNoPolicy) {
     Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
     ASSERT_ERROR_MSG(Cynara::CyadCmdlineErrors::OPTION_MISSING_SET_POLICY, parser.parseMain());
 }
+
+TEST_F(CyadCommandlineTest, eraseNoRecursive) {
+    prepare_argv({ "./cyad", "--erase=",
+                   "--client=client", "--user=user", "--privilege=privilege" });
+    Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
+    ASSERT_ERROR_MSG(Cynara::CyadCmdlineErrors::OPTION_MISSING_ERASE, parser.parseMain());
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -228,4 +228,25 @@ TEST_F(CyadCommandlineDispatcherTest, setPoliciesBulkInputError) {
     dispatcher.execute(result);
 
     ASSERT_FALSE(m_io.cerrRaw().str().empty());
+}
+
+TEST_F(CyadCommandlineDispatcherTest, erase) {
+    using ::testing::_;
+    using ::testing::Return;
+    using ::testing::StrEq;
+
+    FakeAdminApiWrapper adminApi;
+
+    EXPECT_CALL(adminApi, cynara_admin_initialize(_)).WillOnce(Return(CYNARA_API_SUCCESS));
+    EXPECT_CALL(adminApi, cynara_admin_finish(_)).WillOnce(Return(CYNARA_API_SUCCESS));
+
+    Cynara::CommandsDispatcher dispatcher(m_io, adminApi);
+
+    Cynara::EraseCyadCommand command("", true, { "client", "user", "privilege" });
+
+    EXPECT_CALL(adminApi, cynara_admin_erase(_, StrEq(""), true, StrEq("client"), StrEq("user"),
+                                             StrEq("privilege")))
+        .WillOnce(Return(CYNARA_API_SUCCESS));
+
+    dispatcher.execute(command);
 }

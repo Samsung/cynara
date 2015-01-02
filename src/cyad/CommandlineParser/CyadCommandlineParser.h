@@ -59,6 +59,12 @@ namespace CyadCmdlineArgs {
 
     extern const char BULK;
     extern const char * const BULK_LONG;
+
+    extern const char ERASE;
+    extern const char * const ERASE_LONG;
+
+    extern const char RECURSIVE;
+    extern const char * const RECURSIVE_LONG;
 }
 
 namespace CyadCmdlineErrors {
@@ -68,11 +74,14 @@ namespace CyadCmdlineErrors {
     extern const char * const UNKNOWN_OPTION_SET_BUCKET;
     extern const char * const UNKNOWN_OPTION_DELETE_BUCKET;
     extern const char * const UNKNOWN_OPTION_SET_POLICY;
+    extern const char * const UNKNOWN_OPTION_ERASE;
     extern const char * const NO_POLICY;
     extern const char * const NO_BUCKET;
     extern const char * const INVALID_POLICY;
     extern const char * const OPTION_MISSING_SET_POLICY;
     extern const char * const ARGUMENT_MISSING_SET_POLICY;
+    extern const char * const OPTION_MISSING_ERASE;
+    extern const char * const ARGUMENT_MISSING_ERASE;
 }
 
 class CyadCommandlineParser {
@@ -86,6 +95,7 @@ protected:
     std::shared_ptr<CyadCommand> parseSetBucket(const std::string &bucketId);
     std::shared_ptr<CyadCommand> parseDeleteBucket(const std::string &bucketId);
     std::shared_ptr<CyadCommand> parseSetPolicy(void);
+    std::shared_ptr<CyadCommand> parseErase(const std::string &bucketId);
 
 private:
     int m_argc;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -74,13 +74,13 @@ TEST_F(CyadCommandlineTest, setBucketNoPolicy) {
 }
 
 TEST_F(CyadCommandlineTest, setBucketInvalidPolicy) {
-    prepare_argv({ "./cyad", "--set-bucket=bucket", "--policy=NaN" });
+    prepare_argv({ "./cyad", "--set-bucket=bucket", "--type=NaN" });
     Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
     ASSERT_ERROR_MSG(Cynara::CyadCmdlineErrors::INVALID_POLICY, parser.parseMain());
 }
 
 TEST_F(CyadCommandlineTest, setBucketUnknownOption) {
-    prepare_argv({ "./cyad", "--set-bucket=bucket", "--unknown", "--policy=42" });
+    prepare_argv({ "./cyad", "--set-bucket=bucket", "--unknown", "--type=42" });
     Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
     ASSERT_ERROR_MSG(Cynara::CyadCmdlineErrors::UNKNOWN_OPTION_SET_BUCKET, parser.parseMain());
 }

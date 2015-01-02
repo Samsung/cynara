@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ private:
     const std::string helpMessage = "Usage: cyad [OPTIONS]\n\n"
                                     "Bucket set options (with -b or --set-bucket)\n"
                                     "  -b, --set-bucket=<name>        name of bucket\n"
-                                    "  -p, --policy=<policy>          default policy\n"
+                                    "  -t, --type=<policy>            default policy type\n"
                                     "  -m, --metadata=<metadata>      metadata for default policy\n"
                                     "\n"
                                     "Bucket delete options (with -d or --delete-bucket)\n"
@@ -59,8 +59,8 @@ private:
                                     "Policy set options (with -s or --set-policy)\n"
                                     "  -c, --client=<client>          client value\n"
                                     "  -u, --user=<user>              user value\n"
-                                    "  -r, --privilege=<privilege>    privilege value\n"
-                                    "  -p, --policy=<policy>          policy\n"
+                                    "  -p, --privilege=<privilege>    privilege value\n"
+                                    "  -t, --type=<policy>            policy type\n"
                                     "  -m, --metadata=<metadata>      metadata for policy\n"
                                     "  -f, --bulk=<filename>          path or - for stdin\n"
                                     "\n"

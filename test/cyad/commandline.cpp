@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ TEST_F(CyadCommandlineTest, deleteBucket) {
 }
 
 TEST_F(CyadCommandlineTest, setBucket) {
-    prepare_argv({ "./cyad", "--set-bucket=bucket", "--policy=42" });
+    prepare_argv({ "./cyad", "--set-bucket=bucket", "--type=42" });
     Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
 
     auto result = std::dynamic_pointer_cast<Cynara::SetBucketCyadCommand>(parser.parseMain());
@@ -63,7 +63,7 @@ TEST_F(CyadCommandlineTest, setBucketWithMetadata) {
     const std::string ultimateAnswer = "Answer to The Ultimate Question of Life,"
                                        " the Universe, and Everything";
 
-    prepare_argv({ "./cyad", "--set-bucket=adams", "--policy=42", "--metadata=" + ultimateAnswer });
+    prepare_argv({ "./cyad", "--set-bucket=adams", "--type=42", "--metadata=" + ultimateAnswer });
     Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
 
     auto result = std::dynamic_pointer_cast<Cynara::SetBucketCyadCommand>(parser.parseMain());
@@ -76,7 +76,7 @@ TEST_F(CyadCommandlineTest, setBucketWithMetadata) {
 TEST_F(CyadCommandlineTest, setPolicy) {
     prepare_argv({ "./cyad", "--set-policy", "--bucket=some-bucket",
                    "--client=client", "--user=user", "--privilege=privilege",
-                   "--policy=42" });
+                   "--type=42" });
     Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
 
     auto result = std::dynamic_pointer_cast<Cynara::SetPolicyCyadCommand>(parser.parseMain());
@@ -91,7 +91,7 @@ TEST_F(CyadCommandlineTest, setPolicy) {
 TEST_F(CyadCommandlineTest, setPolicyWithMetadata) {
     prepare_argv({ "./cyad", "--set-policy", "--bucket=some-bucket",
                    "--client=client", "--user=user", "--privilege=privilege",
-                   "--policy=42", "--metadata=some-metadata" });
+                   "--type=42", "--metadata=some-metadata" });
     Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
 
     auto result = std::dynamic_pointer_cast<Cynara::SetPolicyCyadCommand>(parser.parseMain());
@@ -106,7 +106,7 @@ TEST_F(CyadCommandlineTest, setPolicyWithMetadata) {
 TEST_F(CyadCommandlineTest, setPolicyInDefaultBucket) {
     prepare_argv({ "./cyad", "--set-policy", "--bucket=",
                    "--client=client", "--user=user", "--privilege=privilege",
-                   "--policy=ALLOW", "--metadata=some-metadata" });
+                   "--type=ALLOW", "--metadata=some-metadata" });
     Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
 
     auto result = std::dynamic_pointer_cast<Cynara::SetPolicyCyadCommand>(parser.parseMain());
@@ -120,7 +120,7 @@ TEST_F(CyadCommandlineTest, setPolicyInDefaultBucket) {
 TEST_F(CyadCommandlineTest, setPolicyInDefaultBucketNoOption) {
     prepare_argv({ "./cyad", "--set-policy",
                    "--client=client", "--user=user", "--privilege=privilege",
-                   "--policy=ALLOW", "--metadata=some-metadata" });
+                   "--type=ALLOW", "--metadata=some-metadata" });
     Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
 
     auto result = std::dynamic_pointer_cast<Cynara::SetPolicyCyadCommand>(parser.parseMain());

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -42,8 +42,8 @@ namespace CyadCmdlineArgs {
     const char DELETE_BUCKET = 'd';
     const char * const DELETE_BUCKET_LONG = "delete-bucket";
 
-    const char POLICY = 'p';
-    const char * const POLICY_LONG = "policy";
+    const char TYPE = 't';
+    const char * const TYPE_LONG = "type";
 
     const char METADATA = 'm';
     const char * const METADATA_LONG = "metadata";
@@ -60,7 +60,7 @@ namespace CyadCmdlineArgs {
     const char USER = 'u';
     const char * const USER_LONG = "user";
 
-    const char PRIVILEGE = 'r';
+    const char PRIVILEGE = 'p';
     const char * const PRIVILEGE_LONG = "privilege";
 
     const char BULK = 'f';
@@ -144,7 +144,7 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseSetBucket(const std::st
     namespace Errors = CyadCmdlineErrors;
 
     const struct option long_options[] = {
-        { Args::POLICY_LONG, required_argument, nullptr, Args::POLICY },
+        { Args::TYPE_LONG,     required_argument, nullptr, Args::TYPE },
         { Args::METADATA_LONG, required_argument, nullptr, Args::METADATA },
         { nullptr, 0, nullptr, 0 }
     };
@@ -155,12 +155,12 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseSetBucket(const std::st
     int opt;
     std::stringstream optstr;
     optstr << ":"
-           << Args::POLICY << ":"
+           << Args::TYPE << ":"
            << Args::METADATA << ":";
 
     while ((opt = getopt_long(m_argc, m_argv, optstr.str().c_str(), long_options, nullptr)) != -1) {
         switch(opt) {
-        case Args::POLICY:
+        case Args::TYPE:
             policy = optarg;
             break;
         case Args::METADATA:
@@ -206,7 +206,7 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseSetPolicy(void) {
         { Args::USER_LONG,      required_argument, nullptr, Args::USER },
         { Args::PRIVILEGE_LONG, required_argument, nullptr, Args::PRIVILEGE },
         { Args::BUCKET_LONG,    required_argument, nullptr, Args::BUCKET },
-        { Args::POLICY_LONG,    required_argument, nullptr, Args::POLICY },
+        { Args::TYPE_LONG,      required_argument, nullptr, Args::TYPE },
         { Args::METADATA_LONG,  required_argument, nullptr, Args::METADATA },
         { Args::BULK_LONG,      required_argument, nullptr, Args::BULK },
         { nullptr, 0, nullptr, 0 }
@@ -216,7 +216,7 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseSetPolicy(void) {
     OptionsValues values = { { Args::CLIENT,    std::string() },
                              { Args::USER,      std::string() },
                              { Args::PRIVILEGE, std::string() },
-                             { Args::POLICY,    std::string() } };
+                             { Args::TYPE,      std::string() } };
 
     std::string metadata;
     std::string bucket;
@@ -228,7 +228,7 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseSetPolicy(void) {
            << Args::USER << ":"
            << Args::PRIVILEGE << ":"
            << Args::BUCKET << ":"
-           << Args::POLICY << ":"
+           << Args::TYPE << ":"
            << Args::METADATA << ":"
            << Args::BULK << ":";
 
@@ -237,7 +237,7 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseSetPolicy(void) {
         case Args::CLIENT:
         case Args::USER:
         case Args::PRIVILEGE:
-        case Args::POLICY:
+        case Args::TYPE:
             values[opt] = optarg;
             break;
         case Args::BUCKET:
@@ -263,7 +263,7 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseSetPolicy(void) {
     }
 
     try {
-        auto policyType = parsePolicyType(values[Args::POLICY]);
+        auto policyType = parsePolicyType(values[Args::TYPE]);
         auto policyResult = PolicyResult(policyType, metadata);
         return std::make_shared<SetPolicyCyadCommand>(bucket, policyResult,
                                                       PolicyKey(values[Args::CLIENT],

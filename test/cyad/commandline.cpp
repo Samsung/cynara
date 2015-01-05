@@ -25,6 +25,8 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <cynara-admin-types.h>
+
 #include <common/types/PolicyKey.h>
 #include <cyad/CommandlineParser/CyadCommand.h>
 #include <cyad/CommandlineParser/CyadCommandlineParser.h>
@@ -203,6 +205,18 @@ TEST_F(CyadCommandlineTest, eraseNonrecursive) {
     auto result = std::dynamic_pointer_cast<Cynara::EraseCyadCommand>(parser.parseMain());
     ASSERT_NE(nullptr, result);
     ASSERT_EQ("bucket", result->bucketId());
+    ASSERT_FALSE(result->recursive());
+    ASSERT_EQ(Cynara::PolicyKey("client", "user", "privilege"), result->policyKey());
+}
+
+TEST_F(CyadCommandlineTest, checkDefaultRecursive) {
+    prepare_argv({ "./cyad", "--check", "--recursive=no",
+                   "--client=client", "--user=user", "--privilege=privilege" });
+    Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
+
+    auto result = std::dynamic_pointer_cast<Cynara::CheckCyadCommand>(parser.parseMain());
+    ASSERT_NE(nullptr, result);
+    ASSERT_EQ(CYNARA_ADMIN_DEFAULT_BUCKET, result->bucketId());
     ASSERT_FALSE(result->recursive());
     ASSERT_EQ(Cynara::PolicyKey("client", "user", "privilege"), result->policyKey());
 }

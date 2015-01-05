@@ -45,6 +45,7 @@ public:
     virtual int execute(SetPolicyCyadCommand &);
     virtual int execute(SetPolicyBulkCyadCommand &);
     virtual int execute(EraseCyadCommand &);
+    virtual int execute(CheckCyadCommand &);
 
 private:
     // TODO: Get argv[0] instead of hardcoded name
@@ -70,6 +71,15 @@ private:
                                     "Policy erase options (with -e or --erase)\n"
                                     "  -e, --erase=<name>             name of bucket"
                                                                      " to start from\n"
+                                    "  -r, --recursive=<yes|no>       if linked buckets should be"
+                                                                     " processed as well\n"
+                                    "  -c, --client=<client>          client value\n"
+                                    "  -u, --user=<user>              user value\n"
+                                    "  -p, --privilege=<privilege>    privilege value\n"
+                                    "\n"
+                                    "Administrative policy check options (with -a or --check)\n"
+                                    "  -k, --bucket=<name>            name of bucket;"
+                                                                     " omit for default\n"
                                     "  -r, --recursive=<yes|no>       if linked buckets should be"
                                                                      " processed as well\n"
                                     "  -c, --client=<client>          client value\n"

@@ -26,6 +26,8 @@
 #include <sstream>
 #include <string>
 
+#include <cynara-admin-types.h>
+
 #include <cyad/CommandlineParser/HumanReadableParser.h>
 #include <cyad/CommandlineParser/PolicyParsingException.h>
 
@@ -72,6 +74,9 @@ namespace CyadCmdlineArgs {
 
     const char RECURSIVE = 'r';
     const char * const RECURSIVE_LONG = "recursive";
+
+    const char CHECK = 'a';
+    const char * const CHECK_LONG = "check";
 }
 
 namespace CyadCmdlineErrors {
@@ -82,6 +87,7 @@ namespace CyadCmdlineErrors {
     const char * const UNKNOWN_OPTION_DELETE_BUCKET = "Unknown option in --delete-bucket";
     const char * const UNKNOWN_OPTION_SET_POLICY = "Unknown option in --set-policy";
     const char * const UNKNOWN_OPTION_ERASE = "Unknown option in --erase (-e)";
+    const char * const UNKNOWN_OPTION_CHECK = "Unknown option in --check (-a)";
     const char * const NO_POLICY = "No --policy specified";
     const char * const NO_BUCKET = "No bucket specified";
     const char * const INVALID_POLICY = "Invalid --policy option";
@@ -89,6 +95,8 @@ namespace CyadCmdlineErrors {
     const char * const ARGUMENT_MISSING_SET_POLICY = "One or more argument missing in --set-policy";
     const char * const OPTION_MISSING_ERASE = "One or more option missing in --erase (-e)";
     const char * const ARGUMENT_MISSING_ERASE = "One or more argument missing in --erase (-e)";
+    const char * const OPTION_MISSING_CHECK = "One or more option missing in --check (-a)";
+    const char * const ARGUMENT_MISSING_CHECK = "One or more argument missing in --check (-a)";
 }
 
 CyadCommandlineParser::CyadCommandlineParser(int argc, char * const *argv)
@@ -105,6 +113,7 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseMain(void) {
         { Args::DELETE_BUCKET_LONG, required_argument, nullptr, Args::DELETE_BUCKET },
         { Args::SET_POLICY_LONG,    no_argument,       nullptr, Args::SET_POLICY },
         { Args::ERASE_LONG,         required_argument, nullptr, Args::ERASE },
+        { Args::CHECK_LONG,         no_argument,       nullptr, Args::CHECK },
         { nullptr, 0, nullptr, 0 }
     };
 
@@ -115,7 +124,8 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseMain(void) {
            << Args::SET_BUCKET << ":"
            << Args::DELETE_BUCKET << ":"
            << Args::SET_POLICY
-           << Args::ERASE << ":";
+           << Args::ERASE << ":"
+           << Args::CHECK;
 
     while ((opt = getopt_long(m_argc, m_argv, optstr.str().c_str(), long_options, nullptr)) != -1) {
         switch (opt) {
@@ -133,6 +143,9 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseMain(void) {
 
             case Args::ERASE:
                 return parseErase(optarg);
+
+            case Args::CHECK:
+                return parseCheck();
 
             case '?': // Unknown option
                 return std::make_shared<ErrorCyadCommand>(CyadCmdlineErrors::UNKNOWN_OPTION);
@@ -343,6 +356,68 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseErase(const std::string
 
 
     return std::make_shared<EraseCyadCommand>(bucketId, recursive,
+                                              PolicyKey(values[Args::CLIENT], values[Args::USER],
+                                                        values[Args::PRIVILEGE]));
+}
+
+std::shared_ptr<CyadCommand> CyadCommandlineParser::parseCheck(void) {
+    namespace Args = CyadCmdlineArgs;
+    namespace Errors = CyadCmdlineErrors;
+
+    const struct option long_options[] = {
+        { Args::BUCKET_LONG,    required_argument, nullptr, Args::BUCKET },
+        { Args::RECURSIVE_LONG, required_argument, nullptr, Args::RECURSIVE },
+        { Args::CLIENT_LONG,    required_argument, nullptr, Args::CLIENT },
+        { Args::USER_LONG,      required_argument, nullptr, Args::USER },
+        { Args::PRIVILEGE_LONG, required_argument, nullptr, Args::PRIVILEGE },
+        { nullptr, 0, nullptr, 0 }
+    };
+
+    typedef std::map<char, std::string> OptionsValues;
+    OptionsValues values = { { Args::RECURSIVE, std::string() },
+                             { Args::CLIENT,    std::string() },
+                             { Args::USER,      std::string() },
+                             { Args::PRIVILEGE, std::string() } };
+
+    std::string bucketId = CYNARA_ADMIN_DEFAULT_BUCKET;
+
+    int opt;
+    std::stringstream optstr;
+    optstr << ":"
+           << Args::BUCKET << ":"
+           << Args::RECURSIVE << ":"
+           << Args::CLIENT << ":"
+           << Args::USER << ":"
+           << Args::PRIVILEGE << ":";
+
+    while ((opt = getopt_long(m_argc, m_argv, optstr.str().c_str(), long_options, nullptr)) != -1) {
+        switch(opt) {
+        case Args::RECURSIVE:
+        case Args::CLIENT:
+        case Args::USER:
+        case Args::PRIVILEGE:
+            values[opt] = optarg;
+            break;
+        case Args::BUCKET:
+            bucketId = optarg;
+            break;
+        case ':': // Missing argument
+            return std::make_shared<ErrorCyadCommand>(Errors::ARGUMENT_MISSING_CHECK);
+        default:
+            return std::make_shared<ErrorCyadCommand>(Errors::UNKNOWN_OPTION_CHECK);
+        }
+    }
+
+    for (const auto &val : values) {
+        if (val.second.empty()) {
+            // TODO: Identify actual option
+            return std::make_shared<ErrorCyadCommand>(Errors::OPTION_MISSING_CHECK);
+        }
+    }
+
+    auto recursive = HumanReadableParser::isYes(values[Args::RECURSIVE]);
+
+    return std::make_shared<CheckCyadCommand>(bucketId, recursive,
                                               PolicyKey(values[Args::CLIENT], values[Args::USER],
                                                         values[Args::PRIVILEGE]));
 }

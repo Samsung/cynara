@@ -58,4 +58,8 @@ int EraseCyadCommand::run(CommandsDispatcher &dispatcher) {
     return dispatcher.execute(*this);
 }
 
+int CheckCyadCommand::run(CommandsDispatcher &dispatcher) {
+    return dispatcher.execute(*this);
+}
+
 } /* namespace Cynara */

@@ -250,3 +250,84 @@ TEST_F(CyadCommandlineDispatcherTest, erase) {
 
     dispatcher.execute(command);
 }
+
+TEST_F(CyadCommandlineDispatcherTest, check) {
+    using ::testing::_;
+    using ::testing::DoAll;
+    using ::testing::NotNull;
+    using ::testing::Return;
+    using ::testing::SetArgPointee;
+    using ::testing::StrEq;
+
+    FakeAdminApiWrapper adminApi;
+
+    EXPECT_CALL(adminApi, cynara_admin_initialize(_)).WillOnce(Return(CYNARA_API_SUCCESS));
+    EXPECT_CALL(adminApi, cynara_admin_finish(_)).WillOnce(Return(CYNARA_API_SUCCESS));
+
+    Cynara::CommandsDispatcher dispatcher(m_io, adminApi);
+
+    Cynara::CheckCyadCommand command("", true, { "client", "user", "privilege" });
+    int result = 42;
+
+    EXPECT_CALL(adminApi, cynara_admin_check(_, StrEq(""), true, StrEq("client"), StrEq("user"),
+                                             StrEq("privilege"), NotNull(), NotNull()))
+        .WillOnce(DoAll(SetArgPointee<6>(result), SetArgPointee<7>(nullptr),
+                        Return(CYNARA_API_SUCCESS)));
+
+    dispatcher.execute(command);
+
+    ASSERT_EQ("42;\n", m_io.coutRaw().str());
+}
+
+TEST_F(CyadCommandlineDispatcherTest, checkWithMetadata) {
+    using ::testing::_;
+    using ::testing::DoAll;
+    using ::testing::NotNull;
+    using ::testing::Return;
+    using ::testing::SetArgPointee;
+    using ::testing::StrEq;
+
+    FakeAdminApiWrapper adminApi;
+
+    EXPECT_CALL(adminApi, cynara_admin_initialize(_)).WillOnce(Return(CYNARA_API_SUCCESS));
+    EXPECT_CALL(adminApi, cynara_admin_finish(_)).WillOnce(Return(CYNARA_API_SUCCESS));
+
+    Cynara::CommandsDispatcher dispatcher(m_io, adminApi);
+
+    Cynara::CheckCyadCommand command("", true, { "client", "user", "privilege" });
+    int result = 42;
+    char *resultExtra = strdup("adams");
+
+    EXPECT_CALL(adminApi, cynara_admin_check(_, StrEq(""), true, StrEq("client"), StrEq("user"),
+                                             StrEq("privilege"), NotNull(), NotNull()))
+        .WillOnce(DoAll(SetArgPointee<6>(result), SetArgPointee<7>(resultExtra),
+                        Return(CYNARA_API_SUCCESS)));
+
+    dispatcher.execute(command);
+
+    ASSERT_EQ("42;adams\n", m_io.coutRaw().str());
+}
+
+TEST_F(CyadCommandlineDispatcherTest, checkWithError) {
+    using ::testing::_;
+    using ::testing::NotNull;
+    using ::testing::Return;
+    using ::testing::StrEq;
+
+    FakeAdminApiWrapper adminApi;
+
+    EXPECT_CALL(adminApi, cynara_admin_initialize(_)).WillOnce(Return(CYNARA_API_SUCCESS));
+    EXPECT_CALL(adminApi, cynara_admin_finish(_)).WillOnce(Return(CYNARA_API_SUCCESS));
+
+    Cynara::CommandsDispatcher dispatcher(m_io, adminApi);
+
+    Cynara::CheckCyadCommand command("", true, { "client", "user", "privilege" });
+
+    EXPECT_CALL(adminApi, cynara_admin_check(_, StrEq(""), true, StrEq("client"), StrEq("user"),
+                                             StrEq("privilege"), NotNull(), NotNull()))
+        .WillOnce(Return(CYNARA_API_UNKNOWN_ERROR));
+
+    dispatcher.execute(command);
+
+    ASSERT_TRUE(m_io.coutRaw().str().empty());
+}

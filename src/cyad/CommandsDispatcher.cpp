@@ -108,4 +108,32 @@ int CommandsDispatcher::execute(EraseCyadCommand &result) {
                                                 result.recursive(), client, user, privilege);
 }
 
+int CommandsDispatcher::execute(CheckCyadCommand &command) {
+    const auto &key = command.policyKey();
+    auto client = key.client().toString().c_str();
+    auto user = key.user().toString().c_str();
+    auto privilege = key.privilege().toString().c_str();
+
+    // Initialization is needed to make compiler happy (-Werror=maybe-uninitialized, FTW)
+    int result = CYNARA_API_ACCESS_DENIED;
+    char *resultExtra = nullptr;
+
+    auto ret =  m_adminApiWrapper.cynara_admin_check(m_cynaraAdmin, command.bucketId().c_str(),
+                                                     command.recursive(), client, user, privilege,
+                                                     &result, &resultExtra);
+
+    if (ret == CYNARA_API_SUCCESS) {
+        m_io.cout() << result << ";";
+
+        if (resultExtra != nullptr) {
+            m_io.cout() << resultExtra;
+            free(resultExtra);
+        }
+
+        m_io.cout() << std::endl;
+    }
+
+    return ret;
+}
+
 } /* namespace Cynara */

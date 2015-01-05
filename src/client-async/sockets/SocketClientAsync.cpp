@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,11 +35,17 @@ SocketClientAsync::SocketClientAsync(const std::string &socketPath, ProtocolPtr 
 }
 
 Socket::ConnectionStatus SocketClientAsync::connect(void) {
-    return m_socket.connect();
+    Socket::ConnectionStatus status = m_socket.connect();
+    if (status != Socket::ConnectionStatus::ALREADY_CONNECTED)
+        clear();
+    return status;
 }
 
 Socket::ConnectionStatus SocketClientAsync::completeConnection(void) {
-    return m_socket.completeConnection();
+    Socket::ConnectionStatus status = m_socket.completeConnection();
+    if (status == Socket::ConnectionStatus::CONNECTION_FAILED)
+        clear();
+    return status;
 }
 
 int SocketClientAsync::getSockFd(void) {
@@ -69,6 +75,12 @@ bool SocketClientAsync::receiveFromCynara(void) {
 
 ResponsePtr SocketClientAsync::getResponse(void) {
     return m_protocol->extractResponseFromBuffer(m_readQueue);
+}
+
+void SocketClientAsync::clear(void)
+{
+    m_readQueue->clear();
+    m_writeQueue->clear();
 }
 
 } // namespace Cynara

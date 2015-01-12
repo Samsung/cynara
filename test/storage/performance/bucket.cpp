@@ -28,6 +28,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <storage/InMemoryStorageBackend.h>
 #include <types/Policy.h>
 #include <types/PolicyBucket.h>
 #include <types/PolicyKey.h>
@@ -36,11 +37,6 @@
 #include "../../Benchmark.h"
 
 using namespace Cynara;
-
-class Benchmark {
-public:
-
-};
 
 class PolicyKeyGenerator {
 public:
@@ -101,6 +97,44 @@ TEST(Performance, bucket_filtered_100000) {
     });
 
     auto key = std::string("performance_" + std::to_string(policyNumber));
+    auto value = std::to_string(result.count() / measureRepeats) + " [us]";
+    RecordProperty(key, value);
+}
+
+TEST(Performance, bucket_hasBucket) {
+    using std::chrono::microseconds;
+
+    InMemoryStorageBackend backend("/some/fake/path"); // don't use load() or save()
+
+    for (auto i = 0u; i < 1000; ++i) {
+        backend.createBucket("b" + std::to_string(i), Cynara::PredefinedPolicyType::DENY);
+    }
+
+    const unsigned int measureRepeats = 5000;
+    auto result = Benchmark::measure<microseconds>([&backend, measureRepeats] () {
+        for (auto i = 0u; i < measureRepeats; ++i) {
+            backend.hasBucket("b" + std::to_string(i));
+        }
+    });
+
+    auto key = std::string("performance");
+    auto value = std::to_string(result.count() / measureRepeats) + " [us]";
+    RecordProperty(key, value);
+}
+
+TEST(Performance, bucket_createBucket) {
+    using std::chrono::microseconds;
+
+    InMemoryStorageBackend backend("/some/fake/path"); // don't use load() or save()
+
+    const unsigned int measureRepeats = 1000;
+    auto result = Benchmark::measure<microseconds>([&backend, measureRepeats] () {
+        for (auto i = 0u; i < measureRepeats; ++i) {
+            backend.createBucket("b" + std::to_string(i), Cynara::PredefinedPolicyType::DENY);
+        }
+    });
+
+    auto key = std::string("performance");
     auto value = std::to_string(result.count() / measureRepeats) + " [us]";
     RecordProperty(key, value);
 }

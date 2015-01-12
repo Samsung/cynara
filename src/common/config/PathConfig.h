@@ -45,8 +45,10 @@ extern const std::string lockFile;
 extern const std::string indexFilename;
 extern const std::string guardFilename;
 extern const std::string checksumFilename;
-extern const std::string bucketFilenamePrefix;
 extern const std::string backupFilenameSuffix;
+extern const std::string bucketFilenamePrefix;
+extern const char fieldSeparator;
+extern const char recordSeparator;
 } // namespace StoragePath
 
 namespace PluginPath {

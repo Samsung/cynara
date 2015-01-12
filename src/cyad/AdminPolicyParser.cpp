@@ -20,9 +20,9 @@
  * @brief       Parses policies from input stream
  */
 
+#include <config/PathConfig.h>
 #include <exceptions/BucketRecordCorruptedException.h>
 #include <storage/StorageDeserializer.h>
-#include <storage/StorageSerializer.h>
 
 #include "AdminPolicyParser.h"
 
@@ -35,7 +35,7 @@ CynaraAdminPolicies parse(const std::shared_ptr<std::istream> &input,
     CynaraAdminPolicies policies;
 
     auto nextToken = [] (const std::string &line, std::size_t &beginToken) -> std::string  {
-        auto endToken = line.find(StorageSerializer::fieldSeparator(), beginToken);
+        auto endToken = line.find(PathConfig::StoragePath::fieldSeparator, beginToken);
         if (endToken != std::string::npos) {
             auto token = line.substr(beginToken, endToken - beginToken);
             beginToken = endToken + 1;
@@ -57,7 +57,7 @@ CynaraAdminPolicies parse(const std::shared_ptr<std::istream> &input,
 
     for (std::size_t lineNum = 1; !input->eof(); ++lineNum) {
         std::string line;
-        std::getline(*input, line, StorageSerializer::recordSeparator());
+        std::getline(*input, line, PathConfig::StoragePath::recordSeparator);
 
         if (line.empty())
             break;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -24,13 +24,13 @@
 #include <memory>
 #include <string>
 
+#include <config/PathConfig.h>
 #include <exceptions/BucketDeserializationException.h>
 #include <exceptions/BucketRecordCorruptedException.h>
 #include <types/PolicyType.h>
 
 #include <storage/BucketDeserializer.h>
 #include <storage/Buckets.h>
-#include <storage/StorageSerializer.h>
 
 #include "StorageDeserializer.h"
 
@@ -46,7 +46,7 @@ void StorageDeserializer::initBuckets(Buckets &buckets) {
 
     for (std::size_t lineNum = 1; !m_inStream->eof(); ++lineNum) {
         std::string line;
-        std::getline(*m_inStream, line, StorageSerializer::recordSeparator());
+        std::getline(*m_inStream, line, PathConfig::StoragePath::recordSeparator);
 
         if (line.empty())
             break;
@@ -80,7 +80,7 @@ void StorageDeserializer::loadBuckets(Buckets &buckets) {
 
 PolicyBucketId StorageDeserializer::parseBucketId(const std::string &line,
                                                     std::size_t &beginToken) {
-    auto bucketNameEndToken = line.find(StorageSerializer::fieldSeparator(), beginToken);
+    auto bucketNameEndToken = line.find(PathConfig::StoragePath::fieldSeparator, beginToken);
     if (bucketNameEndToken != std::string::npos) {
         auto bucketName = line.substr(beginToken, bucketNameEndToken - beginToken);
         beginToken = bucketNameEndToken + 1;

@@ -57,8 +57,10 @@ const std::string lockFile(statePath);
 const std::string indexFilename("buckets");
 const std::string guardFilename("guard");
 const std::string checksumFilename("checksum");
-const std::string bucketFilenamePrefix("_");
 const std::string backupFilenameSuffix("~");
+const std::string bucketFilenamePrefix("_");
+const char fieldSeparator(';');
+const char recordSeparator('\n');
 } // namespace StoragePath
 
 namespace PluginPath {

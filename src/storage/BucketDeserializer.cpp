@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -25,13 +25,13 @@
 #include <string>
 #include <vector>
 
+#include <config/PathConfig.h>
 #include <exceptions/BucketRecordCorruptedException.h>
 #include <types/PolicyCollection.h>
 #include <types/PolicyResult.h>
 #include <types/PolicyType.h>
 
 #include <storage/StorageDeserializer.h>
-#include <storage/StorageSerializer.h>
 
 #include "BucketDeserializer.h"
 
@@ -43,7 +43,7 @@ PolicyCollection BucketDeserializer::loadPolicies(void) {
     // TODO: Get someone smart to do error checking on stream
     for (std::size_t lineNum = 1; !m_inStream->eof(); ++lineNum) {
         std::string line;
-        std::getline(*m_inStream, line, StorageSerializer::recordSeparator());
+        std::getline(*m_inStream, line, PathConfig::StoragePath::recordSeparator);
 
         if (line.empty())
             break;
@@ -67,7 +67,7 @@ PolicyKey BucketDeserializer::parseKey(const std::string &line, std::size_t &beg
     std::array<std::string, 3> keyFeatures;
 
     for (std::size_t tokenNum = 0; tokenNum < keyFeatures.size(); ++tokenNum) {
-        auto endToken = line.find(StorageSerializer::fieldSeparator(), beginToken);
+        auto endToken = line.find(PathConfig::StoragePath::fieldSeparator, beginToken);
         if (endToken != std::string::npos) {
             keyFeatures[tokenNum] = line.substr(beginToken, endToken - beginToken);
             beginToken = endToken + 1;

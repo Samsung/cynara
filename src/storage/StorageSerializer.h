@@ -25,9 +25,13 @@
 
 #include <functional>
 #include <fstream>
+#include <ios>
 #include <memory>
+#include <sstream>
 
 #include <config/PathConfig.h>
+#include <exceptions/BucketSerializationException.h>
+#include <types/Policy.h>
 #include <types/PolicyBucket.h>
 #include <types/PolicyBucketId.h>
 #include <types/PolicyCollection.h>
@@ -39,13 +43,14 @@
 
 namespace Cynara {
 
+template<typename StreamType>
 class StorageSerializer {
 
 public:
     typedef std::function<std::shared_ptr<StorageSerializer>(const PolicyBucketId &)>
             BucketStreamOpener;
 
-    StorageSerializer(std::shared_ptr<std::ostream> os);
+    StorageSerializer(std::shared_ptr<StreamType> os);
     virtual ~StorageSerializer() {};
 
     virtual void dump(const Buckets &buckets,
@@ -72,8 +77,67 @@ protected:
     void dump(const PolicyCollection::value_type &policy);
 
 private:
-    std::shared_ptr<std::ostream> m_outStream;
+    std::shared_ptr<StreamType> m_outStream;
 };
+
+template<typename StreamType>
+StorageSerializer<StreamType>::StorageSerializer(std::shared_ptr<StreamType> os) : m_outStream(os) {
+}
+
+template<typename StreamType>
+void StorageSerializer<StreamType>::dump(const Buckets &buckets, BucketStreamOpener streamOpener) {
+    for (const auto bucketIter : buckets) {
+        const auto &bucket = bucketIter.second;
+
+        dumpFields(bucket.id(), bucket.defaultPolicy().policyType(),
+                   bucket.defaultPolicy().metadata());
+    }
+
+    for (const auto bucketIter : buckets) {
+        const auto &bucketId = bucketIter.first;
+        const auto &bucket = bucketIter.second;
+        auto bucketSerializer = streamOpener(bucketId);
+
+        if (bucketSerializer != nullptr) {
+            bucketSerializer->dump(bucket);
+        } else {
+            throw BucketSerializationException(bucketId);
+        }
+    }
+}
+
+template<typename StreamType>
+void StorageSerializer<StreamType>::dump(const PolicyBucket &bucket) {
+    for (auto it = std::begin(bucket); it != std::end(bucket); ++it) {
+        const auto &policy = *it;
+        dump(policy);
+    }
+}
+
+template<typename StreamType>
+void StorageSerializer<StreamType>::dump(const PolicyKeyFeature &keyFeature) {
+    *m_outStream << keyFeature.toString();
+}
+
+template<typename StreamType>
+void StorageSerializer<StreamType>::dump(const PolicyType &policyType) {
+    auto oldFormat = m_outStream->flags();
+    *m_outStream << "0x" << std::uppercase <<  std::hex << policyType;
+    m_outStream->flags(oldFormat);
+}
+
+template<typename StreamType>
+void StorageSerializer<StreamType>::dump(const PolicyResult::PolicyMetadata &metadata) {
+    *m_outStream << metadata;
+}
+
+template<typename StreamType>
+void StorageSerializer<StreamType>::dump(const PolicyCollection::value_type &policy) {
+    const auto &key = policy->key();
+    const auto &result = policy->result();
+
+    dumpFields(key.client(), key.user(), key.privilege(), result.policyType(), result.metadata());
+}
 
 } /* namespace Cynara */
 

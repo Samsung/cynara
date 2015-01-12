@@ -100,7 +100,7 @@ void InMemoryStorageBackend::save(void) {
     std::string indexFilename = m_dbPath + m_indexFilename;
     openDumpFileStream(indexStream, indexFilename + m_backupFilenameSuffix);
 
-    StorageSerializer storageSerializer(indexStream);
+    StorageSerializer<std::ofstream> storageSerializer(indexStream);
     storageSerializer.dump(buckets(), std::bind(&InMemoryStorageBackend::bucketDumpStreamOpener,
                            this, std::placeholders::_1));
 
@@ -253,14 +253,14 @@ std::shared_ptr<BucketDeserializer> InMemoryStorageBackend::bucketStreamOpener(
     }
 }
 
-std::shared_ptr<StorageSerializer> InMemoryStorageBackend::bucketDumpStreamOpener(
+std::shared_ptr<StorageSerializer<std::ofstream> > InMemoryStorageBackend::bucketDumpStreamOpener(
         const PolicyBucketId &bucketId) {
     std::string bucketFilename = m_dbPath + m_bucketFilenamePrefix +
                                  bucketId + m_backupFilenameSuffix;
     auto bucketStream = std::make_shared<std::ofstream>();
 
     openDumpFileStream(bucketStream, bucketFilename);
-    return std::make_shared<StorageSerializer>(bucketStream);
+    return std::make_shared<StorageSerializer<std::ofstream> >(bucketStream);
 }
 
 void InMemoryStorageBackend::postLoadCleanup(bool isBackupValid) {

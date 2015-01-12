@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+# Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ SET(LIB_CYNARA_STORAGE_SOURCES
     ${CYNARA_LIB_CYNARA_STORAGE_PATH}/Integrity.cpp
     ${CYNARA_LIB_CYNARA_STORAGE_PATH}/Storage.cpp
     ${CYNARA_LIB_CYNARA_STORAGE_PATH}/StorageDeserializer.cpp
-    ${CYNARA_LIB_CYNARA_STORAGE_PATH}/StorageSerializer.cpp
     )
 
 INCLUDE_DIRECTORIES(

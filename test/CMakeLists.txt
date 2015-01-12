@@ -68,7 +68,6 @@ SET(CYNARA_SOURCES_FOR_TESTS
     ${CYNARA_SRC}/storage/Integrity.cpp
     ${CYNARA_SRC}/storage/Storage.cpp
     ${CYNARA_SRC}/storage/StorageDeserializer.cpp
-    ${CYNARA_SRC}/storage/StorageSerializer.cpp
 )
 
 SET(CYNARA_TESTS_SOURCES

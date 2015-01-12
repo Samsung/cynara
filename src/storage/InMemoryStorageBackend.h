@@ -71,7 +71,8 @@ protected:
 
     virtual void openDumpFileStream(std::shared_ptr<std::ofstream> stream,
                                     const std::string &filename);
-    std::shared_ptr<StorageSerializer> bucketDumpStreamOpener(const PolicyBucketId &bucketId);
+    std::shared_ptr<StorageSerializer<std::ofstream> > bucketDumpStreamOpener(
+            const PolicyBucketId &bucketId);
 
     virtual void postLoadCleanup(bool isBackupValid);
 

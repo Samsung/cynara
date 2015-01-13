@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@
  */
 
 #include <functional>
+#include <limits>
 #include <map>
 #include <stdexcept>
 #include <string>
@@ -85,6 +86,15 @@ int cynara_admin_finish(struct cynara_admin *p_cynara_admin) {
     return CYNARA_API_SUCCESS;
 }
 
+bool int2PolicyType(int type, Cynara::PolicyType &policyType) {
+    if (type < std::numeric_limits<Cynara::PolicyType>::min())
+        return false;
+    if (type > std::numeric_limits<Cynara::PolicyType>::max())
+        return false;
+    policyType = static_cast<Cynara::PolicyType>(type);
+    return true;
+}
+
 CYNARA_API
 int cynara_admin_set_policies(struct cynara_admin *p_cynara_admin,
                               const struct cynara_admin_policy *const *policies) {
@@ -117,28 +127,26 @@ int cynara_admin_set_policies(struct cynara_admin *p_cynara_admin,
                 return CYNARA_API_INVALID_PARAM;
 
             switch (policy->result) {
+                case CYNARA_ADMIN_NONE:
+                    return CYNARA_API_INVALID_PARAM;
                 case CYNARA_ADMIN_DELETE:
                     remove[policy->bucket].push_back(key(policy));
-                    break;
-                case CYNARA_ADMIN_DENY:
-                    insertOrUpdate[policy->bucket].push_back(Cynara::Policy(key(policy),
-                                                        Cynara::PredefinedPolicyType::DENY));
-                    break;
-                case CYNARA_ADMIN_ALLOW:
-                    insertOrUpdate[policy->bucket].push_back(Cynara::Policy(key(policy),
-                                                        Cynara::PredefinedPolicyType::ALLOW));
                     break;
                 case CYNARA_ADMIN_BUCKET:
                     if (!policy->result_extra)
                         return CYNARA_API_INVALID_PARAM;
-                    insertOrUpdate[policy->bucket].push_back(Cynara::Policy(key(policy),
-                                                        Cynara::PolicyResult(
-                                                        Cynara::PredefinedPolicyType::BUCKET,
-                                                        policy->result_extra)));
-                    break;
-                case CYNARA_ADMIN_NONE:
                 default:
-                    return CYNARA_API_INVALID_PARAM;
+                {
+                    std::string extraStr = policy->result_extra ? policy->result_extra : "";
+                    Cynara::PolicyType policyType;
+                    if (!int2PolicyType(policy->result, policyType))
+                        return CYNARA_API_INVALID_PARAM;
+
+                    insertOrUpdate[policy->bucket].push_back(Cynara::Policy(key(policy),
+                                                             Cynara::PolicyResult(
+                                                             policyType,
+                                                             extraStr)));
+                }
             }
         }
 
@@ -155,17 +163,10 @@ int cynara_admin_set_bucket(struct cynara_admin *p_cynara_admin, const char *buc
         return CYNARA_API_INVALID_PARAM;
 
     return Cynara::tryCatch([&]() {
-        std::string extraStr = extra ? extra : "";
 
         switch (operation) {
             case CYNARA_ADMIN_DELETE:
                 return p_cynara_admin->impl->removeBucket(bucket);
-            case CYNARA_ADMIN_DENY:
-                return p_cynara_admin->impl->insertOrUpdateBucket(bucket,
-                    Cynara::PolicyResult(Cynara::PredefinedPolicyType::DENY, extraStr));
-            case CYNARA_ADMIN_ALLOW:
-                return p_cynara_admin->impl->insertOrUpdateBucket(bucket,
-                    Cynara::PolicyResult(Cynara::PredefinedPolicyType::ALLOW, extraStr));
             case CYNARA_ADMIN_NONE:
                 if (bucket != Cynara::defaultPolicyBucketId) {
                     return p_cynara_admin->impl->insertOrUpdateBucket(bucket,
@@ -173,8 +174,17 @@ int cynara_admin_set_bucket(struct cynara_admin *p_cynara_admin, const char *buc
                 }
                 return CYNARA_API_OPERATION_NOT_ALLOWED;
             case CYNARA_ADMIN_BUCKET:
-            default:
                 return CYNARA_API_INVALID_PARAM;
+            default:
+            {
+                std::string extraStr = extra ? extra : "";
+                Cynara::PolicyType policyType;
+                if (!int2PolicyType(operation, policyType))
+                    return CYNARA_API_INVALID_PARAM;
+
+                return p_cynara_admin->impl->insertOrUpdateBucket(bucket,
+                    Cynara::PolicyResult(policyType, extraStr));
+            }
         }
     });
 }

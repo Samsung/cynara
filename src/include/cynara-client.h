@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,6 +23,8 @@
 #ifndef CYNARA_CLIENT_H
 #define CYNARA_CLIENT_H
 
+#include <stddef.h>
+
 #include <cynara-error.h>
 
 #ifdef __cplusplus
@@ -32,6 +34,101 @@ extern "C" {
 typedef struct cynara cynara;
 typedef struct cynara_configuration cynara_configuration;
 
+/**
+ * \par Description:
+ * Initialize cynara_configuration. Create structure used in following configuration
+ * API calls.
+ *
+ * \par Purpose:
+ * For configuration parameter to be used in cynara initialization function, this API must be
+ * called before any other cynara configuration API function.
+ * It will create cynara_configuration structure, an optional parameter of cynara initialization.
+ *
+ * \par Typical use case:
+ * Once before setting parameters of cynara async configuration and passing to
+ * cynara_initialize().
+ *
+ * \par Method of function operation:
+ * This API initializes inner library structures and in case of success returns pointer
+ * to created cynara_configuration structure.
+ *
+ * \par Sync (or) Async:
+ * This as a synchronous API.
+ *
+ * \par Thread-safety:
+ * This function is NOT thread-safe. If functions from described API are called by multithreaded
+ * application from different threads, they must be put into protected critical section.
+ *
+ * \par Important notes:
+ * Structure cynara_configuration created by cynara_configuration_create() call
+ * should be released with cynara_configuration_destroy().
+ * Structure cynara_configuration should be destroyed after passing it to
+ * cynara_initialize().
+ *
+ * \param[out] pp_conf Placeholder for created cynara_configuration structure.
+ *
+ * \return CYNARA_API_SUCCESS on success
+ *         or negative error code on error.
+ */
+int cynara_configuration_create(cynara_configuration **pp_conf);
+
+
+/**
+ * \par Description:
+ * Release cynara_configuration structure created with cynara_configuration_create().
+ *
+ * \par Purpose:
+ * This API should be used to clean up after usage of cynara_configuration.
+ *
+ * \par Typical use case:
+ * Once cynara_configuration is not needed.
+ *
+ * \par Method of function operation:
+ * This API releases inner library structure and destroys cynara_configuration structure.
+ *
+ * \par Sync (or) Async:
+ * This is a synchronous API.
+ *
+ * \par Thread-safety:
+ * This function is NOT thread-safe. If functions from described API are called by multithreaded
+ * application from different threads, they must be put into protected critical section.
+ *
+ * \param[in] p_conf cynara_configuration structure. If NULL, the call has no effect.
+ */
+void cynara_configuration_destroy(cynara_configuration *p_conf);
+
+/**
+ * \par Description:
+ * Set client cache size.
+ *
+ * \par Purpose:
+ * This API is used to change default number of cached responses returned from cynara.
+ *
+ * \par Typical use case:
+ * Once before setting parameters of cynara async configuration and passing to
+ * cynara_initialize().
+ *
+ * \par Method of function operation:
+ * This API initializes cache with given capacity.
+ *
+ * \par Sync (or) Async:
+ * This as a synchronous API.
+ *
+ * \par Thread-safety:
+ * This function is NOT thread-safe. If functions from described API are called by multithreaded
+ * application from different threads, they must be put into protected critical section.
+ *
+ * \par Important notes:
+ * After passing cynara_configuration to cynara_initialize() calling this API will have
+ * no effect.
+ *
+ * \param[in] p_conf cynara_configuration structure pointer.
+ * \param[in] cache_size Cache size to be set.
+ *
+ * \return CYNARA_API_SUCCESS on success
+ *        or negative error code on error.
+ */
+int cynara_configuration_set_cache_size(cynara_configuration *p_conf, size_t cache_size);
 
 /**
  * \par Description:

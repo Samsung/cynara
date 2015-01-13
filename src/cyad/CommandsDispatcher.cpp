@@ -26,8 +26,9 @@
 #include <exceptions/BucketRecordCorruptedException.h>
 
 #include <cyad/AdminLibraryInitializationFailedException.h>
-#include <cyad/CynaraAdminPolicies.h>
 #include <cyad/AdminPolicyParser.h>
+#include <cyad/CommandlineParser/CmdlineOpts.h>
+#include <cyad/CynaraAdminPolicies.h>
 
 #include "CommandsDispatcher.h"
 
@@ -51,7 +52,7 @@ int CommandsDispatcher::execute(CyadCommand &) {
 }
 
 int CommandsDispatcher::execute(HelpCyadCommand &) {
-    m_io.cout() << helpMessage << std::endl;
+    m_io.cout() << CmdlineOpts::makeHelp() << std::endl;
     return CYNARA_API_SUCCESS;
 }
 
@@ -59,7 +60,7 @@ int CommandsDispatcher::execute(ErrorCyadCommand &result) {
     m_io.cout() << "There was an error in command-line options:" << std::endl;
     m_io.cout() << result.message() << std::endl;
 
-    m_io.cout() << std::endl << helpMessage << std::endl;
+    m_io.cout() << std::endl << CmdlineOpts::makeHelp() << std::endl;
     return CYNARA_API_INVALID_COMMANDLINE_PARAM;
 }
 

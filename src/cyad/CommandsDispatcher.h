@@ -48,46 +48,6 @@ public:
     virtual int execute(CheckCyadCommand &);
 
 private:
-    // TODO: Get argv[0] instead of hardcoded name
-    const std::string helpMessage = "Usage: cyad [OPTIONS]\n\n"
-                                    "Bucket set options (with -b or --set-bucket)\n"
-                                    "  -b, --set-bucket=<name>        name of bucket\n"
-                                    "  -t, --type=<policy>            default policy type\n"
-                                    "  -m, --metadata=<metadata>      metadata for default policy\n"
-                                    "\n"
-                                    "Bucket delete options (with -d or --delete-bucket)\n"
-                                    "  -d, --delete-bucket=<name>     name of bucket to delete\n"
-                                    "\n"
-                                    "Policy set options (with -s or --set-policy)\n"
-                                    "  -k, --bucket=<name>            name of bucket;"
-                                                                     " omit for default\n"
-                                    "  -c, --client=<client>          client value\n"
-                                    "  -u, --user=<user>              user value\n"
-                                    "  -p, --privilege=<privilege>    privilege value\n"
-                                    "  -t, --type=<policy>            policy type\n"
-                                    "  -m, --metadata=<metadata>      metadata for policy\n"
-                                    "  -f, --bulk=<filename>          path or - for stdin\n"
-                                    "\n"
-                                    "Policy erase options (with -e or --erase)\n"
-                                    "  -e, --erase=<name>             name of bucket"
-                                                                     " to start from\n"
-                                    "  -r, --recursive=<yes|no>       if linked buckets should be"
-                                                                     " processed as well\n"
-                                    "  -c, --client=<client>          client value\n"
-                                    "  -u, --user=<user>              user value\n"
-                                    "  -p, --privilege=<privilege>    privilege value\n"
-                                    "\n"
-                                    "Administrative policy check options (with -a or --check)\n"
-                                    "  -k, --bucket=<name>            name of bucket;"
-                                                                     " omit for default\n"
-                                    "  -r, --recursive=<yes|no>       if linked buckets should be"
-                                                                     " processed as well\n"
-                                    "  -c, --client=<client>          client value\n"
-                                    "  -u, --user=<user>              user value\n"
-                                    "  -p, --privilege=<privilege>    privilege value\n"
-                                    "\n"
-                                    "Help options:\n"
-                                    "  -h, --help                     print help message";
     BaseDispatcherIO &m_io;
     BaseAdminApiWrapper &m_adminApiWrapper;
     struct cynara_admin *m_cynaraAdmin;

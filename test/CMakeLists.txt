@@ -49,6 +49,8 @@ SET(CYNARA_SOURCES_FOR_TESTS
     ${CYNARA_SRC}/common/types/PolicyResult.cpp
     ${CYNARA_SRC}/common/types/PolicyType.cpp
     ${CYNARA_SRC}/cyad/AdminPolicyParser.cpp
+    ${CYNARA_SRC}/cyad/CommandlineParser/CmdlineErrors.cpp
+    ${CYNARA_SRC}/cyad/CommandlineParser/CmdlineOpts.cpp
     ${CYNARA_SRC}/cyad/CommandlineParser/CyadCommand.cpp
     ${CYNARA_SRC}/cyad/CommandlineParser/CyadCommandlineParser.cpp
     ${CYNARA_SRC}/cyad/CommandlineParser/HumanReadableParser.cpp

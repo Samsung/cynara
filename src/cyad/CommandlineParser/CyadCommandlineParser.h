@@ -24,71 +24,11 @@
 #define SRC_CYAD_COMMANDLINEPARSER_CYADCOMMANDLINEPARSER_H_
 
 #include <memory>
+#include <string>
 
 #include <cyad/CommandlineParser/CyadCommand.h>
 
 namespace Cynara {
-
-namespace CyadCmdlineArgs {
-    extern const char HELP;
-    extern const char * const HELP_LONG;
-
-    extern const char SET_BUCKET;
-    extern const char * const SET_BUCKET_LONG;
-
-    extern const char DELETE_BUCKET;
-    extern const char * const DELETE_BUCKET_LONG;
-
-    extern const char TYPE;
-    extern const char * const TYPE_LONG;
-
-    extern const char METADATA;
-    extern const char * const METADATA_LONG;
-
-    extern const char BUCKET;
-    extern const char * const BUCKET_LONG;
-
-    extern const char CLIENT;
-    extern const char * const CLIENT_LONG;
-
-    extern const char USER;
-    extern const char * const USER_LONG;
-
-    extern const char PRIVILEGE;
-    extern const char * const PRIVILEGE_LONG;
-
-    extern const char BULK;
-    extern const char * const BULK_LONG;
-
-    extern const char ERASE;
-    extern const char * const ERASE_LONG;
-
-    extern const char RECURSIVE;
-    extern const char * const RECURSIVE_LONG;
-
-    extern const char CHECK;
-    extern const char * const CHECK_LONG;
-}
-
-namespace CyadCmdlineErrors {
-    extern const char * const UNKNOWN_ERROR;
-    extern const char * const NO_OPTION;
-    extern const char * const UNKNOWN_OPTION;
-    extern const char * const UNKNOWN_OPTION_SET_BUCKET;
-    extern const char * const UNKNOWN_OPTION_DELETE_BUCKET;
-    extern const char * const UNKNOWN_OPTION_SET_POLICY;
-    extern const char * const UNKNOWN_OPTION_ERASE;
-    extern const char * const UNKNOWN_OPTION_CHECK;
-    extern const char * const NO_POLICY;
-    extern const char * const NO_BUCKET;
-    extern const char * const INVALID_POLICY;
-    extern const char * const OPTION_MISSING_SET_POLICY;
-    extern const char * const ARGUMENT_MISSING_SET_POLICY;
-    extern const char * const OPTION_MISSING_ERASE;
-    extern const char * const ARGUMENT_MISSING_ERASE;
-    extern const char * const OPTION_MISSING_CHECK;
-    extern const char * const ARGUMENT_MISSING_CHECK;
-}
 
 class CyadCommandlineParser {
 public:

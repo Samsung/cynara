@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 /**
  * @file        src/common/plugin/PluginManager.cpp
  * @author      Zofia Abramowska <z.abramowska@samsung.com>
+ * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       Definition of PluginManager class
  */
@@ -28,6 +29,7 @@
 #include <dlfcn.h>
 #include <functional>
 
+#include <exceptions/UnknownPolicyTypeException.h>
 #include <log/log.h>
 
 #include "PluginManager.h"
@@ -77,6 +79,12 @@ void PluginManager::invalidateAll(void) {
     for (auto &plugin : m_plugins) {
         plugin.second->invalidate();
     }
+}
+
+void PluginManager::checkPolicyType(PolicyType pType) const {
+    const auto it = m_plugins.find(pType);
+    if (it == m_plugins.end() || it->second == nullptr)
+        throw UnknownPolicyTypeException(pType);
 }
 
 void PluginManager::loadPlugins(void) {

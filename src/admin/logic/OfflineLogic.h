@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 /**
  * @file        src/admin/logic/OfflineLogic.h
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
+ * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file contains definition of OfflineLogic class
  */
@@ -27,6 +28,7 @@
 
 #include <lock/FileLock.h>
 #include <plugin/PluginManager.h>
+#include <types/PolicyType.h>
 
 #include <storage/Storage.h>
 #include <storage/StorageBackend.h>
@@ -56,6 +58,9 @@ protected:
     void acquireDatabase(void);
     void acquirePlugins(void);
     void onPoliciesChanged(void);
+    void checkPoliciesTypes(const ApiInterface::PoliciesByBucket &policies, bool allowBucket,
+                            bool allowNone);
+    void checkSinglePolicyType(const PolicyType &policyType, bool allowBucket, bool allowNone);
 
 private:
     typedef std::unique_ptr<Storage> StorageUniquePtr;

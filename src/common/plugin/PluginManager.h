@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 /**
  * @file        src/common/plugin/PluginManager.h
  * @author      Zofia Abramowska <z.abramowska@samsung.com>
+ * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       Declaration of PluginManager class
  */
@@ -32,6 +33,7 @@
 
 #include <plugin/ExternalPluginInterface.h>
 #include <types/PolicyDescription.h>
+#include <types/PolicyType.h>
 
 namespace Cynara {
 typedef std::shared_ptr<ExternalPluginInterface> ExternalPluginPtr;
@@ -46,6 +48,8 @@ public:
     ExternalPluginPtr getPlugin(PolicyType pType);
     std::vector<PolicyDescription> getPolicyDescriptions(void) const;
     void invalidateAll(void);
+
+    void checkPolicyType(PolicyType pType) const;
 
 private:
     typedef std::unique_ptr<void, std::function<void (void*)>> PluginLibPtr;

@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -104,6 +104,9 @@ static int interpretCodeResponse(const CodeResponse::Code &code) {
         case CodeResponse::Code::NO_BUCKET:
             LOGE("Trying to use unexisting bucket.");
             return CYNARA_API_BUCKET_NOT_FOUND;
+        case CodeResponse::Code::NO_POLICY_TYPE:
+            LOGE("Trying to use unknown policy type.");
+            return CYNARA_API_INVALID_PARAM;
         case CodeResponse::Code::FAILED:
             LOGC("Cynara service answered: Operation failed.");
             return CYNARA_API_OPERATION_FAILED;

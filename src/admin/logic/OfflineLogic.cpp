@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 /**
  * @file        src/admin/logic/OfflineLogic.cpp
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
+ * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file contains implementation of OfflineLogic class
  */
@@ -28,6 +29,7 @@
 #include <exceptions/DefaultBucketDeletionException.h>
 #include <exceptions/DefaultBucketSetNoneException.h>
 #include <exceptions/InvalidBucketIdException.h>
+#include <exceptions/UnknownPolicyTypeException.h>
 #include <plugin/PluginManager.h>
 
 #include <storage/InMemoryStorageBackend.h>
@@ -52,10 +54,34 @@ void OfflineLogic::acquirePlugins(void) {
     m_pluginManager->loadPlugins();
 }
 
+void OfflineLogic::checkPoliciesTypes(const ApiInterface::PoliciesByBucket &policies,
+                                      bool allowBucket, bool allowNone) {
+    for (const auto &group : policies) {
+        for (const auto &policy : group.second) {
+            checkSinglePolicyType(policy.result().policyType(), allowBucket, allowNone);
+        }
+    }
+}
+
+void OfflineLogic::checkSinglePolicyType(const PolicyType &policyType, bool allowBucket,
+                                         bool allowNone) {
+    if (allowBucket && policyType == PredefinedPolicyType::BUCKET)
+        return;
+    if (allowNone && policyType == PredefinedPolicyType::NONE)
+        return;
+    for (const auto &descr : predefinedPolicyDescr) {
+        if (descr.type == policyType)
+            return;
+    }
+    m_pluginManager->checkPolicyType(policyType);
+}
+
 int OfflineLogic::setPolicies(const ApiInterface::PoliciesByBucket &insertOrUpdate,
                               const ApiInterface::KeysByBucket &remove) {
     try {
         acquireDatabase();
+        acquirePlugins();
+        checkPoliciesTypes(insertOrUpdate, true, false);
         m_storage->insertPolicies(insertOrUpdate);
         m_storage->deletePolicies(remove);
         onPoliciesChanged();
@@ -63,6 +89,8 @@ int OfflineLogic::setPolicies(const ApiInterface::PoliciesByBucket &insertOrUpda
         return CYNARA_API_BUCKET_NOT_FOUND;
     } catch (const DatabaseException &) {
         return CYNARA_API_OPERATION_FAILED;
+    } catch (const UnknownPolicyTypeException &ex) {
+        return CYNARA_API_INVALID_PARAM;
     }
 
     return CYNARA_API_SUCCESS;
@@ -72,6 +100,8 @@ int OfflineLogic::insertOrUpdateBucket(const PolicyBucketId &bucket,
                                        const PolicyResult &policyResult) {
     try {
         acquireDatabase();
+        acquirePlugins();
+        checkSinglePolicyType(policyResult.policyType(), true, true);
         m_storage->addOrUpdateBucket(bucket, policyResult);
         onPoliciesChanged();
     } catch (const DefaultBucketSetNoneException &) {
@@ -80,6 +110,8 @@ int OfflineLogic::insertOrUpdateBucket(const PolicyBucketId &bucket,
         return CYNARA_API_OPERATION_NOT_ALLOWED;
     } catch (const DatabaseException &) {
         return CYNARA_API_OPERATION_FAILED;
+    } catch (const UnknownPolicyTypeException &ex) {
+        return CYNARA_API_INVALID_PARAM;
     }
 
     return CYNARA_API_SUCCESS;

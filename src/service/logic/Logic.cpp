@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@
 #include <exceptions/PluginErrorException.h>
 #include <exceptions/PluginNotFoundException.h>
 #include <exceptions/UnexpectedErrorException.h>
+#include <exceptions/UnknownPolicyTypeException.h>
 #include <request/AdminCheckRequest.h>
 #include <request/AgentActionRequest.h>
 #include <request/AgentRegisterRequest.h>
@@ -301,6 +302,7 @@ void Logic::execute(RequestContextPtr context, InsertOrUpdateBucketRequestPtr re
     auto code = CodeResponse::Code::OK;
 
     try {
+        checkSinglePolicyType(request->result().policyType(), true, true);
         m_storage->addOrUpdateBucket(request->bucketId(), request->result());
         onPoliciesChanged();
     } catch (const DatabaseException &ex) {
@@ -309,6 +311,8 @@ void Logic::execute(RequestContextPtr context, InsertOrUpdateBucketRequestPtr re
         code = CodeResponse::Code::NOT_ALLOWED;
     } catch (const InvalidBucketIdException &ex) {
         code = CodeResponse::Code::NOT_ALLOWED;
+    } catch (const UnknownPolicyTypeException &ex) {
+        code = CodeResponse::Code::NO_POLICY_TYPE;
     }
 
     context->returnResponse(context, std::make_shared<CodeResponse>(code,
@@ -348,6 +352,7 @@ void Logic::execute(RequestContextPtr context, RemoveBucketRequestPtr request) {
 void Logic::execute(RequestContextPtr context, SetPoliciesRequestPtr request) {
     auto code = CodeResponse::Code::OK;
     try {
+        checkPoliciesTypes(request->policiesToBeInsertedOrUpdated(), true, false);
         m_storage->insertPolicies(request->policiesToBeInsertedOrUpdated());
         m_storage->deletePolicies(request->policiesToBeRemoved());
         onPoliciesChanged();
@@ -355,9 +360,32 @@ void Logic::execute(RequestContextPtr context, SetPoliciesRequestPtr request) {
         code = CodeResponse::Code::FAILED;
     } catch (const BucketNotExistsException &ex) {
         code = CodeResponse::Code::NO_BUCKET;
+    } catch (const UnknownPolicyTypeException &ex) {
+        code = CodeResponse::Code::NO_POLICY_TYPE;
     }
     context->returnResponse(context, std::make_shared<CodeResponse>(code,
                             request->sequenceNumber()));
+}
+
+void Logic::checkPoliciesTypes(const std::map<PolicyBucketId, std::vector<Policy>> &policies,
+                               bool allowBucket, bool allowNone) {
+    for (const auto &group : policies) {
+        for (const auto &policy : group.second) {
+            checkSinglePolicyType(policy.result().policyType(), allowBucket, allowNone);
+        }
+    }
+}
+
+void Logic::checkSinglePolicyType(const PolicyType &policyType, bool allowBucket, bool allowNone) {
+    if (allowBucket && policyType == PredefinedPolicyType::BUCKET)
+        return;
+    if (allowNone && policyType == PredefinedPolicyType::NONE)
+        return;
+    for (const auto &descr : predefinedPolicyDescr) {
+        if (descr.type == policyType)
+            return;
+    }
+    m_pluginManager->checkPolicyType(policyType);
 }
 
 void Logic::contextClosed(RequestContextPtr context) {

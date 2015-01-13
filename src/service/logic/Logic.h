@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -23,8 +23,14 @@
 #ifndef SRC_SERVICE_LOGIC_LOGIC_H_
 #define SRC_SERVICE_LOGIC_LOGIC_H_
 
+#include <map>
+#include <vector>
+
+#include <types/Policy.h>
+#include <types/PolicyBucketId.h>
 #include <types/PolicyKey.h>
 #include <types/PolicyResult.h>
+#include <types/PolicyType.h>
 
 #include <main/pointers.h>
 #include <plugin/PluginManager.h>
@@ -94,6 +100,9 @@ private:
                 const PluginData &agentData, const RequestContextPtr &request,
                 const ServicePluginInterfacePtr &plugin);
 
+    void checkPoliciesTypes(const std::map<PolicyBucketId, std::vector<Policy>> &policies,
+                            bool allowBucket, bool allowNone);
+    void checkSinglePolicyType(const PolicyType &policyType, bool allowBucket, bool allowNone);
     void handleAgentTalkerDisconnection(const AgentTalkerPtr &agentTalkerPtr);
     void handleClientDisconnection(const CheckContextPtr &checkContextPtr);
 

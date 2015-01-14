@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 /**
  * @file        src/client/logic/Logic.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @author      Zofia Abramowska <z.abramowska@samsung.com>
  * @version     1.0
  * @brief       This file contains definition of Logic class - main libcynara-client class
  */
@@ -29,12 +30,20 @@
 #include <types/PolicyKey.h>
 #include <types/PolicyResult.h>
 
+#include <configuration/Configuration.h>
+
 #include <api/ApiInterface.h>
 #include <cache/CacheInterface.h>
 
 namespace Cynara {
 
 class Logic : public ApiInterface {
+public:
+    explicit Logic(const Configuration &conf = Configuration());
+    virtual ~Logic() {};
+
+    virtual int check(const std::string &client, const ClientSession &session,
+                      const std::string &user, const std::string &privilege);
 private:
     SocketClientPtr m_socket;
     PluginCachePtr m_cache;
@@ -42,12 +51,6 @@ private:
     void onDisconnected(void);
     bool ensureConnection(void);
     int requestResult(const PolicyKey &key, PolicyResult &result);
-public:
-    Logic();
-    virtual ~Logic() {};
-
-    virtual int check(const std::string &client, const ClientSession &session,
-                      const std::string &user, const std::string &privilege);
 };
 
 } // namespace Cynara

@@ -86,7 +86,7 @@ int cynara_async_configuration_set_cache_size(cynara_async_configuration *p_conf
 
 CYNARA_API
 int cynara_async_initialize(cynara_async **pp_cynara,
-                            const cynara_async_configuration *p_conf UNUSED,
+                            const cynara_async_configuration *p_conf,
                             cynara_status_callback callback, void *user_status_data) {
     if (!pp_cynara)
         return CYNARA_API_INVALID_PARAM;
@@ -94,7 +94,11 @@ int cynara_async_initialize(cynara_async **pp_cynara,
     init_log();
 
     return Cynara::tryCatch([&]() {
-        *pp_cynara = new cynara_async(new Cynara::Logic(callback, user_status_data));
+        if (p_conf && p_conf->impl)
+            *pp_cynara = new cynara_async(new Cynara::Logic(callback, user_status_data,
+                                                            *(p_conf->impl)));
+        else
+            *pp_cynara = new cynara_async(new Cynara::Logic(callback, user_status_data));
 
         LOGD("Cynara client async initialized");
 

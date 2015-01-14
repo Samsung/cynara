@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 /**
  * @file        src/client-async/logic/Logic.cpp
  * @author      Marcin Niesluchowski <m.niesluchow@samsung.com>
+ * @author      Zofia Abramowska <z.abramowska@samsung.com>
  * @version     1.0
  * @brief       This file contains implementation of Logic class - main
  *              libcynara-client-async class
@@ -42,13 +43,14 @@
 
 namespace Cynara {
 
-Logic::Logic(cynara_status_callback callback, void *userStatusData)
-    : m_statusCallback(callback, userStatusData), m_operationPermitted(true),
-      m_inAnswerCancelResponseCallback(false) {
+Logic::Logic(cynara_status_callback callback, void *userStatusData, const Configuration &conf)
+    : m_statusCallback(callback, userStatusData),
+      m_operationPermitted(true), m_inAnswerCancelResponseCallback(false) {
+
     m_socketClient = std::make_shared<SocketClientAsync>(
         PathConfig::SocketPath::client, std::make_shared<ProtocolClient>());
 
-    m_cache = std::make_shared<CapacityCache>();
+    m_cache = std::make_shared<CapacityCache>(conf.getCacheSize());
     auto naiveInterpreter = std::make_shared<NaiveInterpreter>();
     for (auto &descr : naiveInterpreter->getSupportedPolicyDescr()) {
         m_cache->registerPlugin(descr, naiveInterpreter);

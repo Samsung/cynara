@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 /**
  * @file        src/client-async/logic/Logic.h
  * @author      Marcin Niesluchowski <m.niesluchow@samsung.com>
+ * @author      Zofia Abramowska <z.abramowska@samsung.com>
  * @version     1.0
  * @brief       This file contains declaration of Logic class - main
  *              libcynara-client-async class
@@ -25,6 +26,7 @@
 #define SRC_CLIENT_ASYNC_LOGIC_LOGIC_H_
 
 #include <cache/CacheInterface.h>
+#include <configuration/Configuration.h>
 #include <types/ProtocolFields.h>
 
 #include <api/ApiInterface.h>
@@ -38,7 +40,8 @@ namespace Cynara {
 
 class Logic : public ApiInterface {
 public:
-    Logic(cynara_status_callback callback, void *userStatusData);
+    Logic(cynara_status_callback callback, void *userStatusData,
+          const Configuration &conf = Configuration());
     virtual ~Logic();
 
     virtual int checkCache(const std::string &client, const std::string &session,

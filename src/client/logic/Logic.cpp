@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 /**
  * @file        src/client/logic/Logic.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @author      Zofia Abramowska <z.abramowska@samsung.com>
  * @version     1.0
  * @brief       This file contains implementation of Logic class - main libcynara-client class
  */
@@ -47,10 +48,10 @@ static ProtocolFrameSequenceNumber generateSequenceNumber(void) {
     return ++sequenceNumber;
 }
 
-Logic::Logic() {
+Logic::Logic(const Configuration &conf) {
     m_socket = std::make_shared<SocketClient>(PathConfig::SocketPath::client,
                                               std::make_shared<ProtocolClient>());
-    m_cache = std::make_shared<CapacityCache>();
+    m_cache = std::make_shared<CapacityCache>(conf.getCacheSize());
     auto naiveInterpreter = std::make_shared<NaiveInterpreter>();
     for (auto &descr : naiveInterpreter->getSupportedPolicyDescr()) {
         m_cache->registerPlugin(descr, naiveInterpreter);

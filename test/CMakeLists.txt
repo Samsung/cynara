@@ -86,6 +86,7 @@ SET(CYNARA_TESTS_SOURCES
     credsCommons/parser/Parser.cpp
     cyad/commandline.cpp
     cyad/commandline_errors.cpp
+    cyad/commandline_short.cpp
     cyad/commands_dispatcher.cpp
     cyad/helpers.cpp
     cyad/policy_collection.cpp

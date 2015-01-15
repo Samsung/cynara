@@ -35,7 +35,6 @@
 #include <log/log.h>
 #include <config/PathConfig.h>
 #include <exceptions/BucketNotExistsException.h>
-#include <exceptions/CannotCreateFileException.h>
 #include <exceptions/DatabaseException.h>
 #include <exceptions/FileNotFoundException.h>
 #include <exceptions/UnexpectedErrorException.h>
@@ -105,13 +104,11 @@ void InMemoryStorageBackend::load(void) {
 }
 
 void InMemoryStorageBackend::save(void) {
-    auto indexStream = std::make_shared<std::ofstream>();
-    std::string indexFilename = m_dbPath + m_indexFilename;
-    openDumpFileStream(indexStream, indexFilename + m_backupFilenameSuffix);
+    std::string checksumFilename = m_dbPath + m_chsFilename;
+    auto chsStream = std::make_shared<std::ofstream>();
+    openDumpFileStream<std::ofstream>(chsStream, checksumFilename + m_backupFilenameSuffix);
 
-    StorageSerializer<std::ofstream> storageSerializer(indexStream);
-    storageSerializer.dump(buckets(), std::bind(&InMemoryStorageBackend::bucketDumpStreamOpener,
-                           this, std::placeholders::_1));
+    dumpDatabase(chsStream);
 
     m_integrity.syncDatabase(buckets(), true);
     m_integrity.createBackupGuard();
@@ -230,7 +227,17 @@ void InMemoryStorageBackend::erasePolicies(const PolicyBucketId &bucketId, bool 
     }
 }
 
-void InMemoryStorageBackend::openFileStream(std::shared_ptr<std::ifstream> stream,
+void InMemoryStorageBackend::dumpDatabase(const std::shared_ptr<std::ofstream> &chsStream) {
+    auto indexStream = std::make_shared<ChecksumStream>(m_indexFilename, chsStream);
+    std::string indexFilename = m_dbPath + m_indexFilename;
+    openDumpFileStream<ChecksumStream>(indexStream, indexFilename + m_backupFilenameSuffix);
+
+    StorageSerializer<ChecksumStream> storageSerializer(indexStream);
+    storageSerializer.dump(buckets(), std::bind(&InMemoryStorageBackend::bucketDumpStreamOpener,
+                           this, std::placeholders::_1, chsStream));
+}
+
+void InMemoryStorageBackend::openFileStream(const std::shared_ptr<std::ifstream> &stream,
                                             const std::string &filename, bool isBackupValid) {
     // TODO: Consider adding exceptions to streams and handling them:
     // stream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
@@ -241,15 +248,6 @@ void InMemoryStorageBackend::openFileStream(std::shared_ptr<std::ifstream> strea
     }
 
     m_checksum.compare(*stream, filename, isBackupValid);
-}
-
-void InMemoryStorageBackend::openDumpFileStream(std::shared_ptr<std::ofstream> stream,
-                                                const std::string &filename) {
-    stream->open(filename, std::ofstream::out | std::ofstream::trunc);
-
-    if (!stream->is_open()) {
-        throw CannotCreateFileException(filename);
-    }
 }
 
 std::shared_ptr<BucketDeserializer> InMemoryStorageBackend::bucketStreamOpener(
@@ -266,14 +264,15 @@ std::shared_ptr<BucketDeserializer> InMemoryStorageBackend::bucketStreamOpener(
     }
 }
 
-std::shared_ptr<StorageSerializer<std::ofstream> > InMemoryStorageBackend::bucketDumpStreamOpener(
-        const PolicyBucketId &bucketId) {
+std::shared_ptr<StorageSerializer<ChecksumStream> > InMemoryStorageBackend::bucketDumpStreamOpener(
+        const PolicyBucketId &bucketId, const std::shared_ptr<std::ofstream> &chsStream) {
     std::string bucketFilename = m_dbPath + m_bucketFilenamePrefix +
                                  bucketId + m_backupFilenameSuffix;
-    auto bucketStream = std::make_shared<std::ofstream>();
+    auto bucketStream = std::make_shared<ChecksumStream>(m_bucketFilenamePrefix + bucketId,
+                                                         chsStream);
 
-    openDumpFileStream(bucketStream, bucketFilename);
-    return std::make_shared<StorageSerializer<std::ofstream> >(bucketStream);
+    openDumpFileStream<ChecksumStream>(bucketStream, bucketFilename);
+    return std::make_shared<StorageSerializer<ChecksumStream> >(bucketStream);
 }
 
 void InMemoryStorageBackend::postLoadCleanup(bool isBackupValid) {

@@ -27,6 +27,7 @@
 #include <memory>
 #include <string>
 
+#include <exceptions/CannotCreateFileException.h>
 #include <types/pointers.h>
 #include <types/PolicyBucket.h>
 #include <types/PolicyBucketId.h>
@@ -35,6 +36,7 @@
 
 #include <storage/BucketDeserializer.h>
 #include <storage/Buckets.h>
+#include <storage/ChecksumStream.h>
 #include <storage/ChecksumValidator.h>
 #include <storage/Integrity.h>
 #include <storage/StorageBackend.h>
@@ -66,16 +68,18 @@ public:
                                const PolicyKey &filter);
 
 protected:
-    void openFileStream(std::shared_ptr<std::ifstream> stream, const std::string &filename,
+    void dumpDatabase(const std::shared_ptr<std::ofstream> &chsStream);
+    void openFileStream(const std::shared_ptr<std::ifstream> &stream, const std::string &filename,
                         bool isBackupValid);
     std::shared_ptr<BucketDeserializer> bucketStreamOpener(const PolicyBucketId &bucketId,
                                                            const std::string &fileNameSuffix,
                                                            bool isBackupValid);
 
-    virtual void openDumpFileStream(std::shared_ptr<std::ofstream> stream,
-                                    const std::string &filename);
-    std::shared_ptr<StorageSerializer<std::ofstream> > bucketDumpStreamOpener(
-            const PolicyBucketId &bucketId);
+    template<typename StreamType>
+    void openDumpFileStream(const std::shared_ptr<StreamType> &stream,
+                            const std::string &filename);
+    std::shared_ptr<StorageSerializer<ChecksumStream> > bucketDumpStreamOpener(
+            const PolicyBucketId &bucketId, const std::shared_ptr<std::ofstream> &chsStream);
 
     virtual void postLoadCleanup(bool isBackupValid);
 
@@ -97,6 +101,16 @@ protected:
         return m_buckets;
     }
 };
+
+template<typename StreamType>
+void InMemoryStorageBackend::openDumpFileStream(const std::shared_ptr<StreamType> &stream,
+                                                const std::string &filename) {
+    stream->open(filename, std::ofstream::out | std::ofstream::trunc);
+
+    if (!stream->is_open()) {
+        throw CannotCreateFileException(filename);
+    }
+}
 
 } /* namespace Cynara */
 

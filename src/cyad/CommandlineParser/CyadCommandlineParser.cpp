@@ -58,7 +58,8 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseMain(void) {
         CmdlineOpt::DeleteBucket,
         CmdlineOpt::SetPolicy,
         CmdlineOpt::Erase,
-        CmdlineOpt::Check
+        CmdlineOpt::Check,
+        CmdlineOpt::ListPolicies
     };
 
     const auto longOpts = Opts::makeLongOptions(opts);
@@ -86,6 +87,9 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseMain(void) {
             case CmdlineOpt::Check:
                 return parseCheck();
 
+            case CmdlineOpt::ListPolicies:
+                return parseListPolicies(optarg);
+
             case '?': // Unknown option
                 return sharedError(Err::unknownOption());
 
@@ -94,6 +98,7 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseMain(void) {
                     case CmdlineOpt::SetBucket:
                     case CmdlineOpt::DeleteBucket:
                     case CmdlineOpt::Erase:
+                    case CmdlineOpt::ListPolicies:
                         return sharedError(Err::noBucket());
                 }
                 // Shall never happen, but let's just make compiler happy.
@@ -346,6 +351,53 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseCheck(void) {
                                               PolicyKey(values[CmdlineOpt::Client],
                                                         values[CmdlineOpt::User],
                                                         values[CmdlineOpt::Privilege]));
+}
+
+std::shared_ptr<CyadCommand> CyadCommandlineParser::parseListPolicies(const std::string &bucketId) {
+    namespace Opts = CmdlineOpts;
+    namespace Err = CmdlineErrors;
+    using CmdlineOpts::CmdlineOpt;
+
+    std::vector<CmdlineOpt> opts = {
+        CmdlineOpt::Client,
+        CmdlineOpt::User,
+        CmdlineOpt::Privilege
+    };
+
+    const auto longOpts = Opts::makeLongOptions(opts);
+    const auto shortOpts = Opts::makeShortOptions(opts);
+
+    typedef std::unordered_map<char, std::string> OptionsValues;
+    OptionsValues values = { { CmdlineOpt::Client,    std::string() },
+                             { CmdlineOpt::User,      std::string() },
+                             { CmdlineOpt::Privilege, std::string() } };
+
+    int opt;
+    while ((opt = getopt_long(m_argc, m_argv, shortOpts.data(), longOpts.data(), nullptr)) != -1) {
+        switch (opt) {
+            case CmdlineOpt::Client:
+            case CmdlineOpt::User:
+            case CmdlineOpt::Privilege:
+                values[opt] = optarg;
+                break;
+            case ':': // Missing argument
+                return sharedError(Err::argumentMissing(CmdlineOpt::ListPolicies));
+            default:
+                return sharedError(Err::unknownOption(CmdlineOpt::ListPolicies));
+        }
+    }
+
+    for (const auto &val : values) {
+        if (val.second.empty()) {
+            // TODO: Identify actual option
+            return sharedError(Err::optionMissing(CmdlineOpt::ListPolicies));
+        }
+    }
+
+    return std::make_shared<ListPoliciesCyadCommand>(bucketId,
+                                                     PolicyKey(values[CmdlineOpt::Client],
+                                                               values[CmdlineOpt::User],
+                                                               values[CmdlineOpt::Privilege]));
 }
 
 } /* namespace Cynara */

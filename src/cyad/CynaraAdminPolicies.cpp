@@ -22,6 +22,8 @@
 
 #include <algorithm>
 #include <cstring>
+#include <functional>
+#include <memory>
 #include <new>
 #include <stdexcept>
 #include <string>
@@ -92,6 +94,68 @@ cynara_admin_policy* const *CynaraAdminPolicies::data(void) const {
     }
 
     return m_policies.data();
+}
+
+cynara_admin_policy **CynaraAdminPolicies::duplicate(void) const {
+    if (sealed() == false) {
+        throw std::logic_error("Collection is not sealed");
+    }
+
+    auto freePolicies = [this] (cynara_admin_policy **policies) {
+        for (auto i = 0u; i < m_policies.size() - 1; ++i) {
+            auto p = policies[i];
+            ::free(p->bucket);
+            ::free(p->client);
+            ::free(p->user);
+            ::free(p->privilege);
+            ::free(p->result_extra);
+            ::free(p);
+        }
+        free(policies);
+    };
+
+    auto dup = static_cast<cynara_admin_policy **>(calloc(m_policies.size(),
+                                                   sizeof(cynara_admin_policy *)));
+
+    if (dup == nullptr)
+        throw std::bad_alloc();
+
+    std::unique_ptr<cynara_admin_policy *, decltype(freePolicies)> dupPtr(dup, freePolicies);
+
+    for (auto i = 0u; i < m_policies.size() - 1; ++i) {
+        dup[i] = static_cast<cynara_admin_policy *>(calloc(1, sizeof(cynara_admin_policy)));
+
+        if (dup[i] == nullptr)
+            throw std::bad_alloc();
+
+        dup[i]->bucket = strdup(m_policies.at(i)->bucket);
+        if (dup[i]->bucket == nullptr)
+            throw std::bad_alloc();
+
+        dup[i]->client = strdup(m_policies.at(i)->client);
+        if (dup[i]->client == nullptr)
+            throw std::bad_alloc();
+
+        dup[i]->user = strdup(m_policies.at(i)->user);
+        if (dup[i]->user == nullptr)
+            throw std::bad_alloc();
+
+        dup[i]->privilege = strdup(m_policies.at(i)->privilege);
+        if (dup[i]->privilege == nullptr)
+            throw std::bad_alloc();
+
+        dup[i]->result = m_policies.at(i)->result;
+
+        if (m_policies.at(i)->result_extra) {
+            dup[i]->result_extra = strdup(m_policies.at(i)->result_extra);
+            if (dup[i]->result_extra == nullptr)
+                throw std::bad_alloc();
+        } else
+            dup[i]->result_extra = nullptr;
+    }
+
+    dup[m_policies.size() - 1] = nullptr;
+    return dupPtr.release();
 }
 
 } /* namespace Cynara */

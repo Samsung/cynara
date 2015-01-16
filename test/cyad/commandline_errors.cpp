@@ -128,3 +128,11 @@ TEST_F(CyadCommandlineTest, eraseNoRecursive) {
     Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
     ASSERT_ERROR_MSG(Errors::optionMissing(CmdlineOpt::Erase), parser.parseMain());
 }
+
+// Error should be argument missing, but getopt acts weird
+TEST_F(CyadCommandlineTest, listPoliciesNoBucket) {
+    prepare_argv({ "./cyad", "--list-policies",
+                   "--client=client", "--user=user", "--privilege=privilege" });
+    Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
+    ASSERT_ERROR_MSG(Errors::optionMissing(CmdlineOpt::ListPolicies), parser.parseMain());
+}

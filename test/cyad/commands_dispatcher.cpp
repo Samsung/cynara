@@ -27,6 +27,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <cynara-admin-types.h>
 #include <cynara-error.h>
 #include <cynara-policy-types.h>
 
@@ -330,4 +331,67 @@ TEST_F(CyadCommandlineDispatcherTest, checkWithError) {
     dispatcher.execute(command);
 
     ASSERT_TRUE(m_io.coutRaw().str().empty());
+}
+
+TEST_F(CyadCommandlineDispatcherTest, listPoliciesNone) {
+    using ::testing::_;
+    using ::testing::DoAll;
+    using ::testing::NotNull;
+    using ::testing::Return;
+    using ::testing::SetArgPointee;
+    using ::testing::StrEq;
+
+    FakeAdminApiWrapper adminApi;
+
+    EXPECT_CALL(adminApi, cynara_admin_initialize(_)).WillOnce(Return(CYNARA_API_SUCCESS));
+    EXPECT_CALL(adminApi, cynara_admin_finish(_)).WillOnce(Return(CYNARA_API_SUCCESS));
+
+    Cynara::CommandsDispatcher dispatcher(m_io, adminApi);
+
+    Cynara::ListPoliciesCyadCommand command("", { "client", "user", "privilege" });
+
+    Cynara::CynaraAdminPolicies resultPolicies;
+    resultPolicies.seal();
+    auto policies = resultPolicies.duplicate();
+
+    EXPECT_CALL(adminApi, cynara_admin_list_policies(_, StrEq(""), StrEq("client"), StrEq("user"),
+                                                     StrEq("privilege"), NotNull()))
+        .WillOnce(DoAll(SetArgPointee<5>(policies), Return(CYNARA_API_SUCCESS)));
+
+    dispatcher.execute(command);
+
+    ASSERT_EQ("", m_io.coutRaw().str());
+}
+
+TEST_F(CyadCommandlineDispatcherTest, listPoliciesTwo) {
+    using ::testing::_;
+    using ::testing::DoAll;
+    using ::testing::NotNull;
+    using ::testing::Return;
+    using ::testing::SetArgPointee;
+    using ::testing::StrEq;
+
+    FakeAdminApiWrapper adminApi;
+
+    EXPECT_CALL(adminApi, cynara_admin_initialize(_)).WillOnce(Return(CYNARA_API_SUCCESS));
+    EXPECT_CALL(adminApi, cynara_admin_finish(_)).WillOnce(Return(CYNARA_API_SUCCESS));
+
+    Cynara::CommandsDispatcher dispatcher(m_io, adminApi);
+
+    Cynara::ListPoliciesCyadCommand command("", { "client", "user", "privilege" });
+
+    Cynara::CynaraAdminPolicies resultPolicies;
+    resultPolicies.add("bucket", { CYNARA_ADMIN_DENY, "metadata" }, {"cli", "usr", "privilege"} );
+    resultPolicies.add("bucket-2", { CYNARA_ADMIN_ALLOW, "" }, {"cli", "usr", "privilege"} );
+    resultPolicies.seal();
+    auto policies = resultPolicies.duplicate();
+
+    EXPECT_CALL(adminApi, cynara_admin_list_policies(_, StrEq(""), StrEq("client"), StrEq("user"),
+                                                     StrEq("privilege"), NotNull()))
+        .WillOnce(DoAll(SetArgPointee<5>(policies), Return(CYNARA_API_SUCCESS)));
+
+    dispatcher.execute(command);
+
+    ASSERT_EQ("bucket;cli;usr;privilege;0;metadata\nbucket-2;cli;usr;privilege;65535;\n",
+              m_io.coutRaw().str());
 }

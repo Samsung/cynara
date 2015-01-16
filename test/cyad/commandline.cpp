@@ -220,3 +220,25 @@ TEST_F(CyadCommandlineTest, checkDefaultRecursive) {
     ASSERT_FALSE(result->recursive());
     ASSERT_EQ(Cynara::PolicyKey("client", "user", "privilege"), result->policyKey());
 }
+
+TEST_F(CyadCommandlineTest, listPoliciesDefault) {
+    prepare_argv({ "./cyad", "--list-policies=",
+                   "--client=client", "--user=user", "--privilege=privilege" });
+    Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
+
+    auto result = std::dynamic_pointer_cast<Cynara::ListPoliciesCyadCommand>(parser.parseMain());
+    ASSERT_NE(nullptr, result);
+    ASSERT_EQ(CYNARA_ADMIN_DEFAULT_BUCKET, result->bucketId());
+    ASSERT_EQ(Cynara::PolicyKey("client", "user", "privilege"), result->policyKey());
+}
+
+TEST_F(CyadCommandlineTest, listPoliciesOtherBucket) {
+    prepare_argv({ "./cyad", "--list-policies=some-bucket",
+                   "--client=c", "--user=u", "--privilege=p" });
+    Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
+
+    auto result = std::dynamic_pointer_cast<Cynara::ListPoliciesCyadCommand>(parser.parseMain());
+    ASSERT_NE(nullptr, result);
+    ASSERT_EQ("some-bucket", result->bucketId());
+    ASSERT_EQ(Cynara::PolicyKey("c", "u", "p"), result->policyKey());
+}

@@ -43,6 +43,7 @@ protected:
     std::shared_ptr<CyadCommand> parseSetPolicy(void);
     std::shared_ptr<CyadCommand> parseErase(const std::string &bucketId);
     std::shared_ptr<CyadCommand> parseCheck(void);
+    std::shared_ptr<CyadCommand> parseListPolicies(const std::string &bucketId);
 
 private:
     int m_argc;

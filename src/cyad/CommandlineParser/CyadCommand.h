@@ -207,6 +207,28 @@ private:
     PolicyKey m_policyKey;
 };
 
+class ListPoliciesCyadCommand : public CyadCommand {
+public:
+    ListPoliciesCyadCommand(const PolicyBucketId &bucketId, const PolicyKey &policyKey)
+        : m_bucketId(bucketId), m_policyKey(policyKey) {}
+
+    virtual ~ListPoliciesCyadCommand() {}
+
+    virtual int run(CommandsDispatcher &dispatcher);
+
+    const PolicyBucketId &bucketId(void) const {
+        return m_bucketId;
+    }
+
+    const PolicyKey &policyKey(void) const {
+        return m_policyKey;
+    }
+
+private:
+    PolicyBucketId m_bucketId;
+    PolicyKey m_policyKey;
+};
+
 } /* namespace Cynara */
 
 #endif /* SRC_CYAD_COMMANDLINEPARSER_CYADCOMMAND_H_ */

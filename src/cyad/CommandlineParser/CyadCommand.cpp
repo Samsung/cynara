@@ -62,4 +62,8 @@ int CheckCyadCommand::run(CommandsDispatcher &dispatcher) {
     return dispatcher.execute(*this);
 }
 
+int ListPoliciesCyadCommand::run(CommandsDispatcher &dispatcher) {
+    return dispatcher.execute(*this);
+}
+
 } /* namespace Cynara */

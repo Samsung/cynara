@@ -46,6 +46,10 @@ public:
                  int(struct cynara_admin *p_cynara_admin, const char *start_bucket,
                      const int recursive, const char *client, const char *user,
                      const char *privilege, int *result, char **result_extra));
+    MOCK_METHOD6(cynara_admin_list_policies,
+                 int(struct cynara_admin *p_cynara_admin, const char *bucket, const char *client,
+                     const char *user, const char *privilege,
+                     struct cynara_admin_policy ***policies));
     MOCK_METHOD6(cynara_admin_erase,
                  int(struct cynara_admin *p_cynara_admin, const char *start_bucket, int recursive,
                      const char *client, const char *user, const char *privilege));

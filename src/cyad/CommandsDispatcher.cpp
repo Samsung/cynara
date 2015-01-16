@@ -20,6 +20,7 @@
  * @brief       CommandsDispatcher class (implementation)
  */
 
+#include <cynara-admin-types.h>
 #include <cynara-error.h>
 #include <cynara-policy-types.h>
 
@@ -132,6 +133,53 @@ int CommandsDispatcher::execute(CheckCyadCommand &command) {
         }
 
         m_io.cout() << std::endl;
+    }
+
+    return ret;
+}
+
+int CommandsDispatcher::execute(ListPoliciesCyadCommand &command) {
+    const auto &key = command.policyKey();
+    auto client = key.client().toString().c_str();
+    auto user = key.user().toString().c_str();
+    auto privilege = key.privilege().toString().c_str();
+
+    // Initialization is needed to make compiler happy (-Werror=maybe-uninitialized, FTW)
+    cynara_admin_policy **policies = nullptr;
+
+    auto ret = m_adminApiWrapper.cynara_admin_list_policies(m_cynaraAdmin,
+                                                            command.bucketId().c_str(),
+                                                            client, user, privilege,
+                                                            &policies);
+
+    auto printPolicy = [this] (cynara_admin_policy *p) {
+        m_io.cout() << p->bucket << ";"
+                    << p->client << ";"
+                    << p->user << ";"
+                    << p->privilege << ";"
+                    << p->result << ";";
+        if (p->result_extra != nullptr) {
+            m_io.cout() << p->result_extra;
+        }
+        m_io.cout() << std::endl;
+    };
+
+    auto freePolicy = [] (cynara_admin_policy *p) {
+        free(p->bucket);
+        free(p->client);
+        free(p->user);
+        free(p->privilege);
+        free(p->result_extra);
+        free(p);
+    };
+
+    if (ret == CYNARA_API_SUCCESS) {
+        for (int i = 0; policies[i]; ++i) {
+            auto p = policies[i];
+            printPolicy(p);
+            freePolicy(p);
+        }
+        free(policies);
     }
 
     return ret;

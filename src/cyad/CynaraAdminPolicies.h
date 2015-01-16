@@ -45,6 +45,7 @@ public:
     void seal(void);
 
     cynara_admin_policy* const *data(void) const;
+    cynara_admin_policy **duplicate(void) const;
 
     bool sealed(void) const {
         return m_sealed;

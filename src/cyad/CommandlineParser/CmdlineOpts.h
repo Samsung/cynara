@@ -40,6 +40,7 @@ enum CmdlineOpt {
     Erase = 'e',
     Check = 'a',
     ListPolicies = 'l',
+    ListPoliciesDesc = 'g',
 
     Type = 't',
     Metadata = 'm',

@@ -185,4 +185,32 @@ int CommandsDispatcher::execute(ListPoliciesCyadCommand &command) {
     return ret;
 }
 
+int CommandsDispatcher::execute(ListPoliciesDescCyadCommand &) {
+    // Initialization is needed to make compiler happy (-Werror=maybe-uninitialized, FTW)
+    cynara_admin_policy_descr **descs = nullptr;
+
+    auto ret = m_adminApiWrapper.cynara_admin_list_policies_descriptions(m_cynaraAdmin, &descs);
+
+    auto printPolicyDesc = [this] (cynara_admin_policy_descr *pd) {
+        m_io.cout() << pd->result << ";"
+                    << pd->name << std::endl;
+    };
+
+    auto freePolicyDesc = [] (cynara_admin_policy_descr *pd) {
+        free(pd->name);
+        free(pd);
+    };
+
+    if (ret == CYNARA_API_SUCCESS) {
+        for (int i = 0; descs[i]; ++i) {
+            auto p = descs[i];
+            printPolicyDesc(p);
+            freePolicyDesc(p);
+        }
+        free(descs);
+    }
+
+    return ret;
+}
+
 } /* namespace Cynara */

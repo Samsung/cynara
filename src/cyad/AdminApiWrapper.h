@@ -52,6 +52,8 @@ public:
     virtual int cynara_admin_erase(struct cynara_admin *p_cynara_admin, const char *start_bucket,
                                    int recursive, const char *client, const char *user,
                                    const char *privilege);
+    virtual int cynara_admin_list_policies_descriptions(struct cynara_admin *p_cynara_admin,
+                                                  struct cynara_admin_policy_descr ***descriptions);
 };
 
 } /* namespace Cynara */

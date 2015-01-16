@@ -69,4 +69,9 @@ int AdminApiWrapper::cynara_admin_list_policies(struct cynara_admin *p_cynara_ad
     return ::cynara_admin_list_policies(p_cynara_admin, bucket, client, user, privilege, policies);
 }
 
+int AdminApiWrapper::cynara_admin_list_policies_descriptions(struct cynara_admin *p_cynara_admin,
+                                                 struct cynara_admin_policy_descr ***descriptions) {
+    return ::cynara_admin_list_policies_descriptions(p_cynara_admin, descriptions);
+}
+
 } /* namespace Cynara */

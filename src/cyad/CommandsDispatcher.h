@@ -47,6 +47,7 @@ public:
     virtual int execute(EraseCyadCommand &);
     virtual int execute(CheckCyadCommand &);
     virtual int execute(ListPoliciesCyadCommand &);
+    virtual int execute(ListPoliciesDescCyadCommand &);
 
 private:
     BaseDispatcherIO &m_io;

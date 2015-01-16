@@ -229,6 +229,14 @@ private:
     PolicyKey m_policyKey;
 };
 
+class ListPoliciesDescCyadCommand : public CyadCommand {
+public:
+    ListPoliciesDescCyadCommand() {}
+    virtual ~ListPoliciesDescCyadCommand() {}
+
+    virtual int run(CommandsDispatcher &dispatcher);
+};
+
 } /* namespace Cynara */
 
 #endif /* SRC_CYAD_COMMANDLINEPARSER_CYADCOMMAND_H_ */

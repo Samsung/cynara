@@ -242,3 +242,12 @@ TEST_F(CyadCommandlineTest, listPoliciesOtherBucket) {
     ASSERT_EQ("some-bucket", result->bucketId());
     ASSERT_EQ(Cynara::PolicyKey("c", "u", "p"), result->policyKey());
 }
+
+TEST_F(CyadCommandlineTest, listPoliciesDesc) {
+    prepare_argv({ "./cyad", "--list-policies-descriptions" });
+    Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
+
+    auto result = std::dynamic_pointer_cast<Cynara::ListPoliciesDescCyadCommand>(
+                                                                                parser.parseMain());
+    ASSERT_NE(nullptr, result);
+}

@@ -395,3 +395,63 @@ TEST_F(CyadCommandlineDispatcherTest, listPoliciesTwo) {
     ASSERT_EQ("bucket;cli;usr;privilege;0;metadata\nbucket-2;cli;usr;privilege;65535;\n",
               m_io.coutRaw().str());
 }
+
+TEST_F(CyadCommandlineDispatcherTest, listPoliciesDescNone) {
+    using ::testing::_;
+    using ::testing::DoAll;
+    using ::testing::NotNull;
+    using ::testing::Return;
+    using ::testing::SetArgPointee;
+
+    FakeAdminApiWrapper adminApi;
+
+    EXPECT_CALL(adminApi, cynara_admin_initialize(_)).WillOnce(Return(CYNARA_API_SUCCESS));
+    EXPECT_CALL(adminApi, cynara_admin_finish(_)).WillOnce(Return(CYNARA_API_SUCCESS));
+
+    Cynara::CommandsDispatcher dispatcher(m_io, adminApi);
+
+    Cynara::ListPoliciesDescCyadCommand command;
+
+    auto descs = static_cast<cynara_admin_policy_descr **>(
+                        calloc(1, sizeof(cynara_admin_policy_descr *)));
+    descs[0] = nullptr;
+
+    EXPECT_CALL(adminApi, cynara_admin_list_policies_descriptions(_, NotNull()))
+        .WillOnce(DoAll(SetArgPointee<1>(descs), Return(CYNARA_API_SUCCESS)));
+
+    dispatcher.execute(command);
+
+    ASSERT_EQ("", m_io.coutRaw().str());
+}
+
+TEST_F(CyadCommandlineDispatcherTest, listPoliciesDescOne) {
+    using ::testing::_;
+    using ::testing::DoAll;
+    using ::testing::NotNull;
+    using ::testing::Return;
+    using ::testing::SetArgPointee;
+
+    FakeAdminApiWrapper adminApi;
+
+    EXPECT_CALL(adminApi, cynara_admin_initialize(_)).WillOnce(Return(CYNARA_API_SUCCESS));
+    EXPECT_CALL(adminApi, cynara_admin_finish(_)).WillOnce(Return(CYNARA_API_SUCCESS));
+
+    Cynara::CommandsDispatcher dispatcher(m_io, adminApi);
+
+    Cynara::ListPoliciesDescCyadCommand command;
+
+    auto descs = static_cast<cynara_admin_policy_descr **>(
+                        calloc(2, sizeof(cynara_admin_policy_descr *)));
+
+    descs[0] = static_cast<cynara_admin_policy_descr *>(malloc(sizeof(cynara_admin_policy_descr)));
+    descs[0]->result = 42;
+    descs[0]->name = strdup("adams");
+    descs[1] = nullptr;
+
+    EXPECT_CALL(adminApi, cynara_admin_list_policies_descriptions(_, NotNull()))
+        .WillOnce(DoAll(SetArgPointee<1>(descs), Return(CYNARA_API_SUCCESS)));
+
+    dispatcher.execute(command);
+
+    ASSERT_EQ("42;adams\n", m_io.coutRaw().str());
+}

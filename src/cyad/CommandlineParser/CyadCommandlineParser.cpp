@@ -59,7 +59,8 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseMain(void) {
         CmdlineOpt::SetPolicy,
         CmdlineOpt::Erase,
         CmdlineOpt::Check,
-        CmdlineOpt::ListPolicies
+        CmdlineOpt::ListPolicies,
+        CmdlineOpt::ListPoliciesDesc
     };
 
     const auto longOpts = Opts::makeLongOptions(opts);
@@ -89,6 +90,9 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseMain(void) {
 
             case CmdlineOpt::ListPolicies:
                 return parseListPolicies(optarg);
+
+            case CmdlineOpt::ListPoliciesDesc:
+                return std::make_shared<ListPoliciesDescCyadCommand>();
 
             case '?': // Unknown option
                 return sharedError(Err::unknownOption());

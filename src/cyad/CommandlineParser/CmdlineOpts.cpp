@@ -48,6 +48,9 @@ const OptionsMap commandlineOptions = {
     { CmdlineOpt::ListPolicies,
         { "list-policies", CmdlineOpt::ListPolicies, "list-policies=<bucket>",
           "name of bucket to erase policies from", OptHasArg::RequiredArgument } },
+    { CmdlineOpt::ListPoliciesDesc,
+        { "list-policies-descriptions", CmdlineOpt::ListPoliciesDesc, "list-policies-descriptions",
+          "", OptHasArg::NoArgument } },
 
     { CmdlineOpt::Type,
         { "type", CmdlineOpt::Type, "type=<type>",
@@ -170,6 +173,11 @@ std::string makeHelp(void) {
     helpStr << opt(CmdlineOpt::Client) << std::endl;
     helpStr << opt(CmdlineOpt::User) << std::endl;
     helpStr << opt(CmdlineOpt::Privilege) << std::endl;
+    helpStr << std::endl;
+
+    helpStr << head("Policies descriptions list options", CmdlineOpt::ListPoliciesDesc)
+            << std::endl;
+    helpStr << opt(CmdlineOpt::ListPoliciesDesc) << std::endl;
     helpStr << std::endl;
 
     helpStr << head("Help options", CmdlineOpt::Help) << std::endl;

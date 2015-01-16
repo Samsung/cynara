@@ -18,6 +18,7 @@ Source1009:    libcynara-creds-socket.manifest
 Source1010:    libcynara-session.manifest
 Source1011:    cynara-db-migration.manifest
 Source1012:    cyad.manifest
+Source1013:    cynara-db-chsgen.manifest
 Requires:      default-ac-domains
 Requires(pre): pwdutils
 Requires(pre): cynara-db-migration >= %{version}-%{release}
@@ -171,6 +172,7 @@ cp -a %{SOURCE1009} .
 cp -a %{SOURCE1010} .
 cp -a %{SOURCE1011} .
 cp -a %{SOURCE1012} .
+cp -a %{SOURCE1013} .
 cp -a test/db/db* .
 
 %build
@@ -385,7 +387,9 @@ fi
 
 %files -n cynara-db-migration
 %manifest cynara-db-migration.manifest
+%manifest cynara-db-chsgen.manifest
 %attr(700,root,root) %{_sbindir}/cynara-db-migration
+%attr(700,root,root) %{_sbindir}/cynara-db-chsgen
 
 %files -n cyad
 %manifest cyad.manifest

@@ -25,12 +25,17 @@ STATE_PATH='/var/cynara'
 DB_DIR='db'
 INDEX_NAME='buckets'
 DEFAULT_BUCKET_NAME='_'
+CHECKSUM_NAME='checksum'
+GUARD_NAME='guard'
 DENY_POLICY=';0x0;'
 
 # Return values for comparison
 LESS=-1
 EQUAL=0
 GREATER=1
+
+# Cynara version which introduced checksums
+CHS_INTRO_VERSION='0.6.0'
 
 ##### Variables, with default values (optional)
 
@@ -118,6 +123,41 @@ parse_opts() {
     done
 }
 
+generate_checksums() {
+    # Output file
+    CHECKSUMS="${STATE_PATH}/${DB_DIR}/${CHECKSUM_NAME}"
+    GUARD="${STATE_PATH}/${DB_DIR}/${GUARD_NAME}"
+    WILDCARD="*"
+
+    # Check if checksums should be generated from backup
+    if [ -e $GUARD ] ; then
+        WILDCARD="${WILDCARD}~"
+
+        # Database will be read from backup at next load
+        CHECKSUMS="${CHECKSUMS}~"
+    fi
+
+    # Mimic opening in truncate mode
+    echo -n "" > "${CHECKSUMS}"
+
+    # Actual checksums generation
+    for FILE in $(find ${STATE_PATH}/${DB_DIR}/${WILDCARD} -type f ! -name "${CHECKSUM_NAME}*" \
+                                                                   ! -name "${GUARD_NAME}"); do
+        CHECKSUM="$(/usr/sbin/cynara-db-chsgen ${FILE})"
+        if [ 0 -eq $? ] ; then
+            echo "${CHECKSUM}" >> ${CHECKSUMS}
+        else
+            exit_failure
+        fi
+    done
+
+    # Set proper permissions for newly created checksum file
+    chown -R ${CYNARA_USER}:${CYNARA_GROUP} ${CHECKSUMS}
+
+    # Set proper SMACK label for newly created checksum file
+    chsmack -a ${SMACK_LABEL} ${CHECKSUMS}
+}
+
 minimal_db() {
     # Create Cynara's database directory
     mkdir -p ${STATE_PATH}/${DB_DIR}
@@ -134,12 +174,27 @@ minimal_db() {
     chsmack -a ${SMACK_LABEL} ${STATE_PATH}/${DB_DIR}/*
 }
 
+upgrade_db() {
+    # Add or update checksum file if necessary
+    if [ 0 -ge $(version_compare ${CHS_INTRO_VERSION} ${NEW_VERSION}) ] ; then
+        generate_checksums
+    fi
+}
+
+downgrade_db() {
+    # Remove checksum file if necessary
+    if [ 0 -lt $(version_compare ${CHS_INTRO_VERSION} ${NEW_VERSION}) ] ; then
+        rm "${STATE_PATH}/${DB_DIR}/${CHECKSUM_NAME}" > /dev/null 2>&1
+    fi
+}
+
 install_db() {
     if [ -z ${NEW_VERSION} ] ; then
         failure
     fi
 
     minimal_db
+    upgrade_db
 }
 
 migrate_db() {
@@ -152,6 +207,21 @@ migrate_db() {
         install_db
         exit_success
     fi
+
+    case $(version_compare ${OLD_VERSION} ${NEW_VERSION}) in
+        -1 )
+            upgrade_db
+            ;;
+        0 )
+            :
+            # Same version given twice; take no action
+            ;;
+        1 )
+            downgrade_db
+            ;;
+        * )
+            failure
+    esac
 }
 
 remove_db() {

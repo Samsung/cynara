@@ -31,6 +31,7 @@
 #include <exceptions/InvalidBucketIdException.h>
 #include <exceptions/UnknownPolicyTypeException.h>
 #include <plugin/PluginManager.h>
+#include <types/PolicyDescription.h>
 
 #include <storage/InMemoryStorageBackend.h>
 #include <storage/Storage.h>
@@ -148,6 +149,8 @@ int OfflineLogic::adminCheck(const PolicyBucketId &startBucket, bool recursive,
 int OfflineLogic::listDescriptions(std::vector<PolicyDescription> &descriptions) {
     acquirePlugins();
     descriptions = m_pluginManager->getPolicyDescriptions();
+    descriptions.insert(descriptions.begin(), predefinedPolicyDescr.begin(),
+                        predefinedPolicyDescr.end());
     return CYNARA_API_SUCCESS;
 }
 

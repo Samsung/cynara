@@ -22,13 +22,13 @@
  * @brief       Implementation of internal libcynara-creds-socket functions
  */
 
-
-#include <errno.h>
+#include <cerrno>
+#include <cstring>
 #include <string>
-#include <string.h>
-
 #include <sys/socket.h>
 #include <sys/types.h>
+
+#include <exceptions/TryCatch.h>
 
 #include <cynara-error.h>
 
@@ -59,16 +59,18 @@ int getClientSmackLabel(int socketFd, char **client) {
 }
 
 #define GET_CRED(SOCK, RESULT, CRED) \
-    struct ucred credentials; \
-    int ret = getCredentials(SOCK, &credentials); \
-    if (ret < 0) \
-        return ret; \
+    return Cynara::tryCatch([&]() { \
+        struct ucred credentials; \
+        int ret = getCredentials(SOCK, &credentials); \
+        if (ret < 0) \
+            return ret; \
  \
-    *RESULT = strdup(std::to_string(credentials.CRED).c_str()); \
-    if (*RESULT == nullptr) \
+        *RESULT = strdup(std::to_string(credentials.CRED).c_str()); \
+        if (*RESULT == nullptr) \
             return CYNARA_API_OUT_OF_MEMORY; \
  \
-    return CYNARA_API_SUCCESS; \
+        return CYNARA_API_SUCCESS; \
+     });
 
 int getClientPid(int socketFd, char **client) {
     GET_CRED(socketFd, client, pid)

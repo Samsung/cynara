@@ -24,6 +24,7 @@
  */
 
 #include <exception>
+#include <iostream>
 #include <stdlib.h>
 
 #include <systemd/sd-journal.h>
@@ -31,12 +32,19 @@
 
 #include <common.h>
 #include <log/log.h>
+
+#include "CmdlineParser.h"
 #include "Cynara.h"
 
-int main(int argc UNUSED, char **argv UNUSED) {
+int main(int argc, char **argv) {
     init_log();
 
     try {
+        if (1 < argc) {
+            auto handlingSuccess = Cynara::CmdlineParser::handleCmdlineOptions(argc, argv);
+            return (handlingSuccess ? EXIT_SUCCESS : EXIT_FAILURE);
+        }
+
         Cynara::Cynara cynara;
         LOGI("Cynara service is starting ...");
         cynara.init();

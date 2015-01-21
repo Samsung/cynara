@@ -22,6 +22,7 @@ SET(CYNARA_SOURCES
     ${CYNARA_SERVICE_PATH}/agent/AgentManager.cpp
     ${CYNARA_SERVICE_PATH}/agent/AgentTalker.cpp
     ${CYNARA_SERVICE_PATH}/logic/Logic.cpp
+    ${CYNARA_SERVICE_PATH}/main/CmdlineParser.cpp
     ${CYNARA_SERVICE_PATH}/main/Cynara.cpp
     ${CYNARA_SERVICE_PATH}/main/main.cpp
     ${CYNARA_SERVICE_PATH}/request/CheckRequestManager.cpp

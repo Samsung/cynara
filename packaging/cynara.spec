@@ -185,7 +185,8 @@ export CXXFLAGS="$CXXFLAGS -Wp,-U_FORTIFY_SOURCE"
 export CXXFLAGS="$CXXFLAGS -DCYNARA_STATE_PATH=\\\"%{state_path}\\\" \
                            -DCYNARA_LIB_PATH=\\\"%{lib_path}\\\" \
                            -DCYNARA_TESTS_DIR=\\\"%{tests_dir}\\\" \
-                           -DCYNARA_CONFIGURATION_DIR=\\\"%{conf_path}\\\""
+                           -DCYNARA_CONFIGURATION_DIR=\\\"%{conf_path}\\\" \
+                           -DCYNARA_VERSION=\\\"%{version}\\\""
 export LDFLAGS+="-Wl,--rpath=%{_libdir}"
 
 %cmake . \

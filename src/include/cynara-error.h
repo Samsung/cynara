@@ -26,6 +26,8 @@
 #ifndef CYNARA_ERROR_H
 #define CYNARA_ERROR_H
 
+#include <stddef.h>
+
 /**
  * \name Return Codes
  * exported by the foundation API.
@@ -79,6 +81,59 @@
 
 /*! \brief   indicating invalid parameter in command-line */
 #define CYNARA_API_INVALID_COMMANDLINE_PARAM    -12
+
+/*! \brief   indicating that provided buffer is too short */
+#define CYNARA_API_BUFFER_TOO_SHORT             -13
 /** @}*/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**
+ * \par Description:
+ * Returns the error string in the user-supplied buffer buf of length buflen.
+ *
+ * \par Purpose:
+ * This function populates passed argument buf with a string that describes the error code
+ * passed in the argument errnum, possibly using the LC_MESSAGES part of the current locale
+ * to select the appropriate language.
+ *
+ * \par Typical use case:
+ * Once after any of API functions returns negative value (if the error message is to be presented
+ * to the user).
+ *
+ * \par Method of function operation:
+ * This function copies error string to memory pointed by argument buf along with termination
+ * character ('\0').
+ *
+ * \par Sync (or) async:
+ * This is a synchronous API.
+ *
+ * \par Thread-safety:
+ * This function is thread-safe as long as setlocale() is not invoked concurrently.
+ *
+ * \par Important notes:
+ * This function copies error string to memory pointed by argument buf only if the buffer is
+ * of sufficient size (indicated by argument buflen). User is responsible for allocating sufficient
+ * memory for both error string and termination character ('\0').
+ * Moreover, the user must not invoke setlocale() concurrently with this function, because results
+ * are unspecified.
+ *
+ * \param[in] errnum error number
+ * \param[out] buf buffer for error message
+ * \param[in] buflen buffer size
+ *
+ * \return CYNARA_API_SUCCESS on success, CYNARA_API_BUFFER_TOO_SHORT, if error message couldn't fit
+ *         into allocated buffer, or CYNARA_API_INVALID_PARAM if errnum is not a valid error number
+ *         or argument buf is NULL.
+ *
+ * \brief Obtain error message from error number.
+ */
+int cynara_strerror(int errnum, char *buf, size_t buflen);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* CYNARA_ERROR_H */

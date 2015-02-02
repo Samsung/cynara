@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@
 #include <cyad/CommandlineParser/CyadCommandlineParser.h>
 #include <cyad/CommandsDispatcher.h>
 #include <cyad/DispatcherIO.h>
+#include <cyad/ErrorApiWrapper.h>
 
 namespace Cynara {
 
@@ -42,6 +43,7 @@ public:
 
 private:
     AdminApiWrapper m_adminApiWrapper;
+    ErrorApiWrapper m_errorApiWrapper;
     DispatcherIO m_io;
     std::unique_ptr<CommandsDispatcher> m_dispatcher;
     CyadCommandlineParser m_parser;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ namespace Cynara {
 
 Cyad::Cyad(int argc, char **argv) : m_parser(argc, argv), m_cynaraInitError(CYNARA_API_SUCCESS) {
     try {
-        m_dispatcher.reset(new CommandsDispatcher(m_io, m_adminApiWrapper));
+        m_dispatcher.reset(new CommandsDispatcher(m_io, m_adminApiWrapper, m_errorApiWrapper));
     } catch (const Cynara::AdminLibraryInitializationFailedException &ex) {
         m_cynaraInitError = ex.errorCode();
     }

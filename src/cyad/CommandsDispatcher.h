@@ -24,6 +24,7 @@
 #define SRC_CYAD_COMMANDSDISPATCHER_H_
 
 #include <cyad/BaseAdminApiWrapper.h>
+#include <cyad/BaseErrorApiWrapper.h>
 #include <cyad/CommandlineParser/CyadCommand.h>
 #include <cyad/DispatcherIO.h>
 
@@ -34,7 +35,8 @@ namespace Cynara {
 
 class CommandsDispatcher {
 public:
-    CommandsDispatcher(BaseDispatcherIO &io, BaseAdminApiWrapper &adminApiWrapper);
+    CommandsDispatcher(BaseDispatcherIO &io, BaseAdminApiWrapper &adminApiWrapper,
+                       BaseErrorApiWrapper &errorApiWrapper);
     virtual ~CommandsDispatcher();
 
     virtual int execute(CyadCommand &);
@@ -49,9 +51,13 @@ public:
     virtual int execute(ListPoliciesCyadCommand &);
     virtual int execute(ListPoliciesDescCyadCommand &);
 
+protected:
+    void printAdminApiError(int errnum);
+
 private:
     BaseDispatcherIO &m_io;
     BaseAdminApiWrapper &m_adminApiWrapper;
+    BaseErrorApiWrapper &m_errorApiWrapper;
     struct cynara_admin *m_cynaraAdmin;
 };
 

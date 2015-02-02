@@ -35,20 +35,26 @@
 
 namespace Cynara {
 
-CommandsDispatcher::CommandsDispatcher(BaseDispatcherIO &io, BaseAdminApiWrapper &adminApiWrapper)
-    : m_io(io), m_adminApiWrapper(adminApiWrapper), m_cynaraAdmin(nullptr)
+CommandsDispatcher::CommandsDispatcher(BaseDispatcherIO &io, BaseAdminApiWrapper &adminApiWrapper,
+                                       BaseErrorApiWrapper &errorApiWrapper)
+    : m_io(io), m_adminApiWrapper(adminApiWrapper), m_errorApiWrapper(errorApiWrapper),
+      m_cynaraAdmin(nullptr)
 {
     auto ret = m_adminApiWrapper.cynara_admin_initialize(&m_cynaraAdmin);
-    if (ret != CYNARA_API_SUCCESS)
+    if (ret != CYNARA_API_SUCCESS) {
+        printAdminApiError(ret);
         throw AdminLibraryInitializationFailedException(ret);
+    }
 }
 
 CommandsDispatcher::~CommandsDispatcher() {
-    m_adminApiWrapper.cynara_admin_finish(m_cynaraAdmin);
+    auto ret = m_adminApiWrapper.cynara_admin_finish(m_cynaraAdmin);
+    if (ret != CYNARA_API_SUCCESS)
+        printAdminApiError(ret);
 }
 
 int CommandsDispatcher::execute(CyadCommand &) {
-    m_io.cout() << "Whatever you wanted, it's not implemented" << std::endl;
+    m_io.cerr() << "Whatever you wanted, it's not implemented" << std::endl;
     return CYNARA_API_UNKNOWN_ERROR;
 }
 
@@ -58,25 +64,35 @@ int CommandsDispatcher::execute(HelpCyadCommand &) {
 }
 
 int CommandsDispatcher::execute(ErrorCyadCommand &result) {
-    m_io.cout() << "There was an error in command-line options:" << std::endl;
-    m_io.cout() << result.message() << std::endl;
+    m_io.cerr() << "There was an error in command-line options:" << std::endl;
+    m_io.cerr() << result.message() << std::endl;
 
-    m_io.cout() << std::endl << CmdlineOpts::makeHelp() << std::endl;
+    m_io.cerr() << std::endl << CmdlineOpts::makeHelp() << std::endl;
     return CYNARA_API_INVALID_COMMANDLINE_PARAM;
 }
 
 int CommandsDispatcher::execute(DeleteBucketCyadCommand &result) {
-    return m_adminApiWrapper.cynara_admin_set_bucket(m_cynaraAdmin, result.bucketId().c_str(),
-                                                     CYNARA_ADMIN_DELETE, nullptr);
+    auto ret = m_adminApiWrapper.cynara_admin_set_bucket(m_cynaraAdmin, result.bucketId().c_str(),
+                                                         CYNARA_ADMIN_DELETE, nullptr);
+
+    if (ret != CYNARA_API_SUCCESS)
+        printAdminApiError(ret);
+
+    return ret;
 }
 
 int CommandsDispatcher::execute(SetBucketCyadCommand &result) {
     const auto &policyResult = result.policyResult();
     const char *metadata = policyResult.metadata().empty() ? nullptr
                                                            : policyResult.metadata().c_str();
-    return m_adminApiWrapper.cynara_admin_set_bucket(m_cynaraAdmin,
-                                                     result.bucketId().c_str(),
-                                                     policyResult.policyType(), metadata);
+    auto ret = m_adminApiWrapper.cynara_admin_set_bucket(m_cynaraAdmin,
+                                                         result.bucketId().c_str(),
+                                                         policyResult.policyType(), metadata);
+
+    if (ret != CYNARA_API_SUCCESS)
+        printAdminApiError(ret);
+
+    return ret;
 }
 
 int CommandsDispatcher::execute(SetPolicyCyadCommand &result) {
@@ -85,7 +101,12 @@ int CommandsDispatcher::execute(SetPolicyCyadCommand &result) {
     policies.add(result.bucketId(), result.policyResult(), result.policyKey());
     policies.seal();
 
-    return m_adminApiWrapper.cynara_admin_set_policies(m_cynaraAdmin, policies.data());
+    auto ret = m_adminApiWrapper.cynara_admin_set_policies(m_cynaraAdmin, policies.data());
+
+    if (ret != CYNARA_API_SUCCESS)
+        printAdminApiError(ret);
+
+    return ret;
 }
 
 int CommandsDispatcher::execute(SetPolicyBulkCyadCommand &result) {
@@ -93,7 +114,10 @@ int CommandsDispatcher::execute(SetPolicyBulkCyadCommand &result) {
 
     try {
         auto policies = Cynara::AdminPolicyParser::parse(input);
-        return m_adminApiWrapper.cynara_admin_set_policies(m_cynaraAdmin, policies.data());
+        auto ret = m_adminApiWrapper.cynara_admin_set_policies(m_cynaraAdmin, policies.data());
+        if (ret != CYNARA_API_SUCCESS)
+            printAdminApiError(ret);
+        return ret;
     } catch (const BucketRecordCorruptedException &ex) {
         m_io.cerr() << ex.message();
         return CYNARA_API_INVALID_COMMANDLINE_PARAM;
@@ -106,8 +130,13 @@ int CommandsDispatcher::execute(EraseCyadCommand &result) {
     auto user = key.user().toString().c_str();
     auto privilege = key.privilege().toString().c_str();
 
-    return m_adminApiWrapper.cynara_admin_erase(m_cynaraAdmin, result.bucketId().c_str(),
-                                                result.recursive(), client, user, privilege);
+    auto ret = m_adminApiWrapper.cynara_admin_erase(m_cynaraAdmin, result.bucketId().c_str(),
+                                                    result.recursive(), client, user, privilege);
+
+    if (ret != CYNARA_API_SUCCESS)
+        printAdminApiError(ret);
+
+    return ret;
 }
 
 int CommandsDispatcher::execute(CheckCyadCommand &command) {
@@ -133,6 +162,8 @@ int CommandsDispatcher::execute(CheckCyadCommand &command) {
         }
 
         m_io.cout() << std::endl;
+    } else {
+        printAdminApiError(ret);
     }
 
     return ret;
@@ -180,6 +211,8 @@ int CommandsDispatcher::execute(ListPoliciesCyadCommand &command) {
             freePolicy(p);
         }
         free(policies);
+    } else {
+        printAdminApiError(ret);
     }
 
     return ret;
@@ -208,9 +241,28 @@ int CommandsDispatcher::execute(ListPoliciesDescCyadCommand &) {
             freePolicyDesc(p);
         }
         free(descs);
+    } else {
+        printAdminApiError(ret);
     }
 
     return ret;
+}
+
+void CommandsDispatcher::printAdminApiError(int errnum) {
+    const std::size_t buffSize = 256;
+    char buf[buffSize];
+    auto ret = m_errorApiWrapper.cynara_strerror(errnum, buf, buffSize);
+
+    m_io.cerr() << "Cynara: [" << errnum << "] ";
+
+    if (ret == CYNARA_API_SUCCESS)
+        m_io.cerr() << buf << std::endl;
+    else if (ret == CYNARA_API_INVALID_PARAM)
+        m_io.cerr() << "Unknown error (sic!)" << std::endl;
+    else if (ret == CYNARA_API_BUFFER_TOO_SHORT)
+        m_io.cerr() << "Error message too long" << std::endl;
+    else
+        m_io.cerr() << "Unknown error (sic! sic!)" << std::endl;
 }
 
 } /* namespace Cynara */

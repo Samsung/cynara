@@ -143,3 +143,30 @@ int cynara_check(cynara *p_cynara, const char *client, const char *client_sessio
         return p_cynara->impl->check(clientStr, clientSessionStr, userStr, privilegeStr);
     });
 }
+
+CYNARA_API
+int cynara_simple_check(cynara *p_cynara, const char *client, const char *client_session,
+                        const char *user, const char *privilege) {
+    if (!p_cynara || !p_cynara->impl)
+        return CYNARA_API_INVALID_PARAM;
+    if (!client || !client_session || !user || !privilege)
+        return CYNARA_API_INVALID_PARAM;
+
+    return Cynara::tryCatch([&]() {
+        std::string clientStr;
+        std::string clientSessionStr;
+        std::string userStr;
+        std::string privilegeStr;
+
+        try {
+            clientStr = client;
+            clientSessionStr = client_session;
+            userStr = user;
+            privilegeStr = privilege;
+        } catch (const std::length_error &e) {
+            LOGE("%s", e.what());
+            return CYNARA_API_INVALID_PARAM;
+        }
+        return p_cynara->impl->simpleCheck(clientStr, clientSessionStr, userStr, privilegeStr);
+    });
+}

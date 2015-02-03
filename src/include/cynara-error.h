@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,6 +32,8 @@
  * result codes beginning with negative codes indicate an error.
  * @{
 */
+/*! \brief  indicating access that cannot be resolved without further actions*/
+#define CYNARA_API_ACCESS_NOT_RESOLVED          3
 
 /*! \brief   indicating access that was checked is allowed */
 #define CYNARA_API_ACCESS_ALLOWED               2

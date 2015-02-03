@@ -81,6 +81,15 @@ int Logic::check(const std::string &client, const ClientSession &session, const 
     return m_cache->update(session, key, result);
 }
 
+int Logic::simpleCheck(const std::string &client, const ClientSession &session,
+                       const std::string &user, const std::string &privilege) {
+    (void)client;
+    (void)session;
+    (void)user;
+    (void)privilege;
+    return CYNARA_API_ACCESS_NOT_RESOLVED;
+}
+
 bool Logic::ensureConnection(void) {
     if (m_socket->isConnected())
         return true;

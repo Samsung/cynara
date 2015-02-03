@@ -48,6 +48,8 @@ public:
 
     virtual int check(const std::string &client, const ClientSession &session,
                       const std::string &user, const std::string &privilege);
+    virtual int simpleCheck(const std::string &client, const ClientSession &session,
+                            const std::string &user, const std::string &privilege);
 private:
     SocketClientPtr m_socket;
     PluginCachePtr m_cache;

@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 /**
  * @file        src/client/api/ApiInterface.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @author      Zofia Abramowska <z.abramowska@samsung.com>
  * @version     1.0
  * @brief       This file contains libcynara-client API interface definition.
  */
@@ -37,6 +38,8 @@ public:
 
     virtual int check(const std::string &client, const ClientSession &session,
                       const std::string &user, const std::string &privilege) = 0;
+    virtual int simpleCheck(const std::string &client, const ClientSession &session,
+                            const std::string &user, const std::string &privilege) = 0;
 };
 
 } // namespace Cynara

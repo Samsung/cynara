@@ -16,6 +16,7 @@
 /**
  * @file        src/include/cynara-client.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @author      Zofia Abramowska <z.abramowska@samsung.com>
  * @version     1.0
  * @brief       This file contains client APIs of Cynara available with libcynara-client.
  */
@@ -234,7 +235,56 @@ int cynara_finish(cynara *p_cynara);
  * or other error code on error.
  */
 int cynara_check(cynara *p_cynara, const char *client, const char *client_session, const char *user,
-        const char *privilege);
+                 const char *privilege);
+
+/**
+ * \par Description:
+ * Check for (potential) permission to take some action or access a resource.
+ *
+ * \par Purpose:
+ * This API should be used for a quick check if a user running application identified as client
+ * has access to a given privilege.
+ *
+ * \par Typical use case:
+ * An application may use this API to check, if it has (potential) permission to take some action
+ * or access resource in future (permissions may rarely change). The typical use would be to disable
+ * or hide some of functionalities, if they probably could not be used anyways.
+ *
+ * \par Method of function operation:
+ * This function is very similar to cynara_check() with the difference, that in case of answer not
+ * being one of CYNARA_API_PERMISSION_DENIED or CYNARA_API_PERMISSION_ALLOWED, no external
+ * application will be consulted. Instead, CYNARA_API_ACCESS_NOT_RESOLVED is returned, meaning,
+ * that only running full cynara_check() API would yield eventual answer.
+ * Similarly, like in cynara_check(), argument client_session can be used to distinguish client
+ * sessions and grant possibility to yield answer from cache.
+ *
+ * \par Sync (or) Async:
+ * This is a synchronous API.
+ *
+ * \par Thread-safety:
+ * This function is NOT thread-safe. If functions from described API are called by multithreaded
+ * application from different threads, they must be put into mutex protected critical section.
+ *
+ * \par Important notes:
+ * The answer will be taken from Cynara's database without consulting any external applications.
+ * If the answer cannot be resolved in one of CYNARA_API_PERMISSION_DENIED or
+ * CYNARA_API_PERMISSION_ALLOWED without communicating with external application the API will return
+ * CYNARA_API_ACCESS_NOT_RESOLVED.
+ * Call to cynara_simple_check needs cynara structure to be created first with call to
+ * cynara_initialize.
+ *
+ * \param[in] p_cynara Cynara structure.
+ * \param[in] client Application or process identifier.
+ * \param[in] client_session Session of client (connection, launch).
+ * \param[in] user User running client.
+ * \param[in] privilege Privilege that is a subject of a check.
+ *
+ * \return CYNARA_API_ACCESS_ALLOWED on access allowed, CYNARA_API_ACCESS_DENIED on access denial,
+ * CYNARA_API_ACCESS_NOT_RESOLVED when decision is not known without usage of external plugins or
+ * agents or negative error code on error.
+ */
+int cynara_simple_check(cynara *p_cynara, const char *client, const char *client_session,
+                        const char *user, const char *privilege);
 
 #ifdef __cplusplus
 }

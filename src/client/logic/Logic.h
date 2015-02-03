@@ -24,6 +24,7 @@
 #ifndef SRC_CLIENT_LOGIC_LOGIC_H_
 #define SRC_CLIENT_LOGIC_LOGIC_H_
 
+#include <memory>
 #include <string>
 
 #include <sockets/SocketClient.h>
@@ -36,6 +37,9 @@
 #include <cache/CacheInterface.h>
 
 namespace Cynara {
+
+class Logic;
+typedef std::unique_ptr<Logic> LogicUniquePtr;
 
 class Logic : public ApiInterface {
 public:

@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,12 +25,16 @@
 #define SRC_ADMIN_LOGIC_LOGIC_H_
 
 #include <functional>
+#include <memory>
 
 #include <common/lock/FileLock.h>
 
 #include <api/ApiInterface.h>
 
 namespace Cynara {
+
+class Logic;
+typedef std::unique_ptr<Logic> LogicUniquePtr;
 
 class OnlineLogic;
 class OfflineLogic;

@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,12 +23,17 @@
 #ifndef SRC_AGENT_LOGIC_LOGIC_H_
 #define SRC_AGENT_LOGIC_LOGIC_H_
 
+#include <memory>
+
 #include <types/Agent.h>
 
 #include <api/ApiInterface.h>
 #include <socket/AgentSocketClient.h>
 
 namespace Cynara {
+
+class Logic;
+typedef std::unique_ptr<Logic> LogicUniquePtr;
 
 class Logic : public ApiInterface {
 public:

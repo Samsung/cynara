@@ -25,6 +25,8 @@
 #ifndef SRC_CLIENT_ASYNC_LOGIC_LOGIC_H_
 #define SRC_CLIENT_ASYNC_LOGIC_LOGIC_H_
 
+#include <memory>
+
 #include <cache/CacheInterface.h>
 #include <configuration/Configuration.h>
 #include <types/ProtocolFields.h>
@@ -37,6 +39,8 @@
 #include <sockets/SocketClientAsync.h>
 
 namespace Cynara {
+class Logic;
+typedef std::unique_ptr<Logic> LogicUniquePtr;
 
 class Logic : public ApiInterface {
 public:

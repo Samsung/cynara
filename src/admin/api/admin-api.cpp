@@ -67,7 +67,9 @@ int cynara_admin_initialize(struct cynara_admin **pp_cynara_admin) {
 
     return Cynara::tryCatch([&]() {
         try {
-            *pp_cynara_admin = new cynara_admin(new Cynara::Logic);
+            Cynara::LogicUniquePtr ptr(new Cynara::Logic());
+            *pp_cynara_admin = new cynara_admin(ptr.get());
+            ptr.release();
         } catch (const Cynara::FileLockAcquiringException &ex) {
             LOGE("%s", ex.what());
             return CYNARA_API_OPERATION_FAILED;

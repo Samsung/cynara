@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -54,7 +54,9 @@ int cynara_agent_initialize(cynara_agent **pp_cynara_agent, const char *p_agent_
     init_log();
 
     return Cynara::tryCatch([&]() {
-        *pp_cynara_agent = new cynara_agent(new Cynara::Logic(p_agent_type));
+        Cynara::LogicUniquePtr ptr(new Cynara::Logic(p_agent_type));
+        *pp_cynara_agent = new cynara_agent(ptr.get());
+        ptr.release();
 
         LOGD("Cynara agent initialized");
 

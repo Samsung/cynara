@@ -225,9 +225,26 @@ if [ $? -eq 1 ]; then
 fi
 
 if [ $1 -gt 1 ] ; then
-    OLDVERSION="$(rpm -q --qf '%%{version}' %{name})"
-    %{_sbindir}/cynara/cynara-db-migration.sh upgrade -f ${OLDVERSION} -t %{version}
+    # upgrade
+    OLD_VERSION=""
+    VERSION_INDICATOR="$(ls %{_libdir}/libcynara-commons\.so\.*\.*\.*)"
+    if [ -z "${VERSION_INDICATOR}" ] ; then
+        # For releases which dropped "%{_libdir}/libcynara-commons\.so\.*" file
+        OLD_VERSION="$(/usr/bin/cynara --version)"
+    else
+        VERSION="${VERSION_INDICATOR##*so\.}"
+        SIGNIFICANT="${VERSION%\.*}"
+        if [ 0 -eq "${SIGNIFICANT%%\.*}" -a 5 -ge "${SIGNIFICANT##*\.}" ] ; then
+            # For releases which did not provide "--version" functionality
+            OLD_VERSION="${VERSION}"
+        else
+            OLD_VERSION="$(/usr/bin/cynara --version)"
+        fi
+    fi
+
+    %{_sbindir}/cynara/cynara-db-migration.sh upgrade -f ${OLD_VERSION} -t %{version}
 else
+    # install
     %{_sbindir}/cynara/cynara-db-migration.sh install -t %{version}
 fi
 

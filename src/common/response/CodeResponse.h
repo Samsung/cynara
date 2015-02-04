@@ -16,6 +16,7 @@
 /**
  * @file        src/common/response/CodeResponse.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @author      Pawel Wieczorek <p.wieczorek2@samsung.com>
  * @version     1.0
  * @brief       This file defines class for responding to a request with a code
  */
@@ -36,7 +37,8 @@ public:
         NO_BUCKET,
         NO_POLICY_TYPE,
         NOT_ALLOWED,
-        FAILED
+        FAILED,
+        DB_CORRUPTED
     };
 
     const Code m_code;

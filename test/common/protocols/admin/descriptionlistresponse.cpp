@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 /**
  * @file        test/common/protocols/admin/descriptionlistresponse.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @author      Pawel Wieczorek <p.wieczorek2@samsung.com>
  * @version     1.0
  * @brief       Tests for Cynara::DescriptionListResponse usage in Cynara::ProtocolAdmin
  */
@@ -42,7 +43,11 @@ void compare(const Cynara::DescriptionListResponse &resp1,
         EXPECT_EQ(resp1.descriptions()[i].name, resp2.descriptions()[i].name);
         EXPECT_EQ(resp1.descriptions()[i].type, resp2.descriptions()[i].type);
     }
+    EXPECT_EQ(resp1.isDbCorrupted(), resp2.isDbCorrupted());
 }
+
+static const bool DB_OK = false;
+static const bool DB_CORRUPTED = true;
 
 } /* namespace anonymous */
 
@@ -57,7 +62,7 @@ TEST(ProtocolAdmin, DescriptionListResponse01) {
         PolicyDescription(Types::allow, "allow"),
     };
 
-    auto response = std::make_shared<DescriptionListResponse>(descriptions, SN::min);
+    auto response = std::make_shared<DescriptionListResponse>(descriptions, DB_OK, SN::min);
     auto protocol = std::make_shared<ProtocolAdmin>();
     testResponse(response, protocol);
 }
@@ -67,7 +72,7 @@ TEST(ProtocolAdmin, DescriptionListResponse02) {
         PolicyDescription(Types::bucket, "bucket"),
     };
 
-    auto response = std::make_shared<DescriptionListResponse>(descriptions, SN::min_1);
+    auto response = std::make_shared<DescriptionListResponse>(descriptions, DB_OK, SN::min_1);
     auto protocol = std::make_shared<ProtocolAdmin>();
     testResponse(response, protocol);
 }
@@ -77,7 +82,7 @@ TEST(ProtocolAdmin, DescriptionListResponse03) {
         PolicyDescription(Types::deny, "deny"),
     };
 
-    auto response = std::make_shared<DescriptionListResponse>(descriptions, SN::max);
+    auto response = std::make_shared<DescriptionListResponse>(descriptions, DB_OK, SN::max);
     auto protocol = std::make_shared<ProtocolAdmin>();
     testResponse(response, protocol);
 }
@@ -87,7 +92,7 @@ TEST(ProtocolAdmin, DescriptionListResponse04) {
         PolicyDescription(Types::none, "none"),
     };
 
-    auto response = std::make_shared<DescriptionListResponse>(descriptions, SN::max_1);
+    auto response = std::make_shared<DescriptionListResponse>(descriptions, DB_OK, SN::max_1);
     auto protocol = std::make_shared<ProtocolAdmin>();
     testResponse(response, protocol);
 }
@@ -97,7 +102,7 @@ TEST(ProtocolAdmin, DescriptionListResponse05) {
         PolicyDescription(Types::plugin_type, "plugin"),
     };
 
-    auto response = std::make_shared<DescriptionListResponse>(descriptions, SN::mid);
+    auto response = std::make_shared<DescriptionListResponse>(descriptions, DB_OK, SN::mid);
     auto protocol = std::make_shared<ProtocolAdmin>();
     testResponse(response, protocol);
 }
@@ -113,7 +118,7 @@ TEST(ProtocolAdmin, DescriptionListResponseMultipleDescriptions) {
         PolicyDescription(Types::plugin_type, "plugin"),
     };
 
-    auto response = std::make_shared<DescriptionListResponse>(descriptions, SN::max_2);
+    auto response = std::make_shared<DescriptionListResponse>(descriptions, DB_OK, SN::max_2);
     auto protocol = std::make_shared<ProtocolAdmin>();
     testResponse(response, protocol);
 }
@@ -121,7 +126,24 @@ TEST(ProtocolAdmin, DescriptionListResponseMultipleDescriptions) {
 TEST(ProtocolAdmin, DescriptionListResponseEmptyDescriptions) {
     std::vector<PolicyDescription> descriptions;
 
-    auto response = std::make_shared<DescriptionListResponse>(descriptions, SN::min_2);
+    auto response = std::make_shared<DescriptionListResponse>(descriptions, DB_OK, SN::min_2);
+    auto protocol = std::make_shared<ProtocolAdmin>();
+    testResponse(response, protocol);
+}
+
+/**
+ * @brief   Verify if DescriptionListResponse is properly (de)serialized while database is corrupted
+ * @test    Expected result:
+ * - descriptions vector contains predefined policies ALLOW and DENY
+ * - dbCorrupted flag set to true (DB_CORRUPTED)
+ */
+TEST(ProtocolAdmin, DescriptionListResponseDatabaseCorrupted) {
+    std::vector<PolicyDescription> descriptions = {
+        PolicyDescription(Types::allow, "allow"),
+        PolicyDescription(Types::bucket, "bucket"),
+    };
+
+    auto response = std::make_shared<DescriptionListResponse>(descriptions, DB_CORRUPTED, SN::max);
     auto protocol = std::make_shared<ProtocolAdmin>();
     testResponse(response, protocol);
 }
@@ -133,7 +155,7 @@ TEST(ProtocolAdmin, DescriptionListResponseBinary01) {
         PolicyDescription(Types::allow, "allow"),
     };
 
-    auto response = std::make_shared<DescriptionListResponse>(descriptions, SN::min);
+    auto response = std::make_shared<DescriptionListResponse>(descriptions, DB_OK, SN::min);
     auto protocol = std::make_shared<ProtocolAdmin>();
     binaryTestResponse(response, protocol);
 }
@@ -143,7 +165,7 @@ TEST(ProtocolAdmin, DescriptionListResponseBinary02) {
         PolicyDescription(Types::bucket, "bucket"),
     };
 
-    auto response = std::make_shared<DescriptionListResponse>(descriptions, SN::min_1);
+    auto response = std::make_shared<DescriptionListResponse>(descriptions, DB_OK, SN::min_1);
     auto protocol = std::make_shared<ProtocolAdmin>();
     binaryTestResponse(response, protocol);
 }
@@ -153,7 +175,7 @@ TEST(ProtocolAdmin, DescriptionListResponseBinary03) {
         PolicyDescription(Types::deny, "deny"),
     };
 
-    auto response = std::make_shared<DescriptionListResponse>(descriptions, SN::max);
+    auto response = std::make_shared<DescriptionListResponse>(descriptions, DB_OK, SN::max);
     auto protocol = std::make_shared<ProtocolAdmin>();
     binaryTestResponse(response, protocol);
 }
@@ -163,7 +185,7 @@ TEST(ProtocolAdmin, DescriptionListResponseBinary04) {
         PolicyDescription(Types::none, "none"),
     };
 
-    auto response = std::make_shared<DescriptionListResponse>(descriptions, SN::max_1);
+    auto response = std::make_shared<DescriptionListResponse>(descriptions, DB_OK, SN::max_1);
     auto protocol = std::make_shared<ProtocolAdmin>();
     binaryTestResponse(response, protocol);
 }
@@ -173,7 +195,7 @@ TEST(ProtocolAdmin, DescriptionListResponseBinary05) {
         PolicyDescription(Types::plugin_type, "plugin"),
     };
 
-    auto response = std::make_shared<DescriptionListResponse>(descriptions, SN::mid);
+    auto response = std::make_shared<DescriptionListResponse>(descriptions, DB_OK, SN::mid);
     auto protocol = std::make_shared<ProtocolAdmin>();
     binaryTestResponse(response, protocol);
 }
@@ -189,7 +211,7 @@ TEST(ProtocolAdmin, DescriptionListResponseBinaryMultipleDescriptions) {
         PolicyDescription(Types::plugin_type, "plugin"),
     };
 
-    auto response = std::make_shared<DescriptionListResponse>(descriptions, SN::max_2);
+    auto response = std::make_shared<DescriptionListResponse>(descriptions, DB_OK, SN::max_2);
     auto protocol = std::make_shared<ProtocolAdmin>();
     binaryTestResponse(response, protocol);
 }
@@ -197,7 +219,24 @@ TEST(ProtocolAdmin, DescriptionListResponseBinaryMultipleDescriptions) {
 TEST(ProtocolAdmin, DescriptionListResponseBinaryEmptyDescriptions) {
     std::vector<PolicyDescription> descriptions;
 
-    auto response = std::make_shared<DescriptionListResponse>(descriptions, SN::min_2);
+    auto response = std::make_shared<DescriptionListResponse>(descriptions, DB_OK, SN::min_2);
+    auto protocol = std::make_shared<ProtocolAdmin>();
+    binaryTestResponse(response, protocol);
+}
+
+/**
+ * @brief   Verify if DescriptionListResponse is properly (de)serialized while database is corrupted
+ * @test    Expected result:
+ * - descriptions vector contains predefined policies ALLOW and DENY
+ * - dbCorrupted flag set to true (DB_CORRUPTED)
+ */
+TEST(ProtocolAdmin, DescriptionListResponseBinaryDatabaseCorrupted) {
+    std::vector<PolicyDescription> descriptions = {
+        PolicyDescription(Types::allow, "allow"),
+        PolicyDescription(Types::bucket, "bucket"),
+    };
+
+    auto response = std::make_shared<DescriptionListResponse>(descriptions, DB_CORRUPTED, SN::max);
     auto protocol = std::make_shared<ProtocolAdmin>();
     binaryTestResponse(response, protocol);
 }

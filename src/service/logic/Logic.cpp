@@ -17,6 +17,7 @@
  * @file        src/service/logic/Logic.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @author      Zofia Abramowska <z.abramowska@samsung.com>
+ * @author      Pawel Wieczorek <p.wieczorek2@samsung.com>
  * @version     1.0
  * @brief       This file implements main class of logic layer in cynara service
  */
@@ -76,7 +77,7 @@
 
 namespace Cynara {
 
-Logic::Logic() {
+Logic::Logic() : m_dbCorrupted(false) {
 }
 
 Logic::~Logic() {
@@ -96,15 +97,20 @@ void Logic::execute(RequestContextPtr context UNUSED, SignalRequestPtr request) 
 void Logic::execute(RequestContextPtr context, AdminCheckRequestPtr request) {
     PolicyResult result;
     bool bucketValid = true;
-    try {
-        result = m_storage->checkPolicy(request->key(), request->startBucket(),
-                                        request->recursive());
-    } catch (const BucketNotExistsException &ex) {
+
+    if (m_dbCorrupted) {
         bucketValid = false;
+    } else {
+        try {
+            result = m_storage->checkPolicy(request->key(), request->startBucket(),
+                                            request->recursive());
+        } catch (const BucketNotExistsException &ex) {
+            bucketValid = false;
+        }
     }
 
     context->returnResponse(context, std::make_shared<AdminCheckResponse>(result, bucketValid,
-                            request->sequenceNumber()));
+                            m_dbCorrupted, request->sequenceNumber()));
 }
 
 void Logic::execute(RequestContextPtr context, AgentActionRequestPtr request) {
@@ -183,7 +189,7 @@ bool Logic::check(const RequestContextPtr &context, const PolicyKey &key,
         return false;
     }
 
-    result = m_storage->checkPolicy(key);
+    result = (m_dbCorrupted ? PredefinedPolicyType::DENY : m_storage->checkPolicy(key));
 
     switch (result.policyType()) {
         case PredefinedPolicyType::ALLOW :
@@ -286,19 +292,23 @@ void Logic::execute(RequestContextPtr context, DescriptionListRequestPtr request
     descriptions.insert(descriptions.begin(), predefinedPolicyDescr.begin(),
                         predefinedPolicyDescr.end());
     context->returnResponse(context, std::make_shared<DescriptionListResponse>(descriptions,
-                            request->sequenceNumber()));
+                            m_dbCorrupted, request->sequenceNumber()));
 }
 
 void Logic::execute(RequestContextPtr context, EraseRequestPtr request) {
     auto code = CodeResponse::Code::OK;
 
-    try {
-        m_storage->erasePolicies(request->startBucket(), request->recursive(), request->filter());
-        onPoliciesChanged();
-    } catch (const DatabaseException &ex) {
-        code = CodeResponse::Code::FAILED;
-    } catch (const BucketNotExistsException &ex) {
-        code = CodeResponse::Code::NO_BUCKET;
+    if (m_dbCorrupted) {
+        code = CodeResponse::Code::DB_CORRUPTED;
+    } else {
+        try {
+            m_storage->erasePolicies(request->startBucket(), request->recursive(), request->filter());
+            onPoliciesChanged();
+        } catch (const DatabaseException &ex) {
+            code = CodeResponse::Code::FAILED;
+        } catch (const BucketNotExistsException &ex) {
+            code = CodeResponse::Code::NO_BUCKET;
+        }
     }
 
     context->returnResponse(context, std::make_shared<CodeResponse>(code,
@@ -308,18 +318,22 @@ void Logic::execute(RequestContextPtr context, EraseRequestPtr request) {
 void Logic::execute(RequestContextPtr context, InsertOrUpdateBucketRequestPtr request) {
     auto code = CodeResponse::Code::OK;
 
-    try {
-        checkSinglePolicyType(request->result().policyType(), true, true);
-        m_storage->addOrUpdateBucket(request->bucketId(), request->result());
-        onPoliciesChanged();
-    } catch (const DatabaseException &ex) {
-        code = CodeResponse::Code::FAILED;
-    } catch (const DefaultBucketSetNoneException &ex) {
-        code = CodeResponse::Code::NOT_ALLOWED;
-    } catch (const InvalidBucketIdException &ex) {
-        code = CodeResponse::Code::NOT_ALLOWED;
-    } catch (const UnknownPolicyTypeException &ex) {
-        code = CodeResponse::Code::NO_POLICY_TYPE;
+    if (m_dbCorrupted) {
+        code = CodeResponse::Code::DB_CORRUPTED;
+    } else {
+        try {
+            checkSinglePolicyType(request->result().policyType(), true, true);
+            m_storage->addOrUpdateBucket(request->bucketId(), request->result());
+            onPoliciesChanged();
+        } catch (const DatabaseException &ex) {
+            code = CodeResponse::Code::FAILED;
+        } catch (const DefaultBucketSetNoneException &ex) {
+            code = CodeResponse::Code::NOT_ALLOWED;
+        } catch (const InvalidBucketIdException &ex) {
+            code = CodeResponse::Code::NOT_ALLOWED;
+        } catch (const UnknownPolicyTypeException &ex) {
+            code = CodeResponse::Code::NO_POLICY_TYPE;
+        }
     }
 
     context->returnResponse(context, std::make_shared<CodeResponse>(code,
@@ -328,48 +342,64 @@ void Logic::execute(RequestContextPtr context, InsertOrUpdateBucketRequestPtr re
 
 void Logic::execute(RequestContextPtr context, ListRequestPtr request) {
     bool bucketValid = true;
-
     std::vector<Policy> policies;
-    try {
-        policies = m_storage->listPolicies(request->bucket(), request->filter());
-    } catch (const BucketNotExistsException &ex) {
+
+    if (m_dbCorrupted) {
         bucketValid = false;
+    } else {
+        try {
+            policies = m_storage->listPolicies(request->bucket(), request->filter());
+        } catch (const BucketNotExistsException &ex) {
+            bucketValid = false;
+        }
     }
 
     context->returnResponse(context, std::make_shared<ListResponse>(policies, bucketValid,
-                            request->sequenceNumber()));
+                            m_dbCorrupted, request->sequenceNumber()));
 }
 
 void Logic::execute(RequestContextPtr context, RemoveBucketRequestPtr request) {
     auto code = CodeResponse::Code::OK;
-    try {
-        m_storage->deleteBucket(request->bucketId());
-        onPoliciesChanged();
-    } catch (const DatabaseException &ex) {
-        code = CodeResponse::Code::FAILED;
-    } catch (const BucketNotExistsException &ex) {
-        code = CodeResponse::Code::NO_BUCKET;
-    } catch (const DefaultBucketDeletionException &ex) {
-        code = CodeResponse::Code::NOT_ALLOWED;
+
+    if (m_dbCorrupted) {
+        code = CodeResponse::Code::DB_CORRUPTED;
+    } else {
+        try {
+            m_storage->deleteBucket(request->bucketId());
+            onPoliciesChanged();
+        } catch (const DatabaseException &ex) {
+            code = CodeResponse::Code::FAILED;
+        } catch (const BucketNotExistsException &ex) {
+            code = CodeResponse::Code::NO_BUCKET;
+        } catch (const DefaultBucketDeletionException &ex) {
+            code = CodeResponse::Code::NOT_ALLOWED;
+        }
     }
+
     context->returnResponse(context, std::make_shared<CodeResponse>(code,
                             request->sequenceNumber()));
 }
 
 void Logic::execute(RequestContextPtr context, SetPoliciesRequestPtr request) {
     auto code = CodeResponse::Code::OK;
-    try {
-        checkPoliciesTypes(request->policiesToBeInsertedOrUpdated(), true, false);
-        m_storage->insertPolicies(request->policiesToBeInsertedOrUpdated());
-        m_storage->deletePolicies(request->policiesToBeRemoved());
-        onPoliciesChanged();
-    } catch (const DatabaseException &ex) {
-        code = CodeResponse::Code::FAILED;
-    } catch (const BucketNotExistsException &ex) {
-        code = CodeResponse::Code::NO_BUCKET;
-    } catch (const UnknownPolicyTypeException &ex) {
-        code = CodeResponse::Code::NO_POLICY_TYPE;
+
+    if (m_dbCorrupted) {
+        code = CodeResponse::Code::DB_CORRUPTED;
+    } else {
+        try {
+            checkPoliciesTypes(request->policiesToBeInsertedOrUpdated(), true, false);
+            m_storage->insertPolicies(request->policiesToBeInsertedOrUpdated());
+            m_storage->deletePolicies(request->policiesToBeRemoved());
+            onPoliciesChanged();
+        } catch (const DatabaseException &ex) {
+            code = CodeResponse::Code::FAILED;
+        } catch (const BucketNotExistsException &ex) {
+            code = CodeResponse::Code::NO_BUCKET;
+        } catch (const UnknownPolicyTypeException &ex) {
+            code = CodeResponse::Code::NO_POLICY_TYPE;
+        }
     }
+
     context->returnResponse(context, std::make_shared<CodeResponse>(code,
                             request->sequenceNumber()));
 }

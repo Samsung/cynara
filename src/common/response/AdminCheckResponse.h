@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 /**
  * @file        src/common/response/AdminCheckResponse.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @author      Pawel Wieczorek <p.wieczorek2@samsung.com>
  * @version     1.0
  * @brief       This file defines response class for admin check request
  */
@@ -33,9 +34,10 @@ namespace Cynara {
 
 class AdminCheckResponse : public Response {
 public:
-    AdminCheckResponse(const PolicyResult &result, bool bucketValid,
+    AdminCheckResponse(const PolicyResult &result, bool bucketValid, bool dbCorrupted,
                        ProtocolFrameSequenceNumber sequenceNumber) :
-        Response(sequenceNumber), m_result(result), m_bucketValid(bucketValid) {
+        Response(sequenceNumber), m_result(result), m_bucketValid(bucketValid),
+        m_dbCorrupted(dbCorrupted) {
     }
 
     virtual ~AdminCheckResponse() {}
@@ -51,9 +53,14 @@ public:
         return m_bucketValid;
     }
 
+    bool isDbCorrupted(void) const {
+        return m_dbCorrupted;
+    }
+
 private:
     const PolicyResult m_result;
     bool m_bucketValid;
+    bool m_dbCorrupted;
 };
 
 } // namespace Cynara

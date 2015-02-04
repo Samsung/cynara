@@ -17,6 +17,7 @@
  * @file        src/service/logic/Logic.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @author      Zofia Abramowska <z.abramowska@samsung.com>
+ * @author      Pawel Wieczorek <p.wieczorek2@samsung.com>
  * @version     1.0
  * @brief       This file defines main class of logic layer in cynara service
  */
@@ -95,6 +96,7 @@ private:
     StoragePtr m_storage;
     SocketManagerPtr m_socketManager;
     AuditLog m_auditLog;
+    bool m_dbCorrupted;
 
     bool check(const RequestContextPtr &context, const PolicyKey &key,
                ProtocolFrameSequenceNumber checkId, PolicyResult &result);

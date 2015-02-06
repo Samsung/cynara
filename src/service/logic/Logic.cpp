@@ -169,6 +169,7 @@ void Logic::execute(RequestContextPtr context, CancelRequestPtr request) {
 void Logic::execute(RequestContextPtr context, CheckRequestPtr request) {
     PolicyResult result(PredefinedPolicyType::DENY);
     if (check(context, request->key(), request->sequenceNumber(), result)) {
+        m_auditLog.log(request->key(), result);
         context->returnResponse(context, std::make_shared<CheckResponse>(result,
                                 request->sequenceNumber()));
     }
@@ -272,6 +273,7 @@ bool Logic::update(const PolicyKey &key, ProtocolFrameSequenceNumber checkId,
     }
 
     if (answerReady && context->responseQueue()) {
+        m_auditLog.log(key, result);
         context->returnResponse(context, std::make_shared<CheckResponse>(result, checkId));
         return true;
     }
@@ -422,6 +424,7 @@ void Logic::execute(RequestContextPtr context, SimpleCheckRequestPtr request) {
         }
     }
     }
+    m_auditLog.log(request->key(), result);
     context->returnResponse(context, std::make_shared<SimpleCheckResponse>(retValue, result,
                                                                   request->sequenceNumber()));
 }
@@ -476,6 +479,7 @@ void Logic::handleAgentTalkerDisconnection(const AgentTalkerPtr &agentTalkerPtr)
 
     if (!checkContextPtr->cancelled() && checkContextPtr->m_requestContext->responseQueue()) {
         PolicyResult result(PredefinedPolicyType::DENY);
+        m_auditLog.log(checkContextPtr->m_key, result);
         checkContextPtr->m_requestContext->returnResponse(checkContextPtr->m_requestContext,
                 std::make_shared<CheckResponse>(result, checkContextPtr->m_checkId));
     }

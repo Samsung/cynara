@@ -20,6 +20,7 @@ Group=cynara
 NoNewPrivileges=true
 
 #Environment="CYNARA_LOG_LEVEL=LOG_DEBUG"
+#Environment="CYNARA_AUDIT_LEVEL=ALL"
 
 [Install]
 WantedBy=multi-user.target

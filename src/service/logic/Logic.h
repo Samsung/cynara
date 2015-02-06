@@ -27,6 +27,7 @@
 #include <map>
 #include <vector>
 
+#include <log/AuditLog.h>
 #include <types/Policy.h>
 #include <types/PolicyBucketId.h>
 #include <types/PolicyKey.h>
@@ -93,6 +94,7 @@ private:
     PluginManagerPtr m_pluginManager;
     StoragePtr m_storage;
     SocketManagerPtr m_socketManager;
+    AuditLog m_auditLog;
 
     bool check(const RequestContextPtr &context, const PolicyKey &key,
                ProtocolFrameSequenceNumber checkId, PolicyResult &result);

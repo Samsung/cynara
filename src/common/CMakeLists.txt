@@ -30,6 +30,7 @@ SET(COMMON_SOURCES
     ${COMMON_PATH}/containers/BinaryQueue.cpp
     ${COMMON_PATH}/error/api.cpp
     ${COMMON_PATH}/lock/FileLock.cpp
+    ${COMMON_PATH}/log/AuditLog.cpp
     ${COMMON_PATH}/log/log.cpp
     ${COMMON_PATH}/plugin/PluginManager.cpp
     ${COMMON_PATH}/protocol/ProtocolAdmin.cpp

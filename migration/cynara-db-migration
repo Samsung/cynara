@@ -27,6 +27,11 @@ INDEX_NAME='buckets'
 DEFAULT_BUCKET_NAME='_'
 DENY_POLICY=';0x0;'
 
+# Return values for comparison
+LESS=-1
+EQUAL=0
+GREATER=1
+
 ##### Variables, with default values (optional)
 
 CYNARA_USER='cynara'
@@ -38,6 +43,47 @@ OLD_VERSION=
 NEW_VERSION=
 
 ##### Functions
+
+version_compare() {
+    local MAJOR1=
+    local MAJOR2=
+    local MINOR1=
+    local MINOR2=
+    local PATCH1=
+    local PATCH2=
+
+    # Parse
+    i=1
+    while [ 2 -ge $i ] ; do
+        eval "ARG=\$$i"
+        eval "MAJOR$i=${ARG%%.*}"
+        eval "TMP=${ARG#*.}"
+        eval "MINOR$i=${TMP%%.*}"
+        eval "PATCH$i=${ARG##*.}"
+        i=$(($i+1))
+    done
+
+    # Compare
+    if [ $MAJOR1 -lt $MAJOR2 ] ; then
+        echo "$LESS"
+    elif [ $MAJOR1 -eq $MAJOR2 ] ; then
+        if [ $MINOR1 -lt $MINOR2 ] ; then
+            echo "$LESS"
+        elif [ $MINOR1 -eq $MINOR2 ] ; then
+            if [ $PATCH1 -lt $PATCH2 ] ; then
+                echo "$LESS"
+            elif [ $PATCH1 -eq $PATCH2 ] ; then
+                echo "$EQUAL"
+            else
+                echo "$GREATER"
+            fi
+        else
+            echo "$GREATER"
+        fi
+    else
+        echo "$GREATER"
+    fi
+}
 
 parse_opts() {
     while getopts ":f:t:p:u:g:l:" opt; do

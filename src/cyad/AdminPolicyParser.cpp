@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -30,8 +30,30 @@ namespace Cynara {
 
 namespace AdminPolicyParser {
 
-CynaraAdminPolicies parse(const std::shared_ptr<std::istream> &input) {
+CynaraAdminPolicies parse(const std::shared_ptr<std::istream> &input,
+                          std::function<PolicyType(const std::string &)> translatePolicy) {
     CynaraAdminPolicies policies;
+
+    auto nextToken = [] (const std::string &line, std::size_t &beginToken) -> std::string  {
+        auto endToken = line.find(StorageSerializer::fieldSeparator(), beginToken);
+        if (endToken != std::string::npos) {
+            auto token = line.substr(beginToken, endToken - beginToken);
+            beginToken = endToken + 1;
+            return token;
+        }
+
+        throw BucketRecordCorruptedException(line);
+    };
+
+    auto lastToken = [] (const std::string &line, std::size_t &beginToken) -> std::string  {
+        if (beginToken < line.size()) {
+            auto ret = line.substr(beginToken);
+            beginToken = line.size();
+            return ret;
+        }
+
+        return std::string();
+    };
 
     for (std::size_t lineNum = 1; !input->eof(); ++lineNum) {
         std::string line;
@@ -42,10 +64,10 @@ CynaraAdminPolicies parse(const std::shared_ptr<std::istream> &input) {
 
         try {
             std::size_t beginToken = 0;
-            auto bucketId = StorageDeserializer::parseBucketId(line, beginToken);
+            auto bucketId = nextToken(line, beginToken);
             auto policyKey = BucketDeserializer::parseKey(line, beginToken);
-            auto policyType = StorageDeserializer::parsePolicyType(line, beginToken);
-            auto metadata = StorageDeserializer::parseMetadata(line, beginToken);
+            auto policyType = translatePolicy(nextToken(line, beginToken));
+            auto metadata = lastToken(line, beginToken);
 
             policies.add(bucketId, PolicyResult(policyType, metadata), policyKey);
         } catch (const BucketRecordCorruptedException &ex) {

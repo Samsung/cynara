@@ -56,6 +56,7 @@ SET(CYNARA_SOURCES_FOR_TESTS
     ${CYNARA_SRC}/cyad/CommandlineParser/HumanReadableParser.cpp
     ${CYNARA_SRC}/cyad/CommandsDispatcher.cpp
     ${CYNARA_SRC}/cyad/CynaraAdminPolicies.cpp
+    ${CYNARA_SRC}/cyad/PolicyTypeTranslator.cpp
     ${CYNARA_SRC}/helpers/creds-commons/CredsCommonsInner.cpp
     ${CYNARA_SRC}/helpers/creds-commons/creds-commons.cpp
     ${CYNARA_SRC}/storage/BucketDeserializer.cpp

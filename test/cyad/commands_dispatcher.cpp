@@ -34,13 +34,12 @@
 
 #include <common/types/PolicyKey.h>
 #include <common/types/PolicyResult.h>
+#include <common/types/PolicyType.h>
 #include <cyad/CynaraAdminPolicies.h>
 #include <cyad/CommandlineParser/CyadCommand.h>
 #include <cyad/CommandsDispatcher.h>
 
 #include "CyadCommandlineDispatcherTest.h"
-#include "FakeAdminApiWrapper.h"
-#include "FakeErrorApiWrapper.h"
 #include "helpers.h"
 
 /**
@@ -53,13 +52,7 @@ TEST_F(CyadCommandlineDispatcherTest, noApi) {
     using ::testing::_;
     using ::testing::Return;
 
-    FakeAdminApiWrapper adminApi;
-    FakeErrorApiWrapper errorApi;
-
-    EXPECT_CALL(adminApi, cynara_admin_initialize(_)).WillOnce(Return(CYNARA_API_SUCCESS));
-    EXPECT_CALL(adminApi, cynara_admin_finish(_)).WillOnce(Return(CYNARA_API_SUCCESS));
-
-    Cynara::CommandsDispatcher dispatcher(m_io, adminApi, errorApi);
+    Cynara::CommandsDispatcher dispatcher(m_io, m_adminApi, m_errorApi);
 
     Cynara::CyadCommand result;
     Cynara::HelpCyadCommand helpResult;
@@ -76,16 +69,10 @@ TEST_F(CyadCommandlineDispatcherTest, deleteBucket) {
     using ::testing::StrEq;
     using ::testing::IsNull;
 
-    FakeAdminApiWrapper adminApi;
-    FakeErrorApiWrapper errorApi;
-
-    EXPECT_CALL(adminApi, cynara_admin_initialize(_)).WillOnce(Return(CYNARA_API_SUCCESS));
-    EXPECT_CALL(adminApi, cynara_admin_finish(_)).WillOnce(Return(CYNARA_API_SUCCESS));
-
-    Cynara::CommandsDispatcher dispatcher(m_io, adminApi, errorApi);
+    Cynara::CommandsDispatcher dispatcher(m_io, m_adminApi, m_errorApi);
     Cynara::DeleteBucketCyadCommand result("test-bucket");
 
-    EXPECT_CALL(adminApi,
+    EXPECT_CALL(m_adminApi,
             cynara_admin_set_bucket(_, StrEq("test-bucket"), CYNARA_ADMIN_DELETE, IsNull()))
         .WillOnce(Return(CYNARA_API_SUCCESS));
 
@@ -97,43 +84,44 @@ TEST_F(CyadCommandlineDispatcherTest, setBucket) {
     using ::testing::Return;
     using ::testing::StrEq;
     using ::testing::IsNull;
+    using ::testing::NotNull;
     using Cynara::PolicyBucketId;
     using Cynara::PolicyType;
     using Cynara::PolicyResult;
 
-    FakeAdminApiWrapper adminApi;
-    FakeErrorApiWrapper errorApi;
+    addDescriptions({ { 42, "hitchhiker" } });
 
-    EXPECT_CALL(adminApi, cynara_admin_initialize(_)).WillOnce(Return(CYNARA_API_SUCCESS));
-    EXPECT_CALL(adminApi, cynara_admin_finish(_)).WillOnce(Return(CYNARA_API_SUCCESS));
+    Cynara::CommandsDispatcher dispatcher(m_io, m_adminApi, m_errorApi);
 
-    Cynara::CommandsDispatcher dispatcher(m_io, adminApi, errorApi);
-
-    typedef std::tuple<PolicyBucketId, PolicyResult> BucketData;
+    typedef std::string RawPolicyType;
+    typedef std::string Metadata;
+    typedef std::tuple<PolicyBucketId, PolicyType, RawPolicyType, Metadata> BucketData;
     typedef std::vector<BucketData> Buckets;
-    const Buckets buckets = { BucketData("test-bucket-1", { CYNARA_ADMIN_ALLOW, "" }),
-                              BucketData("test-bucket-2", { CYNARA_ADMIN_DENY, "" }),
-                              BucketData("test-bucket-3", { CYNARA_ADMIN_BUCKET, "other-bucket" }),
-                              BucketData("test-bucket-2", { CYNARA_ADMIN_NONE, "" }),
-                              BucketData("test-bucket-4", { 42, "douglas-noel-adams" }) };
+    const Buckets buckets = {
+        BucketData("test-bucket-1", CYNARA_ADMIN_ALLOW, "ALLOW", ""),
+        BucketData("test-bucket-2", CYNARA_ADMIN_DENY, "DENY", ""),
+        BucketData("test-bucket-3", CYNARA_ADMIN_BUCKET, "BUCKET", "other-bucket"),
+        BucketData("test-bucket-2", CYNARA_ADMIN_NONE, "NONE", ""),
+        BucketData("test-bucket-4", 42, "hitchhiker", "douglas-noel-adams") };
 
     for (const auto &bucket : buckets) {
         const auto &bucketId = std::get<0>(bucket);
-        const auto &policyResult = std::get<1>(bucket);
+        const auto &policyType = std::get<1>(bucket);
+        const auto &rawPolicyType = std::get<2>(bucket);
+        const auto &metadata = std::get<3>(bucket);
 
         SCOPED_TRACE(bucketId);
 
-        Cynara::SetBucketCyadCommand result(bucketId, policyResult);
+        Cynara::SetBucketCyadCommand result(bucketId, { rawPolicyType, metadata });
 
-        if (policyResult.metadata().empty() == false) {
-            EXPECT_CALL(adminApi,
-                    cynara_admin_set_bucket(_, StrEq(bucketId.c_str()), policyResult.policyType(),
-                                            StrEq(policyResult.metadata().c_str())))
+        if (metadata.empty() == false) {
+            EXPECT_CALL(m_adminApi,
+                    cynara_admin_set_bucket(_, StrEq(bucketId.c_str()), policyType,
+                                            StrEq(metadata.c_str())))
                 .WillOnce(Return(CYNARA_API_SUCCESS));
         } else {
-            EXPECT_CALL(adminApi,
-                    cynara_admin_set_bucket(_, StrEq(bucketId.c_str()), policyResult.policyType(),
-                                           IsNull()))
+            EXPECT_CALL(m_adminApi,
+                    cynara_admin_set_bucket(_, StrEq(bucketId.c_str()), policyType, IsNull()))
                 .WillOnce(Return(CYNARA_API_SUCCESS));
         }
 
@@ -145,14 +133,8 @@ TEST_F(CyadCommandlineDispatcherTest, setPolicy) {
     using ::testing::_;
     using ::testing::Return;
 
-    FakeAdminApiWrapper adminApi;
-    FakeErrorApiWrapper errorApi;
-
-    EXPECT_CALL(adminApi, cynara_admin_initialize(_)).WillOnce(Return(CYNARA_API_SUCCESS));
-    EXPECT_CALL(adminApi, cynara_admin_finish(_)).WillOnce(Return(CYNARA_API_SUCCESS));
-
-    Cynara::CommandsDispatcher dispatcher(m_io, adminApi, errorApi);
-    Cynara::SetPolicyCyadCommand result("test-bucket", { CYNARA_ADMIN_ALLOW, "" },
+    Cynara::CommandsDispatcher dispatcher(m_io, m_adminApi, m_errorApi);
+    Cynara::SetPolicyCyadCommand result("test-bucket", { "allow", "" },
                                         { "client", "user", "privilege" });
 
     Cynara::CynaraAdminPolicies expectedPolicies;
@@ -160,7 +142,7 @@ TEST_F(CyadCommandlineDispatcherTest, setPolicy) {
                          { "client", "user", "privilege"} );
     expectedPolicies.seal();
 
-    EXPECT_CALL(adminApi, cynara_admin_set_policies(_, AdmPolicyListEq(expectedPolicies.data())))
+    EXPECT_CALL(m_adminApi, cynara_admin_set_policies(_, AdmPolicyListEq(expectedPolicies.data())))
         .WillOnce(Return(CYNARA_API_SUCCESS));
 
     dispatcher.execute(result);
@@ -170,14 +152,8 @@ TEST_F(CyadCommandlineDispatcherTest, setPolicyWithMetadata) {
     using ::testing::_;
     using ::testing::Return;
 
-    FakeAdminApiWrapper adminApi;
-    FakeErrorApiWrapper errorApi;
-
-    EXPECT_CALL(adminApi, cynara_admin_initialize(_)).WillOnce(Return(CYNARA_API_SUCCESS));
-    EXPECT_CALL(adminApi, cynara_admin_finish(_)).WillOnce(Return(CYNARA_API_SUCCESS));
-
-    Cynara::CommandsDispatcher dispatcher(m_io, adminApi, errorApi);
-    Cynara::SetPolicyCyadCommand result("test-bucket", { CYNARA_ADMIN_ALLOW, "metadata" },
+    Cynara::CommandsDispatcher dispatcher(m_io, m_adminApi, m_errorApi);
+    Cynara::SetPolicyCyadCommand result("test-bucket", { "allow", "metadata" },
                                         Cynara::PolicyKey("client", "user", "privilege"));
 
     Cynara::CynaraAdminPolicies expectedPolicies;
@@ -185,7 +161,7 @@ TEST_F(CyadCommandlineDispatcherTest, setPolicyWithMetadata) {
                          { "client", "user", "privilege"} );
     expectedPolicies.seal();
 
-    EXPECT_CALL(adminApi, cynara_admin_set_policies(_, AdmPolicyListEq(expectedPolicies.data())))
+    EXPECT_CALL(m_adminApi, cynara_admin_set_policies(_, AdmPolicyListEq(expectedPolicies.data())))
         .WillOnce(Return(CYNARA_API_SUCCESS));
 
     dispatcher.execute(result);
@@ -195,25 +171,21 @@ TEST_F(CyadCommandlineDispatcherTest, setPoliciesBulk) {
     using ::testing::_;
     using ::testing::Return;
 
-    FakeAdminApiWrapper adminApi;
-    FakeErrorApiWrapper errorApi;
-
-    EXPECT_CALL(adminApi, cynara_admin_initialize(_)).WillOnce(Return(CYNARA_API_SUCCESS));
-    EXPECT_CALL(adminApi, cynara_admin_finish(_)).WillOnce(Return(CYNARA_API_SUCCESS));
-
-    Cynara::CommandsDispatcher dispatcher(m_io, adminApi, errorApi);
+    Cynara::CommandsDispatcher dispatcher(m_io, m_adminApi, m_errorApi);
     Cynara::SetPolicyBulkCyadCommand result("-");
 
     // fake stdin ;)
     m_io.file() << "bucket;cli;usr;privilege;0;metadata" << std::endl;
-    m_io.file() << "bucket-2;cli;usr;privilege;0xFFFF";
+    m_io.file() << "bucket-2;cli;usr;privilege;0xFFFF;" << std::endl;
+    m_io.file() << "bucket-3;cli;usr;priv;bucket;bucket-2";
 
     Cynara::CynaraAdminPolicies expectedPolicies;
     expectedPolicies.add("bucket", { CYNARA_ADMIN_DENY, "metadata" }, {"cli", "usr", "privilege"} );
     expectedPolicies.add("bucket-2", { CYNARA_ADMIN_ALLOW, "" }, {"cli", "usr", "privilege"} );
+    expectedPolicies.add("bucket-3", { CYNARA_ADMIN_BUCKET, "bucket-2" }, {"cli", "usr", "priv"} );
     expectedPolicies.seal();
 
-    EXPECT_CALL(adminApi, cynara_admin_set_policies(_, AdmPolicyListEq(expectedPolicies.data())))
+    EXPECT_CALL(m_adminApi, cynara_admin_set_policies(_, AdmPolicyListEq(expectedPolicies.data())))
         .WillOnce(Return(CYNARA_API_SUCCESS));
 
     dispatcher.execute(result);
@@ -223,13 +195,7 @@ TEST_F(CyadCommandlineDispatcherTest, setPoliciesBulkInputError) {
     using ::testing::_;
     using ::testing::Return;
 
-    FakeAdminApiWrapper adminApi;
-    FakeErrorApiWrapper errorApi;
-
-    EXPECT_CALL(adminApi, cynara_admin_initialize(_)).WillOnce(Return(CYNARA_API_SUCCESS));
-    EXPECT_CALL(adminApi, cynara_admin_finish(_)).WillOnce(Return(CYNARA_API_SUCCESS));
-
-    Cynara::CommandsDispatcher dispatcher(m_io, adminApi, errorApi);
+    Cynara::CommandsDispatcher dispatcher(m_io, m_adminApi, m_errorApi);
     Cynara::SetPolicyBulkCyadCommand result("-");
 
     // fake stdin ;)
@@ -245,17 +211,11 @@ TEST_F(CyadCommandlineDispatcherTest, erase) {
     using ::testing::Return;
     using ::testing::StrEq;
 
-    FakeAdminApiWrapper adminApi;
-    FakeErrorApiWrapper errorApi;
-
-    EXPECT_CALL(adminApi, cynara_admin_initialize(_)).WillOnce(Return(CYNARA_API_SUCCESS));
-    EXPECT_CALL(adminApi, cynara_admin_finish(_)).WillOnce(Return(CYNARA_API_SUCCESS));
-
-    Cynara::CommandsDispatcher dispatcher(m_io, adminApi, errorApi);
+    Cynara::CommandsDispatcher dispatcher(m_io, m_adminApi, m_errorApi);
 
     Cynara::EraseCyadCommand command("", true, { "client", "user", "privilege" });
 
-    EXPECT_CALL(adminApi, cynara_admin_erase(_, StrEq(""), true, StrEq("client"), StrEq("user"),
+    EXPECT_CALL(m_adminApi, cynara_admin_erase(_, StrEq(""), true, StrEq("client"), StrEq("user"),
                                              StrEq("privilege")))
         .WillOnce(Return(CYNARA_API_SUCCESS));
 
@@ -270,18 +230,12 @@ TEST_F(CyadCommandlineDispatcherTest, check) {
     using ::testing::SetArgPointee;
     using ::testing::StrEq;
 
-    FakeAdminApiWrapper adminApi;
-    FakeErrorApiWrapper errorApi;
-
-    EXPECT_CALL(adminApi, cynara_admin_initialize(_)).WillOnce(Return(CYNARA_API_SUCCESS));
-    EXPECT_CALL(adminApi, cynara_admin_finish(_)).WillOnce(Return(CYNARA_API_SUCCESS));
-
-    Cynara::CommandsDispatcher dispatcher(m_io, adminApi, errorApi);
+    Cynara::CommandsDispatcher dispatcher(m_io, m_adminApi, m_errorApi);
 
     Cynara::CheckCyadCommand command("", true, { "client", "user", "privilege" });
     int result = 42;
 
-    EXPECT_CALL(adminApi, cynara_admin_check(_, StrEq(""), true, StrEq("client"), StrEq("user"),
+    EXPECT_CALL(m_adminApi, cynara_admin_check(_, StrEq(""), true, StrEq("client"), StrEq("user"),
                                              StrEq("privilege"), NotNull(), NotNull()))
         .WillOnce(DoAll(SetArgPointee<6>(result), SetArgPointee<7>(nullptr),
                         Return(CYNARA_API_SUCCESS)));
@@ -299,19 +253,13 @@ TEST_F(CyadCommandlineDispatcherTest, checkWithMetadata) {
     using ::testing::SetArgPointee;
     using ::testing::StrEq;
 
-    FakeAdminApiWrapper adminApi;
-    FakeErrorApiWrapper errorApi;
-
-    EXPECT_CALL(adminApi, cynara_admin_initialize(_)).WillOnce(Return(CYNARA_API_SUCCESS));
-    EXPECT_CALL(adminApi, cynara_admin_finish(_)).WillOnce(Return(CYNARA_API_SUCCESS));
-
-    Cynara::CommandsDispatcher dispatcher(m_io, adminApi, errorApi);
+    Cynara::CommandsDispatcher dispatcher(m_io, m_adminApi, m_errorApi);
 
     Cynara::CheckCyadCommand command("", true, { "client", "user", "privilege" });
     int result = 42;
     char *resultExtra = strdup("adams");
 
-    EXPECT_CALL(adminApi, cynara_admin_check(_, StrEq(""), true, StrEq("client"), StrEq("user"),
+    EXPECT_CALL(m_adminApi, cynara_admin_check(_, StrEq(""), true, StrEq("client"), StrEq("user"),
                                              StrEq("privilege"), NotNull(), NotNull()))
         .WillOnce(DoAll(SetArgPointee<6>(result), SetArgPointee<7>(resultExtra),
                         Return(CYNARA_API_SUCCESS)));
@@ -330,13 +278,7 @@ TEST_F(CyadCommandlineDispatcherTest, checkWithError) {
     using ::testing::StrEq;
     using ::testing::Unused;
 
-    FakeAdminApiWrapper adminApi;
-    FakeErrorApiWrapper errorApi;
-
-    EXPECT_CALL(adminApi, cynara_admin_initialize(_)).WillOnce(Return(CYNARA_API_SUCCESS));
-    EXPECT_CALL(adminApi, cynara_admin_finish(_)).WillOnce(Return(CYNARA_API_SUCCESS));
-
-    Cynara::CommandsDispatcher dispatcher(m_io, adminApi, errorApi);
+    Cynara::CommandsDispatcher dispatcher(m_io, m_adminApi, m_errorApi);
 
     Cynara::CheckCyadCommand command("", true, { "client", "user", "privilege" });
 
@@ -344,12 +286,12 @@ TEST_F(CyadCommandlineDispatcherTest, checkWithError) {
         strncpy(buf, "Test error message", buflen);
     };
 
-    EXPECT_CALL(adminApi, cynara_admin_check(_, StrEq(""), true, StrEq("client"), StrEq("user"),
+    EXPECT_CALL(m_adminApi, cynara_admin_check(_, StrEq(""), true, StrEq("client"), StrEq("user"),
                                              StrEq("privilege"), NotNull(), NotNull()))
         .WillOnce(Return(CYNARA_API_UNKNOWN_ERROR));
 
     // Should we expect some minimal buflen here?
-    EXPECT_CALL(errorApi, cynara_strerror(CYNARA_API_UNKNOWN_ERROR, NotNull(), _))
+    EXPECT_CALL(m_errorApi, cynara_strerror(CYNARA_API_UNKNOWN_ERROR, NotNull(), _))
         .WillOnce(DoAll(Invoke(setErrorMessage), Return(CYNARA_API_SUCCESS)));
 
     dispatcher.execute(command);
@@ -365,13 +307,7 @@ TEST_F(CyadCommandlineDispatcherTest, listPoliciesNone) {
     using ::testing::SetArgPointee;
     using ::testing::StrEq;
 
-    FakeAdminApiWrapper adminApi;
-    FakeErrorApiWrapper errorApi;
-
-    EXPECT_CALL(adminApi, cynara_admin_initialize(_)).WillOnce(Return(CYNARA_API_SUCCESS));
-    EXPECT_CALL(adminApi, cynara_admin_finish(_)).WillOnce(Return(CYNARA_API_SUCCESS));
-
-    Cynara::CommandsDispatcher dispatcher(m_io, adminApi, errorApi);
+    Cynara::CommandsDispatcher dispatcher(m_io, m_adminApi, m_errorApi);
 
     Cynara::ListPoliciesCyadCommand command("", { "client", "user", "privilege" });
 
@@ -379,7 +315,7 @@ TEST_F(CyadCommandlineDispatcherTest, listPoliciesNone) {
     resultPolicies.seal();
     auto policies = resultPolicies.duplicate();
 
-    EXPECT_CALL(adminApi, cynara_admin_list_policies(_, StrEq(""), StrEq("client"), StrEq("user"),
+    EXPECT_CALL(m_adminApi, cynara_admin_list_policies(_, StrEq(""), StrEq("client"), StrEq("user"),
                                                      StrEq("privilege"), NotNull()))
         .WillOnce(DoAll(SetArgPointee<5>(policies), Return(CYNARA_API_SUCCESS)));
 
@@ -396,13 +332,7 @@ TEST_F(CyadCommandlineDispatcherTest, listPoliciesTwo) {
     using ::testing::SetArgPointee;
     using ::testing::StrEq;
 
-    FakeAdminApiWrapper adminApi;
-    FakeErrorApiWrapper errorApi;
-
-    EXPECT_CALL(adminApi, cynara_admin_initialize(_)).WillOnce(Return(CYNARA_API_SUCCESS));
-    EXPECT_CALL(adminApi, cynara_admin_finish(_)).WillOnce(Return(CYNARA_API_SUCCESS));
-
-    Cynara::CommandsDispatcher dispatcher(m_io, adminApi, errorApi);
+    Cynara::CommandsDispatcher dispatcher(m_io, m_adminApi, m_errorApi);
 
     Cynara::ListPoliciesCyadCommand command("", { "client", "user", "privilege" });
 
@@ -412,7 +342,7 @@ TEST_F(CyadCommandlineDispatcherTest, listPoliciesTwo) {
     resultPolicies.seal();
     auto policies = resultPolicies.duplicate();
 
-    EXPECT_CALL(adminApi, cynara_admin_list_policies(_, StrEq(""), StrEq("client"), StrEq("user"),
+    EXPECT_CALL(m_adminApi, cynara_admin_list_policies(_, StrEq(""), StrEq("client"), StrEq("user"),
                                                      StrEq("privilege"), NotNull()))
         .WillOnce(DoAll(SetArgPointee<5>(policies), Return(CYNARA_API_SUCCESS)));
 
@@ -422,64 +352,20 @@ TEST_F(CyadCommandlineDispatcherTest, listPoliciesTwo) {
               m_io.coutRaw().str());
 }
 
-TEST_F(CyadCommandlineDispatcherTest, listPoliciesDescNone) {
+TEST_F(CyadCommandlineDispatcherTest, listPoliciesDesc) {
     using ::testing::_;
     using ::testing::DoAll;
     using ::testing::NotNull;
     using ::testing::Return;
     using ::testing::SetArgPointee;
+    using ::testing::HasSubstr;
 
-    FakeAdminApiWrapper adminApi;
-    FakeErrorApiWrapper errorApi;
+    addDescriptions({ { 42, "adams" } });
 
-    EXPECT_CALL(adminApi, cynara_admin_initialize(_)).WillOnce(Return(CYNARA_API_SUCCESS));
-    EXPECT_CALL(adminApi, cynara_admin_finish(_)).WillOnce(Return(CYNARA_API_SUCCESS));
-
-    Cynara::CommandsDispatcher dispatcher(m_io, adminApi, errorApi);
+    Cynara::CommandsDispatcher dispatcher(m_io, m_adminApi, m_errorApi);
 
     Cynara::ListPoliciesDescCyadCommand command;
-
-    auto descs = static_cast<cynara_admin_policy_descr **>(
-                        calloc(1, sizeof(cynara_admin_policy_descr *)));
-    descs[0] = nullptr;
-
-    EXPECT_CALL(adminApi, cynara_admin_list_policies_descriptions(_, NotNull()))
-        .WillOnce(DoAll(SetArgPointee<1>(descs), Return(CYNARA_API_SUCCESS)));
-
     dispatcher.execute(command);
 
-    ASSERT_EQ("", m_io.coutRaw().str());
-}
-
-TEST_F(CyadCommandlineDispatcherTest, listPoliciesDescOne) {
-    using ::testing::_;
-    using ::testing::DoAll;
-    using ::testing::NotNull;
-    using ::testing::Return;
-    using ::testing::SetArgPointee;
-
-    FakeAdminApiWrapper adminApi;
-    FakeErrorApiWrapper errorApi;
-
-    EXPECT_CALL(adminApi, cynara_admin_initialize(_)).WillOnce(Return(CYNARA_API_SUCCESS));
-    EXPECT_CALL(adminApi, cynara_admin_finish(_)).WillOnce(Return(CYNARA_API_SUCCESS));
-
-    Cynara::CommandsDispatcher dispatcher(m_io, adminApi, errorApi);
-
-    Cynara::ListPoliciesDescCyadCommand command;
-
-    auto descs = static_cast<cynara_admin_policy_descr **>(
-                        calloc(2, sizeof(cynara_admin_policy_descr *)));
-
-    descs[0] = static_cast<cynara_admin_policy_descr *>(malloc(sizeof(cynara_admin_policy_descr)));
-    descs[0]->result = 42;
-    descs[0]->name = strdup("adams");
-    descs[1] = nullptr;
-
-    EXPECT_CALL(adminApi, cynara_admin_list_policies_descriptions(_, NotNull()))
-        .WillOnce(DoAll(SetArgPointee<1>(descs), Return(CYNARA_API_SUCCESS)));
-
-    dispatcher.execute(command);
-
-    ASSERT_EQ("42;adams\n", m_io.coutRaw().str());
+    EXPECT_THAT(m_io.coutRaw().str(), HasSubstr("42;adams\n"));
 }

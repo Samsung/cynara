@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -22,22 +22,29 @@
 
 #include <memory>
 #include <sstream>
+#include <string>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include <common/exceptions/BucketRecordCorruptedException.h>
 #include <common/types/PolicyKey.h>
+#include <common/types/PolicyType.h>
 #include <cyad/AdminPolicyParser.h>
 
 #include "helpers.h"
+
+static Cynara::PolicyType translatePolicy(const std::string &rawPolicy) {
+    return std::stoi(rawPolicy);
+}
 
 TEST(AdminPolicyParser, parseInvalid) {
     auto input = std::make_shared<std::stringstream>();
 
     *input << "invalid input" << std::endl;
 
-    ASSERT_THROW(Cynara::AdminPolicyParser::parse(input), Cynara::BucketRecordCorruptedException);
+    ASSERT_THROW(Cynara::AdminPolicyParser::parse(input, translatePolicy),
+                 Cynara::BucketRecordCorruptedException);
 }
 
 TEST(AdminPolicyParser, parse0) {
@@ -46,7 +53,7 @@ TEST(AdminPolicyParser, parse0) {
     Cynara::CynaraAdminPolicies expectedPolicies;
     expectedPolicies.seal();
 
-    auto policies = Cynara::AdminPolicyParser::parse(input);
+    auto policies = Cynara::AdminPolicyParser::parse(input, translatePolicy);
 
     ASSERT_TRUE(policies.sealed());
     ASSERT_THAT(policies.data(), AdmPolicyListEq(expectedPolicies.data()));
@@ -61,7 +68,7 @@ TEST(AdminPolicyParser, parse1) {
     expectedPolicies.add("b", { 0, "m" }, { "c", "u", "p" });
     expectedPolicies.seal();
 
-    auto policies = Cynara::AdminPolicyParser::parse(input);
+    auto policies = Cynara::AdminPolicyParser::parse(input, translatePolicy);
 
     ASSERT_TRUE(policies.sealed());
     ASSERT_THAT(policies.data(), AdmPolicyListEq(expectedPolicies.data()));
@@ -78,7 +85,7 @@ TEST(AdminPolicyParser, parse2) {
     expectedPolicies.add("b2", { 0, "m2" }, { "c2", "u2", "p2" });
     expectedPolicies.seal();
 
-    auto policies = Cynara::AdminPolicyParser::parse(input);
+    auto policies = Cynara::AdminPolicyParser::parse(input, translatePolicy);
 
     ASSERT_TRUE(policies.sealed());
     ASSERT_THAT(policies.data(), AdmPolicyListEq(expectedPolicies.data()));

@@ -29,6 +29,7 @@
 #include <cyad/AdminLibraryInitializationFailedException.h>
 #include <cyad/AdminPolicyParser.h>
 #include <cyad/CommandlineParser/CmdlineOpts.h>
+#include <cyad/CommandlineParser/PolicyParsingException.h>
 #include <cyad/CynaraAdminPolicies.h>
 
 #include "CommandsDispatcher.h"
@@ -43,6 +44,14 @@ CommandsDispatcher::CommandsDispatcher(BaseDispatcherIO &io, BaseAdminApiWrapper
     auto ret = m_adminApiWrapper.cynara_admin_initialize(&m_cynaraAdmin);
     if (ret != CYNARA_API_SUCCESS) {
         printAdminApiError(ret);
+        throw AdminLibraryInitializationFailedException(ret);
+    }
+
+    try {
+        initPolicyTranslator();
+    } catch (int ret) {
+        printAdminApiError(ret);
+        // It's not really initialization error, but still nothing depends on user input
         throw AdminLibraryInitializationFailedException(ret);
     }
 }
@@ -85,21 +94,35 @@ int CommandsDispatcher::execute(SetBucketCyadCommand &result) {
     const auto &policyResult = result.policyResult();
     const char *metadata = policyResult.metadata().empty() ? nullptr
                                                            : policyResult.metadata().c_str();
-    auto ret = m_adminApiWrapper.cynara_admin_set_bucket(m_cynaraAdmin,
-                                                         result.bucketId().c_str(),
-                                                         policyResult.policyType(), metadata);
 
-    if (ret != CYNARA_API_SUCCESS)
-        printAdminApiError(ret);
+    try {
+        int policyType = m_policyTranslator.translate(result.policyResult().policyType());
+        auto ret = m_adminApiWrapper.cynara_admin_set_bucket(m_cynaraAdmin,
+                                                             result.bucketId().c_str(),
+                                                             policyType, metadata);
 
-    return ret;
+        if (ret != CYNARA_API_SUCCESS)
+            printAdminApiError(ret);
+
+        return ret;
+    } catch (const PolicyParsingException &) {
+        m_io.cerr() << "Invalid policy" << std::endl;
+        return CYNARA_API_INVALID_COMMANDLINE_PARAM;
+    }
 }
 
 int CommandsDispatcher::execute(SetPolicyCyadCommand &result) {
     CynaraAdminPolicies policies;
 
-    policies.add(result.bucketId(), result.policyResult(), result.policyKey());
-    policies.seal();
+    try {
+        int policyType = m_policyTranslator.translate(result.policyResult().policyType());
+        policies.add(result.bucketId(), PolicyResult(policyType, result.policyResult().metadata()),
+                     result.policyKey());
+        policies.seal();
+    } catch (const PolicyParsingException &) {
+        m_io.cerr() << "Invalid policy" << std::endl;
+        return CYNARA_API_INVALID_COMMANDLINE_PARAM;
+    }
 
     auto ret = m_adminApiWrapper.cynara_admin_set_policies(m_cynaraAdmin, policies.data());
 
@@ -113,13 +136,18 @@ int CommandsDispatcher::execute(SetPolicyBulkCyadCommand &result) {
     auto input = m_io.openFile(result.filename());
 
     try {
-        auto policies = Cynara::AdminPolicyParser::parse(input);
+        using Cynara::AdminPolicyParser::parse;
+        auto policies = parse(input, std::bind(&PolicyTypeTranslator::translate,
+                                               &m_policyTranslator, std::placeholders::_1));
         auto ret = m_adminApiWrapper.cynara_admin_set_policies(m_cynaraAdmin, policies.data());
         if (ret != CYNARA_API_SUCCESS)
             printAdminApiError(ret);
         return ret;
     } catch (const BucketRecordCorruptedException &ex) {
         m_io.cerr() << ex.message();
+        return CYNARA_API_INVALID_COMMANDLINE_PARAM;
+    } catch (const PolicyParsingException &) {
+        m_io.cerr() << "Invalid policy" << std::endl;
         return CYNARA_API_INVALID_COMMANDLINE_PARAM;
     }
 }
@@ -219,33 +247,12 @@ int CommandsDispatcher::execute(ListPoliciesCyadCommand &command) {
 }
 
 int CommandsDispatcher::execute(ListPoliciesDescCyadCommand &) {
-    // Initialization is needed to make compiler happy (-Werror=maybe-uninitialized, FTW)
-    cynara_admin_policy_descr **descs = nullptr;
 
-    auto ret = m_adminApiWrapper.cynara_admin_list_policies_descriptions(m_cynaraAdmin, &descs);
-
-    auto printPolicyDesc = [this] (cynara_admin_policy_descr *pd) {
-        m_io.cout() << pd->result << ";"
-                    << pd->name << std::endl;
-    };
-
-    auto freePolicyDesc = [] (cynara_admin_policy_descr *pd) {
-        free(pd->name);
-        free(pd);
-    };
-
-    if (ret == CYNARA_API_SUCCESS) {
-        for (int i = 0; descs[i]; ++i) {
-            auto p = descs[i];
-            printPolicyDesc(p);
-            freePolicyDesc(p);
-        }
-        free(descs);
-    } else {
-        printAdminApiError(ret);
+    for (const auto desc : m_policyTranslator.descriptions()) {
+        m_io.cout() << desc.first << ";" << desc.second << std::endl;
     }
 
-    return ret;
+    return CYNARA_API_SUCCESS;
 }
 
 void CommandsDispatcher::printAdminApiError(int errnum) {
@@ -263,6 +270,28 @@ void CommandsDispatcher::printAdminApiError(int errnum) {
         m_io.cerr() << "Error message too long" << std::endl;
     else
         m_io.cerr() << "Unknown error (sic! sic!)" << std::endl;
+}
+
+void CommandsDispatcher::initPolicyTranslator(void) {
+    // Initialization is needed to make compiler happy (-Werror=maybe-uninitialized, FTW)
+    cynara_admin_policy_descr **descs = nullptr;
+
+    auto ret = m_adminApiWrapper.cynara_admin_list_policies_descriptions(m_cynaraAdmin, &descs);
+
+    auto freePolicyDesc = [] (cynara_admin_policy_descr *pd) {
+        free(pd->name);
+        free(pd);
+    };
+
+    if (ret == CYNARA_API_SUCCESS) {
+        m_policyTranslator.setDescriptions(descs);
+        for (int i = 0; descs[i] != nullptr; ++i) {
+            freePolicyDesc(descs[i]);
+        }
+        free(descs);
+    } else {
+        throw ret;
+    }
 }
 
 } /* namespace Cynara */

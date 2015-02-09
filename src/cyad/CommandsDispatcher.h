@@ -27,6 +27,7 @@
 #include <cyad/BaseErrorApiWrapper.h>
 #include <cyad/CommandlineParser/CyadCommand.h>
 #include <cyad/DispatcherIO.h>
+#include <cyad/PolicyTypeTranslator.h>
 
 struct cynara_admin;
 struct cynara_admin_policy;
@@ -53,8 +54,10 @@ public:
 
 protected:
     void printAdminApiError(int errnum);
+    void initPolicyTranslator(void);
 
 private:
+    PolicyTypeTranslator m_policyTranslator;
     BaseDispatcherIO &m_io;
     BaseAdminApiWrapper &m_adminApiWrapper;
     BaseErrorApiWrapper &m_errorApiWrapper;

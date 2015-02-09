@@ -27,7 +27,7 @@
 
 #include <types/PolicyBucketId.h>
 #include <types/PolicyKey.h>
-#include <types/PolicyResult.h>
+#include <cyad/CommandlineParser/RawPolicyResult.h>
 
 namespace Cynara {
 
@@ -73,7 +73,7 @@ public:
 
 class SetBucketCyadCommand : public CyadCommand {
 public:
-    SetBucketCyadCommand(const PolicyBucketId &bucketId, const PolicyResult &policyResult)
+    SetBucketCyadCommand(const PolicyBucketId &bucketId, const RawPolicyResult &policyResult)
         : m_bucketId(bucketId), m_policyResult(policyResult) {}
 
     virtual ~SetBucketCyadCommand() {}
@@ -84,13 +84,13 @@ public:
         return m_bucketId;
     }
 
-    const PolicyResult &policyResult(void) const {
+    const RawPolicyResult &policyResult(void) const {
         return m_policyResult;
     }
 
 private:
     PolicyBucketId m_bucketId;
-    PolicyResult m_policyResult;
+    RawPolicyResult m_policyResult;
 };
 
 class DeleteBucketCyadCommand : public CyadCommand {
@@ -111,7 +111,7 @@ private:
 
 class SetPolicyCyadCommand : public CyadCommand {
 public:
-    SetPolicyCyadCommand(const PolicyBucketId &bucketId, const PolicyResult &policyResult,
+    SetPolicyCyadCommand(const PolicyBucketId &bucketId, const RawPolicyResult &policyResult,
                          const PolicyKey &policyKey)
         : m_bucketId(bucketId), m_policyResult(policyResult), m_policyKey(policyKey) {}
 
@@ -123,7 +123,7 @@ public:
         return m_bucketId;
     }
 
-    const PolicyResult &policyResult(void) const {
+    const RawPolicyResult &policyResult(void) const {
         return m_policyResult;
     }
 
@@ -133,7 +133,7 @@ public:
 
 private:
     PolicyBucketId m_bucketId;
-    PolicyResult m_policyResult;
+    RawPolicyResult m_policyResult;
     PolicyKey m_policyKey;
 };
 

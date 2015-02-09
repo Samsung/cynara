@@ -58,7 +58,7 @@ TEST_F(CyadCommandlineTest, setBucket) {
     auto result = std::dynamic_pointer_cast<Cynara::SetBucketCyadCommand>(parser.parseMain());
     ASSERT_NE(nullptr, result);
     ASSERT_EQ("bucket", result->bucketId());
-    ASSERT_EQ(42, result->policyResult().policyType());
+    ASSERT_EQ("42", result->policyResult().policyType());
     ASSERT_TRUE(result->policyResult().metadata().empty());
 }
 
@@ -72,7 +72,7 @@ TEST_F(CyadCommandlineTest, setBucketWithMetadata) {
     auto result = std::dynamic_pointer_cast<Cynara::SetBucketCyadCommand>(parser.parseMain());
     ASSERT_NE(nullptr, result);
     ASSERT_EQ("adams", result->bucketId());
-    ASSERT_EQ(42, result->policyResult().policyType());
+    ASSERT_EQ("42", result->policyResult().policyType());
     ASSERT_EQ(ultimateAnswer, result->policyResult().metadata());
 }
 
@@ -87,7 +87,7 @@ TEST_F(CyadCommandlineTest, setPolicy) {
     ASSERT_EQ("some-bucket", result->bucketId());
 
     ASSERT_EQ(Cynara::PolicyKey("client", "user", "privilege"), result->policyKey());
-    ASSERT_EQ(42, result->policyResult().policyType());
+    ASSERT_EQ("42", result->policyResult().policyType());
     ASSERT_TRUE(result->policyResult().metadata().empty());
 }
 
@@ -102,7 +102,7 @@ TEST_F(CyadCommandlineTest, setPolicyWithMetadata) {
     ASSERT_EQ("some-bucket", result->bucketId());
 
     ASSERT_EQ(Cynara::PolicyKey("client", "user", "privilege"), result->policyKey());
-    ASSERT_EQ(42, result->policyResult().policyType());
+    ASSERT_EQ("42", result->policyResult().policyType());
     ASSERT_EQ("some-metadata", result->policyResult().metadata());
 }
 
@@ -116,7 +116,7 @@ TEST_F(CyadCommandlineTest, setPolicyInDefaultBucket) {
     ASSERT_NE(nullptr, result);
     ASSERT_EQ("", result->bucketId());
     ASSERT_EQ(Cynara::PolicyKey("client", "user", "privilege"), result->policyKey());
-    ASSERT_EQ(CYNARA_ADMIN_ALLOW, result->policyResult().policyType());
+    ASSERT_EQ("ALLOW", result->policyResult().policyType());
     ASSERT_EQ("some-metadata", result->policyResult().metadata());
 }
 
@@ -130,7 +130,7 @@ TEST_F(CyadCommandlineTest, setPolicyInDefaultBucketNoOption) {
     ASSERT_NE(nullptr, result);
     ASSERT_EQ("", result->bucketId());
     ASSERT_EQ(Cynara::PolicyKey("client", "user", "privilege"), result->policyKey());
-    ASSERT_EQ(CYNARA_ADMIN_ALLOW, result->policyResult().policyType());
+    ASSERT_EQ("ALLOW", result->policyResult().policyType());
     ASSERT_EQ("some-metadata", result->policyResult().metadata());
 }
 

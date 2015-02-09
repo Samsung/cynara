@@ -149,12 +149,7 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseSetBucket(const std::st
     if (policy.empty())
         return sharedError(Err::noType());
 
-    try {
-        auto policyType = HumanReadableParser::policyType(policy);
-        return std::make_shared<SetBucketCyadCommand>(bucketId, PolicyResult(policyType, metadata));
-    } catch (const PolicyParsingException &) {
-        return sharedError(Err::invalidType());
-    }
+    return std::make_shared<SetBucketCyadCommand>(bucketId, RawPolicyResult(policy, metadata));
 }
 
 std::shared_ptr<CyadCommand> CyadCommandlineParser::parseDeleteBucket(const std::string &bucketId) {
@@ -232,18 +227,11 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseSetPolicy(void) {
         }
     }
 
-    try {
-        auto policyType = HumanReadableParser::policyType(values[CmdlineOpt::Type]);
-        auto policyResult = PolicyResult(policyType, metadata);
-        return std::make_shared<SetPolicyCyadCommand>(bucket, policyResult,
-                                                      PolicyKey(values[CmdlineOpt::Client],
-                                                                values[CmdlineOpt::User],
-                                                                values[CmdlineOpt::Privilege]));
-    } catch (const PolicyParsingException &) {
-        return sharedError(Err::invalidType());
-    }
-
-    return sharedError(Err::unknownError());
+    auto policyResult = RawPolicyResult(values[CmdlineOpt::Type], metadata);
+    return std::make_shared<SetPolicyCyadCommand>(bucket, policyResult,
+                                                  PolicyKey(values[CmdlineOpt::Client],
+                                                            values[CmdlineOpt::User],
+                                                            values[CmdlineOpt::Privilege]));
 }
 
 std::shared_ptr<CyadCommand> CyadCommandlineParser::parseErase(const std::string &bucketId) {

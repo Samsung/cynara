@@ -56,7 +56,10 @@ private:
 
     void onDisconnected(void);
     bool ensureConnection(void);
+    template <typename Req, typename Res>
+    std::shared_ptr<Res> requestResponse(const PolicyKey &key);
     int requestResult(const PolicyKey &key, PolicyResult &result);
+    int requestSimpleResult(const PolicyKey &key, PolicyResult &result);
 };
 
 } // namespace Cynara

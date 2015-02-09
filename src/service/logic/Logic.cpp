@@ -16,6 +16,7 @@
 /**
  * @file        src/service/logic/Logic.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @author      Zofia Abramowska <z.abramowska@samsung.com>
  * @version     1.0
  * @brief       This file implements main class of logic layer in cynara service
  */
@@ -51,6 +52,7 @@
 #include <request/RequestContext.h>
 #include <request/SetPoliciesRequest.h>
 #include <request/SignalRequest.h>
+#include <request/SimpleCheckRequest.h>
 #include <response/AdminCheckResponse.h>
 #include <response/AgentRegisterResponse.h>
 #include <response/CancelResponse.h>
@@ -58,6 +60,7 @@
 #include <response/CodeResponse.h>
 #include <response/DescriptionListResponse.h>
 #include <response/ListResponse.h>
+#include <response/SimpleCheckResponse.h>
 #include <types/Policy.h>
 
 #include <main/Cynara.h>
@@ -365,6 +368,60 @@ void Logic::execute(RequestContextPtr context, SetPoliciesRequestPtr request) {
     }
     context->returnResponse(context, std::make_shared<CodeResponse>(code,
                             request->sequenceNumber()));
+}
+
+void Logic::execute(RequestContextPtr context, SimpleCheckRequestPtr request) {
+    int retValue = CYNARA_API_SUCCESS;
+    PolicyResult result;
+    PolicyKey key = request->key();
+    result = m_storage->checkPolicy(key);
+
+    switch (result.policyType()) {
+    case PredefinedPolicyType::ALLOW:
+        LOGD("simple check of policy key <%s> returned ALLOW", key.toString().c_str());
+        break;
+    case PredefinedPolicyType::DENY:
+        LOGD("simple check of policy key <%s> returned DENY", key.toString().c_str());
+        break;
+    default: {
+        ExternalPluginPtr plugin = m_pluginManager->getPlugin(result.policyType());
+        if (!plugin) {
+            LOGE("Plugin not found for policy: [0x%x]", result.policyType());
+            result = PolicyResult(PredefinedPolicyType::DENY);
+            retValue = CYNARA_API_SUCCESS;
+            break;
+        }
+
+        ServicePluginInterfacePtr servicePlugin =
+                std::dynamic_pointer_cast<ServicePluginInterface>(plugin);
+        if (!servicePlugin) {
+            LOGE("Couldn't cast plugin pointer to ServicePluginInterface");
+            result = PolicyResult(PredefinedPolicyType::DENY);
+            retValue = CYNARA_API_SUCCESS;
+            break;
+        }
+
+        AgentType requiredAgent;
+        PluginData pluginData;
+        auto ret = servicePlugin->check(key.client().toString(), key.user().toString(),
+                                        key.privilege().toString(), result, requiredAgent,
+                                        pluginData);
+        switch (ret) {
+        case ServicePluginInterface::PluginStatus::ANSWER_READY:
+            LOGD("simple check of policy key <%s> in plugin returned [" PRIu16 "]",
+                 key.toString().c_str(), result.policyType());
+            break;
+        case ServicePluginInterface::PluginStatus::ANSWER_NOTREADY:
+            retValue = CYNARA_API_ACCESS_NOT_RESOLVED;
+            break;
+        default:
+            result = PolicyResult(PredefinedPolicyType::DENY);
+            retValue = CYNARA_API_SUCCESS;
+        }
+    }
+    }
+    context->returnResponse(context, std::make_shared<SimpleCheckResponse>(retValue, result,
+                                                                  request->sequenceNumber()));
 }
 
 void Logic::checkPoliciesTypes(const std::map<PolicyBucketId, std::vector<Policy>> &policies,

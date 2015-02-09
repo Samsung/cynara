@@ -16,6 +16,7 @@
 /**
  * @file        src/service/logic/Logic.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @author      Zofia Abramowska <z.abramowska@samsung.com>
  * @version     1.0
  * @brief       This file defines main class of logic layer in cynara service
  */
@@ -82,6 +83,7 @@ public:
     virtual void execute(RequestContextPtr context, RemoveBucketRequestPtr request);
     virtual void execute(RequestContextPtr context, SetPoliciesRequestPtr request);
     virtual void execute(RequestContextPtr context, SignalRequestPtr request);
+    virtual void execute(RequestContextPtr context, SimpleCheckRequestPtr request);
 
     virtual void contextClosed(RequestContextPtr context);
 

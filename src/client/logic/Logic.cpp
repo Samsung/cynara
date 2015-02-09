@@ -35,8 +35,10 @@
 #include <protocol/ProtocolClient.h>
 #include <request/CheckRequest.h>
 #include <request/pointers.h>
+#include <request/SimpleCheckRequest.h>
 #include <response/CheckResponse.h>
 #include <response/pointers.h>
+#include <response/SimpleCheckResponse.h>
 #include <sockets/SocketClient.h>
 
 #include <logic/Logic.h>
@@ -65,12 +67,10 @@ int Logic::check(const std::string &client, const ClientSession &session, const 
 
     PolicyKey key(client, user, privilege);
     int ret = m_cache->get(session, key);
-    //Any other situation than cache miss
     if (ret != CYNARA_API_CACHE_MISS) {
         return ret;
     }
 
-    //No value in Cache
     PolicyResult result;
     ret = requestResult(key, result);
     if (ret != CYNARA_API_SUCCESS) {
@@ -83,11 +83,24 @@ int Logic::check(const std::string &client, const ClientSession &session, const 
 
 int Logic::simpleCheck(const std::string &client, const ClientSession &session,
                        const std::string &user, const std::string &privilege) {
-    (void)client;
-    (void)session;
-    (void)user;
-    (void)privilege;
-    return CYNARA_API_ACCESS_NOT_RESOLVED;
+    if (!ensureConnection())
+        return CYNARA_API_SERVICE_NOT_AVAILABLE;
+
+    PolicyKey key(client, user, privilege);
+    int ret = m_cache->get(session, key);
+    if (ret != CYNARA_API_CACHE_MISS) {
+        return ret;
+    }
+
+    PolicyResult result;
+    ret = requestSimpleResult(key, result);
+    if (ret != CYNARA_API_SUCCESS) {
+        if (ret != CYNARA_API_ACCESS_NOT_RESOLVED)
+            LOGE("Error fetching response for simpleCheck.");
+        return ret;
+    }
+
+    return m_cache->update(session, key, result);
 }
 
 bool Logic::ensureConnection(void) {
@@ -100,30 +113,52 @@ bool Logic::ensureConnection(void) {
     return false;
 }
 
-int Logic::requestResult(const PolicyKey &key, PolicyResult &result) {
+template <typename Req, typename Res>
+std::shared_ptr<Res> Logic::requestResponse(const PolicyKey &key) {
     ProtocolFrameSequenceNumber sequenceNumber = generateSequenceNumber();
 
     //Ask cynara service
-    CheckResponsePtr checkResponse;
-    RequestPtr request = std::make_shared<CheckRequest>(key, sequenceNumber);
+    std::shared_ptr<Res> reqResponse;
+    RequestPtr request = std::make_shared<Req>(key, sequenceNumber);
     ResponsePtr response;
     while (!(response = m_socket->askCynaraServer(request))) {
         onDisconnected();
         if (!m_socket->connect())
-            return CYNARA_API_SERVICE_NOT_AVAILABLE;
+            return nullptr;
     }
 
-    checkResponse = std::dynamic_pointer_cast<CheckResponse>(response);
+    reqResponse = std::dynamic_pointer_cast<Res>(response);
+    return reqResponse;
+}
+
+int Logic::requestResult(const PolicyKey &key, PolicyResult &result) {
+    auto checkResponse = requestResponse<CheckRequest, CheckResponse>(key);
     if (!checkResponse) {
-        LOGC("Critical error. Casting Response to CheckResponse failed.");
-        return CYNARA_API_ACCESS_DENIED;
+        LOGC("Critical error. Requesting CheckResponse failed.");
+        return CYNARA_API_SERVICE_NOT_AVAILABLE;
     }
-
     LOGD("checkResponse: policyType = %" PRIu16 ", metadata = %s",
          checkResponse->m_resultRef.policyType(),
          checkResponse->m_resultRef.metadata().c_str());
-
     result = checkResponse->m_resultRef;
+    return CYNARA_API_SUCCESS;
+}
+
+int Logic::requestSimpleResult(const PolicyKey &key, PolicyResult &result) {
+    auto simpleCheckResponse = requestResponse<SimpleCheckRequest, SimpleCheckResponse>(key);
+    if (!simpleCheckResponse) {
+        LOGC("Critical error. Requesting SimpleCheckResponse failed.");
+        return CYNARA_API_SERVICE_NOT_AVAILABLE;
+    }
+
+    if (simpleCheckResponse->getReturnValue() != CYNARA_API_SUCCESS)
+        return simpleCheckResponse->getReturnValue();
+
+    LOGD("SimpleCheckResponse: policyType = %" PRIu16 ", metadata = %s",
+         simpleCheckResponse->getResult().policyType(),
+         simpleCheckResponse->getResult().metadata().c_str());
+
+    result = simpleCheckResponse->getResult();
     return CYNARA_API_SUCCESS;
 }
 

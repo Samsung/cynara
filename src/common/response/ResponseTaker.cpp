@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 /**
  * @file        src/common/response/ResponseTaker.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @author      Zofia Abramowska <z.abramowska@samsung.com>
  * @version     1.0
  * @brief       This file implements ResponseTaker class
  */
@@ -61,6 +62,11 @@ void ResponseTaker::execute(RequestContextPtr context UNUSED,
 }
 
 void ResponseTaker::execute(RequestContextPtr context UNUSED, ListResponsePtr response UNUSED) {
+    throw NotImplementedException();
+}
+
+void ResponseTaker::execute(RequestContextPtr context UNUSED,
+                            SimpleCheckResponsePtr response UNUSED) {
     throw NotImplementedException();
 }
 

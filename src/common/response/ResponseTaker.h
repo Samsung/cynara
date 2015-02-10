@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 /**
  * @file        src/common/response/ResponseTaker.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @author      Zofia Abramowska <z.abramowska@samsung.com>
  * @version     1.0
  * @brief       This file defines ResponseTaker class
  */
@@ -41,6 +42,7 @@ public:
     virtual void execute(RequestContextPtr context, CodeResponsePtr response);
     virtual void execute(RequestContextPtr context, DescriptionListResponsePtr response);
     virtual void execute(RequestContextPtr context, ListResponsePtr response);
+    virtual void execute(RequestContextPtr context, SimpleCheckResponsePtr response);
 };
 
 } // namespace Cynara

@@ -52,6 +52,7 @@ SET(COMMON_SOURCES
     ${COMMON_PATH}/request/RequestTaker.cpp
     ${COMMON_PATH}/request/SetPoliciesRequest.cpp
     ${COMMON_PATH}/request/SignalRequest.cpp
+    ${COMMON_PATH}/request/SimpleCheckRequest.cpp
     ${COMMON_PATH}/response/AdminCheckResponse.cpp
     ${COMMON_PATH}/response/AgentActionResponse.cpp
     ${COMMON_PATH}/response/AgentRegisterResponse.cpp
@@ -61,6 +62,7 @@ SET(COMMON_SOURCES
     ${COMMON_PATH}/response/DescriptionListResponse.cpp
     ${COMMON_PATH}/response/ListResponse.cpp
     ${COMMON_PATH}/response/ResponseTaker.cpp
+    ${COMMON_PATH}/response/SimpleCheckResponse.cpp
     ${COMMON_PATH}/sockets/Socket.cpp
     ${COMMON_PATH}/sockets/SocketClient.cpp
     ${COMMON_PATH}/types/PolicyBucket.cpp

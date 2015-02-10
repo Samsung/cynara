@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Contact: Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  *
@@ -19,6 +19,7 @@
  * @file        src/common/protocol/ProtocolOpCode.h
  * @author      Adam Malinowski <a.malinowsk2@partner.samsung.com>
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @author      Zofia Abramowska <z.abramowska@samsung.com>
  * @version     1.0
  * @brief       Declaration of protocol frame operation codes.
  */
@@ -36,8 +37,10 @@ enum ProtocolOpCode : uint8_t {
     OpCheckPolicyResponse,
     OpCancelRequest,
     OpCancelResponse,
+    OpSimpleCheckPolicyRequest,
+    OpSimpleCheckPolicyResponse,
 
-    /** Opcodes 4 - 19 are reserved for future use */
+    /** Opcodes 6 - 19 are reserved for future use */
 
     /** Admin operations */
     OpInsertOrUpdateBucket = 20,

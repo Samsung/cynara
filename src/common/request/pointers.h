@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 /**
  * @file        src/common/request/pointers.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @author      Zofia Abramowska <z.abramowska@samsung.com>
  * @version     1.0
  * @brief       This file defines request classes pointers
  */
@@ -71,6 +72,9 @@ typedef std::shared_ptr<SetPoliciesRequest> SetPoliciesRequestPtr;
 
 class SignalRequest;
 typedef std::shared_ptr<SignalRequest> SignalRequestPtr;
+
+class SimpleCheckRequest;
+typedef std::shared_ptr<SimpleCheckRequest> SimpleCheckRequestPtr;
 
 } // namespace Cynara
 

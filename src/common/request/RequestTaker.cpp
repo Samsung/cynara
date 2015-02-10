@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
  * @file        src/common/request/RequestTaker.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @author      Adam Malinowski <a.malinowsk2@partner.samsung.com>
+ * @author      Zofia Abramowska <z.abramowska@samsung.com>
  * @version     1.0
  * @brief       This file implements RequestTaker class
  */
@@ -78,6 +79,10 @@ void RequestTaker::execute(RequestContextPtr context UNUSED, SetPoliciesRequestP
 }
 
 void RequestTaker::execute(RequestContextPtr context UNUSED, SignalRequestPtr request UNUSED) {
+    throw NotImplementedException();
+}
+
+void RequestTaker::execute(RequestContextPtr context UNUSED, SimpleCheckRequestPtr request UNUSED) {
     throw NotImplementedException();
 }
 

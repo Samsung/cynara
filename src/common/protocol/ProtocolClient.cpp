@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
  * @file        src/common/protocol/ProtocolClient.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @author      Adam Malinowski <a.malinowsk2@partner.samsung.com>
+ * @author      Zofia Abramowska <z.abramowska@samsung.com>
  * @version     1.0
  * @brief       This file implements protocol class for communication with client
  */
@@ -34,8 +35,10 @@
 #include <request/CancelRequest.h>
 #include <request/CheckRequest.h>
 #include <request/RequestContext.h>
+#include <request/SimpleCheckRequest.h>
 #include <response/CancelResponse.h>
 #include <response/CheckResponse.h>
+#include <response/SimpleCheckResponse.h>
 #include <types/PolicyKey.h>
 #include <types/PolicyResult.h>
 #include <types/PolicyType.h>
@@ -73,6 +76,20 @@ RequestPtr ProtocolClient::deserializeCheckRequest(void) {
                                           m_frameHeader.sequenceNumber());
 }
 
+RequestPtr ProtocolClient::deserializeSimpleCheckRequest(void) {
+    std::string clientId, userId, privilegeId;
+
+    ProtocolDeserialization::deserialize(m_frameHeader, clientId);
+    ProtocolDeserialization::deserialize(m_frameHeader, userId);
+    ProtocolDeserialization::deserialize(m_frameHeader, privilegeId);
+
+    LOGD("Deserialized SimpleCheckRequest: client <%s>, user <%s>, privilege <%s>",
+         clientId.c_str(), userId.c_str(), privilegeId.c_str());
+
+    return std::make_shared<SimpleCheckRequest>(PolicyKey(clientId, userId, privilegeId),
+                                                m_frameHeader.sequenceNumber());
+}
+
 RequestPtr ProtocolClient::extractRequestFromBuffer(BinaryQueuePtr bufferQueue) {
     ProtocolFrameSerializer::deserializeHeader(m_frameHeader, bufferQueue);
 
@@ -88,6 +105,8 @@ RequestPtr ProtocolClient::extractRequestFromBuffer(BinaryQueuePtr bufferQueue) 
             return deserializeCheckRequest();
         case OpCancelRequest:
             return deserializeCancelRequest();
+        case OpSimpleCheckPolicyRequest:
+            return deserializeSimpleCheckRequest();
         default:
             throw InvalidProtocolException(InvalidProtocolException::WrongOpCode);
             break;
@@ -117,6 +136,24 @@ ResponsePtr ProtocolClient::deserializeCheckResponse(void) {
     return std::make_shared<CheckResponse>(policyResult, m_frameHeader.sequenceNumber());
 }
 
+ResponsePtr ProtocolClient::deserializeSimpleCheckResponse() {
+    int32_t retValue;
+    PolicyType result;
+    PolicyResult::PolicyMetadata additionalInfo;
+
+    ProtocolDeserialization::deserialize(m_frameHeader, retValue);
+    ProtocolDeserialization::deserialize(m_frameHeader, result);
+    ProtocolDeserialization::deserialize(m_frameHeader, additionalInfo);
+
+    const PolicyResult policyResult(result, additionalInfo);
+
+    LOGD("Deserialized SimpleCheckResponse: retVal [%" PRIi32 "%] result [%" PRIu16 "],"
+         " metadata <%s>", retValue, policyResult.policyType(), policyResult.metadata().c_str());
+
+    return std::make_shared<SimpleCheckResponse>(retValue, policyResult,
+                                                 m_frameHeader.sequenceNumber());
+}
+
 ResponsePtr ProtocolClient::extractResponseFromBuffer(BinaryQueuePtr bufferQueue) {
     ProtocolFrameSerializer::deserializeHeader(m_frameHeader, bufferQueue);
 
@@ -131,6 +168,8 @@ ResponsePtr ProtocolClient::extractResponseFromBuffer(BinaryQueuePtr bufferQueue
             return deserializeCheckResponse();
         case OpCancelResponse:
             return deserializeCancelResponse();
+        case OpSimpleCheckPolicyResponse:
+            return deserializeSimpleCheckResponse();
         default:
             throw InvalidProtocolException(InvalidProtocolException::WrongOpCode);
             break;
@@ -165,6 +204,21 @@ void ProtocolClient::execute(RequestContextPtr context, CheckRequestPtr request)
     ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
 }
 
+void ProtocolClient::execute(RequestContextPtr context, SimpleCheckRequestPtr request) {
+    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
+
+    LOGD("Serializing SimpleCheckRequest: client <%s>, user <%s>, privilege <%s>",
+         request->key().client().value().c_str(), request->key().user().value().c_str(),
+         request->key().privilege().value().c_str());
+
+    ProtocolSerialization::serialize(frame, OpSimpleCheckPolicyRequest);
+    ProtocolSerialization::serialize(frame, request->key().client().value());
+    ProtocolSerialization::serialize(frame, request->key().user().value());
+    ProtocolSerialization::serialize(frame, request->key().privilege().value());
+
+    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
+}
+
 void ProtocolClient::execute(RequestContextPtr context, CancelResponsePtr response) {
     ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(
             response->sequenceNumber());
@@ -187,6 +241,23 @@ void ProtocolClient::execute(RequestContextPtr context, CheckResponsePtr respons
     ProtocolSerialization::serialize(frame, OpCheckPolicyResponse);
     ProtocolSerialization::serialize(frame, response->m_resultRef.policyType());
     ProtocolSerialization::serialize(frame, response->m_resultRef.metadata());
+
+    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
+}
+
+void ProtocolClient::execute(RequestContextPtr context, SimpleCheckResponsePtr response) {
+    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(
+            response->sequenceNumber());
+
+    LOGD("Serializing SimpleCheckResponse: op [%" PRIu8 "], retVal [%" PRIi32 "],"
+         " policyType [%" PRIu16 "], metadata <%s>", OpCheckPolicyResponse,
+         response->getReturnValue(), response->getResult().policyType(),
+         response->getResult().metadata().c_str());
+
+    ProtocolSerialization::serialize(frame, OpSimpleCheckPolicyResponse);
+    ProtocolSerialization::serialize(frame, response->getReturnValue());
+    ProtocolSerialization::serialize(frame, response->getResult().policyType());
+    ProtocolSerialization::serialize(frame, response->getResult().metadata());
 
     ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -43,16 +43,20 @@ public:
 
     virtual void execute(RequestContextPtr context, CancelRequestPtr request);
     virtual void execute(RequestContextPtr context, CheckRequestPtr request);
+    virtual void execute(RequestContextPtr context, SimpleCheckRequestPtr request);
 
     virtual void execute(RequestContextPtr context, CancelResponsePtr response);
     virtual void execute(RequestContextPtr context, CheckResponsePtr response);
+    virtual void execute(RequestContextPtr context, SimpleCheckResponsePtr request);
 
 private:
     RequestPtr deserializeCancelRequest(void);
     RequestPtr deserializeCheckRequest(void);
+    RequestPtr deserializeSimpleCheckRequest(void);
 
     ResponsePtr deserializeCancelResponse(void);
     ResponsePtr deserializeCheckResponse(void);
+    ResponsePtr deserializeSimpleCheckResponse(void);
 };
 
 } // namespace Cynara

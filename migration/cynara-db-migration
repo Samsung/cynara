@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+# Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@
 STATE_PATH='/var/cynara'
 DB_DIR='db'
 INDEX_NAME='buckets'
-DEFAULT_NAME='_'
+DEFAULT_BUCKET_NAME='_'
 DENY_POLICY=';0x0;'
 
 ##### Variables, with default values (optional)
@@ -40,22 +40,25 @@ NEW_VERSION=
 ##### Functions
 
 parse_opts() {
-    while getopts ":f:t:u:g:l:" opt; do
+    while getopts ":f:t:p:u:g:l:" opt; do
         case $opt in
             f )
-                OLD_VERSION=${OPTARG}
+                OLD_VERSION="${OPTARG}"
                 ;;
             t )
-                NEW_VERSION=${OPTARG}
+                NEW_VERSION="${OPTARG}"
+                ;;
+            p )
+                STATE_PATH="${OPTARG}"
                 ;;
             u )
-                CYNARA_USER=${OPTARG}
+                CYNARA_USER="${OPTARG}"
                 ;;
             g )
-                CYNARA_GROUP=${OPTARG}
+                CYNARA_GROUP="${OPTARG}"
                 ;;
             l )
-                SMACK_LABEL=${OPTARG}
+                SMACK_LABEL="${OPTARG}"
                 ;;
             \? )
                 echo "Invalid option: -$OPTARG" >&2
@@ -69,17 +72,13 @@ parse_opts() {
     done
 }
 
-create_db() {
-    if [ -z ${NEW_VERSION} ]; then
-        failure
-    fi
-
-    # Create Cynara's database directory:
+minimal_db() {
+    # Create Cynara's database directory
     mkdir -p ${STATE_PATH}/${DB_DIR}
 
     # Create contents of minimal database: first index file, then default bucket
     echo ${DENY_POLICY} > ${STATE_PATH}/${DB_DIR}/${INDEX_NAME}
-    touch ${STATE_PATH}/${DB_DIR}/${DEFAULT_NAME}
+    touch ${STATE_PATH}/${DB_DIR}/${DEFAULT_BUCKET_NAME}
 
     # Set proper permissions for newly created database
     chown -R ${CYNARA_USER}:${CYNARA_GROUP} ${STATE_PATH}/${DB_DIR}
@@ -89,6 +88,14 @@ create_db() {
     chsmack -a ${SMACK_LABEL} ${STATE_PATH}/${DB_DIR}/*
 }
 
+install_db() {
+    if [ -z ${NEW_VERSION} ] ; then
+        failure
+    fi
+
+    minimal_db
+}
+
 migrate_db() {
     if [ -z ${OLD_VERSION} -o -z ${NEW_VERSION} ]; then
         failure
@@ -96,7 +103,8 @@ migrate_db() {
 
     # Create minimal database if there was none:
     if [ ! -d "${STATE_PATH}/${DB_DIR}" ]; then
-        create_db
+        install_db
+        exit_success
     fi
 }
 
@@ -105,7 +113,7 @@ remove_db() {
         failure
     fi
 
-    rm -rf ${STATE_PATH}
+    rm -rf "${STATE_PATH}/${DB_DIR}"
 }
 
 usage() {
@@ -115,13 +123,14 @@ Usage: $0 COMMAND OPTIONS
 This script installs, migrates to another version or removes Cynara's policies database
 
 Commands:
-  upgrade (up)    migrate old data to new version of database structure
+  upgrade (up)    migrate data to different version of database
   install (in)    create minimal database
   uninstall (rm)  remove database entirely
 
 Options:
   -f from   Set old version of database (mandatory for upgrade and uninstall)
   -t to     Set new version of database (mandatory for upgrade and install)
+  -p path   Set path for storing database (default: /var/cynara)
   -u user   Set database owner (default: cynara)
   -g group  Set database group (default: cynara)
   -l label  Set SMACK label for database (default: System)
@@ -131,7 +140,15 @@ EOF
 
 failure() {
     usage
+    exit_failure
+}
+
+exit_failure() {
     exit 1
+}
+
+exit_success() {
+    exit 0
 }
 
 ##### Main
@@ -149,7 +166,7 @@ case $1 in
     "in" | "install" )
         shift $OPTIND
         parse_opts "$@"
-        create_db
+        install_db
         ;;
     "rm" | "uninstall" )
         shift $OPTIND

@@ -210,8 +210,9 @@ bool Logic::pluginCheck(const RequestContextPtr &context, const PolicyKey &key,
 
     ServicePluginInterfacePtr servicePlugin =
             std::dynamic_pointer_cast<ServicePluginInterface>(plugin);
-    if (!plugin) {
-        throw PluginNotFoundException(result);
+    if (!servicePlugin) {
+        result = PolicyResult(PredefinedPolicyType::DENY);
+        return true;
     }
 
     AgentType requiredAgent;
@@ -243,7 +244,8 @@ bool Logic::pluginCheck(const RequestContextPtr &context, const PolicyKey &key,
             }
             return false;
         default:
-            throw PluginErrorException(key); // This 'throw' should be removed or handled properly.
+            result = PolicyResult(PredefinedPolicyType::DENY);
+            return true;
     }
 }
 

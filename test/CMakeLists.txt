@@ -107,6 +107,7 @@ INCLUDE_DIRECTORIES(
     ${CYNARA_SRC}/common
     ${CYNARA_SRC}/include
     ${CYNARA_SRC}
+    test-common
     credsCommons/parser
     common/protocols
 )

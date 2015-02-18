@@ -30,6 +30,7 @@ class FakeInMemoryStorageBackend : public Cynara::InMemoryStorageBackend {
 public:
     using Cynara::InMemoryStorageBackend::InMemoryStorageBackend;
     MOCK_METHOD0(buckets, Cynara::Buckets&(void));
+    MOCK_METHOD1(postLoadCleanup, void(bool isBackupValid));
 };
 
 

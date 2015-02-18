@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -24,21 +24,21 @@
 #define SRC_STORAGE_INTEGRITY_H_
 
 #include <fcntl.h>
+#include <memory>
 #include <string>
 
 #include <storage/Buckets.h>
 
 namespace Cynara {
 
+class Integrity;
+typedef std::unique_ptr<Integrity> IntegrityUniquePtr;
+
 class Integrity
 {
 public:
     typedef std::function<bool(const PolicyBucketId &)> BucketPresenceTester;
-    Integrity(const std::string &path, const std::string &index, const std::string &backupSuffix,
-              const std::string &bucketPrefix)
-    : m_dbPath(path), m_indexFilename(index), m_backupFilenameSuffix(backupSuffix),
-      m_bucketFilenamePrefix(bucketPrefix) {
-    }
+    Integrity(const std::string &path) : m_dbPath(path) {}
     virtual ~Integrity() {};
 
     virtual bool backupGuardExists(void) const;
@@ -60,9 +60,9 @@ protected:
 
 private:
     const std::string m_dbPath;
-    const std::string m_indexFilename;
-    const std::string m_backupFilenameSuffix;
-    const std::string m_bucketFilenamePrefix;
+    static const std::string m_indexFilename;
+    static const std::string m_backupFilenameSuffix;
+    static const std::string m_bucketFilenamePrefix;
     static const std::string m_guardFilename;
 };
 

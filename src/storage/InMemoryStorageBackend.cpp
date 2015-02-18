@@ -57,9 +57,12 @@ const std::string InMemoryStorageBackend::m_backupFilenameSuffix(
 const std::string InMemoryStorageBackend::m_bucketFilenamePrefix(
         PathConfig::StoragePath::bucketFilenamePrefix);
 
+InMemoryStorageBackend::InMemoryStorageBackend(const std::string &path) : m_dbPath(path) {
+    m_integrity.reset(new Integrity(path));
+}
+
 void InMemoryStorageBackend::load(void) {
-    Integrity integrity(m_dbPath, m_indexFilename, m_backupFilenameSuffix, m_bucketFilenamePrefix);
-    bool isBackupValid = integrity.backupGuardExists();
+    bool isBackupValid = m_integrity->backupGuardExists();
     std::string bucketSuffix = "";
     std::string indexFilename = m_dbPath + m_indexFilename;
 
@@ -89,12 +92,7 @@ void InMemoryStorageBackend::load(void) {
         this->buckets().insert({ defaultPolicyBucketId, PolicyBucket(defaultPolicyBucketId) });
     }
 
-    if (isBackupValid) {
-        integrity.revalidatePrimaryDatabase(buckets());
-    }
-    //in case there were unnecessary files in db directory
-    integrity.deleteNonIndexedFiles(std::bind(&InMemoryStorageBackend::hasBucket, this,
-                                    std::placeholders::_1));
+    postLoadCleanup(isBackupValid);
 }
 
 void InMemoryStorageBackend::save(void) {
@@ -106,11 +104,9 @@ void InMemoryStorageBackend::save(void) {
     storageSerializer.dump(buckets(), std::bind(&InMemoryStorageBackend::bucketDumpStreamOpener,
                            this, std::placeholders::_1));
 
-    Integrity integrity(m_dbPath, m_indexFilename, m_backupFilenameSuffix, m_bucketFilenamePrefix);
-
-    integrity.syncDatabase(buckets(), true);
-    integrity.createBackupGuard();
-    integrity.revalidatePrimaryDatabase(buckets());
+    m_integrity->syncDatabase(buckets(), true);
+    m_integrity->createBackupGuard();
+    m_integrity->revalidatePrimaryDatabase(buckets());
     //guard is removed during revalidation
 }
 
@@ -265,6 +261,15 @@ std::shared_ptr<StorageSerializer> InMemoryStorageBackend::bucketDumpStreamOpene
 
     openDumpFileStream(bucketStream, bucketFilename);
     return std::make_shared<StorageSerializer>(bucketStream);
+}
+
+void InMemoryStorageBackend::postLoadCleanup(bool isBackupValid) {
+    if (isBackupValid) {
+        m_integrity->revalidatePrimaryDatabase(buckets());
+    }
+    //in case there were unnecessary files in db directory
+    m_integrity->deleteNonIndexedFiles(std::bind(&InMemoryStorageBackend::hasBucket, this,
+                                       std::placeholders::_1));
 }
 
 } /* namespace Cynara */

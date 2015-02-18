@@ -195,9 +195,11 @@ TEST_F(InMemeoryStorageBackendFixture, deletePolicyFromNonexistentBucket) {
 // Database dir is empty
 TEST_F(InMemeoryStorageBackendFixture, load_no_db) {
     using ::testing::ReturnRef;
+    using ::testing::Return;
     auto testDbPath = std::string(CYNARA_TESTS_DIR) + "/empty_db/";
     FakeInMemoryStorageBackend backend(testDbPath);
     EXPECT_CALL(backend, buckets()).WillRepeatedly(ReturnRef(m_buckets));
+    EXPECT_CALL(backend, postLoadCleanup(false)).WillOnce(Return());
     backend.load();
     ASSERT_DB_VIRGIN(m_buckets);
 }
@@ -205,9 +207,11 @@ TEST_F(InMemeoryStorageBackendFixture, load_no_db) {
 // Database dir contains index with default bucket, but no file for this bucket
 TEST_F(InMemeoryStorageBackendFixture, load_no_default) {
     using ::testing::ReturnRef;
+    using ::testing::Return;
     auto testDbPath = std::string(CYNARA_TESTS_DIR) + "/db2/";
     FakeInMemoryStorageBackend backend(testDbPath);
     EXPECT_CALL(backend, buckets()).WillRepeatedly(ReturnRef(m_buckets));
+    EXPECT_CALL(backend, postLoadCleanup(false)).WillOnce(Return());
     backend.load();
     ASSERT_DB_VIRGIN(m_buckets);
 }
@@ -215,9 +219,11 @@ TEST_F(InMemeoryStorageBackendFixture, load_no_default) {
 // Database contains index with default bucket and an empty bucket file
 TEST_F(InMemeoryStorageBackendFixture, load_default_only) {
     using ::testing::ReturnRef;
+    using ::testing::Return;
     auto testDbPath = std::string(CYNARA_TESTS_DIR) + "/db3/";
     FakeInMemoryStorageBackend backend(testDbPath);
     EXPECT_CALL(backend, buckets()).WillRepeatedly(ReturnRef(m_buckets));
+    EXPECT_CALL(backend, postLoadCleanup(false)).WillOnce(Return());
     backend.load();
     ASSERT_DB_VIRGIN(m_buckets);
 }
@@ -226,12 +232,14 @@ TEST_F(InMemeoryStorageBackendFixture, load_default_only) {
 // There are files for both buckets present
 TEST_F(InMemeoryStorageBackendFixture, load_2_buckets) {
     using ::testing::ReturnRef;
+    using ::testing::Return;
     using ::testing::IsEmpty;
 
     auto testDbPath = std::string(CYNARA_TESTS_DIR) + "/db4/";
 
     FakeInMemoryStorageBackend backend(testDbPath);
     EXPECT_CALL(backend, buckets()).WillRepeatedly(ReturnRef(m_buckets));
+    EXPECT_CALL(backend, postLoadCleanup(false)).WillOnce(Return());
     backend.load();
 
     std::vector<std::string> bucketIds = { "", "additional" };
@@ -249,9 +257,11 @@ TEST_F(InMemeoryStorageBackendFixture, load_2_buckets) {
 // Database contains index with 2 buckets; 1st bucket is valid, but second is corrupted
 TEST_F(InMemeoryStorageBackendFixture, second_bucket_corrupted) {
     using ::testing::ReturnRef;
+    using ::testing::Return;
     auto testDbPath = std::string(CYNARA_TESTS_DIR) + "/db5/";
     FakeInMemoryStorageBackend backend(testDbPath);
     EXPECT_CALL(backend, buckets()).WillRepeatedly(ReturnRef(m_buckets));
+    EXPECT_CALL(backend, postLoadCleanup(false)).WillOnce(Return());
     backend.load();
     ASSERT_DB_VIRGIN(m_buckets);
 }
@@ -265,6 +275,7 @@ TEST_F(InMemeoryStorageBackendFixture, second_bucket_corrupted) {
  */
 TEST_F(InMemeoryStorageBackendFixture, load_from_backup) {
     using ::testing::ReturnRef;
+    using ::testing::Return;
     using ::testing::IsEmpty;
     using ::testing::InSequence;
 
@@ -275,6 +286,7 @@ TEST_F(InMemeoryStorageBackendFixture, load_from_backup) {
         // Calls are expected in a specific order
         InSequence s;
         EXPECT_CALL(backend, buckets()).WillRepeatedly(ReturnRef(m_buckets));
+        EXPECT_CALL(backend, postLoadCleanup(true)).WillOnce(Return());
         backend.load();
     }
 

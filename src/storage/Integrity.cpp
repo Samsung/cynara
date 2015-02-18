@@ -38,7 +38,12 @@
 
 namespace Cynara {
 
-const std::string Integrity::m_guardFilename(PathConfig::StoragePath::guardFilename);
+namespace StorageConfig = PathConfig::StoragePath;
+
+const std::string Integrity::m_guardFilename(StorageConfig::guardFilename);
+const std::string Integrity::m_indexFilename(StorageConfig::indexFilename);
+const std::string Integrity::m_backupFilenameSuffix(StorageConfig::backupFilenameSuffix);
+const std::string Integrity::m_bucketFilenamePrefix(StorageConfig::bucketFilenamePrefix);
 
 bool Integrity::backupGuardExists(void) const {
     struct stat buffer;

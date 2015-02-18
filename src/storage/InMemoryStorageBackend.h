@@ -35,6 +35,7 @@
 
 #include <storage/BucketDeserializer.h>
 #include <storage/Buckets.h>
+#include <storage/Integrity.h>
 #include <storage/StorageBackend.h>
 #include <storage/StorageSerializer.h>
 
@@ -42,8 +43,7 @@ namespace Cynara {
 
 class InMemoryStorageBackend : public StorageBackend {
 public:
-    InMemoryStorageBackend(const std::string &path) : m_dbPath(path) {
-    }
+    InMemoryStorageBackend(const std::string &path);
     virtual ~InMemoryStorageBackend() {};
 
     virtual void load(void);
@@ -73,9 +73,12 @@ protected:
                                     const std::string &filename);
     std::shared_ptr<StorageSerializer> bucketDumpStreamOpener(const PolicyBucketId &bucketId);
 
+    virtual void postLoadCleanup(bool isBackupValid);
+
 private:
     std::string m_dbPath;
     Buckets m_buckets;
+    IntegrityUniquePtr m_integrity;
     static const std::string m_indexFilename;
     static const std::string m_backupFilenameSuffix;
     static const std::string m_bucketFilenamePrefix;

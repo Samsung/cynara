@@ -337,6 +337,7 @@ fi
 %files -n cynara-tests
 %manifest cynara-tests.manifest
 %attr(755,root,root) /usr/bin/cynara-tests
+%attr(755,root,root) /usr/bin/cynara-db-migration-tests
 %attr(755,root,root) %{tests_dir}/db*/*
 %dir %attr(755,root,root) %{tests_dir}/empty_db
 

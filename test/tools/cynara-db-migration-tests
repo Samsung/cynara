@@ -1,0 +1,218 @@
+#!/bin/sh
+#
+# Copyright (c) 2015 Samsung Electronics Co., Ltd All Rights Reserved
+#
+#    Licensed under the Apache License, Version 2.0 (the "License");
+#    you may not use this file except in compliance with the License.
+#    You may obtain a copy of the License at
+#
+#        http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS,`
+#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#    See the License for the specific language governing permissions and
+#    limitations under the License.
+#
+# @file        test/tools/cynara-db-migration-tests
+# @author      Pawel Wieczorek <p.wieczorek2@samsung.com>
+# @brief       Tests of migration tool for Cynara's database
+#
+
+##### Constants (these must not be modified by shell)
+
+# Paths
+TESTS_DIR='/tmp/cynara-db-migration-tests'
+PATTERNS_DIR='/usr/share/cynara/tests'
+MIGRATE='/usr/sbin/cynara-db-migration'
+
+# Names
+DB_DIR='db'
+LOG_FILE='output.log'
+FAIL_FILE='fail.log'
+
+# Various Cynara versions
+CHS_INTRO_VERSION='0.6.0'
+PRECHS_HIGH_VERSION='0.4.2'
+PRECHS_LOW_VERSION='0.2.4'
+POSTCHS_HIGH_VERSION='4.2.0'
+POSTCHS_LOW_VERSION='2.4.0'
+
+# Messages
+MIGRATE_FAIL_MSG="$MIGRATE failed."
+COMPARE_FAIL_MSG="Mismatch in file"
+DB_STILL_EXISTS_MSG="Database directory still exists."
+
+# Status indicators
+SUCCESS=0
+FAILURE=1
+
+##### Variables, with default values (optional)
+
+TEST_CASE=0
+
+##### Functions
+
+fail_msg() {
+    local ID="$1"
+    local NAME="$2"
+    echo "Test $ID ($NAME) failed:"
+    cat "${TESTS_DIR}/${ID}/${FAIL_FILE}"
+}
+
+success_msg() {
+    local ID="$1"
+    local NAME="$2"
+    echo "Test $ID ($NAME) passed."
+}
+
+execute() {
+    ${MIGRATE} $1
+    echo $?
+}
+
+run() {
+    # Iterate test case ID
+    TEST_CASE=$(($TEST_CASE+1))
+
+    # Prepare environment
+    local ID=$TEST_CASE
+    local INITIAL="$1"
+    local PATTERN="$2"
+    local NAME="$3"
+    local STATE_PATH="${TESTS_DIR}/${ID}"
+
+    mkdir -p "$STATE_PATH"
+    if [ 'empty' != "$INITIAL" ] ; then
+        cp -a "${PATTERNS_DIR}/${INITIAL}" "${STATE_PATH}/${DB_DIR}"
+    fi
+
+    # Prepare error handling
+    local RUN_SUCCESS=$SUCCESS
+    local FAIL_REASON="${STATE_PATH}/${FAIL_FILE}"
+    echo -n "" > "$FAIL_REASON"
+
+    # Run command
+    local ARG="$4 -p $STATE_PATH"
+    local RET=$(execute "$ARG")
+
+    # Check results
+    if [ $SUCCESS -ne $RET ] ; then
+        # Migration tool failure
+        echo "$MIGRATE_FAIL_MSG" > "$FAIL_REASON"
+    else
+        # Clear logfile
+        local LOG="${STATE_PATH}/${LOG_FILE}"
+        echo -n "" > "$LOG"
+
+        if [ 'empty' = "$PATTERN" ] ; then
+            # No pattern - check if database directory was removed
+            if [ -d "${STATE_PATH}/${DB_DIR}" ] ; then
+                RUN_SUCCESS=$FAILURE
+                echo "" >> "$FAIL_REASON"
+                echo "$DB_STILL_EXISTS_MSG" >> "$FAIL_REASON"
+            fi
+        else
+            # Pattern given - compare it to generated database
+            for FILE in ${PATTERNS_DIR}/${PATTERN}/* ; do
+                diff ${FILE} ${STATE_PATH}/${DB_DIR}/${FILE##*\/} > "$LOG" 2>&1
+                if [ $SUCCESS -ne $? ] ; then
+                    RUN_SUCCESS=$FAILURE
+                    # Append comparison result to fail log
+                    echo ""  >> "$FAIL_REASON"
+                    echo "${COMPARE_FAIL_MSG}: ${FILE##*\/}" >> "$FAIL_REASON"
+                    cat "$LOG" >> "$FAIL_REASON"
+                fi
+            done
+        fi
+    fi
+
+    # Return results
+    if [ $SUCCESS -eq $RUN_SUCCESS ] ; then
+        success_msg "$ID" "$NAME"
+    else
+        fail_msg "$ID" "$NAME"
+    fi
+
+    # Clean up environment
+    rm -r "$STATE_PATH"
+}
+
+##### Main
+
+# How to add new test cases:
+#
+# run INITIAL_DB PATTERN_DB TEST_CASE_NAME MIGRATION_ARGS
+#
+# checking if database was removed: pass 'empty' as PATTERN_DB
+
+### Set up tests environment
+mkdir -p "$TESTS_DIR"
+
+# Test case 01: install minimal pre-checksum database
+run empty db7_prechs "inst_min_prechs" "install -t $PRECHS_LOW_VERSION"
+
+# Test case 02: install minimal post-checksum database
+run empty db8_postchs "inst_min_postchs" "install -t $POSTCHS_LOW_VERSION"
+
+# Test case 03: upgrade from pre-checksum to pre-checksum
+run db7_prechs db7_prechs "up_prechs_prechs" \
+    "upgrade -f $PRECHS_LOW_VERSION -t $PRECHS_HIGH_VERSION"
+
+# Test case 04: upgrade from pre-checksum to post-checksum
+run db7_prechs db8_postchs "up_prechs_postchs" \
+    "upgrade -f $PRECHS_LOW_VERSION -t $POSTCHS_HIGH_VERSION"
+
+# Test case 05: upgrade from post-checksum to post-checksum
+run db8_postchs db8_postchs "up_postchs_postchs" \
+    "upgrade -f $POSTCHS_LOW_VERSION -t $POSTCHS_HIGH_VERSION"
+
+# Test case 06: downgrade from pre-checksum to pre-checksum
+run db7_prechs db7_prechs "down_prechs_prechs" \
+    "upgrade -f $PRECHS_HIGH_VERSION -t $PRECHS_LOW_VERSION"
+
+# Test case 07: downgrade from post-checksum to pre-checksum
+run db8_postchs db7_prechs "down_postchs_prechs" \
+    "upgrade -f $POSTCHS_HIGH_VERSION -t $PRECHS_LOW_VERSION"
+
+# Test case 08: downgrade from post-checksum to post-checksum
+run db8_postchs db8_postchs "down_postchs_postchs" \
+    "upgrade -f $POSTCHS_HIGH_VERSION -t $POSTCHS_LOW_VERSION"
+
+# Test case 09: migrate to the same database version
+run db8_postchs db8_postchs "migr_same_ver" \
+    "upgrade -f $POSTCHS_HIGH_VERSION -t $POSTCHS_HIGH_VERSION"
+
+# Test case 10: uninstall database
+run db7_prechs empty "uninst_db" "uninstall -f $PRECHS_LOW_VERSION"
+
+# Test case 11: upgrade from pre-checksum to pre-checksum (backups)
+run db9_prechs_bcp db9_prechs_bcp "up_prechs_prechs_bcp" \
+    "upgrade -f $PRECHS_LOW_VERSION -t $PRECHS_HIGH_VERSION"
+
+# Test case 12: upgrade from pre-checksum to post-checksum (backups)
+run db9_prechs_bcp db10_postchs_bcp "up_prechs_postchs_bcp" \
+    "upgrade -f $PRECHS_LOW_VERSION -t $POSTCHS_HIGH_VERSION"
+
+# Test case 13: upgrade from post-checksum to post-checksum (backups)
+run db10_postchs_bcp db10_postchs_bcp "up_postchs_postchs_bcp" \
+    "upgrade -f $POSTCHS_LOW_VERSION -t $POSTCHS_HIGH_VERSION"
+
+# Test case 14: downgrade from backup pre-checksum to pre-checksum (backups)
+run db9_prechs_bcp db9_prechs_bcp "down_prechs_prechs_bcp" \
+    "upgrade -f $PRECHS_HIGH_VERSION -t $PRECHS_LOW_VERSION"
+
+# Test case 15: downgrade from backup post-checksum to pre-checksum (backups)
+run db10_postchs_bcp db9_prechs_bcp "down_postchs_prechs_bcp" \
+    "upgrade -f $POSTCHS_HIGH_VERSION -t $PRECHS_LOW_VERSION"
+
+# Test case 16: downgrade from backup post-checksum to post-checksum (backups)
+run db10_postchs_bcp db10_postchs_bcp "down_postchs_postchs_bcp" \
+    "upgrade -f $POSTCHS_HIGH_VERSION -t $POSTCHS_LOW_VERSION"
+
+# Test case 17: migrate to the same database version (backups)
+run db10_postchs_bcp db10_postchs_bcp "migr_same_ver_bcp" \
+    "upgrade -f $POSTCHS_HIGH_VERSION -t $POSTCHS_HIGH_VERSION"
+
+### Clean up tests environment
+rm -r "$TESTS_DIR"

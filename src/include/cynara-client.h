@@ -252,9 +252,9 @@ int cynara_check(cynara *p_cynara, const char *client, const char *client_sessio
  *
  * \par Method of function operation:
  * This function is very similar to cynara_check() with the difference, that in case of answer not
- * being one of CYNARA_API_PERMISSION_DENIED or CYNARA_API_PERMISSION_ALLOWED, no external
- * application will be consulted. Instead, CYNARA_API_ACCESS_NOT_RESOLVED is returned, meaning,
- * that only running full cynara_check() API would yield eventual answer.
+ * being one of CYNARA_API_ACCESS_DENIED or CYNARA_API_ACCESS_ALLOWED, no external application will
+ * be consulted. Instead, CYNARA_API_ACCESS_NOT_RESOLVED is returned, meaning, that only running
+ * full cynara_check() API would yield eventual answer.
  * Similarly, like in cynara_check(), argument client_session can be used to distinguish client
  * sessions and grant possibility to yield answer from cache.
  *

@@ -35,12 +35,13 @@
 #include <protocol/ProtocolClient.h>
 #include <request/CancelRequest.h>
 #include <request/CheckRequest.h>
+#include <request/SimpleCheckRequest.h>
 #include <response/CancelResponse.h>
 #include <response/CheckResponse.h>
+#include <response/SimpleCheckResponse.h>
 #include <sockets/Socket.h>
 
 #include "Logic.h"
-
 namespace Cynara {
 
 Logic::Logic(cynara_status_callback callback, void *userStatusData, const Configuration &conf)
@@ -77,7 +78,23 @@ int Logic::checkCache(const std::string &client, const std::string &session,
     return m_cache->get(session, PolicyKey(client, user, privilege));
 }
 
-int Logic::createRequest(const std::string &client, const std::string &session,
+int Logic::createCheckRequest(const std::string &client, const std::string &session,
+                              const std::string &user, const std::string &privilege,
+                              cynara_check_id &checkId, cynara_response_callback callback,
+                              void *userResponseData) {
+    return createRequest(false, client, session, user, privilege, checkId, callback,
+                         userResponseData);
+}
+
+int Logic::createSimpleRequest(const std::string &client, const std::string &session,
+                               const std::string &user, const std::string &privilege,
+                               cynara_check_id &checkId, cynara_response_callback callback,
+                               void *userResponseData) {
+    return createRequest(true, client, session, user, privilege, checkId, callback,
+                         userResponseData);
+}
+
+int Logic::createRequest(bool simple, const std::string &client, const std::string &session,
                          const std::string &user, const std::string &privilege,
                          cynara_check_id &checkId, cynara_response_callback callback,
                          void *userResponseData) {
@@ -93,8 +110,12 @@ int Logic::createRequest(const std::string &client, const std::string &session,
 
     PolicyKey key(client, user, privilege);
     ResponseCallback responseCallback(callback, userResponseData);
-    m_checks.insert(CheckPair(sequenceNumber, CheckData(key, session, responseCallback)));
-    m_socketClient->appendRequest(std::make_shared<CheckRequest>(key, sequenceNumber));
+    m_checks.insert(CheckPair(sequenceNumber, CheckData(key, session, responseCallback,
+                                                        simple)));
+    if (simple)
+        m_socketClient->appendRequest(std::make_shared<SimpleCheckRequest>(key, sequenceNumber));
+    else
+        m_socketClient->appendRequest(std::make_shared<CheckRequest>(key, sequenceNumber));
 
     onStatusChange(m_socketClient->getSockFd(), cynara_async_status::CYNARA_STATUS_FOR_RW);
     checkId = static_cast<cynara_check_id>(sequenceNumber);
@@ -158,7 +179,12 @@ void Logic::prepareRequestsToSend(void) {
             m_sequenceContainer.release(it->first);
             it = m_checks.erase(it);
         } else {
-            m_socketClient->appendRequest(std::make_shared<CheckRequest>(it->second.key(), it->first));
+            if (it->second.isSimple())
+                m_socketClient->appendRequest(std::make_shared<SimpleCheckRequest>(it->second.key(),
+                                                                                   it->first));
+            else
+                m_socketClient->appendRequest(std::make_shared<CheckRequest>(it->second.key(),
+                                                                             it->first));
             ++it;
         }
     }
@@ -176,22 +202,32 @@ bool Logic::processOut(void) {
     }
 }
 
+Logic::CheckMap::iterator Logic::checkResponseValid(ResponsePtr response) {
+    auto it = m_checks.find(response->sequenceNumber());
+    if (it == m_checks.end()) {
+        LOGC("Critical error. Unknown checkResponse received: sequenceNumber = [%" PRIu16 "]",
+             response->sequenceNumber());
+        throw UnexpectedErrorException("Unexpected response from cynara service");
+    }
+    return it;
+}
+
+void Logic::releaseRequest(Logic::CheckMap::iterator reqIt) {
+    m_sequenceContainer.release(reqIt->first);
+    m_checks.erase(reqIt);
+}
+
 void Logic::processCheckResponse(CheckResponsePtr checkResponse) {
     LOGD("checkResponse: policyType = [%" PRIu16 "], metadata = <%s>",
          checkResponse->m_resultRef.policyType(),
          checkResponse->m_resultRef.metadata().c_str());
 
-    auto it = m_checks.find(checkResponse->sequenceNumber());
-    if (it == m_checks.end()) {
-        LOGC("Critical error. Unknown checkResponse received: sequenceNumber = [%" PRIu16 "]",
-             checkResponse->sequenceNumber());
-        throw UnexpectedErrorException("Unexpected response from cynara service");
-    }
+    auto it = checkResponseValid(checkResponse);
     int result = m_cache->update(it->second.session(), it->second.key(),
                                  checkResponse->m_resultRef);
     CheckData checkData(std::move(it->second));
-    m_sequenceContainer.release(it->first);
-    m_checks.erase(it);
+    releaseRequest(it);
+
     if (!checkData.cancelled()) {
         bool onAnswerCancel = m_inAnswerCancelResponseCallback;
         m_inAnswerCancelResponseCallback = true;
@@ -201,29 +237,47 @@ void Logic::processCheckResponse(CheckResponsePtr checkResponse) {
     }
 }
 
+void Logic::processSimpleCheckResponse(SimpleCheckResponsePtr response) {
+    LOGD("simpleCheckResponse");
+    LOGD("checkResponse: policyType = [%" PRIu16 "], metadata = <%s>",
+         response->getResult().policyType(),
+         response->getResult().metadata().c_str());
+
+    auto it = checkResponseValid(response);
+    int result = response->getReturnValue();
+    if (result == CYNARA_API_SUCCESS)
+        result = m_cache->update(it->second.session(), it->second.key(),
+                                 response->getResult());
+    CheckData checkData(std::move(it->second));
+    releaseRequest(it);
+
+    if (!checkData.cancelled()) {
+        bool onAnswerCancel = m_inAnswerCancelResponseCallback;
+        m_inAnswerCancelResponseCallback = true;
+        checkData.callback().onAnswer(
+            static_cast<cynara_check_id>(response->sequenceNumber()), result);
+        m_inAnswerCancelResponseCallback = onAnswerCancel;
+    }
+}
+
 void Logic::processCancelResponse(CancelResponsePtr cancelResponse) {
     LOGD("cancelResponse");
 
-    auto it = m_checks.find(cancelResponse->sequenceNumber());
-    if (it == m_checks.end()) {
-        LOGC("Critical error. Unknown cancelResponse received: sequenceNumber = [%" PRIu16 "]",
-             cancelResponse->sequenceNumber());
-        throw UnexpectedErrorException("Unexpected response from cynara service");
-    }
+    auto it = checkResponseValid(cancelResponse);
     if (!it->second.cancelled()) {
         LOGC("Critical error. CancelRequest not sent: sequenceNumber = [%" PRIu16 "]",
              cancelResponse->sequenceNumber());
         throw UnexpectedErrorException("Unexpected response from cynara service");
     }
-    m_sequenceContainer.release(it->first);
-    m_checks.erase(it);
+    releaseRequest(it);
 }
 
 void Logic::processResponses(void) {
     ResponsePtr response;
     CheckResponsePtr checkResponse;
     CancelResponsePtr cancelResponse;
-    while (response = m_socketClient->getResponse()) {
+    SimpleCheckResponsePtr simpleResponse;
+    while ((response = m_socketClient->getResponse())) {
         checkResponse = std::dynamic_pointer_cast<CheckResponse>(response);
         if (checkResponse) {
             processCheckResponse(checkResponse);
@@ -233,6 +287,12 @@ void Logic::processResponses(void) {
         cancelResponse = std::dynamic_pointer_cast<CancelResponse>(response);
         if (cancelResponse) {
             processCancelResponse(cancelResponse);
+            continue;
+        }
+
+        simpleResponse = std::dynamic_pointer_cast<SimpleCheckResponse>(response);
+        if (simpleResponse) {
+            processSimpleCheckResponse(simpleResponse);
             continue;
         }
 

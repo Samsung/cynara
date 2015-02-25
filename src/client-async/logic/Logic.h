@@ -50,10 +50,14 @@ public:
 
     virtual int checkCache(const std::string &client, const std::string &session,
                            const std::string &user, const std::string &privilege);
-    virtual int createRequest(const std::string &client, const std::string &session,
-                              const std::string &user, const std::string &privilege,
-                              cynara_check_id &checkId, cynara_response_callback callback,
-                              void *userResponseData);
+    virtual int createCheckRequest(const std::string &client, const std::string &session,
+                                   const std::string &user, const std::string &privilege,
+                                   cynara_check_id &checkId, cynara_response_callback callback,
+                                   void *userResponseData);
+    virtual int createSimpleRequest(const std::string &client, const std::string &session,
+                                    const std::string &user, const std::string &privilege,
+                                    cynara_check_id &checkId, cynara_response_callback callback,
+                                    void *userResponseData);
     virtual int process(void);
     virtual int cancelRequest(cynara_check_id checkId);
     virtual bool isFinishPermitted(void);
@@ -71,11 +75,18 @@ private:
     bool m_inAnswerCancelResponseCallback;
 
     bool checkCacheValid(void);
+    int createRequest(bool simple, const std::string &client, const std::string &session,
+                      const std::string &user, const std::string &privilege,
+                      cynara_check_id &checkId, cynara_response_callback callback,
+                      void *userResponseData);
     void prepareRequestsToSend(void);
     cynara_async_status socketDataStatus(void);
     bool processOut(void);
+    CheckMap::iterator checkResponseValid(ResponsePtr response);
+    void releaseRequest(Logic::CheckMap::iterator reqIt);
     void processCheckResponse(CheckResponsePtr checkResponse);
     void processCancelResponse(CancelResponsePtr cancelResponse);
+    void processSimpleCheckResponse(SimpleCheckResponsePtr response);
     void processResponses(void);
     bool processIn(void);
     bool ensureConnection(void);

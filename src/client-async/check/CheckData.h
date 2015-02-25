@@ -36,11 +36,14 @@ namespace Cynara {
 class CheckData
 {
 public:
-    CheckData(const PolicyKey &key, const std::string &session, const ResponseCallback &callback)
-        : m_key(key), m_session(session), m_callback(callback),  m_cancelled(false) {}
+    CheckData(const PolicyKey &key, const std::string &session, const ResponseCallback &callback,
+              bool simple)
+        : m_key(key), m_session(session), m_callback(callback), m_simple(simple), m_cancelled(false)
+    {}
     CheckData(CheckData &&other)
         : m_key(std::move(other.m_key)), m_session(std::move(other.m_session)),
-          m_callback(std::move(other.m_callback)), m_cancelled(other.m_cancelled) {
+          m_callback(std::move(other.m_callback)), m_simple(other.m_simple),
+          m_cancelled(other.m_cancelled) {
         other.m_cancelled = false;
     }
     ~CheckData() {}
@@ -57,6 +60,10 @@ public:
         return m_callback;
     }
 
+    bool isSimple(void) const {
+        return m_simple;
+    }
+
     bool cancelled(void) const {
         return m_cancelled;
     }
@@ -69,6 +76,7 @@ private:
     PolicyKey m_key;
     std::string m_session;
     ResponseCallback m_callback;
+    bool m_simple;
     bool m_cancelled;
 };
 

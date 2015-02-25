@@ -170,8 +170,44 @@ int cynara_async_create_request(cynara_async *p_cynara, const char *client,
             return CYNARA_API_INVALID_PARAM;
         }
         cynara_check_id checkId;
-        int ret = p_cynara->impl->createRequest(clientStr, clientSessionStr, userStr, privilegeStr,
-                                                checkId, callback, user_response_data);
+        int ret = p_cynara->impl->createCheckRequest(clientStr, clientSessionStr, userStr,
+                                                     privilegeStr, checkId, callback,
+                                                     user_response_data);
+        if (p_check_id && ret == CYNARA_API_SUCCESS)
+            *p_check_id = checkId;
+        return ret;
+    });
+}
+
+CYNARA_API
+int cynara_async_create_simple_request(cynara_async *p_cynara, const char *client,
+                                       const char *client_session, const char *user,
+                                       const char *privilege, cynara_check_id *p_check_id,
+                                       cynara_response_callback callback, void *user_response_data){
+    if (!p_cynara || !p_cynara->impl)
+        return CYNARA_API_INVALID_PARAM;
+    if (!client || !client_session || !user || !privilege)
+        return CYNARA_API_INVALID_PARAM;
+
+    return Cynara::tryCatch([&]() {
+        std::string clientStr;
+        std::string clientSessionStr;
+        std::string userStr;
+        std::string privilegeStr;
+
+        try {
+            clientStr = client;
+            clientSessionStr = client_session;
+            userStr = user;
+            privilegeStr = privilege;
+        } catch (const std::length_error &e) {
+            LOGE("%s", e.what());
+            return CYNARA_API_INVALID_PARAM;
+        }
+        cynara_check_id checkId;
+        int ret = p_cynara->impl->createSimpleRequest(clientStr, clientSessionStr, userStr,
+                                                      privilegeStr, checkId, callback,
+                                                      user_response_data);
         if (p_check_id && ret == CYNARA_API_SUCCESS)
             *p_check_id = checkId;
         return ret;

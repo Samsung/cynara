@@ -36,10 +36,14 @@ public:
 
     virtual int checkCache(const std::string &client, const std::string &session,
                            const std::string &user, const std::string &privilege) = 0;
-    virtual int createRequest(const std::string &client, const std::string &session,
-                              const std::string &user, const std::string &privilege,
-                              cynara_check_id &checkId, cynara_response_callback callback,
-                              void *userResponseData) = 0;
+    virtual int createCheckRequest(const std::string &client, const std::string &session,
+                                   const std::string &user, const std::string &privilege,
+                                   cynara_check_id &checkId, cynara_response_callback callback,
+                                   void *userResponseData) = 0;
+    virtual int createSimpleRequest(const std::string &client, const std::string &session,
+                                    const std::string &user, const std::string &privilege,
+                                    cynara_check_id &checkId, cynara_response_callback callback,
+                                    void *userResponseData) = 0;
     virtual int process(void) = 0;
     virtual int cancelRequest(cynara_check_id checkId) = 0;
     virtual bool isFinishPermitted(void) = 0;

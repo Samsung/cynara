@@ -23,6 +23,8 @@
 #include <algorithm>
 #include <cstring>
 #include <iostream>
+#include <memory>
+#include <new>
 #include <stdexcept>
 #include <unistd.h>
 
@@ -43,8 +45,10 @@ const char ChecksumGenerator::m_fieldSeparator(StorageConfig::fieldSeparator);
 const char ChecksumGenerator::m_recordSeparator(StorageConfig::recordSeparator);
 const std::string ChecksumGenerator::m_backupFilenameSuffix(StorageConfig::backupFilenameSuffix);
 
-ChecksumGenerator::ChecksumGenerator(int argc, char * const *argv) : m_copyStream(std::string()) {
-    m_filename = (1 < argc ? argv[1] : std::string());
+ChecksumGenerator::ChecksumGenerator(int argc, char * const *argv) {
+    if (argc > 1) {
+        m_pathname = argv[1];
+    }
 }
 
 int ChecksumGenerator::run(void) {
@@ -65,11 +69,14 @@ int ChecksumGenerator::run(void) {
     } catch (const std::length_error &ex) {
         std::cerr << ex.what() << std::endl;
         return CYNARA_API_UNKNOWN_ERROR;
+    } catch (const std::bad_alloc &ex) {
+        std::cerr << ex.what() << std::endl;
+        return CYNARA_API_OUT_OF_MEMORY;
     }
 }
 
 const std::string ChecksumGenerator::generate(const std::string &data) {
-    auto checksum = crypt(data.c_str(), "$1$");
+    const char *checksum = crypt(data.c_str(), "$1$");
 
     if (nullptr != checksum) {
         return std::string(checksum);
@@ -85,10 +92,10 @@ const std::string ChecksumGenerator::generate(const std::string &data) {
 };
 
 void ChecksumGenerator::openFileStream(void) {
-    m_inputStream.open(m_filename);
+    m_inputStream.open(m_pathname);
 
     if (!m_inputStream.is_open()) {
-        throw FileNotFoundException(m_filename);
+        throw FileNotFoundException(m_pathname);
     }
 }
 
@@ -100,14 +107,21 @@ void ChecksumGenerator::copyFileStream(void) {
 }
 
 void ChecksumGenerator::printRecord(void) const {
-    std::string filename(basename(m_filename.c_str()));
-    getBasicFilename(filename);
+    std::unique_ptr<char, decltype(free)*> pathnameDuplicate(strdup(m_pathname.c_str()), free);
+    if (pathnameDuplicate == nullptr) {
+        LOGE("Insufficient memory available to allocate duplicate filename: <%s>",
+             m_pathname.c_str());
+        throw std::bad_alloc();
+    }
 
-    std::cout << filename << m_fieldSeparator << generate(m_copyStream.str())
+    std::string basename(::basename(pathnameDuplicate.get()));
+    removeBackupSuffix(basename);
+
+    std::cout << basename << m_fieldSeparator << generate(m_copyStream.str())
               << m_recordSeparator;
 }
 
-void ChecksumGenerator::getBasicFilename(std::string &filename) const {
+void ChecksumGenerator::removeBackupSuffix(std::string &filename) const {
     auto backupSuffixPos = filename.rfind(m_backupFilenameSuffix);
 
     if (std::string::npos != backupSuffixPos &&

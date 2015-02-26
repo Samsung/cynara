@@ -42,11 +42,11 @@ private:
     void openFileStream(void);
     void copyFileStream(void);
     void printRecord(void) const;
-    void getBasicFilename(std::string &filename) const;
+    void removeBackupSuffix(std::string &filename) const;
 
     std::ifstream m_inputStream;
     std::stringstream m_copyStream;
-    std::string m_filename;
+    std::string m_pathname;
     static const char m_fieldSeparator;
     static const char m_recordSeparator;
     static const std::string m_backupFilenameSuffix;

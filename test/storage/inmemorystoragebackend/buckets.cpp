@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ TEST_F(InMemeoryStorageBackendFixture, createBucket) {
     using ::testing::ReturnRef;
     using ::testing::IsEmpty;
 
-    FakeInMemoryStorageBackend backend;
+    FakeInMemoryStorageBackend backend(m_fakeDbPath);
     EXPECT_CALL(backend, buckets())
         .WillRepeatedly(ReturnRef(m_buckets));
 
@@ -53,7 +53,7 @@ TEST_F(InMemeoryStorageBackendFixture, createBucket) {
 TEST_F(InMemeoryStorageBackendFixture, updateBucket) {
     using ::testing::ReturnRef;
 
-    FakeInMemoryStorageBackend backend;
+    FakeInMemoryStorageBackend backend(m_fakeDbPath);
     EXPECT_CALL(backend, buckets())
         .WillRepeatedly(ReturnRef(m_buckets));
 
@@ -69,7 +69,7 @@ TEST_F(InMemeoryStorageBackendFixture, updateBucket) {
 TEST_F(InMemeoryStorageBackendFixture, updateNonexistentBucket) {
     using ::testing::ReturnRef;
 
-    FakeInMemoryStorageBackend backend;
+    FakeInMemoryStorageBackend backend(m_fakeDbPath);
     EXPECT_CALL(backend, buckets())
         .WillRepeatedly(ReturnRef(m_buckets));
 
@@ -81,7 +81,7 @@ TEST_F(InMemeoryStorageBackendFixture, deleteBucket) {
     using ::testing::ReturnRef;
     using ::testing::IsEmpty;
 
-    FakeInMemoryStorageBackend backend;
+    FakeInMemoryStorageBackend backend(m_fakeDbPath);
     EXPECT_CALL(backend, buckets())
         .WillRepeatedly(ReturnRef(m_buckets));
 
@@ -97,7 +97,7 @@ TEST_F(InMemeoryStorageBackendFixture, hasBucket) {
     using ::testing::ReturnRef;
     using ::testing::IsEmpty;
 
-    FakeInMemoryStorageBackend backend;
+    FakeInMemoryStorageBackend backend(m_fakeDbPath);
     EXPECT_CALL(backend, buckets())
         .WillRepeatedly(ReturnRef(m_buckets));
 
@@ -111,7 +111,7 @@ TEST_F(InMemeoryStorageBackendFixture, hasBucket) {
 TEST_F(InMemeoryStorageBackendFixture, deleteNonexistentBucket) {
     using ::testing::ReturnRef;
 
-    FakeInMemoryStorageBackend backend;
+    FakeInMemoryStorageBackend backend(m_fakeDbPath);
     EXPECT_CALL(backend, buckets())
         .WillRepeatedly(ReturnRef(m_buckets));
 

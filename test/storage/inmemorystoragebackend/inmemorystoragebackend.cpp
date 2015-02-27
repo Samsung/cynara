@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -40,13 +40,14 @@
 
 using namespace Cynara;
 
-const std::string InMemeoryStorageBackendFixture::m_indexFileName = "buckets";
-const std::string InMemeoryStorageBackendFixture::m_backupFileNameSuffix = "~";
+const std::string InMemeoryStorageBackendFixture::m_indexFileName("buckets");
+const std::string InMemeoryStorageBackendFixture::m_backupFileNameSuffix("~");
+const std::string InMemeoryStorageBackendFixture::m_fakeDbPath("/fake/database/path");
 
 TEST_F(InMemeoryStorageBackendFixture, defaultPolicyIsDeny) {
     using ::testing::ReturnRef;
 
-    FakeInMemoryStorageBackend backend;
+    FakeInMemoryStorageBackend backend(m_fakeDbPath);
     EXPECT_CALL(backend, buckets())
         .WillOnce(ReturnRef(m_buckets));
 
@@ -65,7 +66,7 @@ TEST_F(InMemeoryStorageBackendFixture, deleteLinking) {
     using ::testing::IsEmpty;
     using ::testing::UnorderedElementsAre;
 
-    FakeInMemoryStorageBackend backend;
+    FakeInMemoryStorageBackend backend(m_fakeDbPath);
     EXPECT_CALL(backend, buckets())
         .Times(4)
         .WillRepeatedly(ReturnRef(m_buckets));
@@ -120,7 +121,7 @@ TEST_F(InMemeoryStorageBackendFixture, insertPolicy) {
     using ::testing::UnorderedElementsAre;
     using PredefinedPolicyType::ALLOW;
 
-    FakeInMemoryStorageBackend backend;
+    FakeInMemoryStorageBackend backend(m_fakeDbPath);
     EXPECT_CALL(backend, buckets())
         .WillOnce(ReturnRef(m_buckets));
 
@@ -136,7 +137,7 @@ TEST_F(InMemeoryStorageBackendFixture, insertPolicy) {
 TEST_F(InMemeoryStorageBackendFixture, insertPolicyToNonexistentBucket) {
     using ::testing::ReturnRef;
 
-    FakeInMemoryStorageBackend backend;
+    FakeInMemoryStorageBackend backend(m_fakeDbPath);
     EXPECT_CALL(backend, buckets())
         .WillOnce(ReturnRef(m_buckets));
 
@@ -151,7 +152,7 @@ TEST_F(InMemeoryStorageBackendFixture, deletePolicy) {
     using ::testing::ContainerEq;
     using PredefinedPolicyType::ALLOW;
 
-    FakeInMemoryStorageBackend backend;
+    FakeInMemoryStorageBackend backend(m_fakeDbPath);
     EXPECT_CALL(backend, buckets())
         .WillOnce(ReturnRef(m_buckets));
 
@@ -184,7 +185,7 @@ TEST_F(InMemeoryStorageBackendFixture, deletePolicyFromNonexistentBucket) {
     using ::testing::IsEmpty;
     using ::testing::UnorderedElementsAre;
 
-    FakeInMemoryStorageBackend backend;
+    FakeInMemoryStorageBackend backend(m_fakeDbPath);
     EXPECT_CALL(backend, buckets())
         .WillOnce(ReturnRef(m_buckets));
 
@@ -311,7 +312,7 @@ TEST_F(InMemeoryStorageBackendFixture, load_from_backup) {
 TEST_F(InMemeoryStorageBackendFixture, erasePoliciesEmptyBase) {
     using ::testing::ReturnRef;
 
-    FakeInMemoryStorageBackend backend;
+    FakeInMemoryStorageBackend backend(m_fakeDbPath);
     EXPECT_CALL(backend, buckets())
         .WillRepeatedly(ReturnRef(m_buckets));
 
@@ -345,7 +346,7 @@ TEST_F(InMemeoryStorageBackendFixture, erasePoliciesSingleBucket) {
     for (const auto &filter : filters()) {
         SCOPED_TRACE(filter.name());
 
-        FakeInMemoryStorageBackend backend;
+        FakeInMemoryStorageBackend backend(m_fakeDbPath);
         EXPECT_CALL(backend, buckets()).WillRepeatedly(ReturnRef(m_buckets));
 
         createBucket(bucketId);
@@ -380,7 +381,7 @@ TEST_F(InMemeoryStorageBackendFixture, erasePoliciesRecursiveNotLinkedBuckets) {
     for (const auto &filter : filters()) {
         SCOPED_TRACE(filter.name());
 
-        FakeInMemoryStorageBackend backend;
+        FakeInMemoryStorageBackend backend(m_fakeDbPath);
         EXPECT_CALL(backend, buckets()).WillRepeatedly(ReturnRef(m_buckets));
 
         createBucket(bucketId);
@@ -423,7 +424,7 @@ TEST_F(InMemeoryStorageBackendFixture, erasePoliciesRecursiveLinkedBuckets) {
     for (const auto &filter : filters()) {
         SCOPED_TRACE(filter.name());
 
-        FakeInMemoryStorageBackend backend;
+        FakeInMemoryStorageBackend backend(m_fakeDbPath);
         EXPECT_CALL(backend, buckets()).WillRepeatedly(ReturnRef(m_buckets));
 
         createBucket(bucketId);
@@ -473,7 +474,7 @@ TEST_F(InMemeoryStorageBackendFixture, erasePoliciesRecursiveLinkedBucketsNoBack
     for (const auto &filter : filters()) {
         SCOPED_TRACE(filter.name());
 
-        FakeInMemoryStorageBackend backend;
+        FakeInMemoryStorageBackend backend(m_fakeDbPath);
         EXPECT_CALL(backend, buckets()).WillRepeatedly(ReturnRef(m_buckets));
 
         createBucket(bucketId);
@@ -522,7 +523,7 @@ TEST_F(InMemeoryStorageBackendFixture, erasePoliciesNonRecursiveLinkedBuckets) {
     for (const auto &filter : filters()) {
         SCOPED_TRACE(filter.name());
 
-        FakeInMemoryStorageBackend backend;
+        FakeInMemoryStorageBackend backend(m_fakeDbPath);
         EXPECT_CALL(backend, buckets()).WillRepeatedly(ReturnRef(m_buckets));
 
         createBucket(bucketId);

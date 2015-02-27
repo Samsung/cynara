@@ -31,9 +31,6 @@
 
 namespace Cynara {
 
-class Integrity;
-typedef std::unique_ptr<Integrity> IntegrityUniquePtr;
-
 class Integrity
 {
 public:

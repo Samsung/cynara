@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ namespace Cynara {
 
 class InMemoryStorageBackend : public StorageBackend {
 public:
+    InMemoryStorageBackend() = delete;
     InMemoryStorageBackend(const std::string &path);
     virtual ~InMemoryStorageBackend() {};
 
@@ -64,7 +65,6 @@ public:
                                const PolicyKey &filter);
 
 protected:
-    InMemoryStorageBackend() {}
     void openFileStream(std::shared_ptr<std::ifstream> stream, const std::string &filename);
     std::shared_ptr<BucketDeserializer> bucketStreamOpener(const PolicyBucketId &bucketId,
                                                            const std::string &fileNameSuffix);
@@ -78,7 +78,7 @@ protected:
 private:
     std::string m_dbPath;
     Buckets m_buckets;
-    IntegrityUniquePtr m_integrity;
+    Integrity m_integrity;
     static const std::string m_indexFilename;
     static const std::string m_backupFilenameSuffix;
     static const std::string m_bucketFilenamePrefix;

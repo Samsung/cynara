@@ -18,6 +18,7 @@
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @author      Zofia Abramowska <z.abramowska@samsung.com>
+ * @author      Pawel Wieczorek <p.wieczorek2@samsung.com>
  * @version     1.0
  * @brief       This file contains implementation of online version of Logic class
  */
@@ -110,6 +111,9 @@ static int interpretCodeResponse(const CodeResponse::Code &code) {
         case CodeResponse::Code::FAILED:
             LOGC("Cynara service answered: Operation failed.");
             return CYNARA_API_OPERATION_FAILED;
+        case CodeResponse::Code::DB_CORRUPTED:
+            LOGC("Cynara service answered: Database is corrupted.");
+            return CYNARA_API_DATABASE_CORRUPTED;
         default:
             LOGE("Unexpected response code from server: [%d]",
                  static_cast<int>(code));
@@ -157,6 +161,11 @@ int OnlineLogic::adminCheck(const PolicyBucketId &startBucket, bool recursive, c
         return ret;
     }
 
+    if (adminCheckResponse->isDbCorrupted()) {
+        LOGC("Cynara service answered: Database is corrupted.");
+        return CYNARA_API_DATABASE_CORRUPTED;
+    }
+
     LOGD("AdminCheckResponse: policyType [%" PRIu16 "], metadata <%s>, bucketValid [%d]",
          adminCheckResponse->result().policyType(), adminCheckResponse->result().metadata().c_str(),
          static_cast<int>(adminCheckResponse->isBucketValid()));
@@ -177,6 +186,11 @@ int OnlineLogic::listPolicies(const PolicyBucketId &bucket, const PolicyKey &fil
     int ret = getResponse<ListRequest>(listResponse, bucket, filter);
     if (ret != CYNARA_API_SUCCESS) {
         return ret;
+    }
+
+    if (listResponse->isDbCorrupted()) {
+        LOGC("Cynara service answered: Database is corrupted.");
+        return CYNARA_API_DATABASE_CORRUPTED;
     }
 
     LOGD("listResponse: number of policies [%zu], bucketValid [%d]",
@@ -206,6 +220,11 @@ int OnlineLogic::listDescriptions(std::vector<PolicyDescription> &descriptions) 
     int ret = getResponse<DescriptionListRequest>(descrResponse);
     if (ret != CYNARA_API_SUCCESS) {
         return ret;
+    }
+
+    if (descrResponse->isDbCorrupted()) {
+        LOGC("Cynara service answered: Database is corrupted.");
+        return CYNARA_API_DATABASE_CORRUPTED;
     }
 
     LOGD("descriptionListResponse: number of plugin descriptions [%zu]",

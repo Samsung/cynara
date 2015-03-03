@@ -82,6 +82,9 @@ int cynara_strerror(int errnum, char *buf, size_t buflen) {
         case CYNARA_API_BUFFER_TOO_SHORT:
             message = "Buffer too short";
             break;
+        case CYNARA_API_DATABASE_CORRUPTED:
+            message = "Database corrupted";
+            break;
     }
 
     if (message == nullptr)

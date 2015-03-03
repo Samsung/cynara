@@ -17,6 +17,7 @@
  * @file        src/admin/logic/OfflineLogic.cpp
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @author      Pawel Wieczorek <p.wieczorek2@samsung.com>
  * @version     1.0
  * @brief       This file contains implementation of OfflineLogic class
  */
@@ -25,6 +26,7 @@
 #include <config/PathConfig.h>
 #include <exceptions/BucketNotExistsException.h>
 #include <exceptions/DatabaseBusyException.h>
+#include <exceptions/DatabaseCorruptedException.h>
 #include <exceptions/DatabaseException.h>
 #include <exceptions/DefaultBucketDeletionException.h>
 #include <exceptions/DefaultBucketSetNoneException.h>
@@ -90,6 +92,8 @@ int OfflineLogic::setPolicies(const ApiInterface::PoliciesByBucket &insertOrUpda
         return CYNARA_API_BUCKET_NOT_FOUND;
     } catch (const DatabaseException &) {
         return CYNARA_API_OPERATION_FAILED;
+    } catch (const DatabaseCorruptedException &) {
+        return CYNARA_API_DATABASE_CORRUPTED;
     } catch (const UnknownPolicyTypeException &ex) {
         return CYNARA_API_INVALID_PARAM;
     }
@@ -111,6 +115,8 @@ int OfflineLogic::insertOrUpdateBucket(const PolicyBucketId &bucket,
         return CYNARA_API_OPERATION_NOT_ALLOWED;
     } catch (const DatabaseException &) {
         return CYNARA_API_OPERATION_FAILED;
+    } catch (const DatabaseCorruptedException &) {
+        return CYNARA_API_DATABASE_CORRUPTED;
     } catch (const UnknownPolicyTypeException &ex) {
         return CYNARA_API_INVALID_PARAM;
     }
@@ -129,6 +135,8 @@ int OfflineLogic::removeBucket(const PolicyBucketId &bucket) {
         return CYNARA_API_OPERATION_NOT_ALLOWED;
     } catch (const DatabaseException &) {
         return CYNARA_API_OPERATION_FAILED;
+    } catch (const DatabaseCorruptedException &) {
+        return CYNARA_API_DATABASE_CORRUPTED;
     }
 
     return CYNARA_API_SUCCESS;
@@ -141,6 +149,8 @@ int OfflineLogic::adminCheck(const PolicyBucketId &startBucket, bool recursive,
         result = m_storage->checkPolicy(key, startBucket, recursive);
     } catch (const BucketNotExistsException &ex) {
         return CYNARA_API_BUCKET_NOT_FOUND;
+    } catch (const DatabaseCorruptedException &) {
+        return CYNARA_API_DATABASE_CORRUPTED;
     }
 
     return CYNARA_API_SUCCESS;
@@ -161,6 +171,8 @@ int OfflineLogic::listPolicies(const PolicyBucketId &bucket, const PolicyKey &fi
         policies = m_storage->listPolicies(bucket, filter);
     } catch (const BucketNotExistsException &ex) {
         return CYNARA_API_BUCKET_NOT_FOUND;
+    } catch (const DatabaseCorruptedException &) {
+        return CYNARA_API_DATABASE_CORRUPTED;
     }
 
     return CYNARA_API_SUCCESS;
@@ -174,6 +186,8 @@ int OfflineLogic::erasePolicies(const PolicyBucketId &startBucket, bool recursiv
         onPoliciesChanged();
     } catch (const BucketNotExistsException &) {
         return CYNARA_API_BUCKET_NOT_FOUND;
+    } catch (const DatabaseCorruptedException &) {
+        return CYNARA_API_DATABASE_CORRUPTED;
     }
 
     return CYNARA_API_SUCCESS;

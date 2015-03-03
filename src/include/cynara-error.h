@@ -84,6 +84,9 @@
 
 /*! \brief   indicating that provided buffer is too short */
 #define CYNARA_API_BUFFER_TOO_SHORT             -13
+
+/*! \brief   indicating that database is corrupted */
+#define CYNARA_API_DATABASE_CORRUPTED           -14
 /** @}*/
 
 #ifdef __cplusplus

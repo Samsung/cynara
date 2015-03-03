@@ -56,17 +56,14 @@ ResponsePtr AgentSocketClient::askCynaraServer(RequestPtr request) {
 }
 
 ResponsePtr AgentSocketClient::receiveResponseFromServer(void) {
-    while (true) {
+    ResponsePtr response;
+    while (!(response = m_protocol->extractResponseFromBuffer(m_readQueue))) {
         if (!m_socket.receiveFromServer(*m_readQueue)) {
             LOGW("Error receiving data from Cynara. Service not available.");
             return nullptr;
         }
-
-        ResponsePtr response = m_protocol->extractResponseFromBuffer(m_readQueue);
-        if (response) {
-            return response;
-        }
     }
+    return response;
 }
 
 bool AgentSocketClient::sendDataToServer(BinaryQueue &data) {

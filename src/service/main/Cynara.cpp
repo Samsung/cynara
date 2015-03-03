@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
  * @file        src/service/main/Cynara.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
+ * @author      Pawel Wieczorek <p.wieczorek2@samsung.com>
  * @version     1.0
  * @brief       This file implements main class of cynara service
  */
@@ -65,7 +66,8 @@ void Cynara::init(void) {
     m_socketManager->bindLogic(m_logic);
 
     m_databaseLock.lock(); // Wait until database lock can be acquired
-    m_storage->load();
+    m_logic->loadDb();
+
     m_pluginManager->loadPlugins();
 }
 

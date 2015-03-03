@@ -88,6 +88,7 @@ public:
     virtual void execute(RequestContextPtr context, SimpleCheckRequestPtr request);
 
     virtual void contextClosed(RequestContextPtr context);
+    virtual void loadDb(void);
 
 private:
     AgentManagerPtr m_agentManager;

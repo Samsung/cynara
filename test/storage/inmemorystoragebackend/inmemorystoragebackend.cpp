@@ -25,6 +25,7 @@
 
 #include "exceptions/BucketNotExistsException.h"
 #include "exceptions/BucketDeserializationException.h"
+#include "exceptions/DatabaseCorruptedException.h"
 #include "exceptions/DefaultBucketDeletionException.h"
 #include "exceptions/FileNotFoundException.h"
 #include "storage/InMemoryStorageBackend.h"
@@ -196,25 +197,21 @@ TEST_F(InMemeoryStorageBackendFixture, deletePolicyFromNonexistentBucket) {
 // Database dir is empty
 TEST_F(InMemeoryStorageBackendFixture, load_no_db) {
     using ::testing::ReturnRef;
-    using ::testing::Return;
     auto testDbPath = std::string(CYNARA_TESTS_DIR) + "/empty_db/";
     FakeInMemoryStorageBackend backend(testDbPath);
     EXPECT_CALL(backend, buckets()).WillRepeatedly(ReturnRef(m_buckets));
-    EXPECT_CALL(backend, postLoadCleanup(false)).WillOnce(Return());
-    backend.load();
-    ASSERT_DB_VIRGIN(m_buckets);
+    EXPECT_THROW(backend.load(), DatabaseCorruptedException);
+    ASSERT_DB_EMPTY(m_buckets);
 }
 
 // Database dir contains index with default bucket, but no file for this bucket
 TEST_F(InMemeoryStorageBackendFixture, load_no_default) {
     using ::testing::ReturnRef;
-    using ::testing::Return;
     auto testDbPath = std::string(CYNARA_TESTS_DIR) + "/db2/";
     FakeInMemoryStorageBackend backend(testDbPath);
     EXPECT_CALL(backend, buckets()).WillRepeatedly(ReturnRef(m_buckets));
-    EXPECT_CALL(backend, postLoadCleanup(false)).WillOnce(Return());
-    backend.load();
-    ASSERT_DB_VIRGIN(m_buckets);
+    EXPECT_THROW(backend.load(), DatabaseCorruptedException);
+    ASSERT_DB_EMPTY(m_buckets);
 }
 
 // Database contains index with default bucket and an empty bucket file
@@ -258,13 +255,11 @@ TEST_F(InMemeoryStorageBackendFixture, load_2_buckets) {
 // Database contains index with 2 buckets; 1st bucket is valid, but second is corrupted
 TEST_F(InMemeoryStorageBackendFixture, second_bucket_corrupted) {
     using ::testing::ReturnRef;
-    using ::testing::Return;
     auto testDbPath = std::string(CYNARA_TESTS_DIR) + "/db5/";
     FakeInMemoryStorageBackend backend(testDbPath);
     EXPECT_CALL(backend, buckets()).WillRepeatedly(ReturnRef(m_buckets));
-    EXPECT_CALL(backend, postLoadCleanup(false)).WillOnce(Return());
-    backend.load();
-    ASSERT_DB_VIRGIN(m_buckets);
+    EXPECT_THROW(backend.load(), DatabaseCorruptedException);
+    ASSERT_DB_EMPTY(m_buckets);
 }
 
 /**

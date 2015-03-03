@@ -16,6 +16,7 @@
 /**
  * @file        test/storage/inmemorystoragebackend/inmemeorystoragebackendfixture.h
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
+ * @author      Pawel Wieczorek <p.wieczorek2@samsung.com>
  * @version     1.0
  * @brief       Fixture for InMemeoryStorageBackend tests
  */
@@ -87,6 +88,12 @@ protected:
         auto &defaultBucket = defaultBucketIter->second;
         ASSERT_THAT(defaultBucket, IsEmpty());
         ASSERT_EQ(Cynara::PredefinedPolicyType::DENY, defaultBucket.defaultPolicy());
+    }
+
+    static void ASSERT_DB_EMPTY(Cynara::Buckets &buckets) {
+        using ::testing::IsEmpty;
+        ASSERT_EQ(0, buckets.size());
+        ASSERT_THAT(buckets, IsEmpty());
     }
 
     virtual ~InMemeoryStorageBackendFixture() {}

@@ -32,6 +32,7 @@
 #include <common.h>
 #include <log/log.h>
 #include <exceptions/BucketNotExistsException.h>
+#include <exceptions/DatabaseCorruptedException.h>
 #include <exceptions/DatabaseException.h>
 #include <exceptions/DefaultBucketDeletionException.h>
 #include <exceptions/DefaultBucketSetNoneException.h>
@@ -523,6 +524,14 @@ void Logic::handleClientDisconnection(const CheckContextPtr &checkContextPtr) {
     if (!checkContextPtr->cancelled()) {
         checkContextPtr->cancel();
         checkContextPtr->m_agentTalker->cancel();
+    }
+}
+
+void Logic::loadDb(void) {
+    try {
+        m_storage->load();
+    } catch (const DatabaseCorruptedException &) {
+        m_dbCorrupted = true;
     }
 }
 

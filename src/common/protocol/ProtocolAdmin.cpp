@@ -347,110 +347,111 @@ ResponsePtr ProtocolAdmin::extractResponseFromBuffer(BinaryQueuePtr bufferQueue)
     return nullptr;
 }
 
-void ProtocolAdmin::execute(RequestContextPtr context, AdminCheckRequestPtr request) {
+void ProtocolAdmin::execute(const RequestContext &context, const AdminCheckRequest &request) {
     LOGD("Serializing AdminCheckRequest: client <%s>, user <%s>, privilege <%s>, "
-         "startBucket <%s>, recursive [%d]", request->key().client().value().c_str(),
-         request->key().user().value().c_str(), request->key().privilege().value().c_str(),
-         request->startBucket().c_str(), request->recursive());
+         "startBucket <%s>, recursive [%d]", request.key().client().value().c_str(),
+         request.key().user().value().c_str(), request.key().privilege().value().c_str(),
+         request.startBucket().c_str(), request.recursive());
 
-    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
+    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request.sequenceNumber());
 
     ProtocolSerialization::serialize(frame, OpAdminCheckRequest);
-    ProtocolSerialization::serialize(frame, request->key().client().value());
-    ProtocolSerialization::serialize(frame, request->key().user().value());
-    ProtocolSerialization::serialize(frame, request->key().privilege().value());
-    ProtocolSerialization::serialize(frame, request->startBucket());
-    ProtocolSerialization::serialize(frame, request->recursive());
+    ProtocolSerialization::serialize(frame, request.key().client().value());
+    ProtocolSerialization::serialize(frame, request.key().user().value());
+    ProtocolSerialization::serialize(frame, request.key().privilege().value());
+    ProtocolSerialization::serialize(frame, request.startBucket());
+    ProtocolSerialization::serialize(frame, request.recursive());
 
-    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
+    ProtocolFrameSerializer::finishSerialization(frame, *(context.responseQueue()));
 }
 
-void ProtocolAdmin::execute(RequestContextPtr context, DescriptionListRequestPtr request) {
+void ProtocolAdmin::execute(const RequestContext &context, const DescriptionListRequest &request) {
     LOGD("Serializing DescriptionListRequest");
-    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
+    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request.sequenceNumber());
 
     ProtocolSerialization::serialize(frame, OpDescriptionListRequest);
 
-    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
+    ProtocolFrameSerializer::finishSerialization(frame, *(context.responseQueue()));
 }
 
-void ProtocolAdmin::execute(RequestContextPtr context, EraseRequestPtr request) {
+void ProtocolAdmin::execute(const RequestContext &context, const EraseRequest &request) {
     LOGD("Serializing EraseRequest: sequenceNumber [%" PRIu16 "], startBucket <%s>, "
          "recursive [%d], filter client <%s> filter user <%s> filter privilege <%s>",
-         request->sequenceNumber(), request->startBucket().c_str(),
-         static_cast<int>(request->recursive()), request->filter().client().value().c_str(),
-         request->filter().user().value().c_str(), request->filter().privilege().value().c_str());
+         request.sequenceNumber(), request.startBucket().c_str(),
+         static_cast<int>(request.recursive()), request.filter().client().value().c_str(),
+         request.filter().user().value().c_str(), request.filter().privilege().value().c_str());
 
-    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
+    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request.sequenceNumber());
 
     ProtocolSerialization::serialize(frame, OpEraseRequest);
-    ProtocolSerialization::serialize(frame, request->startBucket());
-    ProtocolSerialization::serialize(frame, request->recursive());
-    ProtocolSerialization::serialize(frame, request->filter().client().value());
-    ProtocolSerialization::serialize(frame, request->filter().user().value());
-    ProtocolSerialization::serialize(frame, request->filter().privilege().value());
+    ProtocolSerialization::serialize(frame, request.startBucket());
+    ProtocolSerialization::serialize(frame, request.recursive());
+    ProtocolSerialization::serialize(frame, request.filter().client().value());
+    ProtocolSerialization::serialize(frame, request.filter().user().value());
+    ProtocolSerialization::serialize(frame, request.filter().privilege().value());
 
-    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
+    ProtocolFrameSerializer::finishSerialization(frame, *(context.responseQueue()));
 }
 
-void ProtocolAdmin::execute(RequestContextPtr context, InsertOrUpdateBucketRequestPtr request) {
+void ProtocolAdmin::execute(const RequestContext &context,
+                            const InsertOrUpdateBucketRequest &request) {
     LOGD("Serializing InsertOrUpdateBucketRequest: sequenceNumber [%" PRIu16 "], bucketId <%s>, "
-         "result.type [%" PRIu16 "], result.meta <%s>", request->sequenceNumber(),
-         request->bucketId().c_str(), request->result().policyType(),
-         request->result().metadata().c_str());
+         "result.type [%" PRIu16 "], result.meta <%s>", request.sequenceNumber(),
+         request.bucketId().c_str(), request.result().policyType(),
+         request.result().metadata().c_str());
 
-    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
+    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request.sequenceNumber());
 
     ProtocolSerialization::serialize(frame, OpInsertOrUpdateBucket);
-    ProtocolSerialization::serialize(frame, request->bucketId());
-    ProtocolSerialization::serialize(frame, request->result().policyType());
-    ProtocolSerialization::serialize(frame, request->result().metadata());
+    ProtocolSerialization::serialize(frame, request.bucketId());
+    ProtocolSerialization::serialize(frame, request.result().policyType());
+    ProtocolSerialization::serialize(frame, request.result().metadata());
 
-    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
+    ProtocolFrameSerializer::finishSerialization(frame, *(context.responseQueue()));
 }
 
-void ProtocolAdmin::execute(RequestContextPtr context, ListRequestPtr request) {
+void ProtocolAdmin::execute(const RequestContext &context, const ListRequest &request) {
     LOGD("Serializing ListRequest: sequenceNumber [%" PRIu16 "], bucketId <%s>, "
-         "filter client <%s> filter user <%s> filter privilege <%s>", request->sequenceNumber(),
-         request->bucket().c_str(), request->filter().client().value().c_str(),
-         request->filter().user().value().c_str(), request->filter().privilege().value().c_str());
+         "filter client <%s> filter user <%s> filter privilege <%s>", request.sequenceNumber(),
+         request.bucket().c_str(), request.filter().client().value().c_str(),
+         request.filter().user().value().c_str(), request.filter().privilege().value().c_str());
 
-    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
+    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request.sequenceNumber());
 
     ProtocolSerialization::serialize(frame, OpListRequest);
-    ProtocolSerialization::serialize(frame, request->bucket());
-    ProtocolSerialization::serialize(frame, request->filter().client().value());
-    ProtocolSerialization::serialize(frame, request->filter().user().value());
-    ProtocolSerialization::serialize(frame, request->filter().privilege().value());
+    ProtocolSerialization::serialize(frame, request.bucket());
+    ProtocolSerialization::serialize(frame, request.filter().client().value());
+    ProtocolSerialization::serialize(frame, request.filter().user().value());
+    ProtocolSerialization::serialize(frame, request.filter().privilege().value());
 
-    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
+    ProtocolFrameSerializer::finishSerialization(frame, *(context.responseQueue()));
 }
 
-void ProtocolAdmin::execute(RequestContextPtr context, RemoveBucketRequestPtr request) {
+void ProtocolAdmin::execute(const RequestContext &context, const RemoveBucketRequest &request) {
     LOGD("Serializing RemoveBucketRequest: sequenceNumber [%" PRIu16 "], bucketId <%s>",
-         request->sequenceNumber(), request->bucketId().c_str());
+         request.sequenceNumber(), request.bucketId().c_str());
 
-    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
+    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request.sequenceNumber());
 
     ProtocolSerialization::serialize(frame, OpRemoveBucket);
-    ProtocolSerialization::serialize(frame, request->bucketId());
+    ProtocolSerialization::serialize(frame, request.bucketId());
 
-    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
+    ProtocolFrameSerializer::finishSerialization(frame, *(context.responseQueue()));
 }
 
-void ProtocolAdmin::execute(RequestContextPtr context, SetPoliciesRequestPtr request) {
+void ProtocolAdmin::execute(const RequestContext &context, const SetPoliciesRequest &request) {
     LOGD("Serializing SetPoliciesRequestPtr: sequenceNumber [%" PRIu16 "], "
-         "insertOrUpdate count [%zu], remove count [%zu]", request->sequenceNumber(),
-         request->policiesToBeInsertedOrUpdated().size(), request->policiesToBeRemoved().size());
+         "insertOrUpdate count [%zu], remove count [%zu]", request.sequenceNumber(),
+         request.policiesToBeInsertedOrUpdated().size(), request.policiesToBeRemoved().size());
 
     ProtocolFrame frame =
-            ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
+            ProtocolFrameSerializer::startSerialization(request.sequenceNumber());
 
     ProtocolSerialization::serialize(frame, OpSetPolicies);
 
     ProtocolSerialization::serialize(frame,
-            static_cast<ProtocolFrameFieldsCount>(request->policiesToBeInsertedOrUpdated().size()));
-    for (auto policyBucket : request->policiesToBeInsertedOrUpdated()) {
+            static_cast<ProtocolFrameFieldsCount>(request.policiesToBeInsertedOrUpdated().size()));
+    for (auto policyBucket : request.policiesToBeInsertedOrUpdated()) {
         ProtocolSerialization::serialize(frame, policyBucket.first);
         ProtocolSerialization::serialize(frame,
                     static_cast<ProtocolFrameFieldsCount>(policyBucket.second.size()));
@@ -466,8 +467,8 @@ void ProtocolAdmin::execute(RequestContextPtr context, SetPoliciesRequestPtr req
     }
 
     ProtocolSerialization::serialize(frame,
-            static_cast<ProtocolFrameFieldsCount>(request->policiesToBeRemoved().size()));
-    for (auto policyBucket : request->policiesToBeRemoved()) {
+            static_cast<ProtocolFrameFieldsCount>(request.policiesToBeRemoved().size()));
+    for (auto policyBucket : request.policiesToBeRemoved()) {
         ProtocolSerialization::serialize(frame, policyBucket.first);
         ProtocolSerialization::serialize(frame,
                     static_cast<ProtocolFrameFieldsCount>(policyBucket.second.size()));
@@ -479,76 +480,77 @@ void ProtocolAdmin::execute(RequestContextPtr context, SetPoliciesRequestPtr req
         }
     }
 
-    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
+    ProtocolFrameSerializer::finishSerialization(frame, *(context.responseQueue()));
 }
 
-void ProtocolAdmin::execute(RequestContextPtr context, AdminCheckResponsePtr response) {
+void ProtocolAdmin::execute(const RequestContext &context, const AdminCheckResponse &response) {
     LOGD("Serializing AdminCheckResponse: op [%" PRIu8 "], sequenceNumber [%" PRIu16 "], "
          "policyType [%" PRIu16 "], metadata <%s>, bucketValid [%d], dbCorrupted [%d]",
-         OpAdminCheckPolicyResponse, response->sequenceNumber(), response->result().policyType(),
-         response->result().metadata().c_str(), static_cast<int>(response->isBucketValid()),
-         static_cast<int>(response->isDbCorrupted()));
+         OpAdminCheckPolicyResponse, response.sequenceNumber(), response.result().policyType(),
+         response.result().metadata().c_str(), static_cast<int>(response.isBucketValid()),
+         static_cast<int>(response.isDbCorrupted()));
 
     ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(
-            response->sequenceNumber());
+            response.sequenceNumber());
 
     ProtocolSerialization::serialize(frame, OpAdminCheckPolicyResponse);
-    ProtocolSerialization::serialize(frame, response->result().policyType());
-    ProtocolSerialization::serialize(frame, response->result().metadata());
-    ProtocolSerialization::serialize(frame, response->isBucketValid());
-    ProtocolSerialization::serialize(frame, response->isDbCorrupted());
+    ProtocolSerialization::serialize(frame, response.result().policyType());
+    ProtocolSerialization::serialize(frame, response.result().metadata());
+    ProtocolSerialization::serialize(frame, response.isBucketValid());
+    ProtocolSerialization::serialize(frame, response.isDbCorrupted());
 
-    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
+    ProtocolFrameSerializer::finishSerialization(frame, *(context.responseQueue()));
 }
 
-void ProtocolAdmin::execute(RequestContextPtr context, CodeResponsePtr response) {
+void ProtocolAdmin::execute(const RequestContext &context, const CodeResponse &response) {
     LOGD("Serializing CodeResponse: op [%" PRIu8 "], sequenceNumber [%" PRIu16 "], "
-         "code [%" PRIu16 "]", OpCodeResponse, response->sequenceNumber(), response->m_code);
+         "code [%" PRIu16 "]", OpCodeResponse, response.sequenceNumber(), response.m_code);
 
     ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(
-            response->sequenceNumber());
+            response.sequenceNumber());
 
     ProtocolSerialization::serialize(frame, OpCodeResponse);
-    ProtocolSerialization::serialize(frame, static_cast<ProtocolResponseCode>(response->m_code));
+    ProtocolSerialization::serialize(frame, static_cast<ProtocolResponseCode>(response.m_code));
 
-    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
+    ProtocolFrameSerializer::finishSerialization(frame, *(context.responseQueue()));
 }
 
-void ProtocolAdmin::execute(RequestContextPtr context, DescriptionListResponsePtr response) {
+void ProtocolAdmin::execute(const RequestContext &context, const DescriptionListResponse &response)
+{
     ProtocolFrameFieldsCount descriptionsSize
-        = static_cast<ProtocolFrameFieldsCount>(response->descriptions().size());
+        = static_cast<ProtocolFrameFieldsCount>(response.descriptions().size());
 
     LOGD("Serializing DescriptionListResponse: op [%" PRIu8 "], sequenceNumber [%" PRIu16 "], "
          "number of descriptions [%" PRIu16 "], dbCorrupted [%d]", OpDescriptionListResponse,
-         response->sequenceNumber(), descriptionsSize, static_cast<int>(response->isDbCorrupted()));
+         response.sequenceNumber(), descriptionsSize, static_cast<int>(response.isDbCorrupted()));
 
-    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(response->sequenceNumber());
+    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(response.sequenceNumber());
 
     ProtocolSerialization::serialize(frame, OpDescriptionListResponse);
     ProtocolSerialization::serialize(frame, descriptionsSize);
-    for (auto &desc : response->descriptions()) {
+    for (auto &desc : response.descriptions()) {
         ProtocolSerialization::serialize(frame, desc.type);
         ProtocolSerialization::serialize(frame, desc.name);
     }
-    ProtocolSerialization::serialize(frame, response->isDbCorrupted());
+    ProtocolSerialization::serialize(frame, response.isDbCorrupted());
 
-    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
+    ProtocolFrameSerializer::finishSerialization(frame, *(context.responseQueue()));
 }
 
-void ProtocolAdmin::execute(RequestContextPtr context, ListResponsePtr response) {
+void ProtocolAdmin::execute(const RequestContext &context, const ListResponse &response) {
     ProtocolFrameFieldsCount policiesSize
-        = static_cast<ProtocolFrameFieldsCount>(response->policies().size());
+        = static_cast<ProtocolFrameFieldsCount>(response.policies().size());
 
     LOGD("Serializing ListResponse: op [%" PRIu8 "], sequenceNumber [%" PRIu16 "], "
          "number of policies [%" PRIu16 "], bucketValid [%d], dbCorrupted [%d]", OpListResponse,
-         response->sequenceNumber(), policiesSize, static_cast<int>(response->isBucketValid()),
-         static_cast<int>(response->isDbCorrupted()));
+         response.sequenceNumber(), policiesSize, static_cast<int>(response.isBucketValid()),
+         static_cast<int>(response.isDbCorrupted()));
 
-    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(response->sequenceNumber());
+    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(response.sequenceNumber());
 
     ProtocolSerialization::serialize(frame, OpListResponse);
     ProtocolSerialization::serialize(frame, policiesSize);
-    for (auto &policy : response->policies()) {
+    for (auto &policy : response.policies()) {
         // PolicyKey
         ProtocolSerialization::serialize(frame, policy.key().client().value());
         ProtocolSerialization::serialize(frame, policy.key().user().value());
@@ -557,10 +559,10 @@ void ProtocolAdmin::execute(RequestContextPtr context, ListResponsePtr response)
         ProtocolSerialization::serialize(frame, policy.result().policyType());
         ProtocolSerialization::serialize(frame, policy.result().metadata());
     }
-    ProtocolSerialization::serialize(frame, response->isBucketValid());
-    ProtocolSerialization::serialize(frame, response->isDbCorrupted());
+    ProtocolSerialization::serialize(frame, response.isBucketValid());
+    ProtocolSerialization::serialize(frame, response.isDbCorrupted());
 
-    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
+    ProtocolFrameSerializer::finishSerialization(frame, *(context.responseQueue()));
 }
 
 } // namespace Cynara

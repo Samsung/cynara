@@ -34,15 +34,15 @@ public:
     ResponseTaker() = default;
     virtual ~ResponseTaker() {};
 
-    virtual void execute(RequestContextPtr context, AdminCheckResponsePtr response);
-    virtual void execute(RequestContextPtr context, AgentActionResponsePtr response);
-    virtual void execute(RequestContextPtr context, AgentRegisterResponsePtr response);
-    virtual void execute(RequestContextPtr context, CancelResponsePtr response);
-    virtual void execute(RequestContextPtr context, CheckResponsePtr response);
-    virtual void execute(RequestContextPtr context, CodeResponsePtr response);
-    virtual void execute(RequestContextPtr context, DescriptionListResponsePtr response);
-    virtual void execute(RequestContextPtr context, ListResponsePtr response);
-    virtual void execute(RequestContextPtr context, SimpleCheckResponsePtr response);
+    virtual void execute(const RequestContext &context, const AdminCheckResponse &response);
+    virtual void execute(const RequestContext &context, const AgentActionResponse &response);
+    virtual void execute(const RequestContext &context, const AgentRegisterResponse &response);
+    virtual void execute(const RequestContext &context, const CancelResponse &response);
+    virtual void execute(const RequestContext &context, const CheckResponse &response);
+    virtual void execute(const RequestContext &context, const CodeResponse &response);
+    virtual void execute(const RequestContext &context, const DescriptionListResponse &response);
+    virtual void execute(const RequestContext &context, const ListResponse &response);
+    virtual void execute(const RequestContext &context, const SimpleCheckResponse &response);
 };
 
 } // namespace Cynara

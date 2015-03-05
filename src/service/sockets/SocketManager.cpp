@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -218,8 +218,7 @@ void SocketManager::readyForAccept(int fd) {
 void SocketManager::closeSocket(int fd) {
     LOGD("SocketManger closeSocket fd [%d] start", fd);
     Descriptor &desc = m_fds[fd];
-    requestTaker()->contextClosed(std::make_shared<RequestContext>(nullptr,
-                                                                   desc.writeQueue()));
+    requestTaker()->contextClosed(RequestContext(nullptr, desc.writeQueue()));
     removeReadSocket(fd);
     removeWriteSocket(fd);
     desc.clear();
@@ -241,10 +240,9 @@ bool SocketManager::handleRead(int fd, const RawBuffer &readbuffer) {
             LOGD("request extracted");
 
             //build context
-            auto context = std::make_shared<RequestContext>(desc.responseTaker(),
-                                                            desc.writeQueue());
+            RequestContext context(desc.responseTaker(), desc.writeQueue());
             //pass request to request taker
-            req->execute(req, requestTaker(), context);
+            req->execute(*req, *requestTaker(), context);
         }
     } catch (const Exception &ex) {
         LOGE("Error handling request <%s>. Closing socket", ex.what());

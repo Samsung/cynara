@@ -179,87 +179,87 @@ ResponsePtr ProtocolClient::extractResponseFromBuffer(BinaryQueuePtr bufferQueue
     return nullptr;
 }
 
-void ProtocolClient::execute(RequestContextPtr context, CancelRequestPtr request) {
-    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
+void ProtocolClient::execute(const RequestContext &context, const CancelRequest &request) {
+    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request.sequenceNumber());
 
     LOGD("Serializing CancelRequest op [%" PRIu8 "]", OpCancelRequest);
 
     ProtocolSerialization::serialize(frame, OpCancelRequest);
 
-    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
+    ProtocolFrameSerializer::finishSerialization(frame, *(context.responseQueue()));
 }
 
-void ProtocolClient::execute(RequestContextPtr context, CheckRequestPtr request) {
-    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
+void ProtocolClient::execute(const RequestContext &context, const CheckRequest &request) {
+    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request.sequenceNumber());
 
     LOGD("Serializing CheckRequest: client <%s>, user <%s>, privilege <%s>",
-         request->key().client().value().c_str(), request->key().user().value().c_str(),
-         request->key().privilege().value().c_str());
+         request.key().client().value().c_str(), request.key().user().value().c_str(),
+         request.key().privilege().value().c_str());
 
     ProtocolSerialization::serialize(frame, OpCheckPolicyRequest);
-    ProtocolSerialization::serialize(frame, request->key().client().value());
-    ProtocolSerialization::serialize(frame, request->key().user().value());
-    ProtocolSerialization::serialize(frame, request->key().privilege().value());
+    ProtocolSerialization::serialize(frame, request.key().client().value());
+    ProtocolSerialization::serialize(frame, request.key().user().value());
+    ProtocolSerialization::serialize(frame, request.key().privilege().value());
 
-    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
+    ProtocolFrameSerializer::finishSerialization(frame, *(context.responseQueue()));
 }
 
-void ProtocolClient::execute(RequestContextPtr context, SimpleCheckRequestPtr request) {
-    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
+void ProtocolClient::execute(const RequestContext &context, const SimpleCheckRequest &request) {
+    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request.sequenceNumber());
 
     LOGD("Serializing SimpleCheckRequest: client <%s>, user <%s>, privilege <%s>",
-         request->key().client().value().c_str(), request->key().user().value().c_str(),
-         request->key().privilege().value().c_str());
+         request.key().client().value().c_str(), request.key().user().value().c_str(),
+         request.key().privilege().value().c_str());
 
     ProtocolSerialization::serialize(frame, OpSimpleCheckPolicyRequest);
-    ProtocolSerialization::serialize(frame, request->key().client().value());
-    ProtocolSerialization::serialize(frame, request->key().user().value());
-    ProtocolSerialization::serialize(frame, request->key().privilege().value());
+    ProtocolSerialization::serialize(frame, request.key().client().value());
+    ProtocolSerialization::serialize(frame, request.key().user().value());
+    ProtocolSerialization::serialize(frame, request.key().privilege().value());
 
-    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
+    ProtocolFrameSerializer::finishSerialization(frame, *(context.responseQueue()));
 }
 
-void ProtocolClient::execute(RequestContextPtr context, CancelResponsePtr response) {
+void ProtocolClient::execute(const RequestContext &context, const CancelResponse &response) {
     ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(
-            response->sequenceNumber());
+            response.sequenceNumber());
 
     LOGD("Serializing CancelResponse: op [%" PRIu8 "]", OpCancelResponse);
 
     ProtocolSerialization::serialize(frame, OpCancelResponse);
 
-    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
+    ProtocolFrameSerializer::finishSerialization(frame, *(context.responseQueue()));
 }
 
-void ProtocolClient::execute(RequestContextPtr context, CheckResponsePtr response) {
+void ProtocolClient::execute(const RequestContext &context, const CheckResponse &response) {
     ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(
-            response->sequenceNumber());
+            response.sequenceNumber());
 
     LOGD("Serializing CheckResponse: op [%" PRIu8 "], policyType [%" PRIu16 "], metadata <%s>",
-         OpCheckPolicyResponse, response->m_resultRef.policyType(),
-         response->m_resultRef.metadata().c_str());
+         OpCheckPolicyResponse, response.m_resultRef.policyType(),
+         response.m_resultRef.metadata().c_str());
 
     ProtocolSerialization::serialize(frame, OpCheckPolicyResponse);
-    ProtocolSerialization::serialize(frame, response->m_resultRef.policyType());
-    ProtocolSerialization::serialize(frame, response->m_resultRef.metadata());
+    ProtocolSerialization::serialize(frame, response.m_resultRef.policyType());
+    ProtocolSerialization::serialize(frame, response.m_resultRef.metadata());
 
-    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
+    ProtocolFrameSerializer::finishSerialization(frame, *(context.responseQueue()));
 }
 
-void ProtocolClient::execute(RequestContextPtr context, SimpleCheckResponsePtr response) {
+void ProtocolClient::execute(const RequestContext &context, const SimpleCheckResponse &response) {
     ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(
-            response->sequenceNumber());
+            response.sequenceNumber());
 
     LOGD("Serializing SimpleCheckResponse: op [%" PRIu8 "], retVal [%" PRIi32 "],"
          " policyType [%" PRIu16 "], metadata <%s>", OpCheckPolicyResponse,
-         response->getReturnValue(), response->getResult().policyType(),
-         response->getResult().metadata().c_str());
+         response.getReturnValue(), response.getResult().policyType(),
+         response.getResult().metadata().c_str());
 
     ProtocolSerialization::serialize(frame, OpSimpleCheckPolicyResponse);
-    ProtocolSerialization::serialize(frame, response->getReturnValue());
-    ProtocolSerialization::serialize(frame, response->getResult().policyType());
-    ProtocolSerialization::serialize(frame, response->getResult().metadata());
+    ProtocolSerialization::serialize(frame, response.getReturnValue());
+    ProtocolSerialization::serialize(frame, response.getResult().policyType());
+    ProtocolSerialization::serialize(frame, response.getResult().metadata());
 
-    ProtocolFrameSerializer::finishSerialization(frame, *(context->responseQueue()));
+    ProtocolFrameSerializer::finishSerialization(frame, *(context.responseQueue()));
 }
 
 } // namespace Cynara

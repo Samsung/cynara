@@ -24,69 +24,77 @@
 
 #include <attributes/attributes.h>
 #include <exceptions/NotImplementedException.h>
-#include <request/RequestContext.h>
 
 #include "RequestTaker.h"
 
 namespace Cynara {
 
-void RequestTaker::execute(RequestContextPtr context UNUSED, AdminCheckRequestPtr request UNUSED) {
+void RequestTaker::execute(const RequestContext &context UNUSED,
+                           const AdminCheckRequest &request UNUSED) {
     throw NotImplementedException();
 }
 
-void RequestTaker::execute(RequestContextPtr context UNUSED, AgentActionRequestPtr request UNUSED) {
+void RequestTaker::execute(const RequestContext &context UNUSED,
+                           const AgentActionRequest &request UNUSED) {
     throw NotImplementedException();
 }
 
-void RequestTaker::execute(RequestContextPtr context UNUSED,
-                           AgentRegisterRequestPtr request UNUSED) {
+void RequestTaker::execute(const RequestContext &context UNUSED,
+                           const AgentRegisterRequest &request UNUSED) {
     throw NotImplementedException();
 }
 
-void RequestTaker::execute(RequestContextPtr context UNUSED, CancelRequestPtr request UNUSED) {
+void RequestTaker::execute(const RequestContext &context UNUSED,
+                           const CancelRequest &request UNUSED) {
     throw NotImplementedException();
 }
 
-void RequestTaker::execute(RequestContextPtr context UNUSED, CheckRequestPtr request UNUSED) {
+void RequestTaker::execute(const RequestContext &context UNUSED,
+                           const CheckRequest &request UNUSED) {
     throw NotImplementedException();
 }
 
-void RequestTaker::execute(RequestContextPtr context UNUSED, EraseRequestPtr request UNUSED) {
+void RequestTaker::execute(const RequestContext &context UNUSED,
+                           const EraseRequest &request UNUSED) {
     throw NotImplementedException();
 }
 
-void RequestTaker::execute(RequestContextPtr context UNUSED,
-                           DescriptionListRequestPtr request UNUSED) {
+void RequestTaker::execute(const RequestContext &context UNUSED,
+                           const DescriptionListRequest &request UNUSED) {
     throw NotImplementedException();
 }
 
-void RequestTaker::execute(RequestContextPtr context UNUSED,
-                           InsertOrUpdateBucketRequestPtr request UNUSED) {
+void RequestTaker::execute(const RequestContext &context UNUSED,
+                           const InsertOrUpdateBucketRequest &request UNUSED) {
     throw NotImplementedException();
 }
 
-void RequestTaker::execute(RequestContextPtr context UNUSED, ListRequestPtr request UNUSED) {
+void RequestTaker::execute(const RequestContext &context UNUSED,
+                           const ListRequest &request UNUSED) {
     throw NotImplementedException();
 }
 
-void RequestTaker::execute(RequestContextPtr context UNUSED,
-                           RemoveBucketRequestPtr request UNUSED) {
+void RequestTaker::execute(const RequestContext &context UNUSED,
+                           const RemoveBucketRequest &request UNUSED) {
     throw NotImplementedException();
 }
 
-void RequestTaker::execute(RequestContextPtr context UNUSED, SetPoliciesRequestPtr request UNUSED) {
+void RequestTaker::execute(const RequestContext &context UNUSED,
+                           const SetPoliciesRequest &request UNUSED) {
     throw NotImplementedException();
 }
 
-void RequestTaker::execute(RequestContextPtr context UNUSED, SignalRequestPtr request UNUSED) {
+void RequestTaker::execute(const RequestContext &context UNUSED,
+                           const SignalRequest &request UNUSED) {
     throw NotImplementedException();
 }
 
-void RequestTaker::execute(RequestContextPtr context UNUSED, SimpleCheckRequestPtr request UNUSED) {
+void RequestTaker::execute(const RequestContext &context UNUSED,
+                           const SimpleCheckRequest &request UNUSED) {
     throw NotImplementedException();
 }
 
-void RequestTaker::contextClosed(RequestContextPtr context UNUSED) {
+void RequestTaker::contextClosed(const RequestContext &context UNUSED) {
     throw NotImplementedException();
 }
 

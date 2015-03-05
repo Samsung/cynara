@@ -84,10 +84,10 @@ Logic::Logic() : m_dbCorrupted(false) {
 Logic::~Logic() {
 }
 
-void Logic::execute(RequestContextPtr context UNUSED, SignalRequestPtr request) {
-    LOGD("Processing signal: [%d]", request->signalNumber());
+void Logic::execute(const RequestContext &context UNUSED, const SignalRequest &request) {
+    LOGD("Processing signal: [%d]", request.signalNumber());
 
-    switch (request->signalNumber()) {
+    switch (request.signalNumber()) {
     case SIGTERM:
         LOGI("SIGTERM received!");
         m_socketManager->mainLoopStop();
@@ -95,7 +95,7 @@ void Logic::execute(RequestContextPtr context UNUSED, SignalRequestPtr request) 
     }
 }
 
-void Logic::execute(RequestContextPtr context, AdminCheckRequestPtr request) {
+void Logic::execute(const RequestContext &context, const AdminCheckRequest &request) {
     PolicyResult result;
     bool bucketValid = true;
 
@@ -103,23 +103,23 @@ void Logic::execute(RequestContextPtr context, AdminCheckRequestPtr request) {
         bucketValid = false;
     } else {
         try {
-            result = m_storage->checkPolicy(request->key(), request->startBucket(),
-                                            request->recursive());
+            result = m_storage->checkPolicy(request.key(), request.startBucket(),
+                                            request.recursive());
         } catch (const BucketNotExistsException &ex) {
             bucketValid = false;
         }
     }
 
-    context->returnResponse(context, std::make_shared<AdminCheckResponse>(result, bucketValid,
-                            m_dbCorrupted, request->sequenceNumber()));
+    context.returnResponse(context, AdminCheckResponse(result, bucketValid, m_dbCorrupted,
+                                                       request.sequenceNumber()));
 }
 
-void Logic::execute(RequestContextPtr context, AgentActionRequestPtr request) {
-    AgentTalkerPtr talkerPtr = m_agentManager->getTalker(context->responseQueue(),
-                                                         request->sequenceNumber());
+void Logic::execute(const RequestContext &context, const AgentActionRequest &request) {
+    AgentTalkerPtr talkerPtr = m_agentManager->getTalker(context.responseQueue(),
+                                                         request.sequenceNumber());
     if (!talkerPtr) {
         LOGD("Received response from agent with invalid request id: [%" PRIu16 "]",
-             request->sequenceNumber());
+             request.sequenceNumber());
         return;
     }
 
@@ -131,15 +131,15 @@ void Logic::execute(RequestContextPtr context, AgentActionRequestPtr request) {
     }
 
     if (!checkContextPtr->cancelled()) {
-        PluginData data(request->data().begin(), request->data().end());
-        if (request->type() == CYNARA_MSG_TYPE_CANCEL) {
+        PluginData data(request.data().begin(), request.data().end());
+        if (request.type() == CYNARA_MSG_TYPE_CANCEL) {
             // Nothing to do for now
-        } else if (request->type() == CYNARA_MSG_TYPE_ACTION) {
+        } else if (request.type() == CYNARA_MSG_TYPE_ACTION) {
             update(checkContextPtr->m_key, checkContextPtr->m_checkId, data,
                    checkContextPtr->m_requestContext, checkContextPtr->m_plugin);
         } else {
             LOGE("Invalid response type [%d] in response from agent <%s>",
-                 static_cast<int>(request->type()), talkerPtr->agentType().c_str());
+                 static_cast<int>(request.type()), talkerPtr->agentType().c_str());
             // TODO: disconnect agent
         }
     }
@@ -148,18 +148,17 @@ void Logic::execute(RequestContextPtr context, AgentActionRequestPtr request) {
     m_checkRequestManager.removeRequest(checkContextPtr);
 }
 
-void Logic::execute(RequestContextPtr context, AgentRegisterRequestPtr request) {
-    auto result = m_agentManager->registerAgent(request->agentType(), context->responseQueue());
-    context->returnResponse(context, std::make_shared<AgentRegisterResponse>(
-                            result, request->sequenceNumber()));
+void Logic::execute(const RequestContext &context, const AgentRegisterRequest &request) {
+    auto result = m_agentManager->registerAgent(request.agentType(), context.responseQueue());
+    context.returnResponse(context, AgentRegisterResponse(result, request.sequenceNumber()));
 }
 
-void Logic::execute(RequestContextPtr context, CancelRequestPtr request) {
-    CheckContextPtr checkContextPtr = m_checkRequestManager.getContext(context->responseQueue(),
-                                                                       request->sequenceNumber());
+void Logic::execute(const RequestContext &context, const CancelRequest &request) {
+    CheckContextPtr checkContextPtr = m_checkRequestManager.getContext(context.responseQueue(),
+                                                                       request.sequenceNumber());
     if (!checkContextPtr) {
         LOGD("Cancel request id: [%" PRIu16 "] with no matching request in progress.",
-             request->sequenceNumber());
+             request.sequenceNumber());
         return;
     }
 
@@ -169,23 +168,22 @@ void Logic::execute(RequestContextPtr context, CancelRequestPtr request) {
     checkContextPtr->cancel();
     checkContextPtr->m_agentTalker->cancel();
 
-    LOGD("Returning response for cancel request id: [%" PRIu16 "].", request->sequenceNumber());
-    context->returnResponse(context, std::make_shared<CancelResponse>(request->sequenceNumber()));
+    LOGD("Returning response for cancel request id: [%" PRIu16 "].", request.sequenceNumber());
+    context.returnResponse(context, CancelResponse(request.sequenceNumber()));
 }
 
-void Logic::execute(RequestContextPtr context, CheckRequestPtr request) {
+void Logic::execute(const RequestContext &context, const CheckRequest &request) {
     PolicyResult result(PredefinedPolicyType::DENY);
-    if (check(context, request->key(), request->sequenceNumber(), result)) {
-        m_auditLog.log(request->key(), result);
-        context->returnResponse(context, std::make_shared<CheckResponse>(result,
-                                request->sequenceNumber()));
+    if (check(context, request.key(), request.sequenceNumber(), result)) {
+        m_auditLog.log(request.key(), result);
+        context.returnResponse(context, CheckResponse(result, request.sequenceNumber()));
     }
 }
 
-bool Logic::check(const RequestContextPtr &context, const PolicyKey &key,
+bool Logic::check(const RequestContext &context, const PolicyKey &key,
                   ProtocolFrameSequenceNumber checkId, PolicyResult &result) {
 
-    if (m_checkRequestManager.getContext(context->responseQueue(), checkId)) {
+    if (m_checkRequestManager.getContext(context.responseQueue(), checkId)) {
         LOGE("Check request for checkId: [%" PRIu16 "] is already processing", checkId);
         return false;
     }
@@ -204,7 +202,7 @@ bool Logic::check(const RequestContextPtr &context, const PolicyKey &key,
     return pluginCheck(context, key, checkId, result);
 }
 
-bool Logic::pluginCheck(const RequestContextPtr &context, const PolicyKey &key,
+bool Logic::pluginCheck(const RequestContext &context, const PolicyKey &key,
                         ProtocolFrameSequenceNumber checkId, PolicyResult &result) {
 
     LOGD("Trying to check policy: <%s> in plugin.", key.toString().c_str());
@@ -258,7 +256,7 @@ bool Logic::pluginCheck(const RequestContextPtr &context, const PolicyKey &key,
 }
 
 bool Logic::update(const PolicyKey &key, ProtocolFrameSequenceNumber checkId,
-                   const PluginData &agentData, const RequestContextPtr &context,
+                   const PluginData &agentData, const RequestContext &context,
                    const ServicePluginInterfacePtr &plugin) {
 
     LOGD("Check update: <%s>:[%" PRIu16 "]", key.toString().c_str(), checkId);
@@ -279,31 +277,31 @@ bool Logic::update(const PolicyKey &key, ProtocolFrameSequenceNumber checkId,
             throw PluginErrorException(key);
     }
 
-    if (answerReady && context->responseQueue()) {
+    if (answerReady && context.responseQueue()) {
         m_auditLog.log(key, result);
-        context->returnResponse(context, std::make_shared<CheckResponse>(result, checkId));
+        context.returnResponse(context, CheckResponse(result, checkId));
         return true;
     }
 
     return false;
 }
 
-void Logic::execute(RequestContextPtr context, DescriptionListRequestPtr request) {
+void Logic::execute(const RequestContext &context, const DescriptionListRequest &request) {
     auto descriptions = m_pluginManager->getPolicyDescriptions();
     descriptions.insert(descriptions.begin(), predefinedPolicyDescr.begin(),
                         predefinedPolicyDescr.end());
-    context->returnResponse(context, std::make_shared<DescriptionListResponse>(descriptions,
-                            m_dbCorrupted, request->sequenceNumber()));
+    context.returnResponse(context, DescriptionListResponse(descriptions, m_dbCorrupted,
+                                                            request.sequenceNumber()));
 }
 
-void Logic::execute(RequestContextPtr context, EraseRequestPtr request) {
+void Logic::execute(const RequestContext &context, const EraseRequest &request) {
     auto code = CodeResponse::Code::OK;
 
     if (m_dbCorrupted) {
         code = CodeResponse::Code::DB_CORRUPTED;
     } else {
         try {
-            m_storage->erasePolicies(request->startBucket(), request->recursive(), request->filter());
+        m_storage->erasePolicies(request.startBucket(), request.recursive(), request.filter());
             onPoliciesChanged();
         } catch (const DatabaseException &ex) {
             code = CodeResponse::Code::FAILED;
@@ -312,19 +310,18 @@ void Logic::execute(RequestContextPtr context, EraseRequestPtr request) {
         }
     }
 
-    context->returnResponse(context, std::make_shared<CodeResponse>(code,
-                            request->sequenceNumber()));
+    context.returnResponse(context, CodeResponse(code, request.sequenceNumber()));
 }
 
-void Logic::execute(RequestContextPtr context, InsertOrUpdateBucketRequestPtr request) {
+void Logic::execute(const RequestContext &context, const InsertOrUpdateBucketRequest &request) {
     auto code = CodeResponse::Code::OK;
 
     if (m_dbCorrupted) {
         code = CodeResponse::Code::DB_CORRUPTED;
     } else {
         try {
-            checkSinglePolicyType(request->result().policyType(), true, true);
-            m_storage->addOrUpdateBucket(request->bucketId(), request->result());
+            checkSinglePolicyType(request.result().policyType(), true, true);
+            m_storage->addOrUpdateBucket(request.bucketId(), request.result());
             onPoliciesChanged();
         } catch (const DatabaseException &ex) {
             code = CodeResponse::Code::FAILED;
@@ -337,11 +334,10 @@ void Logic::execute(RequestContextPtr context, InsertOrUpdateBucketRequestPtr re
         }
     }
 
-    context->returnResponse(context, std::make_shared<CodeResponse>(code,
-                            request->sequenceNumber()));
+    context.returnResponse(context, CodeResponse(code, request.sequenceNumber()));
 }
 
-void Logic::execute(RequestContextPtr context, ListRequestPtr request) {
+void Logic::execute(const RequestContext &context, const ListRequest &request) {
     bool bucketValid = true;
     std::vector<Policy> policies;
 
@@ -349,24 +345,24 @@ void Logic::execute(RequestContextPtr context, ListRequestPtr request) {
         bucketValid = false;
     } else {
         try {
-            policies = m_storage->listPolicies(request->bucket(), request->filter());
+            policies = m_storage->listPolicies(request.bucket(), request.filter());
         } catch (const BucketNotExistsException &ex) {
             bucketValid = false;
         }
     }
 
-    context->returnResponse(context, std::make_shared<ListResponse>(policies, bucketValid,
-                            m_dbCorrupted, request->sequenceNumber()));
+    context.returnResponse(context, ListResponse(policies, bucketValid, m_dbCorrupted,
+                                                 request.sequenceNumber()));
 }
 
-void Logic::execute(RequestContextPtr context, RemoveBucketRequestPtr request) {
+void Logic::execute(const RequestContext &context, const RemoveBucketRequest &request) {
     auto code = CodeResponse::Code::OK;
 
     if (m_dbCorrupted) {
         code = CodeResponse::Code::DB_CORRUPTED;
     } else {
         try {
-            m_storage->deleteBucket(request->bucketId());
+            m_storage->deleteBucket(request.bucketId());
             onPoliciesChanged();
         } catch (const DatabaseException &ex) {
             code = CodeResponse::Code::FAILED;
@@ -376,21 +372,19 @@ void Logic::execute(RequestContextPtr context, RemoveBucketRequestPtr request) {
             code = CodeResponse::Code::NOT_ALLOWED;
         }
     }
-
-    context->returnResponse(context, std::make_shared<CodeResponse>(code,
-                            request->sequenceNumber()));
+    context.returnResponse(context, CodeResponse(code, request.sequenceNumber()));
 }
 
-void Logic::execute(RequestContextPtr context, SetPoliciesRequestPtr request) {
+void Logic::execute(const RequestContext &context, const SetPoliciesRequest &request) {
     auto code = CodeResponse::Code::OK;
 
     if (m_dbCorrupted) {
         code = CodeResponse::Code::DB_CORRUPTED;
     } else {
         try {
-            checkPoliciesTypes(request->policiesToBeInsertedOrUpdated(), true, false);
-            m_storage->insertPolicies(request->policiesToBeInsertedOrUpdated());
-            m_storage->deletePolicies(request->policiesToBeRemoved());
+            checkPoliciesTypes(request.policiesToBeInsertedOrUpdated(), true, false);
+            m_storage->insertPolicies(request.policiesToBeInsertedOrUpdated());
+            m_storage->deletePolicies(request.policiesToBeRemoved());
             onPoliciesChanged();
         } catch (const DatabaseException &ex) {
             code = CodeResponse::Code::FAILED;
@@ -401,14 +395,13 @@ void Logic::execute(RequestContextPtr context, SetPoliciesRequestPtr request) {
         }
     }
 
-    context->returnResponse(context, std::make_shared<CodeResponse>(code,
-                            request->sequenceNumber()));
+    context.returnResponse(context, CodeResponse(code, request.sequenceNumber()));
 }
 
-void Logic::execute(RequestContextPtr context, SimpleCheckRequestPtr request) {
+void Logic::execute(const RequestContext &context, const SimpleCheckRequest &request) {
     int retValue = CYNARA_API_SUCCESS;
     PolicyResult result;
-    PolicyKey key = request->key();
+    PolicyKey key = request.key();
     result = m_storage->checkPolicy(key);
 
     switch (result.policyType()) {
@@ -455,9 +448,9 @@ void Logic::execute(RequestContextPtr context, SimpleCheckRequestPtr request) {
         }
     }
     }
-    m_auditLog.log(request->key(), result);
-    context->returnResponse(context, std::make_shared<SimpleCheckResponse>(retValue, result,
-                                                                  request->sequenceNumber()));
+    m_auditLog.log(request.key(), result);
+    context.returnResponse(context, SimpleCheckResponse(retValue, result,
+                                                        request.sequenceNumber()));
 }
 
 void Logic::checkPoliciesTypes(const std::map<PolicyBucketId, std::vector<Policy>> &policies,
@@ -481,10 +474,10 @@ void Logic::checkSinglePolicyType(const PolicyType &policyType, bool allowBucket
     m_pluginManager->checkPolicyType(policyType);
 }
 
-void Logic::contextClosed(RequestContextPtr context) {
+void Logic::contextClosed(const RequestContext &context) {
     LOGD("context closed");
 
-    LinkId linkId = context->responseQueue();
+    LinkId linkId = context.responseQueue();
 
     m_agentManager->cleanupAgent(linkId, [&](const AgentTalkerPtr &talker) -> void {
                                  handleAgentTalkerDisconnection(talker); });
@@ -508,11 +501,12 @@ void Logic::handleAgentTalkerDisconnection(const AgentTalkerPtr &agentTalkerPtr)
         return;
     }
 
-    if (!checkContextPtr->cancelled() && checkContextPtr->m_requestContext->responseQueue()) {
+    RequestContext &context = checkContextPtr->m_requestContext;
+    if (!checkContextPtr->cancelled() && context.responseQueue()) {
         PolicyResult result(PredefinedPolicyType::DENY);
         m_auditLog.log(checkContextPtr->m_key, result);
-        checkContextPtr->m_requestContext->returnResponse(checkContextPtr->m_requestContext,
-                std::make_shared<CheckResponse>(result, checkContextPtr->m_checkId));
+        context.returnResponse(checkContextPtr->m_requestContext,
+                               CheckResponse(result, checkContextPtr->m_checkId));
     }
 
     m_checkRequestManager.removeRequest(checkContextPtr);

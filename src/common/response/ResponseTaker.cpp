@@ -29,44 +29,48 @@
 
 namespace Cynara {
 
-void ResponseTaker::execute(RequestContextPtr context UNUSED,
-                            AdminCheckResponsePtr response UNUSED) {
+void ResponseTaker::execute(const RequestContext &context UNUSED,
+                            const AdminCheckResponse &response UNUSED) {
     throw NotImplementedException();
 }
 
-void ResponseTaker::execute(RequestContextPtr context UNUSED,
-                            AgentActionResponsePtr response UNUSED) {
+void ResponseTaker::execute(const RequestContext &context UNUSED,
+                            const AgentActionResponse &response UNUSED) {
     throw NotImplementedException();
 }
 
-void ResponseTaker::execute(RequestContextPtr context UNUSED,
-                            AgentRegisterResponsePtr response UNUSED) {
+void ResponseTaker::execute(const RequestContext &context UNUSED,
+                            const AgentRegisterResponse &response UNUSED) {
     throw NotImplementedException();
 }
 
-void ResponseTaker::execute(RequestContextPtr context UNUSED, CancelResponsePtr response UNUSED) {
+void ResponseTaker::execute(const RequestContext &context UNUSED,
+                            const CancelResponse &response UNUSED) {
     throw NotImplementedException();
 }
 
-void ResponseTaker::execute(RequestContextPtr context UNUSED, CheckResponsePtr response UNUSED) {
+void ResponseTaker::execute(const RequestContext &context UNUSED,
+                            const CheckResponse &response UNUSED) {
     throw NotImplementedException();
 }
 
-void ResponseTaker::execute(RequestContextPtr context UNUSED, CodeResponsePtr response UNUSED) {
+void ResponseTaker::execute(const RequestContext &context UNUSED,
+                            const CodeResponse &response UNUSED) {
     throw NotImplementedException();
 }
 
-void ResponseTaker::execute(RequestContextPtr context UNUSED,
-                            DescriptionListResponsePtr response UNUSED) {
+void ResponseTaker::execute(const RequestContext &context UNUSED,
+                            const DescriptionListResponse &response UNUSED) {
     throw NotImplementedException();
 }
 
-void ResponseTaker::execute(RequestContextPtr context UNUSED, ListResponsePtr response UNUSED) {
+void ResponseTaker::execute(const RequestContext &context UNUSED,
+                            const ListResponse &response UNUSED) {
     throw NotImplementedException();
 }
 
-void ResponseTaker::execute(RequestContextPtr context UNUSED,
-                            SimpleCheckResponsePtr response UNUSED) {
+void ResponseTaker::execute(const RequestContext &context UNUSED,
+                            const SimpleCheckResponse &response UNUSED) {
     throw NotImplementedException();
 }
 

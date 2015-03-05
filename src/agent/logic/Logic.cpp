@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -136,12 +136,10 @@ int Logic::putResponse(const AgentResponseType responseType,
         return CYNARA_API_SERVICE_NOT_AVAILABLE;
     }
 
-    RequestPtr requestPtr = std::make_shared<AgentActionRequest>(responseType, pluginData,
-                                                                 sequenceNumber);
+    AgentActionRequest request(responseType, pluginData, sequenceNumber);
     m_responseBuffer->clear();
-    RequestContextPtr contextPtr = std::make_shared<RequestContext>(ResponseTakerPtr(),
-                                                                    m_responseBuffer);
-    requestPtr->execute(requestPtr, m_responseTakerPtr, contextPtr);
+    RequestContext context(ResponseTakerPtr(), m_responseBuffer);
+    request.execute(request, *m_responseTakerPtr, context);
     return m_agentSocket->sendDataToServer(*m_responseBuffer) ? CYNARA_API_SUCCESS :
                                                      CYNARA_API_SERVICE_NOT_AVAILABLE;
 }

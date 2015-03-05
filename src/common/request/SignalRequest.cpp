@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,15 +20,16 @@
  * @brief       This file implements signal request class
  */
 
-#include <memory>
+#include <attributes/attributes.h>
+#include <request/RequestTaker.h>
 
 #include "SignalRequest.h"
 
 namespace Cynara {
 
-void SignalRequest::execute(RequestPtr self, RequestTakerPtr taker,
-                            RequestContextPtr context) const {
-    taker->execute(context, std::dynamic_pointer_cast<SignalRequest>(self));
+void SignalRequest::execute(const Request &self UNUSED, RequestTaker &taker,
+                            const RequestContext &context) const {
+    taker.execute(context, *this);
 }
 
 } // namespace Cynara

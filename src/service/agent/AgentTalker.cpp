@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -34,9 +34,8 @@ namespace Cynara {
 
 void AgentTalker::sendMessage(const AgentResponseType type, const RawBuffer &data) {
     ResponseTakerPtr responseTaker = std::make_shared<ProtocolAgent>();
-    auto context = std::make_shared<RequestContext>(responseTaker, m_linkId);
-    context->returnResponse(context,
-                std::make_shared<AgentActionResponse>(type, data, m_checkId));
+    RequestContext context(responseTaker, m_linkId);
+    context.returnResponse(context, AgentActionResponse(type, data, m_checkId));
 }
 
 void AgentTalker::send(const PluginData &agentData) {

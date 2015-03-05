@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -38,18 +38,18 @@ public:
     virtual RequestPtr extractRequestFromBuffer(BinaryQueuePtr bufferQueue);
     virtual ResponsePtr extractResponseFromBuffer(BinaryQueuePtr bufferQueue);
 
-    virtual void execute(RequestContextPtr context, AdminCheckRequestPtr request);
-    virtual void execute(RequestContextPtr context, DescriptionListRequestPtr request);
-    virtual void execute(RequestContextPtr context, EraseRequestPtr request);
-    virtual void execute(RequestContextPtr context, InsertOrUpdateBucketRequestPtr request);
-    virtual void execute(RequestContextPtr context, ListRequestPtr request);
-    virtual void execute(RequestContextPtr context, RemoveBucketRequestPtr request);
-    virtual void execute(RequestContextPtr context, SetPoliciesRequestPtr request);
+    virtual void execute(const RequestContext &context, const AdminCheckRequest &request);
+    virtual void execute(const RequestContext &context, const DescriptionListRequest &request);
+    virtual void execute(const RequestContext &context, const EraseRequest &request);
+    virtual void execute(const RequestContext &context, const InsertOrUpdateBucketRequest &request);
+    virtual void execute(const RequestContext &context, const ListRequest &request);
+    virtual void execute(const RequestContext &context, const RemoveBucketRequest &request);
+    virtual void execute(const RequestContext &context, const SetPoliciesRequest &request);
 
-    virtual void execute(RequestContextPtr context, AdminCheckResponsePtr response);
-    virtual void execute(RequestContextPtr context, CodeResponsePtr response);
-    virtual void execute(RequestContextPtr context, DescriptionListResponsePtr response);
-    virtual void execute(RequestContextPtr context, ListResponsePtr response);
+    virtual void execute(const RequestContext &context, const AdminCheckResponse &response);
+    virtual void execute(const RequestContext &context, const CodeResponse &response);
+    virtual void execute(const RequestContext &context, const DescriptionListResponse &response);
+    virtual void execute(const RequestContext &context, const ListResponse &response);
 
 private:
     RequestPtr deserializeAdminCheckRequest(void);

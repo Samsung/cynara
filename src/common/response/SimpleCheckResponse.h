@@ -51,8 +51,8 @@ public:
     }
     virtual ~SimpleCheckResponse() {}
 
-    virtual void execute(ResponsePtr self, ResponseTakerPtr taker,
-                         RequestContextPtr context) const;
+    virtual void execute(const Response &self, ResponseTaker &taker,
+                         const RequestContext &context) const;
 private:
     const PolicyResult m_resultRef;
     const int32_t m_retValue;

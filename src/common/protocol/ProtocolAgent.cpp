@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -142,54 +142,54 @@ ResponsePtr ProtocolAgent::extractResponseFromBuffer(BinaryQueuePtr bufferQueue)
     return nullptr;
 }
 
-void ProtocolAgent::execute(RequestContextPtr context, AgentActionRequestPtr request) {
+void ProtocolAgent::execute(const RequestContext &context, const AgentActionRequest &request) {
     LOGD("Serializing AgentActionRequest: op [%" PRIu8 "], requestType [%" PRIu8 "], "
-         "data lengtgh <%zu>", OpAgentActionRequest, request->type(), request->data().size());
+         "data lengtgh <%zu>", OpAgentActionRequest, request.type(), request.data().size());
 
-    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
+    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request.sequenceNumber());
 
     ProtocolSerialization::serialize(frame, OpAgentActionRequest);
-    ProtocolSerialization::serialize(frame, request->type());
-    ProtocolSerialization::serialize(frame, request->data());
+    ProtocolSerialization::serialize(frame, request.type());
+    ProtocolSerialization::serialize(frame, request.data());
 
-    ProtocolFrameSerializer::finishSerialization(frame, *context->responseQueue());
+    ProtocolFrameSerializer::finishSerialization(frame, *context.responseQueue());
 }
 
-void ProtocolAgent::execute(RequestContextPtr context, AgentRegisterRequestPtr request) {
+void ProtocolAgent::execute(const RequestContext &context, const AgentRegisterRequest &request) {
     LOGD("Serializing AgentRegisterRequest: op [%" PRIu8 "], agent type <%s>",
-         OpAgentRegisterRequest, request->agentType().c_str());
+         OpAgentRegisterRequest, request.agentType().c_str());
 
-    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request->sequenceNumber());
+    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request.sequenceNumber());
 
     ProtocolSerialization::serialize(frame, OpAgentRegisterRequest);
-    ProtocolSerialization::serialize(frame, request->agentType());
+    ProtocolSerialization::serialize(frame, request.agentType());
 
-    ProtocolFrameSerializer::finishSerialization(frame, *context->responseQueue());
+    ProtocolFrameSerializer::finishSerialization(frame, *context.responseQueue());
 }
 
-void ProtocolAgent::execute(RequestContextPtr context, AgentRegisterResponsePtr response) {
+void ProtocolAgent::execute(const RequestContext &context, const AgentRegisterResponse &response) {
     LOGD("Serializing AgentRegisterResponse: op [%" PRIu8 "], response code: [%d]",
-         OpAgentRegisterResponse, static_cast<int>(response->m_code));
+         OpAgentRegisterResponse, static_cast<int>(response.m_code));
 
-    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(response->sequenceNumber());
+    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(response.sequenceNumber());
 
     ProtocolSerialization::serialize(frame, OpAgentRegisterResponse);
-    ProtocolSerialization::serialize(frame, static_cast<ProtocolResponseCode>(response->m_code));
+    ProtocolSerialization::serialize(frame, static_cast<ProtocolResponseCode>(response.m_code));
 
-    ProtocolFrameSerializer::finishSerialization(frame, *context->responseQueue());
+    ProtocolFrameSerializer::finishSerialization(frame, *context.responseQueue());
 }
 
-void ProtocolAgent::execute(RequestContextPtr context, AgentActionResponsePtr response) {
+void ProtocolAgent::execute(const RequestContext &context, const AgentActionResponse &response) {
     LOGD("Serializing AgentActionResponse: op [%" PRIu8 "], responseType [%" PRIu8 "], "
-         "data lengtgh <%zu>", OpAgentActionResponse, response->type(), response->data().size());
+         "data lengtgh <%zu>", OpAgentActionResponse, response.type(), response.data().size());
 
-    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(response->sequenceNumber());
+    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(response.sequenceNumber());
 
     ProtocolSerialization::serialize(frame, OpAgentActionResponse);
-    ProtocolSerialization::serialize(frame, response->type());
-    ProtocolSerialization::serialize(frame, response->data());
+    ProtocolSerialization::serialize(frame, response.type());
+    ProtocolSerialization::serialize(frame, response.data());
 
-    ProtocolFrameSerializer::finishSerialization(frame, *context->responseQueue());
+    ProtocolFrameSerializer::finishSerialization(frame, *context.responseQueue());
 }
 
 } // namespace Cynara

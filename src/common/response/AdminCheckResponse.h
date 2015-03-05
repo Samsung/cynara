@@ -42,8 +42,8 @@ public:
 
     virtual ~AdminCheckResponse() {}
 
-    virtual void execute(ResponsePtr self, ResponseTakerPtr taker,
-                         RequestContextPtr context) const;
+    virtual void execute(const Response &self, ResponseTaker &taker,
+                         const RequestContext &context) const;
 
     const PolicyResult &result(void) const {
         return m_result;

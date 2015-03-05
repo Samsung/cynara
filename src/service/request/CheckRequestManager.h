@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ public:
     CheckRequestManager() {}
     ~CheckRequestManager() {}
 
-    CheckContextPtr createContext(const PolicyKey &key, const RequestContextPtr &request,
+    CheckContextPtr createContext(const PolicyKey &key, const RequestContext &request,
                                   ProtocolFrameSequenceNumber checkId,
                                   const ServicePluginInterfacePtr &plugin,
                                   const AgentTalkerPtr &agentTalkerPtr);

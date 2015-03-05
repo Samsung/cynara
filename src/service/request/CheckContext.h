@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@
 
 #include <containers/BinaryQueue.h>
 #include <request/pointers.h>
+#include <request/RequestContext.h>
 #include <types/PolicyKey.h>
 #include <types/ProtocolFields.h>
 
@@ -38,7 +39,7 @@ namespace Cynara {
 
 class CheckContext {
 public:
-    CheckContext(const PolicyKey &key, RequestContextPtr requestContext,
+    CheckContext(const PolicyKey &key, const RequestContext &requestContext,
                  ProtocolFrameSequenceNumber checkId, ServicePluginInterfacePtr plugin,
                  const AgentTalkerPtr &agentTalkerPtr) : m_agentTalker(agentTalkerPtr),
                      m_checkId(checkId), m_key(key), m_plugin(plugin),
@@ -49,7 +50,7 @@ public:
     const ProtocolFrameSequenceNumber m_checkId;
     const PolicyKey m_key;
     ServicePluginInterfacePtr m_plugin;
-    RequestContextPtr m_requestContext;
+    RequestContext m_requestContext;
     bool m_cancelled;
 
     void cancel(void) {

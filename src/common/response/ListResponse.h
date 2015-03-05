@@ -44,7 +44,8 @@ public:
 
     virtual ~ListResponse() {};
 
-    virtual void execute(ResponsePtr self, ResponseTakerPtr taker, RequestContextPtr context) const;
+    virtual void execute(const Response &self, ResponseTaker &taker,
+                         const RequestContext &context) const;
 
     bool isBucketValid(void) const {
         return m_bucketValid;

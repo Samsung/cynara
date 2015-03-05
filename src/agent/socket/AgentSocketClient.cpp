@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,8 +43,8 @@ AgentSocketClient::AgentSocketClient(const std::string &socketPath, ProtocolPtr 
 
 ResponsePtr AgentSocketClient::askCynaraServer(RequestPtr request) {
     //pass request to protocol
-    RequestContextPtr context = std::make_shared<RequestContext>(ResponseTakerPtr(), m_writeQueue);
-    request->execute(request, m_protocol, context);
+    RequestContext context(ResponseTakerPtr(), m_writeQueue);
+    request->execute(*request, *m_protocol, context);
 
     //send request to cynara
     if (!sendDataToServer(*m_writeQueue)) {

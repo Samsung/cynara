@@ -73,21 +73,21 @@ public:
         m_socketManager.reset();
     }
 
-    virtual void execute(RequestContextPtr context, AdminCheckRequestPtr request);
-    virtual void execute(RequestContextPtr context, AgentActionRequestPtr request);
-    virtual void execute(RequestContextPtr context, AgentRegisterRequestPtr request);
-    virtual void execute(RequestContextPtr context, CancelRequestPtr request);
-    virtual void execute(RequestContextPtr context, CheckRequestPtr request);
-    virtual void execute(RequestContextPtr context, DescriptionListRequestPtr request);
-    virtual void execute(RequestContextPtr context, EraseRequestPtr request);
-    virtual void execute(RequestContextPtr context, InsertOrUpdateBucketRequestPtr request);
-    virtual void execute(RequestContextPtr context, ListRequestPtr request);
-    virtual void execute(RequestContextPtr context, RemoveBucketRequestPtr request);
-    virtual void execute(RequestContextPtr context, SetPoliciesRequestPtr request);
-    virtual void execute(RequestContextPtr context, SignalRequestPtr request);
-    virtual void execute(RequestContextPtr context, SimpleCheckRequestPtr request);
+    virtual void execute(const RequestContext &context, const AdminCheckRequest &request);
+    virtual void execute(const RequestContext &context, const AgentActionRequest &request);
+    virtual void execute(const RequestContext &context, const AgentRegisterRequest &request);
+    virtual void execute(const RequestContext &context, const CancelRequest &request);
+    virtual void execute(const RequestContext &context, const CheckRequest &request);
+    virtual void execute(const RequestContext &context, const DescriptionListRequest &request);
+    virtual void execute(const RequestContext &context, const EraseRequest &request);
+    virtual void execute(const RequestContext &context, const InsertOrUpdateBucketRequest &request);
+    virtual void execute(const RequestContext &context, const ListRequest &request);
+    virtual void execute(const RequestContext &context, const RemoveBucketRequest &request);
+    virtual void execute(const RequestContext &context, const SetPoliciesRequest &request);
+    virtual void execute(const RequestContext &context, const SignalRequest &request);
+    virtual void execute(const RequestContext &context, const SimpleCheckRequest &request);
 
-    virtual void contextClosed(RequestContextPtr context);
+    virtual void contextClosed(const RequestContext &context);
     virtual void loadDb(void);
 
 private:
@@ -99,12 +99,12 @@ private:
     AuditLog m_auditLog;
     bool m_dbCorrupted;
 
-    bool check(const RequestContextPtr &context, const PolicyKey &key,
+    bool check(const RequestContext &context, const PolicyKey &key,
                ProtocolFrameSequenceNumber checkId, PolicyResult &result);
-    bool pluginCheck(const RequestContextPtr &context, const PolicyKey &key,
+    bool pluginCheck(const RequestContext &context, const PolicyKey &key,
                      ProtocolFrameSequenceNumber checkId, PolicyResult &result);
     bool update(const PolicyKey &key, ProtocolFrameSequenceNumber checkId,
-                const PluginData &agentData, const RequestContextPtr &request,
+                const PluginData &agentData, const RequestContext &request,
                 const ServicePluginInterfacePtr &plugin);
 
     void checkPoliciesTypes(const std::map<PolicyBucketId, std::vector<Policy>> &policies,

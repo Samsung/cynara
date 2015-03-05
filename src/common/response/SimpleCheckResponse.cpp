@@ -20,15 +20,16 @@
  * @brief       This file implements simple check response class
  */
 
-#include <memory>
+#include <attributes/attributes.h>
+#include <response/ResponseTaker.h>
 
 #include "SimpleCheckResponse.h"
 
 namespace Cynara {
 
-void SimpleCheckResponse::execute(ResponsePtr self, ResponseTakerPtr taker,
-                                  RequestContextPtr context) const {
-    taker->execute(context, std::dynamic_pointer_cast<SimpleCheckResponse>(self));
+void SimpleCheckResponse::execute(const Response &self UNUSED, ResponseTaker &taker,
+                                  const RequestContext &context) const {
+    taker.execute(context, *this);
 }
 
 } // namespace Cynara

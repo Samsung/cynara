@@ -41,13 +41,13 @@ public:
     virtual RequestPtr extractRequestFromBuffer(BinaryQueuePtr bufferQueue);
     virtual ResponsePtr extractResponseFromBuffer(BinaryQueuePtr bufferQueue);
 
-    virtual void execute(RequestContextPtr context, CancelRequestPtr request);
-    virtual void execute(RequestContextPtr context, CheckRequestPtr request);
-    virtual void execute(RequestContextPtr context, SimpleCheckRequestPtr request);
+    virtual void execute(const RequestContext &context, const CancelRequest &request);
+    virtual void execute(const RequestContext &context, const CheckRequest &request);
+    virtual void execute(const RequestContext &context, const SimpleCheckRequest &request);
 
-    virtual void execute(RequestContextPtr context, CancelResponsePtr response);
-    virtual void execute(RequestContextPtr context, CheckResponsePtr response);
-    virtual void execute(RequestContextPtr context, SimpleCheckResponsePtr request);
+    virtual void execute(const RequestContext &context, const CancelResponse &response);
+    virtual void execute(const RequestContext &context, const CheckResponse &response);
+    virtual void execute(const RequestContext &context, const SimpleCheckResponse &request);
 
 private:
     RequestPtr deserializeCancelRequest(void);

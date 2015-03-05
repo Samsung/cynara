@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@
 #define SRC_COMMON_RESPONSE_RESPONSE_H_
 
 #include <response/pointers.h>
-#include <response/ResponseTaker.h>
 #include <types/ProtocolFields.h>
 
 namespace Cynara {
@@ -35,8 +34,8 @@ public:
     };
     virtual ~Response() {};
 
-    virtual void execute(ResponsePtr self, ResponseTakerPtr taker,
-                         RequestContextPtr context) const = 0;
+    virtual void execute(const Response &self, ResponseTaker &taker,
+                         const RequestContext &context) const = 0;
 
     ProtocolFrameSequenceNumber sequenceNumber(void) const {
         return m_sequenceNumber;

@@ -27,8 +27,6 @@
 
 #include <request/pointers.h>
 #include <request/Request.h>
-#include <request/RequestTaker.h>
-
 namespace Cynara {
 
 class SimpleCheckRequest : public Request {
@@ -46,7 +44,8 @@ public:
         return m_key;
     }
 
-    virtual void execute(RequestPtr self, RequestTakerPtr taker, RequestContextPtr context) const;
+    virtual void execute(const Request &self, RequestTaker &taker,
+                         const RequestContext &context) const;
 };
 
 } // namespace Cynara

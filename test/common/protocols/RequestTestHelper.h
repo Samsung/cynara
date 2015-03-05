@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -42,9 +42,9 @@ namespace RequestTestHelper {
 template <typename R>
 void testRequest(std::shared_ptr<R> request, Cynara::ProtocolPtr protocol) {
     auto queue = std::make_shared<Cynara::BinaryQueue>();
-    auto context = std::make_shared<Cynara::RequestContext>(Cynara::ResponseTakerPtr(), queue);
+    Cynara::RequestContext context(Cynara::ResponseTakerPtr(), queue);
 
-    request->execute(request, protocol, context);
+    request->execute(*request, *protocol, context);
 
     auto extractedRequest = protocol->extractRequestFromBuffer(queue);
     ASSERT_TRUE(bool(extractedRequest));
@@ -55,9 +55,9 @@ void testRequest(std::shared_ptr<R> request, Cynara::ProtocolPtr protocol) {
 
 void binaryTestRequest(Cynara::RequestPtr request, Cynara::ProtocolPtr protocol) {
     auto queue = std::make_shared<Cynara::BinaryQueue>();
-    auto context = std::make_shared<Cynara::RequestContext>(Cynara::ResponseTakerPtr(), queue);
+    Cynara::RequestContext context(Cynara::ResponseTakerPtr(), queue);
 
-    request->execute(request, protocol, context);
+    request->execute(*request, *protocol, context);
     Cynara::RawBuffer data(queue->size());
     queue->flatten(data.data(), queue->size());
 
@@ -65,7 +65,7 @@ void binaryTestRequest(Cynara::RequestPtr request, Cynara::ProtocolPtr protocol)
     ASSERT_TRUE(bool(extractedRequest));
     ASSERT_EQ(queue->size(), 0);
 
-    extractedRequest->execute(extractedRequest, protocol, context);
+    extractedRequest->execute(*extractedRequest, *protocol, context);
     Cynara::RawBuffer data2(queue->size());
     queue->flatten(data2.data(), queue->size());
 

@@ -57,8 +57,8 @@ bool SocketClientAsync::isConnected(void) {
 }
 
 void SocketClientAsync::appendRequest(RequestPtr request) {
-    RequestContextPtr context = std::make_shared<RequestContext>(ResponseTakerPtr(), m_writeQueue);
-    request->execute(request, m_protocol, context);
+    RequestContext context(ResponseTakerPtr(), m_writeQueue);
+    request->execute(*request, *m_protocol, context);
 }
 
 bool SocketClientAsync::isDataToSend(void) {

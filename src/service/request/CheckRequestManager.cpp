@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -31,14 +31,14 @@
 namespace Cynara {
 
 CheckContextPtr CheckRequestManager::createContext(const PolicyKey &key,
-                                                   const RequestContextPtr &request,
+                                                   const RequestContext &request,
                                                    ProtocolFrameSequenceNumber checkId,
                                                    const ServicePluginInterfacePtr &plugin,
                                                    const AgentTalkerPtr &agentTalkerPtr) {
 
     CheckContextPtr checkPtr = std::make_shared<CheckContext>(key, request, checkId, plugin,
                                                               agentTalkerPtr);
-    if (m_checks[request->responseQueue()].insert(std::make_pair(checkId, checkPtr)).second) {
+    if (m_checks[request.responseQueue()].insert(std::make_pair(checkId, checkPtr)).second) {
         return checkPtr;
     }
 
@@ -68,7 +68,7 @@ CheckContextPtr CheckRequestManager::getContext(const AgentTalkerPtr &talker) {
 }
 
 void CheckRequestManager::removeRequest(const CheckContextPtr &checkContextPtr) {
-    auto it = m_checks.find(checkContextPtr->m_requestContext->responseQueue());
+    auto it = m_checks.find(checkContextPtr->m_requestContext.responseQueue());
     if (it != m_checks.end()) {
         it->second.erase(checkContextPtr->m_checkId);
         if (it->second.empty()) {

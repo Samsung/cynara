@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -42,7 +42,8 @@ public:
         return m_agentType;
     }
 
-    virtual void execute(RequestPtr self, RequestTakerPtr taker, RequestContextPtr context) const;
+    virtual void execute(const Request &self, RequestTaker &taker,
+                         const RequestContext &context) const;
 
 private:
     AgentType m_agentType;

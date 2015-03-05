@@ -20,15 +20,16 @@
  * @brief       This file implements simple check request class
  */
 
-#include <memory>
+#include <attributes/attributes.h>
+#include <request/RequestTaker.h>
 
 #include "SimpleCheckRequest.h"
 
 namespace Cynara {
 
-void SimpleCheckRequest::execute(RequestPtr self, RequestTakerPtr taker,
-                                 RequestContextPtr context) const {
-    taker->execute(context, std::dynamic_pointer_cast<SimpleCheckRequest>(self));
+void SimpleCheckRequest::execute(const Request &self UNUSED, RequestTaker &taker,
+                                 const RequestContext &context) const {
+    taker.execute(context, *this);
 }
 
 } // namespace Cynara

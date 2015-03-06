@@ -34,8 +34,7 @@ public:
     };
     virtual ~Response() {};
 
-    virtual void execute(const Response &self, ResponseTaker &taker,
-                         const RequestContext &context) const = 0;
+    virtual void execute(ResponseTaker &taker, const RequestContext &context) const = 0;
 
     ProtocolFrameSequenceNumber sequenceNumber(void) const {
         return m_sequenceNumber;

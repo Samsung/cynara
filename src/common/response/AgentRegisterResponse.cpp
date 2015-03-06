@@ -20,15 +20,13 @@
  * @brief       This file implements class for responding to agent register request
  */
 
-#include <attributes/attributes.h>
 #include <response/ResponseTaker.h>
 
 #include "AgentRegisterResponse.h"
 
 namespace Cynara {
 
-void AgentRegisterResponse::execute(const Response &self UNUSED, ResponseTaker &taker,
-                                    const RequestContext &context) const {
+void AgentRegisterResponse::execute(ResponseTaker &taker, const RequestContext &context) const {
     taker.execute(context, *this);
 }
 

@@ -20,15 +20,13 @@
  * @brief       This file implements check response class
  */
 
-#include <attributes/attributes.h>
 #include <response/ResponseTaker.h>
 
 #include "CheckResponse.h"
 
 namespace Cynara {
 
-void CheckResponse::execute(const Response &self UNUSED, ResponseTaker &taker,
-                            const RequestContext &context) const {
+void CheckResponse::execute(ResponseTaker &taker, const RequestContext &context) const {
     taker.execute(context, *this);
 }
 

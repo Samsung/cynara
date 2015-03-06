@@ -20,15 +20,13 @@
  * @brief       This file implements plugin description list request class
  */
 
-#include <attributes/attributes.h>
 #include <request/RequestTaker.h>
 
 #include "DescriptionListRequest.h"
 
 namespace Cynara {
 
-void DescriptionListRequest::execute(const Request &self UNUSED, RequestTaker &taker,
-                                     const RequestContext &context) const {
+void DescriptionListRequest::execute(RequestTaker &taker, const RequestContext &context) const {
     taker.execute(context, *this);
 }
 

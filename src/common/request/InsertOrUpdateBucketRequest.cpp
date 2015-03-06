@@ -20,14 +20,13 @@
  * @brief       This file implements request class for inserting or updating policy bucket
  */
 
-#include <attributes/attributes.h>
 #include <request/RequestTaker.h>
 
 #include "InsertOrUpdateBucketRequest.h"
 
 namespace Cynara {
 
-void InsertOrUpdateBucketRequest::execute(const Request &self UNUSED, RequestTaker &taker,
+void InsertOrUpdateBucketRequest::execute(RequestTaker &taker,
                                           const RequestContext &context) const {
     taker.execute(context, *this);
 }

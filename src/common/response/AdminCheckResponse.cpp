@@ -20,15 +20,13 @@
  * @brief       This file implements admin check response class
  */
 
-#include <attributes/attributes.h>
 #include <response/ResponseTaker.h>
 
 #include "AdminCheckResponse.h"
 
 namespace Cynara {
 
-void AdminCheckResponse::execute(const Response &self UNUSED, ResponseTaker &taker,
-                                 const RequestContext &context) const {
+void AdminCheckResponse::execute(ResponseTaker &taker, const RequestContext &context) const {
     taker.execute(context, *this);
 }
 

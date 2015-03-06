@@ -139,7 +139,7 @@ int Logic::putResponse(const AgentResponseType responseType,
     AgentActionRequest request(responseType, pluginData, sequenceNumber);
     m_responseBuffer->clear();
     RequestContext context(ResponseTakerPtr(), m_responseBuffer);
-    request.execute(request, *m_responseTakerPtr, context);
+    request.execute(*m_responseTakerPtr, context);
     return m_agentSocket->sendDataToServer(*m_responseBuffer) ? CYNARA_API_SUCCESS :
                                                      CYNARA_API_SERVICE_NOT_AVAILABLE;
 }

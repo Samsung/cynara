@@ -63,7 +63,7 @@ bool SocketClient::isConnected(void) {
 ResponsePtr SocketClient::askCynaraServer(RequestPtr request) {
     //pass request to protocol
     RequestContext context(ResponseTakerPtr(), m_writeQueue);
-    request->execute(*request, *m_protocol, context);
+    request->execute(*m_protocol, context);
 
     //send request to cynara
     if (m_socket.sendToServer(*m_writeQueue) == Socket::SendStatus::CONNECTION_LOST) {

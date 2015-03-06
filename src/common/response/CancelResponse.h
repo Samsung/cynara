@@ -36,8 +36,7 @@ public:
 
     virtual ~CancelResponse() {};
 
-    virtual void execute(const Response &self, ResponseTaker &taker,
-                         const RequestContext &context) const;
+    virtual void execute(ResponseTaker &taker, const RequestContext &context) const;
 };
 
 } // namespace Cynara

@@ -35,7 +35,7 @@ namespace Cynara {
 void AgentTalker::sendMessage(const AgentResponseType type, const RawBuffer &data) {
     ResponseTakerPtr responseTaker = std::make_shared<ProtocolAgent>();
     RequestContext context(responseTaker, m_linkId);
-    context.returnResponse(context, AgentActionResponse(type, data, m_checkId));
+    context.returnResponse(AgentActionResponse(type, data, m_checkId));
 }
 
 void AgentTalker::send(const PluginData &agentData) {

@@ -242,7 +242,7 @@ bool SocketManager::handleRead(int fd, const RawBuffer &readbuffer) {
             //build context
             RequestContext context(desc.responseTaker(), desc.writeQueue());
             //pass request to request taker
-            req->execute(*req, *requestTaker(), context);
+            req->execute(*requestTaker(), context);
         }
     } catch (const Exception &ex) {
         LOGE("Error handling request <%s>. Closing socket", ex.what());

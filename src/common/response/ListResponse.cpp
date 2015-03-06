@@ -20,15 +20,13 @@
  * @brief       This file implements policies list response class
  */
 
-#include <attributes/attributes.h>
 #include <response/ResponseTaker.h>
 
 #include "ListResponse.h"
 
 namespace Cynara {
 
-void ListResponse::execute(const Response &self UNUSED, ResponseTaker &taker,
-                           const RequestContext &context) const {
+void ListResponse::execute(ResponseTaker &taker, const RequestContext &context) const {
     taker.execute(context, *this);
 }
 

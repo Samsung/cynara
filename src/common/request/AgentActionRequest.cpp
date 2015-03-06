@@ -20,15 +20,13 @@
  * @brief       This file implements agent action request class
  */
 
-#include <attributes/attributes.h>
 #include <request/RequestTaker.h>
 
 #include "AgentActionRequest.h"
 
 namespace Cynara {
 
-void AgentActionRequest::execute(const Request &self UNUSED, RequestTaker &taker,
-                                 const RequestContext &context) const {
+void AgentActionRequest::execute(RequestTaker &taker, const RequestContext &context) const {
     taker.execute(context, *this);
 }
 

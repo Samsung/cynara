@@ -20,15 +20,13 @@
  * @brief       This file implements plugins description list response class
  */
 
-#include <attributes/attributes.h>
 #include <response/ResponseTaker.h>
 
 #include "DescriptionListResponse.h"
 
 namespace Cynara {
 
-void DescriptionListResponse::execute(const Response &self UNUSED, ResponseTaker &taker,
-                                      const RequestContext &context) const {
+void DescriptionListResponse::execute(ResponseTaker &taker, const RequestContext &context) const {
     taker.execute(context, *this);
 }
 

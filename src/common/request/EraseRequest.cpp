@@ -20,15 +20,13 @@
  * @brief       This file implements policies erase request class
  */
 
-#include <attributes/attributes.h>
 #include <request/RequestTaker.h>
 
 #include "EraseRequest.h"
 
 namespace Cynara {
 
-void EraseRequest::execute(const Request &self UNUSED, RequestTaker &taker,
-                           const RequestContext &context) const {
+void EraseRequest::execute(RequestTaker &taker, const RequestContext &context) const {
     taker.execute(context, *this);
 }
 

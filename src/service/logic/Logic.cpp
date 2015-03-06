@@ -110,8 +110,8 @@ void Logic::execute(const RequestContext &context, const AdminCheckRequest &requ
         }
     }
 
-    context.returnResponse(context, AdminCheckResponse(result, bucketValid, m_dbCorrupted,
-                                                       request.sequenceNumber()));
+    context.returnResponse(AdminCheckResponse(result, bucketValid, m_dbCorrupted,
+                                              request.sequenceNumber()));
 }
 
 void Logic::execute(const RequestContext &context, const AgentActionRequest &request) {
@@ -150,7 +150,7 @@ void Logic::execute(const RequestContext &context, const AgentActionRequest &req
 
 void Logic::execute(const RequestContext &context, const AgentRegisterRequest &request) {
     auto result = m_agentManager->registerAgent(request.agentType(), context.responseQueue());
-    context.returnResponse(context, AgentRegisterResponse(result, request.sequenceNumber()));
+    context.returnResponse(AgentRegisterResponse(result, request.sequenceNumber()));
 }
 
 void Logic::execute(const RequestContext &context, const CancelRequest &request) {
@@ -169,14 +169,14 @@ void Logic::execute(const RequestContext &context, const CancelRequest &request)
     checkContextPtr->m_agentTalker->cancel();
 
     LOGD("Returning response for cancel request id: [%" PRIu16 "].", request.sequenceNumber());
-    context.returnResponse(context, CancelResponse(request.sequenceNumber()));
+    context.returnResponse(CancelResponse(request.sequenceNumber()));
 }
 
 void Logic::execute(const RequestContext &context, const CheckRequest &request) {
     PolicyResult result(PredefinedPolicyType::DENY);
     if (check(context, request.key(), request.sequenceNumber(), result)) {
         m_auditLog.log(request.key(), result);
-        context.returnResponse(context, CheckResponse(result, request.sequenceNumber()));
+        context.returnResponse(CheckResponse(result, request.sequenceNumber()));
     }
 }
 
@@ -279,7 +279,7 @@ bool Logic::update(const PolicyKey &key, ProtocolFrameSequenceNumber checkId,
 
     if (answerReady && context.responseQueue()) {
         m_auditLog.log(key, result);
-        context.returnResponse(context, CheckResponse(result, checkId));
+        context.returnResponse(CheckResponse(result, checkId));
         return true;
     }
 
@@ -290,8 +290,8 @@ void Logic::execute(const RequestContext &context, const DescriptionListRequest 
     auto descriptions = m_pluginManager->getPolicyDescriptions();
     descriptions.insert(descriptions.begin(), predefinedPolicyDescr.begin(),
                         predefinedPolicyDescr.end());
-    context.returnResponse(context, DescriptionListResponse(descriptions, m_dbCorrupted,
-                                                            request.sequenceNumber()));
+    context.returnResponse(DescriptionListResponse(descriptions, m_dbCorrupted,
+                                                   request.sequenceNumber()));
 }
 
 void Logic::execute(const RequestContext &context, const EraseRequest &request) {
@@ -310,7 +310,7 @@ void Logic::execute(const RequestContext &context, const EraseRequest &request) 
         }
     }
 
-    context.returnResponse(context, CodeResponse(code, request.sequenceNumber()));
+    context.returnResponse(CodeResponse(code, request.sequenceNumber()));
 }
 
 void Logic::execute(const RequestContext &context, const InsertOrUpdateBucketRequest &request) {
@@ -334,7 +334,7 @@ void Logic::execute(const RequestContext &context, const InsertOrUpdateBucketReq
         }
     }
 
-    context.returnResponse(context, CodeResponse(code, request.sequenceNumber()));
+    context.returnResponse(CodeResponse(code, request.sequenceNumber()));
 }
 
 void Logic::execute(const RequestContext &context, const ListRequest &request) {
@@ -351,8 +351,8 @@ void Logic::execute(const RequestContext &context, const ListRequest &request) {
         }
     }
 
-    context.returnResponse(context, ListResponse(policies, bucketValid, m_dbCorrupted,
-                                                 request.sequenceNumber()));
+    context.returnResponse(ListResponse(policies, bucketValid, m_dbCorrupted,
+                                        request.sequenceNumber()));
 }
 
 void Logic::execute(const RequestContext &context, const RemoveBucketRequest &request) {
@@ -372,7 +372,7 @@ void Logic::execute(const RequestContext &context, const RemoveBucketRequest &re
             code = CodeResponse::Code::NOT_ALLOWED;
         }
     }
-    context.returnResponse(context, CodeResponse(code, request.sequenceNumber()));
+    context.returnResponse(CodeResponse(code, request.sequenceNumber()));
 }
 
 void Logic::execute(const RequestContext &context, const SetPoliciesRequest &request) {
@@ -395,7 +395,7 @@ void Logic::execute(const RequestContext &context, const SetPoliciesRequest &req
         }
     }
 
-    context.returnResponse(context, CodeResponse(code, request.sequenceNumber()));
+    context.returnResponse(CodeResponse(code, request.sequenceNumber()));
 }
 
 void Logic::execute(const RequestContext &context, const SimpleCheckRequest &request) {
@@ -449,8 +449,8 @@ void Logic::execute(const RequestContext &context, const SimpleCheckRequest &req
     }
     }
     m_auditLog.log(request.key(), result);
-    context.returnResponse(context, SimpleCheckResponse(retValue, result,
-                                                        request.sequenceNumber()));
+    context.returnResponse(SimpleCheckResponse(retValue, result,
+                                               request.sequenceNumber()));
 }
 
 void Logic::checkPoliciesTypes(const std::map<PolicyBucketId, std::vector<Policy>> &policies,
@@ -505,8 +505,7 @@ void Logic::handleAgentTalkerDisconnection(const AgentTalkerPtr &agentTalkerPtr)
     if (!checkContextPtr->cancelled() && context.responseQueue()) {
         PolicyResult result(PredefinedPolicyType::DENY);
         m_auditLog.log(checkContextPtr->m_key, result);
-        context.returnResponse(checkContextPtr->m_requestContext,
-                               CheckResponse(result, checkContextPtr->m_checkId));
+        context.returnResponse(CheckResponse(result, checkContextPtr->m_checkId));
     }
 
     m_checkRequestManager.removeRequest(checkContextPtr);

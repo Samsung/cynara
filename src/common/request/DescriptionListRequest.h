@@ -36,8 +36,7 @@ public:
 
     virtual ~DescriptionListRequest() {};
 
-    virtual void execute(const Request &self, RequestTaker &taker,
-                         const RequestContext &context) const;
+    virtual void execute(RequestTaker &taker, const RequestContext &context) const;
 };
 
 } // namespace Cynara

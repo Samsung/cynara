@@ -44,7 +44,7 @@ void testRequest(std::shared_ptr<R> request, Cynara::ProtocolPtr protocol) {
     auto queue = std::make_shared<Cynara::BinaryQueue>();
     Cynara::RequestContext context(Cynara::ResponseTakerPtr(), queue);
 
-    request->execute(*request, *protocol, context);
+    request->execute(*protocol, context);
 
     auto extractedRequest = protocol->extractRequestFromBuffer(queue);
     ASSERT_TRUE(bool(extractedRequest));
@@ -57,7 +57,7 @@ void binaryTestRequest(Cynara::RequestPtr request, Cynara::ProtocolPtr protocol)
     auto queue = std::make_shared<Cynara::BinaryQueue>();
     Cynara::RequestContext context(Cynara::ResponseTakerPtr(), queue);
 
-    request->execute(*request, *protocol, context);
+    request->execute(*protocol, context);
     Cynara::RawBuffer data(queue->size());
     queue->flatten(data.data(), queue->size());
 
@@ -65,7 +65,7 @@ void binaryTestRequest(Cynara::RequestPtr request, Cynara::ProtocolPtr protocol)
     ASSERT_TRUE(bool(extractedRequest));
     ASSERT_EQ(queue->size(), 0);
 
-    extractedRequest->execute(*extractedRequest, *protocol, context);
+    extractedRequest->execute(*protocol, context);
     Cynara::RawBuffer data2(queue->size());
     queue->flatten(data2.data(), queue->size());
 

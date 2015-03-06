@@ -20,15 +20,13 @@
  * @brief       This file implements common class for sending a request to agent
  */
 
-#include <attributes/attributes.h>
 #include <response/ResponseTaker.h>
 
 #include "AgentActionResponse.h"
 
 namespace Cynara {
 
-void AgentActionResponse::execute(const Response &self UNUSED, ResponseTaker &taker,
-                                  const RequestContext &context) const {
+void AgentActionResponse::execute(ResponseTaker &taker, const RequestContext &context) const {
     taker.execute(context, *this);
 }
 

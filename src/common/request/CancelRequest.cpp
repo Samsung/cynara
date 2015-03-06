@@ -20,15 +20,13 @@
  * @brief       This file implements cancel request class
  */
 
-#include <attributes/attributes.h>
 #include <request/RequestTaker.h>
 
 #include "CancelRequest.h"
 
 namespace Cynara {
 
-void CancelRequest::execute(const Request &self UNUSED, RequestTaker &taker,
-                            const RequestContext &context) const {
+void CancelRequest::execute(RequestTaker &taker, const RequestContext &context) const {
     taker.execute(context, *this);
 }
 

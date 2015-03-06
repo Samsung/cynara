@@ -20,15 +20,13 @@
  * @brief       This file implements request class for modifying policies
  */
 
-#include <attributes/attributes.h>
 #include <request/RequestTaker.h>
 
 #include "SetPoliciesRequest.h"
 
 namespace Cynara {
 
-void SetPoliciesRequest::execute(const Request &self UNUSED, RequestTaker &taker,
-                                 const RequestContext &context) const {
+void SetPoliciesRequest::execute(RequestTaker &taker, const RequestContext &context) const {
     taker.execute(context, *this);
 }
 

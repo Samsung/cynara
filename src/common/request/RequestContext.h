@@ -23,9 +23,6 @@
 #ifndef SRC_COMMON_REQUEST_REQUESTCONTEXT_H_
 #define SRC_COMMON_REQUEST_REQUESTCONTEXT_H_
 
-#include <memory>
-
-#include <attributes/attributes.h>
 #include <containers/BinaryQueue.h>
 #include <exceptions/ContextErrorException.h>
 #include <request/pointers.h>
@@ -45,10 +42,10 @@ public:
         : m_responseTaker(responseTaker), m_responseQueue(responseQueue) {
     }
 
-    void returnResponse(const RequestContext &self UNUSED, const Response &response) const {
+    void returnResponse(const Response &response) const {
         ResponseTakerPtr taker = m_responseTaker.lock();
         if (taker)
-            response.execute(response, *taker, *this);
+            response.execute(*taker, *this);
     }
 
     BinaryQueuePtr responseQueue(void) const {

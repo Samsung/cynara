@@ -20,15 +20,13 @@
  * @brief       This file implements policies list request class
  */
 
-#include <attributes/attributes.h>
 #include <request/RequestTaker.h>
 
 #include "ListRequest.h"
 
 namespace Cynara {
 
-void ListRequest::execute(const Request &self UNUSED, RequestTaker &taker,
-                          const RequestContext &context) const {
+void ListRequest::execute(RequestTaker &taker, const RequestContext &context) const {
     taker.execute(context, *this);
 }
 

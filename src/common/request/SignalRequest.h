@@ -40,8 +40,7 @@ public:
 
     virtual ~SignalRequest() {};
 
-    virtual void execute(const Request &self, RequestTaker &taker,
-                         const RequestContext &context) const;
+    virtual void execute(RequestTaker &taker, const RequestContext &context) const;
 
     uint32_t signalNumber(void) const {
         return m_sigInfo.ssi_signo;

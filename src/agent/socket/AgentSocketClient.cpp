@@ -44,7 +44,7 @@ AgentSocketClient::AgentSocketClient(const std::string &socketPath, ProtocolPtr 
 ResponsePtr AgentSocketClient::askCynaraServer(RequestPtr request) {
     //pass request to protocol
     RequestContext context(ResponseTakerPtr(), m_writeQueue);
-    request->execute(*request, *m_protocol, context);
+    request->execute(*m_protocol, context);
 
     //send request to cynara
     if (!sendDataToServer(*m_writeQueue)) {

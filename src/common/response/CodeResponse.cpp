@@ -20,15 +20,13 @@
  * @brief       This file implements class for responding to a request with a code
  */
 
-#include <attributes/attributes.h>
 #include <response/ResponseTaker.h>
 
 #include "CodeResponse.h"
 
 namespace Cynara {
 
-void CodeResponse::execute(const Response &self UNUSED, ResponseTaker &taker,
-                           const RequestContext &context) const {
+void CodeResponse::execute(ResponseTaker &taker, const RequestContext &context) const {
     taker.execute(context, *this);
 }
 

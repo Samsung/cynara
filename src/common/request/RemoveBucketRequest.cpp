@@ -20,15 +20,13 @@
  * @brief       This file implements request class for bucket removal
  */
 
-#include <attributes/attributes.h>
 #include <request/RequestTaker.h>
 
 #include "RemoveBucketRequest.h"
 
 namespace Cynara {
 
-void RemoveBucketRequest::execute(const Request &self UNUSED, RequestTaker &taker,
-                                  const RequestContext &context) const {
+void RemoveBucketRequest::execute(RequestTaker &taker, const RequestContext &context) const {
     taker.execute(context, *this);
 }
 

@@ -48,8 +48,7 @@ public:
         return m_type;
     }
 
-    virtual void execute(const Request &self, RequestTaker &taker,
-                         const RequestContext &context) const;
+    virtual void execute(RequestTaker &taker, const RequestContext &context) const;
 
 private:
     const AgentRequestType m_type;

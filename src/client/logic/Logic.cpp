@@ -50,13 +50,12 @@ static ProtocolFrameSequenceNumber generateSequenceNumber(void) {
     return ++sequenceNumber;
 }
 
-Logic::Logic(const Configuration &conf) {
-    m_socket = std::make_shared<SocketClient>(PathConfig::SocketPath::client,
-                                              std::make_shared<ProtocolClient>());
-    m_cache = std::make_shared<CapacityCache>(conf.getCacheSize());
+Logic::Logic(const Configuration &conf) :
+        m_socketClient(PathConfig::SocketPath::client, std::make_shared<ProtocolClient>()),
+        m_cache(conf.getCacheSize()) {
     auto naiveInterpreter = std::make_shared<NaiveInterpreter>();
     for (auto &descr : naiveInterpreter->getSupportedPolicyDescr()) {
-        m_cache->registerPlugin(descr, naiveInterpreter);
+        m_cache.registerPlugin(descr, naiveInterpreter);
     }
 }
 
@@ -66,7 +65,7 @@ int Logic::check(const std::string &client, const ClientSession &session, const 
         return CYNARA_API_SERVICE_NOT_AVAILABLE;
 
     PolicyKey key(client, user, privilege);
-    int ret = m_cache->get(session, key);
+    int ret = m_cache.get(session, key);
     if (ret != CYNARA_API_CACHE_MISS) {
         return ret;
     }
@@ -78,7 +77,7 @@ int Logic::check(const std::string &client, const ClientSession &session, const 
         return ret;
     }
 
-    return m_cache->update(session, key, result);
+    return m_cache.update(session, key, result);
 }
 
 int Logic::simpleCheck(const std::string &client, const ClientSession &session,
@@ -87,7 +86,7 @@ int Logic::simpleCheck(const std::string &client, const ClientSession &session,
         return CYNARA_API_SERVICE_NOT_AVAILABLE;
 
     PolicyKey key(client, user, privilege);
-    int ret = m_cache->get(session, key);
+    int ret = m_cache.get(session, key);
     if (ret != CYNARA_API_CACHE_MISS) {
         return ret;
     }
@@ -100,14 +99,14 @@ int Logic::simpleCheck(const std::string &client, const ClientSession &session,
         return ret;
     }
 
-    return m_cache->update(session, key, result);
+    return m_cache.update(session, key, result);
 }
 
 bool Logic::ensureConnection(void) {
-    if (m_socket->isConnected())
+    if (m_socketClient.isConnected())
         return true;
     onDisconnected();
-    if (m_socket->connect())
+    if (m_socketClient.connect())
         return true;
     LOGW("Cannot connect to cynara. Service not available.");
     return false;
@@ -119,11 +118,11 @@ std::shared_ptr<Res> Logic::requestResponse(const PolicyKey &key) {
 
     //Ask cynara service
     std::shared_ptr<Res> reqResponse;
-    RequestPtr request = std::make_shared<Req>(key, sequenceNumber);
+    Req request(key, sequenceNumber);
     ResponsePtr response;
-    while (!(response = m_socket->askCynaraServer(request))) {
+    while (!(response = m_socketClient.askCynaraServer(request))) {
         onDisconnected();
-        if (!m_socket->connect())
+        if (!m_socketClient.connect())
             return nullptr;
     }
 
@@ -163,7 +162,7 @@ int Logic::requestSimpleResult(const PolicyKey &key, PolicyResult &result) {
 }
 
 void Logic::onDisconnected(void) {
-    m_cache->clear();
+    m_cache.clear();
 }
 
 } // namespace Cynara

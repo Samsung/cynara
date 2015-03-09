@@ -34,7 +34,7 @@
 #include <configuration/Configuration.h>
 
 #include <api/ApiInterface.h>
-#include <cache/CacheInterface.h>
+#include <cache/CapacityCache.h>
 
 namespace Cynara {
 
@@ -51,8 +51,8 @@ public:
     virtual int simpleCheck(const std::string &client, const ClientSession &session,
                             const std::string &user, const std::string &privilege);
 private:
-    SocketClientPtr m_socket;
-    PluginCachePtr m_cache;
+    SocketClient m_socketClient;
+    CapacityCache m_cache;
 
     void onDisconnected(void);
     bool ensureConnection(void);

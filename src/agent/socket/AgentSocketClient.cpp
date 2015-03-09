@@ -41,10 +41,10 @@ AgentSocketClient::AgentSocketClient(const std::string &socketPath, ProtocolPtr 
     m_readQueue = std::make_shared<BinaryQueue>();
 }
 
-ResponsePtr AgentSocketClient::askCynaraServer(RequestPtr request) {
+ResponsePtr AgentSocketClient::askCynaraServer(const Request &request) {
     //pass request to protocol
     RequestContext context(ResponseTakerPtr(), m_writeQueue);
-    request->execute(*m_protocol, context);
+    request.execute(*m_protocol, context);
 
     //send request to cynara
     if (!sendDataToServer(*m_writeQueue)) {

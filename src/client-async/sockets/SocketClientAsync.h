@@ -47,7 +47,7 @@ public:
     Socket::ConnectionStatus completeConnection(void);
     int getSockFd(void);
     bool isConnected(void);
-    void appendRequest(RequestPtr request);
+    void appendRequest(const Request &request);
     bool isDataToSend(void);
     Socket::SendStatus sendToCynara(void);
     bool receiveFromCynara(void);

@@ -45,16 +45,13 @@
 namespace Cynara {
 
 Logic::Logic(cynara_status_callback callback, void *userStatusData, const Configuration &conf)
-    : m_statusCallback(callback, userStatusData),
+    : m_statusCallback(callback, userStatusData), m_cache(conf.getCacheSize()),
+      m_socketClient(PathConfig::SocketPath::client, std::make_shared<ProtocolClient>()),
       m_operationPermitted(true), m_inAnswerCancelResponseCallback(false) {
 
-    m_socketClient = std::make_shared<SocketClientAsync>(
-        PathConfig::SocketPath::client, std::make_shared<ProtocolClient>());
-
-    m_cache = std::make_shared<CapacityCache>(conf.getCacheSize());
     auto naiveInterpreter = std::make_shared<NaiveInterpreter>();
     for (auto &descr : naiveInterpreter->getSupportedPolicyDescr()) {
-        m_cache->registerPlugin(descr, naiveInterpreter);
+        m_cache.registerPlugin(descr, naiveInterpreter);
     }
 }
 
@@ -75,7 +72,7 @@ int Logic::checkCache(const std::string &client, const std::string &session,
     if (!checkCacheValid())
         return CYNARA_API_CACHE_MISS;
 
-    return m_cache->get(session, PolicyKey(client, user, privilege));
+    return m_cache.get(session, PolicyKey(client, user, privilege));
 }
 
 int Logic::createCheckRequest(const std::string &client, const std::string &session,
@@ -113,11 +110,11 @@ int Logic::createRequest(bool simple, const std::string &client, const std::stri
     m_checks.insert(CheckPair(sequenceNumber, CheckData(key, session, responseCallback,
                                                         simple)));
     if (simple)
-        m_socketClient->appendRequest(std::make_shared<SimpleCheckRequest>(key, sequenceNumber));
+        m_socketClient.appendRequest(SimpleCheckRequest(key, sequenceNumber));
     else
-        m_socketClient->appendRequest(std::make_shared<CheckRequest>(key, sequenceNumber));
+        m_socketClient.appendRequest(CheckRequest(key, sequenceNumber));
 
-    onStatusChange(m_socketClient->getSockFd(), cynara_async_status::CYNARA_STATUS_FOR_RW);
+    onStatusChange(m_socketClient.getSockFd(), cynara_async_status::CYNARA_STATUS_FOR_RW);
     checkId = static_cast<cynara_check_id>(sequenceNumber);
 
     return CYNARA_API_SUCCESS;
@@ -151,7 +148,7 @@ int Logic::cancelRequest(cynara_check_id checkId) {
     if (it == m_checks.end() || it->second.cancelled())
         return CYNARA_API_INVALID_PARAM;
 
-    m_socketClient->appendRequest(std::make_shared<CancelRequest>(it->first));
+    m_socketClient.appendRequest(CancelRequest(it->first));
 
     it->second.cancel();
 
@@ -160,7 +157,7 @@ int Logic::cancelRequest(cynara_check_id checkId) {
     it->second.callback().onCancel(it->first);
     m_inAnswerCancelResponseCallback = onAnswerCancel;
 
-    onStatusChange(m_socketClient->getSockFd(), cynara_async_status::CYNARA_STATUS_FOR_RW);
+    onStatusChange(m_socketClient.getSockFd(), cynara_async_status::CYNARA_STATUS_FOR_RW);
 
     return CYNARA_API_SUCCESS;
 }
@@ -170,7 +167,7 @@ bool Logic::isFinishPermitted(void) {
 }
 
 bool Logic::checkCacheValid(void) {
-    return m_socketClient->isConnected();
+    return m_socketClient.isConnected();
 }
 
 void Logic::prepareRequestsToSend(void) {
@@ -180,20 +177,18 @@ void Logic::prepareRequestsToSend(void) {
             it = m_checks.erase(it);
         } else {
             if (it->second.isSimple())
-                m_socketClient->appendRequest(std::make_shared<SimpleCheckRequest>(it->second.key(),
-                                                                                   it->first));
+                m_socketClient.appendRequest(SimpleCheckRequest(it->second.key(), it->first));
             else
-                m_socketClient->appendRequest(std::make_shared<CheckRequest>(it->second.key(),
-                                                                             it->first));
+                m_socketClient.appendRequest(CheckRequest(it->second.key(), it->first));
             ++it;
         }
     }
 }
 
 bool Logic::processOut(void) {
-    switch (m_socketClient->sendToCynara()) {
+    switch (m_socketClient.sendToCynara()) {
         case Socket::SendStatus::ALL_DATA_SENT:
-            onStatusChange(m_socketClient->getSockFd(),
+            onStatusChange(m_socketClient.getSockFd(),
                            cynara_async_status::CYNARA_STATUS_FOR_READ);
         case Socket::SendStatus::PARTIAL_DATA_SENT:
             return true;
@@ -202,11 +197,11 @@ bool Logic::processOut(void) {
     }
 }
 
-Logic::CheckMap::iterator Logic::checkResponseValid(ResponsePtr response) {
-    auto it = m_checks.find(response->sequenceNumber());
+Logic::CheckMap::iterator Logic::checkResponseValid(const Response &response) {
+    auto it = m_checks.find(response.sequenceNumber());
     if (it == m_checks.end()) {
         LOGC("Critical error. Unknown checkResponse received: sequenceNumber = [%" PRIu16 "]",
-             response->sequenceNumber());
+             response.sequenceNumber());
         throw UnexpectedErrorException("Unexpected response from cynara service");
     }
     return it;
@@ -217,14 +212,14 @@ void Logic::releaseRequest(Logic::CheckMap::iterator reqIt) {
     m_checks.erase(reqIt);
 }
 
-void Logic::processCheckResponse(CheckResponsePtr checkResponse) {
+void Logic::processCheckResponse(const CheckResponse &checkResponse) {
     LOGD("checkResponse: policyType = [%" PRIu16 "], metadata = <%s>",
-         checkResponse->m_resultRef.policyType(),
-         checkResponse->m_resultRef.metadata().c_str());
+         checkResponse.m_resultRef.policyType(),
+         checkResponse.m_resultRef.metadata().c_str());
 
     auto it = checkResponseValid(checkResponse);
-    int result = m_cache->update(it->second.session(), it->second.key(),
-                                 checkResponse->m_resultRef);
+    int result = m_cache.update(it->second.session(), it->second.key(),
+                                 checkResponse.m_resultRef);
     CheckData checkData(std::move(it->second));
     releaseRequest(it);
 
@@ -232,22 +227,22 @@ void Logic::processCheckResponse(CheckResponsePtr checkResponse) {
         bool onAnswerCancel = m_inAnswerCancelResponseCallback;
         m_inAnswerCancelResponseCallback = true;
         checkData.callback().onAnswer(
-            static_cast<cynara_check_id>(checkResponse->sequenceNumber()), result);
+            static_cast<cynara_check_id>(checkResponse.sequenceNumber()), result);
         m_inAnswerCancelResponseCallback = onAnswerCancel;
     }
 }
 
-void Logic::processSimpleCheckResponse(SimpleCheckResponsePtr response) {
+void Logic::processSimpleCheckResponse(const SimpleCheckResponse &response) {
     LOGD("simpleCheckResponse");
     LOGD("checkResponse: policyType = [%" PRIu16 "], metadata = <%s>",
-         response->getResult().policyType(),
-         response->getResult().metadata().c_str());
+         response.getResult().policyType(),
+         response.getResult().metadata().c_str());
 
     auto it = checkResponseValid(response);
-    int result = response->getReturnValue();
+    int result = response.getReturnValue();
     if (result == CYNARA_API_SUCCESS)
-        result = m_cache->update(it->second.session(), it->second.key(),
-                                 response->getResult());
+        result = m_cache.update(it->second.session(), it->second.key(),
+                                 response.getResult());
     CheckData checkData(std::move(it->second));
     releaseRequest(it);
 
@@ -255,18 +250,17 @@ void Logic::processSimpleCheckResponse(SimpleCheckResponsePtr response) {
         bool onAnswerCancel = m_inAnswerCancelResponseCallback;
         m_inAnswerCancelResponseCallback = true;
         checkData.callback().onAnswer(
-            static_cast<cynara_check_id>(response->sequenceNumber()), result);
+            static_cast<cynara_check_id>(response.sequenceNumber()), result);
         m_inAnswerCancelResponseCallback = onAnswerCancel;
     }
 }
 
-void Logic::processCancelResponse(CancelResponsePtr cancelResponse) {
-    LOGD("cancelResponse");
+void Logic::processCancelResponse(const CancelResponse &cancelResponse) {
 
     auto it = checkResponseValid(cancelResponse);
     if (!it->second.cancelled()) {
         LOGC("Critical error. CancelRequest not sent: sequenceNumber = [%" PRIu16 "]",
-             cancelResponse->sequenceNumber());
+             cancelResponse.sequenceNumber());
         throw UnexpectedErrorException("Unexpected response from cynara service");
     }
     releaseRequest(it);
@@ -277,22 +271,22 @@ void Logic::processResponses(void) {
     CheckResponsePtr checkResponse;
     CancelResponsePtr cancelResponse;
     SimpleCheckResponsePtr simpleResponse;
-    while ((response = m_socketClient->getResponse())) {
+    while (response = m_socketClient.getResponse()) {
         checkResponse = std::dynamic_pointer_cast<CheckResponse>(response);
         if (checkResponse) {
-            processCheckResponse(checkResponse);
+            processCheckResponse(*checkResponse);
             continue;
         }
 
         cancelResponse = std::dynamic_pointer_cast<CancelResponse>(response);
         if (cancelResponse) {
-            processCancelResponse(cancelResponse);
+            processCancelResponse(*cancelResponse);
             continue;
         }
 
         simpleResponse = std::dynamic_pointer_cast<SimpleCheckResponse>(response);
         if (simpleResponse) {
-            processSimpleCheckResponse(simpleResponse);
+            processSimpleCheckResponse(*simpleResponse);
             continue;
         }
 
@@ -302,19 +296,19 @@ void Logic::processResponses(void) {
 }
 
 bool Logic::processIn(void) {
-    if (!m_socketClient->receiveFromCynara())
+    if (!m_socketClient.receiveFromCynara())
         return false;
     processResponses();
     return true;
 }
 
 cynara_async_status Logic::socketDataStatus(void) {
-    return m_socketClient->isDataToSend() ? cynara_async_status::CYNARA_STATUS_FOR_RW
+    return m_socketClient.isDataToSend() ? cynara_async_status::CYNARA_STATUS_FOR_RW
                                           : cynara_async_status::CYNARA_STATUS_FOR_READ;
 }
 
 bool Logic::ensureConnection(void) {
-    if (m_socketClient->isConnected())
+    if (m_socketClient.isConnected())
         return true;
     onDisconnected();
 
@@ -322,14 +316,14 @@ bool Logic::ensureConnection(void) {
 }
 
 bool Logic::connect(void) {
-    switch (m_socketClient->connect()) {
+    switch (m_socketClient.connect()) {
         case Socket::ConnectionStatus::CONNECTION_SUCCEEDED:
             prepareRequestsToSend();
-            onStatusChange(m_socketClient->getSockFd(), socketDataStatus());
+            onStatusChange(m_socketClient.getSockFd(), socketDataStatus());
             return true;
         case Socket::ConnectionStatus::CONNECTION_IN_PROGRESS:
             prepareRequestsToSend();
-            onStatusChange(m_socketClient->getSockFd(), cynara_async_status::CYNARA_STATUS_FOR_RW);
+            onStatusChange(m_socketClient.getSockFd(), cynara_async_status::CYNARA_STATUS_FOR_RW);
             return true;
         default:
             onServiceNotAvailable();
@@ -338,12 +332,12 @@ bool Logic::connect(void) {
 }
 
 int Logic::completeConnection(bool &completed) {
-    switch (m_socketClient->completeConnection()) {
+    switch (m_socketClient.completeConnection()) {
         case Socket::ConnectionStatus::ALREADY_CONNECTED:
             completed = true;
             return CYNARA_API_SUCCESS;
         case Socket::ConnectionStatus::CONNECTION_SUCCEEDED:
-            onStatusChange(m_socketClient->getSockFd(), socketDataStatus());
+            onStatusChange(m_socketClient.getSockFd(), socketDataStatus());
             completed = true;
             return CYNARA_API_SUCCESS;
         case Socket::ConnectionStatus::CONNECTION_IN_PROGRESS:
@@ -377,7 +371,7 @@ void Logic::onServiceNotAvailable(void)
 
 void Logic::onDisconnected(void) {
     m_operationPermitted = false;
-    m_cache->clear();
+    m_cache.clear();
     m_statusCallback.onDisconnected();
     m_operationPermitted = true;
 }

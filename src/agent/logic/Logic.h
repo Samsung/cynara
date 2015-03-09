@@ -48,7 +48,7 @@ public:
 
 private:
     AgentType m_agentType;
-    AgentSocketPtr m_agentSocket;
+    AgentSocketClient m_socketClient;
     bool m_registered;
     RequestTakerPtr m_responseTakerPtr;
     BinaryQueuePtr m_responseBuffer;

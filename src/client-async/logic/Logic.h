@@ -32,6 +32,7 @@
 #include <types/ProtocolFields.h>
 
 #include <api/ApiInterface.h>
+#include <cache/CapacityCache.h>
 #include <callback/StatusCallback.h>
 #include <check/CheckData.h>
 #include <cynara-client-async.h>
@@ -67,8 +68,8 @@ private:
     typedef std::pair<ProtocolFrameSequenceNumber, CheckData> CheckPair;
 
     StatusCallback m_statusCallback;
-    PluginCachePtr m_cache;
-    SocketClientAsyncPtr m_socketClient;
+    CapacityCache m_cache;
+    SocketClientAsync m_socketClient;
     CheckMap m_checks;
     SequenceContainer m_sequenceContainer;
     bool m_operationPermitted;
@@ -82,11 +83,11 @@ private:
     void prepareRequestsToSend(void);
     cynara_async_status socketDataStatus(void);
     bool processOut(void);
-    CheckMap::iterator checkResponseValid(ResponsePtr response);
-    void releaseRequest(Logic::CheckMap::iterator reqIt);
-    void processCheckResponse(CheckResponsePtr checkResponse);
-    void processCancelResponse(CancelResponsePtr cancelResponse);
-    void processSimpleCheckResponse(SimpleCheckResponsePtr response);
+    CheckMap::iterator checkResponseValid(const Response &response);
+    void releaseRequest(CheckMap::iterator reqIt);
+    void processCheckResponse(const CheckResponse &checkResponse);
+    void processCancelResponse(const CancelResponse &cancelResponse);
+    void processSimpleCheckResponse(const SimpleCheckResponse &response);
     void processResponses(void);
     bool processIn(void);
     bool ensureConnection(void);

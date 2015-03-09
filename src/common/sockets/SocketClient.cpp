@@ -20,15 +20,9 @@
  * @brief       This file contains implementation of cynara's socket client
  */
 
-#include <memory>
-#include <string>
-
 #include <log/log.h>
-#include <protocol/Protocol.h>
-#include <request/pointers.h>
 #include <request/Request.h>
 #include <request/RequestContext.h>
-#include <response/pointers.h>
 #include <sockets/Socket.h>
 
 #include "SocketClient.h"
@@ -60,10 +54,10 @@ bool SocketClient::isConnected(void) {
     return m_socket.isConnected();
 }
 
-ResponsePtr SocketClient::askCynaraServer(RequestPtr request) {
+ResponsePtr SocketClient::askCynaraServer(const Request &request) {
     //pass request to protocol
     RequestContext context(ResponseTakerPtr(), m_writeQueue);
-    request->execute(*m_protocol, context);
+    request.execute(*m_protocol, context);
 
     //send request to cynara
     if (m_socket.sendToServer(*m_writeQueue) == Socket::SendStatus::CONNECTION_LOST) {

@@ -51,9 +51,9 @@ Cynara::ProtocolFrameSequenceNumber generateSequenceNumber(void) {
 
 namespace Cynara {
 
-Logic::Logic(const AgentType &agentType) : m_agentType(agentType), m_registered(false) {
-    m_agentSocket = std::make_shared<AgentSocketClient>(PathConfig::SocketPath::agent,
-                                                        std::make_shared<ProtocolAgent>());
+Logic::Logic(const AgentType &agentType) : m_agentType(agentType),
+        m_socketClient(PathConfig::SocketPath::agent, std::make_shared<ProtocolAgent>()),
+        m_registered(false) {
     m_responseTakerPtr = std::make_shared<ProtocolAgent>();
     m_responseBuffer = std::make_shared<BinaryQueue>();
 }
@@ -63,8 +63,8 @@ int Logic::registerInCynara(void) {
 
     //Ask cynara service
     AgentRegisterResponsePtr registerResponsePtr;
-    RequestPtr request = std::make_shared<AgentRegisterRequest>(m_agentType, sequenceNumber);
-    ResponsePtr response = m_agentSocket->askCynaraServer(request);
+    AgentRegisterRequest request(m_agentType, sequenceNumber);
+    ResponsePtr response = m_socketClient.askCynaraServer(request);
     if (!response) {
         LOGW("Disconnected by cynara server.");
         return CYNARA_API_SERVICE_NOT_AVAILABLE;
@@ -91,7 +91,7 @@ int Logic::registerInCynara(void) {
 }
 
 int Logic::ensureConnection(void) {
-    switch (m_agentSocket->connect()) {
+    switch (m_socketClient.connect()) {
         case SS_CONNECTED:
             return CYNARA_API_SUCCESS;
         case SS_RECONNECTED:
@@ -109,7 +109,7 @@ int Logic::getRequest(AgentActionResponsePtr &resultPtr) {
     if (ret != CYNARA_API_SUCCESS)
         return ret;
 
-    ResponsePtr responsePtr = m_agentSocket->receiveResponseFromServer();
+    ResponsePtr responsePtr = m_socketClient.receiveResponseFromServer();
     if (!responsePtr) {
         LOGW("Disconnected by cynara server.");
         return CYNARA_API_SERVICE_NOT_AVAILABLE;
@@ -131,7 +131,7 @@ int Logic::getRequest(AgentActionResponsePtr &resultPtr) {
 int Logic::putResponse(const AgentResponseType responseType,
                        const ProtocolFrameSequenceNumber sequenceNumber,
                        const RawBuffer &pluginData) {
-    if (!m_agentSocket->isConnected()) {
+    if (!m_socketClient.isConnected()) {
         LOGE("Agent not connected to cynara service.");
         return CYNARA_API_SERVICE_NOT_AVAILABLE;
     }
@@ -140,7 +140,7 @@ int Logic::putResponse(const AgentResponseType responseType,
     m_responseBuffer->clear();
     RequestContext context(ResponseTakerPtr(), m_responseBuffer);
     request.execute(*m_responseTakerPtr, context);
-    return m_agentSocket->sendDataToServer(*m_responseBuffer) ? CYNARA_API_SUCCESS :
+    return m_socketClient.sendDataToServer(*m_responseBuffer) ? CYNARA_API_SUCCESS :
                                                      CYNARA_API_SERVICE_NOT_AVAILABLE;
 }
 

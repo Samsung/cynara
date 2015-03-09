@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,11 +31,11 @@ namespace Cynara {
 
 class OnlineLogic : public ApiInterface {
 private:
-    SocketClientPtr m_socketClient;
+    SocketClient m_socketClient;
 
     bool ensureConnection(void);
     template<typename Req, typename Res, typename... ReqArgs>
-    int getResponse(std::shared_ptr<Res> &retResponse, ReqArgs... args);
+    int getResponse(std::shared_ptr<Res> &retResponse, ReqArgs&&... args);
 
 public:
     OnlineLogic();

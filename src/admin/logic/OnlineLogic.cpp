@@ -25,6 +25,7 @@
 
 #include <cinttypes>
 #include <memory>
+#include <utility>
 
 #include <cynara-error.h>
 #include <common.h>
@@ -54,9 +55,8 @@
 
 namespace Cynara {
 
-OnlineLogic::OnlineLogic() {
-    m_socketClient = std::make_shared<SocketClient>(PathConfig::SocketPath::admin,
-                                                    std::make_shared<ProtocolAdmin>());
+OnlineLogic::OnlineLogic() : m_socketClient(PathConfig::SocketPath::admin,
+                                            std::make_shared<ProtocolAdmin>()) {
 }
 
 ProtocolFrameSequenceNumber generateSequenceNumber(void) {
@@ -65,11 +65,11 @@ ProtocolFrameSequenceNumber generateSequenceNumber(void) {
 }
 
 bool OnlineLogic::ensureConnection(void) {
-    return m_socketClient->isConnected() || m_socketClient->connect();
+    return m_socketClient.isConnected() || m_socketClient.connect();
 }
 
 template<typename Req, typename Res, typename... ReqArgs>
-int OnlineLogic::getResponse(std::shared_ptr<Res> &retResponse, ReqArgs... args) {
+int OnlineLogic::getResponse(std::shared_ptr<Res> &retResponse, ReqArgs&&... args) {
     if (!ensureConnection()) {
         LOGE("Cannot connect to cynara. Service not available.");
         return CYNARA_API_SERVICE_NOT_AVAILABLE;
@@ -77,10 +77,10 @@ int OnlineLogic::getResponse(std::shared_ptr<Res> &retResponse, ReqArgs... args)
 
     ProtocolFrameSequenceNumber sequenceNumber = generateSequenceNumber();
 
-    RequestPtr request = std::make_shared<Req>(args..., sequenceNumber);
+    Req request(std::forward<ReqArgs>(args)..., sequenceNumber);
     ResponsePtr response;
-    while (!(response = m_socketClient->askCynaraServer(request))) {
-        if (!m_socketClient->connect())
+    while (!(response = m_socketClient.askCynaraServer(request))) {
+        if (!m_socketClient.connect())
             return CYNARA_API_SERVICE_NOT_AVAILABLE;
     }
 

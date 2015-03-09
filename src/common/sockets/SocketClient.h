@@ -24,12 +24,12 @@
 #define SRC_COMMON_SOCKETS_SOCKETCLIENT_H_
 
 #include <memory>
+#include <string>
 
 #include <containers/BinaryQueue.h>
 #include <protocol/Protocol.h>
 #include <request/pointers.h>
 #include <response/pointers.h>
-#include <response/ResponseTaker.h>
 #include <sockets/Socket.h>
 
 namespace Cynara {
@@ -53,7 +53,7 @@ public:
 
     //returns pointer to response
     //        or nullptr when connection to cynara service is lost
-    ResponsePtr askCynaraServer(RequestPtr request);
+    ResponsePtr askCynaraServer(const Request &request);
 };
 
 } // namespace Cynara

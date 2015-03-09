@@ -56,9 +56,9 @@ bool SocketClientAsync::isConnected(void) {
     return m_socket.isConnected();
 }
 
-void SocketClientAsync::appendRequest(RequestPtr request) {
+void SocketClientAsync::appendRequest(const Request &request) {
     RequestContext context(ResponseTakerPtr(), m_writeQueue);
-    request->execute(*m_protocol, context);
+    request.execute(*m_protocol, context);
 }
 
 bool SocketClientAsync::isDataToSend(void) {

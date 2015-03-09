@@ -1,5 +1,37 @@
 ###############################
 
+Release: 0.6.0
+Date:    2015.03.09
+Name:    Client configuration, simple-check, cynara_strerror, checksums, emergency mode, migration tool.
+
+Libraries:
+libcynara-admin.0.6.0
+libcynara-agent.0.6.0
+libcynara-client-async.0.6.0
+libcynara-client-commmons.0.6.0
+libcynara-client.0.6.0
+libcynara-commons.0.6.0
+libcynara-creds-commons.0.6.0
+libcynara-creds-dbus.0.6.0
+libcynara-creds-socket.0.6.0
+libcynara-session.0.6.0
+libcynara-storage.0.6.0
+
+Executables:
+cyad
+cynara
+
+Description:
+Configuration of cache size for both synchronous and asynchronous client.
+New client command - simple_check.
+Stringization of errors in cyad and with cynara_strerror.
+Checksums mechanism finished.
+Emergency mode, when database is corrupted.
+Revisited migration tool.
+Some bug fixes
+
+###############################
+
 Release: 0.5.0
 Date:    2015.01.16
 Name:    Cyad, offline-admin, erase, listPolicies, listDescriptions

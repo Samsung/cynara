@@ -21,6 +21,11 @@
  * @version     1.0
  * @brief       This file contains implementation of OfflineLogic class
  */
+#ifdef DB_FILES_SMACK_LABEL
+#include <dirent.h>
+#include <linux/xattr.h>
+#include <sys/smack.h>
+#endif
 
 #include <common.h>
 #include <config/PathConfig.h>
@@ -32,6 +37,7 @@
 #include <exceptions/DefaultBucketSetNoneException.h>
 #include <exceptions/InvalidBucketIdException.h>
 #include <exceptions/UnknownPolicyTypeException.h>
+#include <log/log.h>
 #include <plugin/PluginManager.h>
 #include <types/PolicyDescription.h>
 
@@ -193,8 +199,29 @@ int OfflineLogic::erasePolicies(const PolicyBucketId &startBucket, bool recursiv
     return CYNARA_API_SUCCESS;
 }
 
+
+void OfflineLogic::labelDatabaseFiles(void)
+{
+#ifdef DB_FILES_SMACK_LABEL
+   DIR           *dbDirectory;
+   struct dirent *directoryEntry;
+
+   dbDirectory = opendir(PathConfig::StoragePath::dbDir.c_str());
+   if (dbDirectory) {
+       while ((directoryEntry = readdir(dbDirectory)) != NULL) {
+           std::string f = PathConfig::StoragePath::dbDir + directoryEntry->d_name;
+           if (smack_set_label_for_path(f.c_str(), XATTR_NAME_SMACK, 1, DB_FILES_SMACK_LABEL) < 0) {
+               LOGE("Failed to set label for database file: " << f);
+           }
+       }
+       closedir(dbDirectory);
+   }
+#endif
+}
+
 void OfflineLogic::onPoliciesChanged(void) {
     m_storage->save();
+    labelDatabaseFiles();
 }
 
 } /* namespace Cynara */

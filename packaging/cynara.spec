@@ -30,6 +30,7 @@ BuildRequires: cmake
 BuildRequires: zip
 BuildRequires: pkgconfig(libsystemd-daemon)
 BuildRequires: pkgconfig(libsystemd-journal)
+BuildRequires: pkgconfig(libsmack)
 %{?systemd_requires}
 
 %global user_name %{name}
@@ -199,7 +200,8 @@ export LDFLAGS+="-Wl,--rpath=%{_libdir}"
 %cmake . \
         -DBUILD_TESTS=ON \
         -DCMAKE_BUILD_TYPE=%{?build_type} \
-        -DCMAKE_VERBOSE_MAKEFILE=ON
+        -DCMAKE_VERBOSE_MAKEFILE=ON \
+        -DDB_FILES_SMACK_LABEL="System"
 make %{?jobs:-j%jobs}
 
 %install

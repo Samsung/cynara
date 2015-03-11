@@ -67,6 +67,8 @@ private:
     typedef std::unique_ptr<StorageBackend> StorageBackendUniquePtr;
     typedef std::unique_ptr<PluginManager> PluginManagerUniquePtr;
 
+    void labelDatabaseFiles(void);
+
     StorageUniquePtr m_storage;
     StorageBackendUniquePtr m_storageBackend;
     PluginManagerUniquePtr m_pluginManager;

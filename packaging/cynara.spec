@@ -148,6 +148,7 @@ Cynara helper client session string creation library
 
 %package -n cynara-db-migration
 Summary:    Migration tools for Cynara's database
+Requires:   findutils
 
 %description -n cynara-db-migration
 Migration tools for Cynara's database

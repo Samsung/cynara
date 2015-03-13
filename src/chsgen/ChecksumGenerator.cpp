@@ -30,7 +30,6 @@
 
 #include <cynara-error.h>
 
-#include <config/PathConfig.h>
 #include <exceptions/FileNotFoundException.h>
 #include <exceptions/UnexpectedErrorException.h>
 
@@ -38,11 +37,9 @@
 
 namespace Cynara {
 
-namespace StorageConfig = PathConfig::StoragePath;
-
-const char ChecksumGenerator::m_fieldSeparator(StorageConfig::fieldSeparator);
-const char ChecksumGenerator::m_recordSeparator(StorageConfig::recordSeparator);
-const std::string ChecksumGenerator::m_backupFilenameSuffix(StorageConfig::backupFilenameSuffix);
+const char ChecksumGenerator::m_fieldSeparator(';');
+const char ChecksumGenerator::m_recordSeparator('\n');
+const std::string ChecksumGenerator::m_backupFilenameSuffix("~");
 
 ChecksumGenerator::ChecksumGenerator(int argc, char * const *argv) {
     if (argc > 1) {

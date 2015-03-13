@@ -21,7 +21,6 @@ SET(CHSGEN_PATH ${CYNARA_PATH}/chsgen)
 SET(CHSGEN_SOURCES
     ${CHSGEN_PATH}/ChecksumGenerator.cpp
     ${CHSGEN_PATH}/main.cpp
-    ${CYNARA_PATH}/common/config/PathConfig.cpp
     )
 
 INCLUDE_DIRECTORIES(

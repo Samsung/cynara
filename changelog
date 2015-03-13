@@ -1,5 +1,31 @@
 ###############################
 
+Release: 0.6.1
+Date:    2015.03.13
+Name:    Fix migration and checksums related bugs.
+
+Libraries:
+libcynara-admin.0.6.1
+libcynara-agent.0.6.1
+libcynara-client-async.0.6.1
+libcynara-client-commmons.0.6.1
+libcynara-client.0.6.1
+libcynara-commons.0.6.1
+libcynara-creds-commons.0.6.1
+libcynara-creds-dbus.0.6.1
+libcynara-creds-socket.0.6.1
+libcynara-session.0.6.1
+libcynara-storage.0.6.1
+
+Executables:
+cyad
+cynara
+
+Description:
+Fix bugs related to database migration
+
+###############################
+
 Release: 0.6.0
 Date:    2015.03.09
 Name:    Client configuration, simple-check, cynara_strerror, checksums, emergency mode, migration tool.

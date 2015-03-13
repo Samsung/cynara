@@ -20,6 +20,7 @@ Source1011:    cynara-db-migration.manifest
 Source1012:    cyad.manifest
 Source1013:    cynara-db-chsgen.manifest
 Requires:      default-ac-domains
+Requires:      libcynara-commons = %{version}-%{release}
 Requires(pre): pwdutils
 Requires(pre): cynara-db-migration >= %{version}-%{release}
 Requires(post):   smack
@@ -122,6 +123,7 @@ cynara common library with common functionalities
 
 %package -n libcynara-creds-commons
 Summary:    Base library for cynara credentials helpers
+Requires:   libcynara-commons = %{version}-%{release}
 
 %description -n libcynara-creds-commons
 Base library for cynara credentials helpers
@@ -155,6 +157,8 @@ Migration tools for Cynara's database
 
 %package -n cyad
 Summary: Cynara's command-line tool
+Requires:   libcynara-admin = %{version}-%{release}
+Requires:   libcynara-commons = %{version}-%{release}
 
 %description -n cyad
 Command-line tool to manage Cynara's database

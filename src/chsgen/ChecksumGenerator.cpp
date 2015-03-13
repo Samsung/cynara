@@ -33,7 +33,6 @@
 #include <config/PathConfig.h>
 #include <exceptions/FileNotFoundException.h>
 #include <exceptions/UnexpectedErrorException.h>
-#include <log/log.h>
 
 #include "ChecksumGenerator.h"
 
@@ -83,9 +82,11 @@ const std::string ChecksumGenerator::generate(const std::string &data) {
     } else {
         int err = errno;
         if (err == ENOSYS) {
-            LOGE("'crypt' function was not implemented; error [%d] : <%s>", err, strerror(err));
+            std::cerr << "'crypt' function was not implemented; error [" << err << "] : <"
+                << strerror(err) << ">" << std::endl;
         } else {
-            LOGE("'crypt' function error [%d] : <%s>", err, strerror(err));
+            std::cerr << "'crypt' function error [" << err << "] : <" << strerror(err) << ">"
+                << std::endl;
         }
         throw UnexpectedErrorException(err, strerror(err));
     }
@@ -109,8 +110,8 @@ void ChecksumGenerator::copyFileStream(void) {
 void ChecksumGenerator::printRecord(void) const {
     std::unique_ptr<char, decltype(free)*> pathnameDuplicate(strdup(m_pathname.c_str()), free);
     if (pathnameDuplicate == nullptr) {
-        LOGE("Insufficient memory available to allocate duplicate filename: <%s>",
-             m_pathname.c_str());
+        std::cerr << "Insufficient memory available to allocate duplicate filename: <"
+            << m_pathname << ">" << std::endl;
         throw std::bad_alloc();
     }
 

@@ -233,23 +233,7 @@ fi
 
 if [ $1 -gt 1 ] ; then
     # upgrade
-    OLD_VERSION=""
-    VERSION_INDICATOR="$(ls %{_libdir}/libcynara-commons\.so\.*\.*\.*)"
-    if [ -z "${VERSION_INDICATOR}" ] ; then
-        # For releases which dropped "%{_libdir}/libcynara-commons\.so\.*" file
-        OLD_VERSION="$(/usr/bin/cynara --version)"
-    else
-        VERSION="${VERSION_INDICATOR##*so\.}"
-        SIGNIFICANT="${VERSION%\.*}"
-        if [ 0 -eq "${SIGNIFICANT%%\.*}" -a 5 -ge "${SIGNIFICANT##*\.}" ] ; then
-            # For releases which did not provide "--version" functionality
-            OLD_VERSION="${VERSION}"
-        else
-            OLD_VERSION="$(/usr/bin/cynara --version)"
-        fi
-    fi
-
-    %{_sbindir}/cynara-db-migration upgrade -f ${OLD_VERSION} -t %{version}
+    %{_sbindir}/cynara-db-migration upgrade -f 0.0.0 -t %{version}
 else
     # install
     %{_sbindir}/cynara-db-migration install -t %{version}

@@ -208,20 +208,24 @@ migrate_db() {
         exit_success
     fi
 
-    case $(version_compare ${OLD_VERSION} ${NEW_VERSION}) in
-        -1 )
-            upgrade_db
-            ;;
-        0 )
-            :
-            # Same version given twice; take no action
-            ;;
-        1 )
-            downgrade_db
-            ;;
-        * )
-            failure
-    esac
+#quick fix - always generate or remove checksums if needed
+    upgrade_db
+    downgrade_db
+
+#    case $(version_compare ${OLD_VERSION} ${NEW_VERSION}) in
+#        -1 )
+#            upgrade_db
+#            ;;
+#        0 )
+#            :
+#            # Same version given twice; take no action
+#            ;;
+#        1 )
+#            downgrade_db
+#            ;;
+#        * )
+#            failure
+#    esac
 }
 
 remove_db() {

@@ -51,19 +51,25 @@ FAILURE=1
 
 TEST_CASE=0
 
+##### Colors
+
+RED_BEGIN="\033[0;31m"
+GREEN_BEGIN="\033[0;32m"
+COLOR_END="\033[m"
+
 ##### Functions
 
 fail_msg() {
     local ID="$1"
     local NAME="$2"
-    echo "Test $ID ($NAME) failed:"
+    echo -e "Test $ID ($NAME) $RED_BEGIN failed $COLOR_END:"
     cat "${TESTS_DIR}/${ID}/${FAIL_FILE}"
 }
 
 success_msg() {
     local ID="$1"
     local NAME="$2"
-    echo "Test $ID ($NAME) passed."
+    echo -e "Test $ID ($NAME) $GREEN_BEGIN passed $COLOR_END."
 }
 
 execute() {
@@ -214,5 +220,18 @@ run db10_postchs_bcp db10_postchs_bcp "down_postchs_postchs_bcp" \
 run db10_postchs_bcp db10_postchs_bcp "migr_same_ver_bcp" \
     "upgrade -f $POSTCHS_HIGH_VERSION -t $POSTCHS_HIGH_VERSION"
 
+##############################################################################
+# Test case 18: check if cynara-db-chsgen does not depend on cynara libraries
+TEST_18_DEPS=`ldd /usr/sbin/cynara-db-chsgen | grep -c libcynara`
+if [ $TEST_18_DEPS -eq 0 ] ; then
+    success_msg "18" "cynara-db-chsgen dependencies"
+else
+    mkdir -p ${TESTS_DIR}/18/
+    ldd /usr/sbin/cynara-db-chsgen | grep libcynara > ${TESTS_DIR}/18/${FAIL_FILE}
+    fail_msg "18" "cynara-db-chsgen dependencies"
+fi
+
+##############################################################################
 ### Clean up tests environment
 rm -r "$TESTS_DIR"
+

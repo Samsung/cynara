@@ -55,10 +55,9 @@ CynaraAdminPolicies parse(const std::shared_ptr<std::istream> &input,
         return std::string();
     };
 
-    for (std::size_t lineNum = 1; !input->eof(); ++lineNum) {
-        std::string line;
-        std::getline(*input, line, PathConfig::StoragePath::recordSeparator);
-
+    std::string line;
+    std::size_t lineNum = 1;
+    while (std::getline(*input, line, PathConfig::StoragePath::recordSeparator)) {
         if (line.empty())
             break;
 
@@ -73,6 +72,7 @@ CynaraAdminPolicies parse(const std::shared_ptr<std::istream> &input,
         } catch (const BucketRecordCorruptedException &ex) {
             throw ex.withLineNumber(lineNum);
         }
+        lineNum++;
     }
 
     policies.seal();

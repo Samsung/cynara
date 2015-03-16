@@ -44,10 +44,9 @@ StorageDeserializer::StorageDeserializer(std::shared_ptr<std::istream> inStream,
 void StorageDeserializer::initBuckets(Buckets &buckets) {
     buckets.clear();
 
-    for (std::size_t lineNum = 1; !m_inStream->eof(); ++lineNum) {
-        std::string line;
-        std::getline(*m_inStream, line, PathConfig::StoragePath::recordSeparator);
-
+    std::size_t lineNum = 1;
+    std::string line;
+    while (std::getline(*m_inStream, line, PathConfig::StoragePath::recordSeparator)) {
         if (line.empty())
             break;
 
@@ -58,6 +57,7 @@ void StorageDeserializer::initBuckets(Buckets &buckets) {
 
         //it's safe to simply insert; buckets were cleared earlier, all ids should be unique
         buckets.insert({ bucketId, PolicyBucket(bucketId, PolicyResult(policyType, metadata)) });
+        ++lineNum;
     }
 }
 

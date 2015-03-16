@@ -41,10 +41,9 @@ PolicyCollection BucketDeserializer::loadPolicies(void) {
     PolicyCollection policies;
 
     // TODO: Get someone smart to do error checking on stream
-    for (std::size_t lineNum = 1; !m_inStream->eof(); ++lineNum) {
-        std::string line;
-        std::getline(*m_inStream, line, PathConfig::StoragePath::recordSeparator);
-
+    std::string line;
+    std::size_t lineNum = 1;
+    while(std::getline(*m_inStream, line, PathConfig::StoragePath::recordSeparator)) {
         if (line.empty())
             break;
 
@@ -58,6 +57,7 @@ PolicyCollection BucketDeserializer::loadPolicies(void) {
         } catch (const BucketRecordCorruptedException &ex) {
             throw ex.withLineNumber(lineNum);
         }
+        ++lineNum;
     }
 
     return policies;

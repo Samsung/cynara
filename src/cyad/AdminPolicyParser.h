@@ -32,8 +32,7 @@ namespace Cynara {
 
 namespace AdminPolicyParser {
 
-CynaraAdminPolicies parse(const std::shared_ptr<std::istream> &input,
-                          std::function<PolicyType(const std::string &)>);
+CynaraAdminPolicies parse(std::istream &input, std::function<PolicyType(const std::string &)>);
 
 } /* namespace AdminPolicyParser */
 

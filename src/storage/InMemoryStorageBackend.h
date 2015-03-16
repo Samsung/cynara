@@ -69,15 +69,13 @@ public:
 
 protected:
     void dumpDatabase(const std::shared_ptr<std::ofstream> &chsStream);
-    void openFileStream(const std::shared_ptr<std::ifstream> &stream, const std::string &filename,
-                        bool isBackupValid);
+    void openFileStream(std::ifstream &stream, const std::string &filename, bool isBackupValid);
     std::shared_ptr<BucketDeserializer> bucketStreamOpener(const PolicyBucketId &bucketId,
                                                            const std::string &fileNameSuffix,
                                                            bool isBackupValid);
 
     template<typename StreamType>
-    void openDumpFileStream(const std::shared_ptr<StreamType> &stream,
-                            const std::string &filename);
+    void openDumpFileStream(StreamType &stream, const std::string &filename);
     std::shared_ptr<StorageSerializer<ChecksumStream> > bucketDumpStreamOpener(
             const PolicyBucketId &bucketId, const std::shared_ptr<std::ofstream> &chsStream);
 
@@ -103,11 +101,11 @@ protected:
 };
 
 template<typename StreamType>
-void InMemoryStorageBackend::openDumpFileStream(const std::shared_ptr<StreamType> &stream,
+void InMemoryStorageBackend::openDumpFileStream(StreamType &stream,
                                                 const std::string &filename) {
-    stream->open(filename, std::ofstream::out | std::ofstream::trunc);
+    stream.open(filename, std::ofstream::out | std::ofstream::trunc);
 
-    if (!stream->is_open()) {
+    if (!stream.is_open()) {
         throw CannotCreateFileException(filename);
     }
 }

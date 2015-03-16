@@ -30,7 +30,7 @@ namespace Cynara {
 
 namespace AdminPolicyParser {
 
-CynaraAdminPolicies parse(const std::shared_ptr<std::istream> &input,
+CynaraAdminPolicies parse(std::istream &input,
                           std::function<PolicyType(const std::string &)> translatePolicy) {
     CynaraAdminPolicies policies;
 
@@ -57,7 +57,7 @@ CynaraAdminPolicies parse(const std::shared_ptr<std::istream> &input,
 
     std::string line;
     std::size_t lineNum = 1;
-    while (std::getline(*input, line, PathConfig::StoragePath::recordSeparator)) {
+    while (std::getline(input, line, PathConfig::StoragePath::recordSeparator)) {
         if (line.empty())
             break;
 

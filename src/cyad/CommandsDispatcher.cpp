@@ -137,7 +137,7 @@ int CommandsDispatcher::execute(SetPolicyBulkCyadCommand &result) {
 
     try {
         using Cynara::AdminPolicyParser::parse;
-        auto policies = parse(input, std::bind(&PolicyTypeTranslator::translate,
+        auto policies = parse(*input, std::bind(&PolicyTypeTranslator::translate,
                                                &m_policyTranslator, std::placeholders::_1));
         auto ret = m_adminApiWrapper.cynara_admin_set_policies(m_cynaraAdmin, policies.data());
         if (ret != CYNARA_API_SUCCESS)

@@ -43,7 +43,7 @@ TEST(AdminPolicyParser, parseInvalid) {
 
     *input << "invalid input" << std::endl;
 
-    ASSERT_THROW(Cynara::AdminPolicyParser::parse(input, translatePolicy),
+    ASSERT_THROW(Cynara::AdminPolicyParser::parse(*input, translatePolicy),
                  Cynara::BucketRecordCorruptedException);
 }
 
@@ -53,7 +53,7 @@ TEST(AdminPolicyParser, parse0) {
     Cynara::CynaraAdminPolicies expectedPolicies;
     expectedPolicies.seal();
 
-    auto policies = Cynara::AdminPolicyParser::parse(input, translatePolicy);
+    auto policies = Cynara::AdminPolicyParser::parse(*input, translatePolicy);
 
     ASSERT_TRUE(policies.sealed());
     ASSERT_THAT(policies.data(), AdmPolicyListEq(expectedPolicies.data()));
@@ -68,7 +68,7 @@ TEST(AdminPolicyParser, parse1) {
     expectedPolicies.add("b", { 0, "m" }, { "c", "u", "p" });
     expectedPolicies.seal();
 
-    auto policies = Cynara::AdminPolicyParser::parse(input, translatePolicy);
+    auto policies = Cynara::AdminPolicyParser::parse(*input, translatePolicy);
 
     ASSERT_TRUE(policies.sealed());
     ASSERT_THAT(policies.data(), AdmPolicyListEq(expectedPolicies.data()));
@@ -85,7 +85,7 @@ TEST(AdminPolicyParser, parse2) {
     expectedPolicies.add("b2", { 0, "m2" }, { "c2", "u2", "p2" });
     expectedPolicies.seal();
 
-    auto policies = Cynara::AdminPolicyParser::parse(input, translatePolicy);
+    auto policies = Cynara::AdminPolicyParser::parse(*input, translatePolicy);
 
     ASSERT_TRUE(policies.sealed());
     ASSERT_THAT(policies.data(), AdmPolicyListEq(expectedPolicies.data()));

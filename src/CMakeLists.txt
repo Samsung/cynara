@@ -22,8 +22,7 @@ SET(COMMON_DEPS)
 IF (BUILD_WITH_SYSTEMD)
 SET(COMMON_DEPS
     ${COMMON_DEPS}
-    libsystemd-daemon
-    libsystemd-journal
+    libsystemd
     )
 ENDIF (BUILD_WITH_SYSTEMD)
 

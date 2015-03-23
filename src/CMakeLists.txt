@@ -17,8 +17,7 @@
 #
 
 SET(COMMON_DEPS
-    libsystemd-daemon
-    libsystemd-journal
+    libsystemd
     )
 
 IF (CMAKE_BUILD_TYPE MATCHES "DEBUG")

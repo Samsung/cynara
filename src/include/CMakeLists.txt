@@ -25,6 +25,7 @@ INSTALL(FILES
     ${CYNARA_PATH}/include/cynara-client-plugin.h
     ${CYNARA_PATH}/include/cynara-creds-commons.h
     ${CYNARA_PATH}/include/cynara-creds-dbus.h
+    ${CYNARA_PATH}/include/cynara-creds-gdbus.h
     ${CYNARA_PATH}/include/cynara-creds-socket.h
     ${CYNARA_PATH}/include/cynara-error.h
     ${CYNARA_PATH}/include/cynara-plugin.h

@@ -14,11 +14,12 @@ Source1005:    libcynara-agent.manifest
 Source1006:    libcynara-commons.manifest
 Source1007:    libcynara-creds-commons.manifest
 Source1008:    libcynara-creds-dbus.manifest
-Source1009:    libcynara-creds-socket.manifest
-Source1010:    libcynara-session.manifest
-Source1011:    cynara-db-migration.manifest
-Source1012:    cyad.manifest
-Source1013:    cynara-db-chsgen.manifest
+Source1009:    libcynara-creds-gdbus.manifest
+Source1010:    libcynara-creds-socket.manifest
+Source1011:    libcynara-session.manifest
+Source1012:    cynara-db-migration.manifest
+Source1013:    cyad.manifest
+Source1014:    cynara-db-chsgen.manifest
 Requires:      default-ac-domains
 Requires:      libcynara-commons = %{version}-%{release}
 Requires(pre): pwdutils
@@ -65,6 +66,7 @@ Requires:   libcynara-client = %{version}-%{release}
 Requires:   libcynara-commons = %{version}-%{release}
 Requires:   libcynara-creds-commons = %{version}-%{release}
 Requires:   libcynara-creds-dbus = %{version}-%{release}
+Requires:   libcynara-creds-gdbus = %{version}-%{release}
 Requires:   libcynara-creds-socket = %{version}-%{release}
 Requires:   libcynara-session = %{version}-%{release}
 Requires:   pkgconfig(dbus-1)
@@ -138,6 +140,14 @@ Requires:   libcynara-creds-commons = %{version}-%{release}
 %description -n libcynara-creds-dbus
 Cynara credentials helpers library for dbus clients
 
+%package -n libcynara-creds-gdbus
+Summary:    Cynara credentials helpers library for gdbus client
+BuildRequires: pkgconfig(gio-2.0)
+Requires:   libcynara-creds-commons = %{version}-%{release}
+
+%description -n libcynara-creds-gdbus
+Cynara credentials helpers library for gdbus clients
+
 %package -n libcynara-creds-socket
 Summary:    Cynara credentials helpers library for socket clients
 Requires:   libcynara-creds-commons = %{version}-%{release}
@@ -182,6 +192,7 @@ cp -a %{SOURCE1010} .
 cp -a %{SOURCE1011} .
 cp -a %{SOURCE1012} .
 cp -a %{SOURCE1013} .
+cp -a %{SOURCE1014} .
 cp -a test/db/db* .
 
 %build
@@ -297,6 +308,10 @@ fi
 
 %postun -n libcynara-creds-dbus -p /sbin/ldconfig
 
+%post -n libcynara-creds-gdbus -p /sbin/ldconfig
+
+%postun -n libcynara-creds-gdbus -p /sbin/ldconfig
+
 %post -n libcynara-creds-socket -p /sbin/ldconfig
 
 %postun -n libcynara-creds-socket -p /sbin/ldconfig
@@ -369,6 +384,11 @@ fi
 %manifest libcynara-creds-dbus.manifest
 %license LICENSE
 %{_libdir}/libcynara-creds-dbus.so.*
+
+%files -n libcynara-creds-gdbus
+%manifest libcynara-creds-gdbus.manifest
+%license LICENSE
+%{_libdir}/libcynara-creds-gdbus.so.*
 
 %files -n libcynara-creds-socket
 %manifest libcynara-creds-socket.manifest

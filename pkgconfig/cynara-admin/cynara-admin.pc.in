@@ -7,5 +7,5 @@ Name: cynara-admin
 Description: cynara-admin package
 Version: @CYNARA_VERSION@
 Requires:
-Libs: -L${libdir} -lcynara-admin
+Libs: -L${libdir} -lcynara-admin -lcynara-commons
 Cflags: -I${includedir}/cynara

@@ -7,5 +7,5 @@ Name: cynara-creds-commons
 Description: Base package for all cynara-creds packages
 Version: @CYNARA_VERSION@
 Requires:
-Libs: -L${libdir} -lcynara-creds-commons
+Libs: -L${libdir} -lcynara-creds-commons -lcynara-commons
 Cflags: -I${includedir}/cynara

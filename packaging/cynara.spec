@@ -133,18 +133,21 @@ Base library for cynara credentials helpers
 Summary:    Cynara credentials helpers library for dbus clients
 BuildRequires: pkgconfig(dbus-1)
 Requires:   dbus
+Requires:   libcynara-creds-commons = %{version}-%{release}
 
 %description -n libcynara-creds-dbus
 Cynara credentials helpers library for dbus clients
 
 %package -n libcynara-creds-socket
 Summary:    Cynara credentials helpers library for socket clients
+Requires:   libcynara-creds-commons = %{version}-%{release}
 
 %description -n libcynara-creds-socket
 Cynara credentials helpers library for socket clients
 
 %package -n libcynara-session
 Summary:    Cynara helper client session string creation library
+Requires:   libcynara-commons = %{version}-%{release}
 
 %description -n libcynara-session
 Cynara helper client session string creation library

@@ -7,5 +7,5 @@ Name: cynara-client
 Description: cynara-client package
 Version: @CYNARA_VERSION@
 Requires:
-Libs: -L${libdir} -lcynara-client
+Libs: -L${libdir} -lcynara-client -lcynara-commons
 Cflags: -I${includedir}/cynara

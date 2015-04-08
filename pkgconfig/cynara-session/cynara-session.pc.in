@@ -7,5 +7,5 @@ Name: cynara-session
 Description: cynara-session package
 Version: @CYNARA_VERSION@
 Requires:
-Libs: -L${libdir} -lcynara-session
+Libs: -L${libdir} -lcynara-session -lcynara-commons
 Cflags: -I${includedir}/cynara

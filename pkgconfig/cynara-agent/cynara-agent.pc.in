@@ -7,5 +7,5 @@ Name: cynara-agent
 Description: cynara-agent package
 Version: @CYNARA_VERSION@
 Requires:
-Libs: -L${libdir} -lcynara-agent
+Libs: -L${libdir} -lcynara-agent -lcynara-commons
 Cflags: -I${includedir}/cynara

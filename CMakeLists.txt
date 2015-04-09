@@ -21,7 +21,7 @@
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
 PROJECT("cynara")
-set(CYNARA_VERSION 0.6.1)
+set(CYNARA_VERSION 0.7.0)
 
 ############################# cmake packages ##################################
 

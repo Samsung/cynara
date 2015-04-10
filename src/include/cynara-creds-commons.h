@@ -30,12 +30,16 @@
 
 enum cynara_client_creds {
     CLIENT_METHOD_SMACK,
-    CLIENT_METHOD_PID
+    CLIENT_METHOD_PID,
+
+    CLIENT_METHOD_DEFAULT = 0xFFFF,
 };
 
 enum cynara_user_creds {
     USER_METHOD_UID,
-    USER_METHOD_GID
+    USER_METHOD_GID,
+
+    USER_METHOD_DEFAULT = 0xFFFF,
 };
 
 #ifdef __cplusplus

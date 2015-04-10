@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -61,6 +61,7 @@ extern "C" {
  * \par Important notes:
  * Memory for returned client string is obtained with malloc(), and should be freed with free().
  * Allocated string is returned only, when function succeeds.
+ * If method is CLIENT_METHOD_DEFAULT then it will be chosen based on Cynara configuration file.
  *
  * \param[in] connection DBus connection to a bus. It manages incomming and outgoing messages
  * \param[in] uniqueName DBus identifier of the client
@@ -71,6 +72,8 @@ extern "C" {
  *         CYNARA_API_INVALID_PARAM when client is NULL or uniqueName or client has wrong
  *                                  value (i.e NULL or non-existing)
  *         CYNARA_API_METHOD_NOT_SUPPORTED when requested method is not supported
+ *         CYNARA_API_CONFIGURATION_ERROR if the configuration file can not be opened or
+ *                                        there are errors in configuration file.
  *         CYNARA_API_OUT_OF_MEMORY when there was error allocating memory
  */
 int cynara_creds_dbus_get_client(DBusConnection *connection, const char *uniqueName,
@@ -103,6 +106,7 @@ int cynara_creds_dbus_get_client(DBusConnection *connection, const char *uniqueN
  * \par Important notes:
  * Memory for returned user string is obtained with malloc(), and should be freed with free().
  * Allocated string is returned only, when function succeeds.
+ * If method is USER_METHOD_DEFAULT then it will be chosen based on Cynara configuration file.
  *
  * \param[in] connection DBus connection to a bus. It manages incomming and outgoing messages
  * \param[in] uniqueName DBus identifier of the client invoked by the user
@@ -113,6 +117,8 @@ int cynara_creds_dbus_get_client(DBusConnection *connection, const char *uniqueN
  *         CYNARA_API_INVALID_PARAM when user is NULL or connection is not valid DBus connection or
  *                                  uniqueName does not represent a process conected to the DBus
  *         CYNARA_API_METHOD_NOT_SUPPORTED when requested method is not supported
+ *         CYNARA_API_CONFIGURATION_ERROR if the configuration file can not be opened or
+ *                                        there are errors in configuration file.
  *         CYNARA_API_OUT_OF_MEMORY when there was error allocating memory
  */
 int cynara_creds_dbus_get_user(DBusConnection *connection, const char *uniqueName,

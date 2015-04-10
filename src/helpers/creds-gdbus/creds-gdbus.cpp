@@ -68,6 +68,12 @@ int cynara_creds_gdbus_get_client(GDBusConnection *connection, const gchar *uniq
     if (connection == nullptr || uniqueName == nullptr || client == nullptr)
         return CYNARA_API_INVALID_PARAM;
 
+    if (method == cynara_client_creds::CLIENT_METHOD_DEFAULT) {
+        int ret = cynara_creds_get_default_client_method(&method);
+        if (ret != CYNARA_API_SUCCESS)
+            return ret;
+    }
+
     switch (method) {
         case cynara_client_creds::CLIENT_METHOD_SMACK:
             ret = call_dbus_daemon_method_str(connection, "GetConnectionSmackContext", uniqueName,
@@ -93,6 +99,12 @@ int cynara_creds_gdbus_get_user(GDBusConnection *connection, const gchar *unique
                                 enum cynara_user_creds method, gchar **user) {
     if (connection == nullptr || uniqueName == nullptr || user == nullptr)
         return CYNARA_API_INVALID_PARAM;
+
+    if (method == cynara_user_creds::USER_METHOD_DEFAULT) {
+        int ret = cynara_creds_get_default_user_method(&method);
+        if (ret != CYNARA_API_SUCCESS)
+            return ret;
+    }
 
     if (method != cynara_user_creds::USER_METHOD_UID)
         return CYNARA_API_METHOD_NOT_SUPPORTED;

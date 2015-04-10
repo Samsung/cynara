@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -60,6 +60,7 @@ extern "C" {
  * \par Important notes:
  * Memory for returned client string is obtained with malloc(), and should be freed with free().
  * Allocated string is returned only, when function succeeds.
+ * If method is CLIENT_METHOD_DEFAULT then it will be chosen based on Cynara configuration file.
  *
  * \param[in] socket_fd Descriptor of open connected UNIX socket
  * \param[in] method Method of client identifier creation
@@ -69,6 +70,8 @@ extern "C" {
  *         CYNARA_API_INVALID_PARAM when client is NULL or socket_fd is not valid connected socket
  *                                  descriptor
  *         CYNARA_API_METHOD_NOT_SUPPORTED when requested method is not supported
+ *         CYNARA_API_CONFIGURATION_ERROR if the configuration file can not be opened or
+ *                                        there are errors in configuration file.
  *         CYNARA_API_OUT_OF_MEMORY when there was error allocating memory
  */
 int cynara_creds_socket_get_client(int socket_fd, enum cynara_client_creds method, char **client);
@@ -99,6 +102,7 @@ int cynara_creds_socket_get_client(int socket_fd, enum cynara_client_creds metho
  * \par Important notes:
  * Memory for returned user string is obtained with malloc(), and should be freed with free().
  * Allocated string is returned only, when function succeeds.
+ * If method is USER_METHOD_DEFAULT then it will be chosen based on Cynara configuration file.
  *
  * \param[in] socket_fd Descriptor of open connected UNIX socket
  * \param[in] method Method of user identifier creation
@@ -108,6 +112,8 @@ int cynara_creds_socket_get_client(int socket_fd, enum cynara_client_creds metho
  *         CYNARA_API_INVALID_PARAM when user is NULL or socket_fd is not valid connected socket
  *                                  descriptor
  *         CYNARA_API_METHOD_NOT_SUPPORTED when requested method is not supported
+ *         CYNARA_API_CONFIGURATION_ERROR if the configuration file can not be opened or
+ *                                        there are errors in configuration file.
  *         CYNARA_API_OUT_OF_MEMORY when there was error allocating memory
  */
 int cynara_creds_socket_get_user(int socket_fd, enum cynara_user_creds method, char **user);

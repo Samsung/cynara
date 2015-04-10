@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,6 +38,12 @@ int cynara_creds_socket_get_client(int socket_fd, enum cynara_client_creds metho
     if (client == nullptr)
         return CYNARA_API_INVALID_PARAM;
 
+    if (method == cynara_client_creds::CLIENT_METHOD_DEFAULT) {
+        int ret = cynara_creds_get_default_client_method(&method);
+        if (ret != CYNARA_API_SUCCESS)
+            return ret;
+    }
+
     switch (method) {
         case cynara_client_creds::CLIENT_METHOD_SMACK:
             return getClientSmackLabel(socket_fd, client);
@@ -52,6 +58,12 @@ CYNARA_API
 int cynara_creds_socket_get_user(int socket_fd, enum cynara_user_creds method, char **user) {
     if (user == nullptr)
         return CYNARA_API_INVALID_PARAM;
+
+    if (method == cynara_user_creds::USER_METHOD_DEFAULT) {
+        int ret = cynara_creds_get_default_user_method(&method);
+        if (ret != CYNARA_API_SUCCESS)
+            return ret;
+    }
 
     switch (method) {
         case cynara_user_creds::USER_METHOD_UID:

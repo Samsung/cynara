@@ -60,6 +60,7 @@ extern "C" {
  * \par Important notes:
  * Memory for returned user string should be freed with g_free().
  * Allocated string is returned only, when function succeeds.
+ * If method is CLIENT_METHOD_DEFAULT then it will be chosen based on Cynara configuration file.
  *
  * \param[in] connection DBus connection to a bus. It manages incomming and outgoing messages
  * \param[in] uniqueName DBus identifier of the client
@@ -69,6 +70,8 @@ extern "C" {
  * \return CYNARA_API_SUCCESS on success
  *         CYNARA_API_INVALID_PARAM when client is NULL or uniqueName or client has wrong
  *                                  value (i.e NULL or non-existing)
+ *         CYNARA_API_CONFIGURATION_ERROR if the configuration file can not be opened or
+ *                                        there are errors in configuration file.
  *         CYNARA_API_METHOD_NOT_SUPPORTED when requested method is not supported
  */
 int cynara_creds_gdbus_get_client(GDBusConnection *connection, const gchar *uniqueName,
@@ -101,6 +104,7 @@ int cynara_creds_gdbus_get_client(GDBusConnection *connection, const gchar *uniq
  * \par Important notes:
  * Memory for returned user string should be freed with g_free().
  * Allocated string is returned only, when function succeeds.
+ * If method is USER_METHOD_DEFAULT then it will be chosen based on Cynara configuration file.
  *
  * \param[in] connection DBus connection to a bus. It manages incomming and outgoing messages
  * \param[in] uniqueName DBus identifier of the client invoked by the user
@@ -110,6 +114,8 @@ int cynara_creds_gdbus_get_client(GDBusConnection *connection, const gchar *uniq
  * \return CYNARA_API_SUCCESS on success
  *         CYNARA_API_INVALID_PARAM when user is NULL or connection is not valid DBus connection or
  *                                  uniqueName does not represent a process conected to the DBus
+ *         CYNARA_API_CONFIGURATION_ERROR if the configuration file can not be opened or
+ *                                        there are errors in configuration file.
  *         CYNARA_API_METHOD_NOT_SUPPORTED when requested method is not supported
  */
 int cynara_creds_gdbus_get_user(GDBusConnection *connection, const gchar *uniqueName,

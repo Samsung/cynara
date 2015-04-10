@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -58,8 +58,11 @@ extern "C" {
  * value of method parameter.
  *
  * \par Method of function operation:
- * The function will read and return the value of parameter client_default set
- * in /etc/cynara/creds.conf file (the path is determined by CYNARA_CONFIGURATION_DIR).
+ * When this function is called for the first time it reads and returns the value of client_default
+ * parameter from /etc/cynara/creds.conf file (the path is determined by CYNARA_CONFIGURATION_DIR).
+ * Returned value is cached so subsequent calls will not consult file again but use cached value.
+ * This also means that after the initial call any changes in the file will be ignored for the
+ * remaining lifetime of the process.
  *
  * \par Sync (or) Async:
  * This is a synchronous API.
@@ -95,8 +98,11 @@ int cynara_creds_get_default_client_method(enum cynara_client_creds *method);
  * value of method parameter.
  *
  * \par Method of function operation:
- * The function will read and return the value of parameter user_default set
- * in /etc/cynara/creds.conf file (the path is determined by CYNARA_CONFIGURATION_DIR).
+ * When this function is called for the first time it reads and returns the value of user_default
+ * parameter from /etc/cynara/creds.conf file (the path is determined by CYNARA_CONFIGURATION_DIR).
+ * Returned value is cached so subsequent calls will not consult file again but use cached value.
+ * This also means that after the initial call any changes in the file will be ignored for the
+ * remaining lifetime of the process.
  *
  * \par Sync (or) Async:
  * This is a synchronous API.

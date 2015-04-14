@@ -1,5 +1,33 @@
 ###############################
 
+Release: 0.8.0
+Date:    2015.04.14
+Name:    Default credential method type, credential configuration caching.
+
+Libraries:
+libcynara-admin.0.8.0
+libcynara-agent.0.8.0
+libcynara-client-async.0.8.0
+libcynara-client-commmons.0.8.0
+libcynara-client.0.8.0
+libcynara-commons.0.8.0
+libcynara-creds-commons.0.8.0
+libcynara-creds-dbus.0.8.0
+libcynara-creds-gdbus.0.8.0
+libcynara-creds-socket.0.8.0
+libcynara-session.0.8.0
+libcynara-storage.0.8.0
+
+Executables:
+cyad
+cynara
+
+Description:
+Cache default helper method types.
+Add default method type in credential helpers.
+
+###############################
+
 Release: 0.7.0
 Date:    2015.04.09
 Name:    Add cynara-creds-gdbus, fix cynara-common dependencies, remove shared_ptrs.

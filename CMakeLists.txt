@@ -76,6 +76,8 @@ ADD_DEFINITIONS("-Wextra")                      # Generate even more extra warni
 # Don't export symbols by default
 ADD_DEFINITIONS("-fvisibility=hidden")
 
+# Export version of cynara
+ADD_DEFINITIONS("-DCYNARA_VERSION=\"${CYNARA_VERSION}\"")
 
 IF (CMAKE_BUILD_TYPE MATCHES "DEBUG")
     ADD_DEFINITIONS("-DBUILD_TYPE_DEBUG")

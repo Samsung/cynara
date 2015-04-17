@@ -28,6 +28,18 @@ set(CYNARA_VERSION 0.8.0)
 INCLUDE(FindPkgConfig)
 INCLUDE(CheckCXXCompilerFlag)
 
+########################## search for packages ################################
+
+PKG_CHECK_MODULES(SYSTEMD_DEP
+    QUIET
+    libsystemd-daemon
+    libsystemd-journal
+    )
+
+IF (SYSTEMD_DEP_FOUND)
+    SET(BUILD_WITH_SYSTEMD ON)
+ENDIF (SYSTEMD_DEP_FOUND)
+
 #############################  install dirs  ##################################
 
 SET(LIB_INSTALL_DIR
@@ -83,6 +95,10 @@ IF (CMAKE_BUILD_TYPE MATCHES "DEBUG")
     ADD_DEFINITIONS("-DBUILD_TYPE_DEBUG")
 ENDIF (CMAKE_BUILD_TYPE MATCHES "DEBUG")
 
+IF (BUILD_WITH_SYSTEMD)
+    ADD_DEFINITIONS("-DBUILD_WITH_SYSTEMD")
+ENDIF (BUILD_WITH_SYSTEMD)
+
 SET(TARGET_CYNARA "cynara")
 SET(TARGET_LIB_CYNARA "cynara-client")
 SET(TARGET_LIB_CYNARA_ASYNC "cynara-client-async")
@@ -102,9 +118,13 @@ SET(TARGET_CHSGEN "cynara-db-chsgen")
 
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(pkgconfig)
-ADD_SUBDIRECTORY(systemd)
+
+IF (BUILD_WITH_SYSTEMD)
+    ADD_SUBDIRECTORY(systemd)
+ENDIF (BUILD_WITH_SYSTEMD)
+
 ADD_SUBDIRECTORY(migration)
 
 IF (BUILD_TESTS)
-ADD_SUBDIRECTORY(test)
-ENDIF()
+    ADD_SUBDIRECTORY(test)
+ENDIF (BUILD_TESTS)

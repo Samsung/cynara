@@ -213,7 +213,6 @@ export LDFLAGS+="-Wl,--rpath=%{_libdir}"
 
 %cmake . \
         -DBUILD_TESTS=ON \
-        -DBUILD_WITH_SYSTEMD=ON \
         -DCMAKE_BUILD_TYPE=%{?build_type} \
         -DCMAKE_VERBOSE_MAKEFILE=ON \
         -DDB_FILES_SMACK_LABEL="System"

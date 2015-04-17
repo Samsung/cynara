@@ -16,10 +16,16 @@
 # @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
 #
 
+
+SET(COMMON_DEPS)
+
+IF (BUILD_WITH_SYSTEMD)
 SET(COMMON_DEPS
+    ${COMMON_DEPS}
     libsystemd-daemon
     libsystemd-journal
     )
+ENDIF (BUILD_WITH_SYSTEMD)
 
 IF (CMAKE_BUILD_TYPE MATCHES "DEBUG")
 SET(COMMON_DEPS

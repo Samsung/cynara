@@ -33,7 +33,9 @@
 #include <sys/un.h>
 #include <unistd.h>
 
+#ifdef BUILD_WITH_SYSTEMD
 #include <systemd/sd-daemon.h>
+#endif
 
 #include <log/log.h>
 #include <common.h>
@@ -254,8 +256,11 @@ bool SocketManager::handleRead(int fd, const RawBuffer &readbuffer) {
 
 void SocketManager::createDomainSocket(ProtocolPtr protocol, const std::string &path, mode_t mask,
                                        bool client) {
-    int fd = getSocketFromSystemD(path);
+    int fd;
+#ifdef BUILD_WITH_SYSTEMD
+    fd = getSocketFromSystemD(path);
     if (fd == -1)
+#endif
         fd = createDomainSocketHelp(path, mask);
 
     auto &desc = createDescriptor(fd, client);
@@ -321,6 +326,7 @@ int SocketManager::createDomainSocketHelp(const std::string &path, mode_t mask) 
     return fd;
 }
 
+#ifdef BUILD_WITH_SYSTEMD
 int SocketManager::getSocketFromSystemD(const std::string &path) {
     int n = sd_listen_fds(0);
     LOGI("sd_listen_fds returns: [%d]", n);
@@ -339,6 +345,7 @@ int SocketManager::getSocketFromSystemD(const std::string &path) {
     LOGI("No useable sockets were passed by systemd.");
     return -1;
 }
+#endif // BUILD_WITH_SYSTEMD
 
 void SocketManager::createSignalSocket(ProtocolPtr protocol) {
     sigset_t mask;

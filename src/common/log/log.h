@@ -28,8 +28,12 @@
 
 #ifndef CYNARA_NO_LOGS
 #include <sstream>
+#ifdef BUILD_WITH_SYSTEMD
 #include <systemd/sd-journal.h>
-#endif
+#else // BUILD_WITH_SYSTEMD
+#include <syslog.h>
+#endif // BUILD_WITH_SYSTEMD
+#endif // CYNARA_NO_LOGS
 
 #include <attributes/attributes.h>
 
@@ -39,12 +43,20 @@ extern int __log_level;
 namespace {
     template <typename ...Args>
     void UNUSED __LOG_FUN(int level, const std::stringstream &format, Args&&... args) {
+#ifdef BUILD_WITH_SYSTEMD
         sd_journal_print(level, format.str().c_str(), std::forward<Args>(args)...);
+#else // BUILD_WITH_SYSTEMD
+        syslog(level, format.str().c_str(), std::forward<Args>(args)...);
+#endif // BUILD_WITH_SYSTEMD
     }
 
     template <>
     void UNUSED __LOG_FUN(int level, const std::stringstream &format) {
+#ifdef BUILD_WITH_SYSTEMD
         sd_journal_print(level, "%s", format.str().c_str());
+#else // BUILD_WITH_SYSTEMD
+        syslog(level, "%s", format.str().c_str());
+#endif // BUILD_WITH_SYSTEMD
     }
 } // namespace anonymous
 

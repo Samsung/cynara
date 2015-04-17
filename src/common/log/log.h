@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Contact: Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  *
@@ -18,6 +18,7 @@
 /**
  * @file        src/common/log/log.h
  * @author      Adam Malinowski <a.malinowsk2@partner.samsung.com>
+ * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @version     1.0
  * @brief       This file defines logging utilities.
  */
@@ -30,18 +31,33 @@
 #include <systemd/sd-journal.h>
 #endif
 
+#include <attributes/attributes.h>
+
 extern int __log_level;
 
 #ifndef CYNARA_NO_LOGS
+namespace {
+    template <typename ...Args>
+    void UNUSED __LOG_FUN(int level, const std::stringstream &format, Args&&... args) {
+        sd_journal_print(level, format.str().c_str(), std::forward<Args>(args)...);
+    }
+
+    template <>
+    void UNUSED __LOG_FUN(int level, const std::stringstream &format) {
+        sd_journal_print(level, "%s", format.str().c_str());
+    }
+} // namespace anonymous
+
     #define __LOG(LEVEL, FORMAT, ...) \
         do { \
-            if(LEVEL <= __log_level) { \
-                std::stringstream __LOG_MACRO_format; \
-                __LOG_MACRO_format << FORMAT; \
-                sd_journal_print(LEVEL, __LOG_MACRO_format.str().c_str(), ##__VA_ARGS__); \
+            if (LEVEL <= __log_level) { \
+                std::stringstream __LOG_FORMAT; \
+                __LOG_FORMAT << FORMAT; \
+                __LOG_FUN(LEVEL, __LOG_FORMAT, ##__VA_ARGS__); \
             } \
         } while (0)
-#else
+
+#else // CYNARA_NO_LOGS
     #define __LOG(LEVEL, ...)
 #endif
 

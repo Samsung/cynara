@@ -208,10 +208,12 @@ export CXXFLAGS="$CXXFLAGS -DCYNARA_STATE_PATH=\\\"%{state_path}\\\" \
                            -DCYNARA_LIB_PATH=\\\"%{lib_path}\\\" \
                            -DCYNARA_TESTS_DIR=\\\"%{tests_dir}\\\" \
                            -DCYNARA_CONFIGURATION_DIR=\\\"%{conf_path}\\\""
+
 export LDFLAGS+="-Wl,--rpath=%{_libdir}"
 
 %cmake . \
         -DBUILD_TESTS=ON \
+        -DBUILD_WITH_SYSTEMD=ON \
         -DCMAKE_BUILD_TYPE=%{?build_type} \
         -DCMAKE_VERBOSE_MAKEFILE=ON \
         -DDB_FILES_SMACK_LABEL="System"
@@ -336,6 +338,7 @@ fi
 
 %files -n cynara-devel
 %{_includedir}/cynara/*.h
+%{_includedir}/cynara/attributes/*.h
 %{_includedir}/cynara/log/*.h
 %{_includedir}/cynara/plugin/*.h
 %{_includedir}/cynara/types/*.h

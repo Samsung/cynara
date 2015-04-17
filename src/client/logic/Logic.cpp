@@ -21,6 +21,7 @@
  * @brief       This file contains implementation of Logic class - main libcynara-client class
  */
 
+#include <cinttypes>
 #include <memory>
 
 #include <cache/CapacityCache.h>

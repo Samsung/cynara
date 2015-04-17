@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  * Contact: Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  *
@@ -24,6 +24,7 @@
 
 #include "log.h"
 
+#include <cstring>
 #include <stdlib.h>
 
 #ifdef BUILD_TYPE_DEBUG

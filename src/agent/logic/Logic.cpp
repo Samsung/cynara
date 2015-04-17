@@ -20,6 +20,7 @@
  * @brief       This file contains implementation of Logic class - main libcynara-agent class
  */
 
+#include <cinttypes>
 #include <memory>
 
 #include <common.h>

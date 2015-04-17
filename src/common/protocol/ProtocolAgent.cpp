@@ -20,7 +20,7 @@
  * @brief       This file implements protocol class for communication with agent
  */
 
-#include <inttypes.h>
+#include <cinttypes>
 #include <memory>
 
 #include <exceptions/InvalidProtocolException.h>

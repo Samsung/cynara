@@ -25,6 +25,7 @@
 
 #include <cinttypes>
 #include <cstdlib>
+#include <cstring>
 #include <dirent.h>
 #include <dlfcn.h>
 #include <functional>

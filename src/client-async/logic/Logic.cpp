@@ -22,6 +22,7 @@
  *              libcynara-client-async class
  */
 
+#include <cinttypes>
 #include <memory>
 
 #include <cache/CapacityCache.h>

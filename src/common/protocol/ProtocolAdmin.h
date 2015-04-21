@@ -38,6 +38,8 @@ public:
     virtual RequestPtr extractRequestFromBuffer(BinaryQueuePtr bufferQueue);
     virtual ResponsePtr extractResponseFromBuffer(BinaryQueuePtr bufferQueue);
 
+    using Protocol::execute;
+
     virtual void execute(const RequestContext &context, const AdminCheckRequest &request);
     virtual void execute(const RequestContext &context, const DescriptionListRequest &request);
     virtual void execute(const RequestContext &context, const EraseRequest &request);

@@ -39,6 +39,8 @@ public:
     virtual RequestPtr extractRequestFromBuffer(BinaryQueuePtr bufferQueue);
     virtual ResponsePtr extractResponseFromBuffer(BinaryQueuePtr bufferQueue);
 
+    using Protocol::execute;
+
     virtual void execute(const RequestContext &context, const SignalRequest &request);
 };
 

@@ -47,6 +47,9 @@ public:
     virtual RequestPtr extractRequestFromBuffer(BinaryQueuePtr bufferQueue) = 0;
     virtual ResponsePtr extractResponseFromBuffer(BinaryQueuePtr bufferQueue) = 0;
 
+    using RequestTaker::execute;
+    using ResponseTaker::execute;
+
     ProtocolFrameHeader &frameHeader(void) {
         return m_frameHeader;
     }

@@ -272,7 +272,7 @@ void Logic::processResponses(void) {
     CheckResponsePtr checkResponse;
     CancelResponsePtr cancelResponse;
     SimpleCheckResponsePtr simpleResponse;
-    while (response = m_socketClient.getResponse()) {
+    while ((response = m_socketClient.getResponse())) {
         checkResponse = std::dynamic_pointer_cast<CheckResponse>(response);
         if (checkResponse) {
             processCheckResponse(*checkResponse);

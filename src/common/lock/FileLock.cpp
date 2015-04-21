@@ -82,7 +82,7 @@ void FileLock::lock(void) {
 
 void FileLock::unlock(void) {
     LOGI("Releasing file lock");
-    TEMP_FAILURE_RETRY(::flock(m_lockable.m_fd, LOCK_UN));
+    (void) TEMP_FAILURE_RETRY(::flock(m_lockable.m_fd, LOCK_UN));
 }
 
 } /* namespace Cynara */

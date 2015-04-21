@@ -53,8 +53,7 @@ Cynara::ProtocolFrameSequenceNumber generateSequenceNumber(void) {
 namespace Cynara {
 
 Logic::Logic(const AgentType &agentType) : m_agentType(agentType),
-        m_socketClient(PathConfig::SocketPath::agent, std::make_shared<ProtocolAgent>()),
-        m_registered(false) {
+        m_socketClient(PathConfig::SocketPath::agent, std::make_shared<ProtocolAgent>()) {
     m_responseTakerPtr = std::make_shared<ProtocolAgent>();
     m_responseBuffer = std::make_shared<BinaryQueue>();
 }

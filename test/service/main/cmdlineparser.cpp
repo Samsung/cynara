@@ -29,9 +29,20 @@
 namespace {
 
 const std::string execName("./cynara");
-const std::string helpMessage("Usage: " + execName + " [OPTIONS]\n\n"
-        "  -V, --version                  print version of ./cynara and exit\n"
-        "  -h, --help                     print this help message and exit\n");
+const std::string helpMessage(
+    "Usage: " + execName + " [OPTIONS]\n\n"
+    "Information mode options [program exits after printing information]:\n"
+    "  -V, --version                print version of " + execName + " and exit\n"
+    "  -h, --help                   print this help message and exit\n"
+    "Normal work mode options:\n"
+    "  -d, --daemon                 daemonize "
+    "[by default " + execName + " does not daemonize]\n"
+    "  -m, --mask=MASK              set umask to MASK "
+    "[by default no umask is set]\n"
+    "  -u, --user=USER              change user to USER "
+                 "[by default uid is not changed]\n"
+    "  -g, --group=GROUP            change group to GROUP "
+                 "[by default gid is not changed]\n");
 
 } // namespace
 
@@ -53,10 +64,15 @@ TEST_F(CynaraCommandlineTest, help) {
         prepare_argv({ execName, opt });
 
         SCOPED_TRACE(opt);
-        const auto handlingSuccess = Parser::handleCmdlineOptions(this->argc(), this->argv());
+        const auto options = Parser::handleCmdlineOptions(this->argc(), this->argv());
         getOutput(out, err);
 
-        ASSERT_TRUE(handlingSuccess);
+        ASSERT_FALSE(options.m_error);
+        ASSERT_TRUE(options.m_exit);
+        ASSERT_FALSE(options.m_daemon);
+        ASSERT_EQ(options.m_mask, static_cast<mode_t>(-1));
+        ASSERT_EQ(options.m_uid, static_cast<uid_t>(-1));
+        ASSERT_EQ(options.m_gid, static_cast<gid_t>(-1));
         ASSERT_EQ(helpMessage, out);
         ASSERT_TRUE(err.empty());
     }
@@ -78,10 +94,15 @@ TEST_F(CynaraCommandlineTest, version) {
         prepare_argv({ execName, opt });
 
         SCOPED_TRACE(opt);
-        const auto handlingSuccess = Parser::handleCmdlineOptions(this->argc(), this->argv());
+        const auto options = Parser::handleCmdlineOptions(this->argc(), this->argv());
         getOutput(out, err);
 
-        ASSERT_TRUE(handlingSuccess);
+        ASSERT_FALSE(options.m_error);
+        ASSERT_TRUE(options.m_exit);
+        ASSERT_FALSE(options.m_daemon);
+        ASSERT_EQ(options.m_mask, static_cast<mode_t>(-1));
+        ASSERT_EQ(options.m_uid, static_cast<uid_t>(-1));
+        ASSERT_EQ(options.m_gid, static_cast<gid_t>(-1));
         ASSERT_EQ(std::string(CYNARA_VERSION) + "\n", out);
         ASSERT_TRUE(err.empty());
     }
@@ -103,21 +124,26 @@ TEST_F(CynaraCommandlineTest, unknownOption) {
         prepare_argv({ execName, badOpt });
 
         SCOPED_TRACE(badOpt);
-        const auto handlingSuccess = Parser::handleCmdlineOptions(this->argc(), this->argv());
+        const auto options = Parser::handleCmdlineOptions(this->argc(), this->argv());
         getOutput(out, err);
 
-        ASSERT_FALSE(handlingSuccess);
+        ASSERT_TRUE(options.m_error);
+        ASSERT_TRUE(options.m_exit);
+        ASSERT_FALSE(options.m_daemon);
+        ASSERT_EQ(options.m_mask, static_cast<mode_t>(-1));
+        ASSERT_EQ(options.m_uid, static_cast<uid_t>(-1));
+        ASSERT_EQ(options.m_gid, static_cast<gid_t>(-1));
         ASSERT_EQ(helpMessage, out);
-        ASSERT_EQ("Unknown option\n", err);
+        ASSERT_EQ(std::string("Unknown option: ") + badOpt + "\n", err);
     }
 }
 
 /**
- * @brief   Verify if passing no options to commandline handler returns error message
+ * @brief   Verify if passing no options to commandline handler succeeds
  * @test    Expected result:
- * - call handler indicates failure
- * - help message in output stream
- * - error message in error stream
+ * - call handler indicates success
+ * - empty output stream
+ * - empty error stream
  */
 TEST_F(CynaraCommandlineTest, noOption) {
     std::string err;
@@ -126,10 +152,391 @@ TEST_F(CynaraCommandlineTest, noOption) {
     clearOutput();
     prepare_argv({ execName });
 
-    const auto handlingSuccess = Parser::handleCmdlineOptions(this->argc(), this->argv());
+    const auto options = Parser::handleCmdlineOptions(this->argc(), this->argv());
     getOutput(out, err);
 
-    ASSERT_FALSE(handlingSuccess);
-    ASSERT_EQ(helpMessage, out);
-    ASSERT_EQ("No options given\n", err);
+    ASSERT_FALSE(options.m_error);
+    ASSERT_FALSE(options.m_exit);
+    ASSERT_FALSE(options.m_daemon);
+    ASSERT_EQ(options.m_mask, static_cast<mode_t>(-1));
+    ASSERT_EQ(options.m_uid, static_cast<uid_t>(-1));
+    ASSERT_EQ(options.m_gid, static_cast<gid_t>(-1));
+    ASSERT_TRUE(out.empty());
+    ASSERT_TRUE(err.empty());
+}
+
+/**
+ * @brief   Verify if passing daemon option to commandline succeeds
+ * @test    Expected result:
+ * - call handler indicates success
+ * - empty output stream
+ * - empty error stream
+ */
+TEST_F(CynaraCommandlineTest, daemonOption) {
+    std::string err;
+    std::string out;
+
+    for (const auto &daemonOpt : { "-d", "--daemon" }) {
+        clearOutput();
+        prepare_argv({ execName, daemonOpt });
+
+        SCOPED_TRACE(daemonOpt);
+        const auto options = Parser::handleCmdlineOptions(this->argc(), this->argv());
+        getOutput(out, err);
+
+        ASSERT_FALSE(options.m_error);
+        ASSERT_FALSE(options.m_exit);
+        ASSERT_TRUE(options.m_daemon);
+        ASSERT_EQ(options.m_mask, static_cast<mode_t>(-1));
+        ASSERT_EQ(options.m_uid, static_cast<uid_t>(-1));
+        ASSERT_EQ(options.m_gid, static_cast<gid_t>(-1));
+        ASSERT_TRUE(out.empty());
+        ASSERT_TRUE(err.empty());
+    }
+}
+
+/**
+ * @brief   Verify if passing mask option to commandline succeeds
+ * @test    Expected result:
+ * - call handler indicates success
+ * - empty output stream
+ * - empty error stream
+ */
+TEST_F(CynaraCommandlineTest, maskOption) {
+    std::string err;
+    std::string out;
+
+    std::string maskParam("0666");
+
+    for (const auto &maskOpt : { "-m", "--mask" }) {
+        clearOutput();
+        prepare_argv({ execName, maskOpt, maskParam});
+
+        SCOPED_TRACE(maskOpt);
+        const auto options = Parser::handleCmdlineOptions(this->argc(), this->argv());
+        getOutput(out, err);
+
+        ASSERT_FALSE(options.m_error);
+        ASSERT_FALSE(options.m_exit);
+        ASSERT_FALSE(options.m_daemon);
+        ASSERT_EQ(options.m_mask, 0666);
+        ASSERT_EQ(options.m_uid, static_cast<uid_t>(-1));
+        ASSERT_EQ(options.m_gid, static_cast<gid_t>(-1));
+        ASSERT_TRUE(out.empty());
+        ASSERT_TRUE(err.empty());
+    }
+}
+
+/**
+ * @brief   Verify if passing invalid mask option to commandline fails
+ * @test    Expected result:
+ * - call handler indicates failure
+ * - help message in output stream
+ * - error message in error stream
+ */
+TEST_F(CynaraCommandlineTest, maskOptionInvalid) {
+    std::string err;
+    std::string out;
+
+    std::string maskParam("MASK");
+
+    for (const auto &maskOpt : { "-m", "--mask" }) {
+        clearOutput();
+        prepare_argv({ execName, maskOpt, maskParam});
+
+        SCOPED_TRACE(maskOpt);
+        const auto options = Parser::handleCmdlineOptions(this->argc(), this->argv());
+        getOutput(out, err);
+
+        ASSERT_TRUE(options.m_error);
+        ASSERT_TRUE(options.m_exit);
+        ASSERT_FALSE(options.m_daemon);
+        ASSERT_EQ(options.m_mask, static_cast<mode_t>(-1));
+        ASSERT_EQ(options.m_uid, static_cast<uid_t>(-1));
+        ASSERT_EQ(options.m_gid, static_cast<gid_t>(-1));
+        ASSERT_EQ(helpMessage, out);
+        ASSERT_EQ("Invalid param: MASK\n", err);
+    }
+}
+
+/**
+ * @brief   Verify if passing no mask option to commandline fails
+ * @test    Expected result:
+ * - call handler indicates failure
+ * - help message in output stream
+ * - error message in error stream
+ */
+TEST_F(CynaraCommandlineTest, maskOptionNoParam) {
+    std::string err;
+    std::string out;
+
+    for (const auto &maskOpt : { "-m", "--mask" }) {
+        clearOutput();
+        prepare_argv({ execName, maskOpt});
+
+        SCOPED_TRACE(maskOpt);
+        const auto options = Parser::handleCmdlineOptions(this->argc(), this->argv());
+        getOutput(out, err);
+
+        ASSERT_TRUE(options.m_error);
+        ASSERT_TRUE(options.m_exit);
+        ASSERT_FALSE(options.m_daemon);
+        ASSERT_EQ(options.m_mask, static_cast<mode_t>(-1));
+        ASSERT_EQ(options.m_uid, static_cast<uid_t>(-1));
+        ASSERT_EQ(options.m_gid, static_cast<gid_t>(-1));
+        ASSERT_EQ(helpMessage, out);
+        ASSERT_EQ(std::string("Missing argument for option: ") + maskOpt + "\n", err);
+    }
+}
+
+/**
+ * @brief   Verify if passing user option to commandline succeeds
+ * @test    Expected result:
+ * - call handler indicates success
+ * - empty output stream
+ * - empty error stream
+ */
+TEST_F(CynaraCommandlineTest, userOptionName) {
+    std::string err;
+    std::string out;
+
+    std::string userParam("root");
+
+    for (const auto &userOpt : { "-u", "--user" }) {
+        clearOutput();
+        prepare_argv({ execName, userOpt, userParam});
+
+        SCOPED_TRACE(userOpt);
+        const auto options = Parser::handleCmdlineOptions(this->argc(), this->argv());
+        getOutput(out, err);
+
+        ASSERT_FALSE(options.m_error);
+        ASSERT_FALSE(options.m_exit);
+        ASSERT_FALSE(options.m_daemon);
+        ASSERT_EQ(options.m_mask, static_cast<mode_t>(-1));
+        ASSERT_EQ(options.m_uid, 0);
+        ASSERT_EQ(options.m_gid, static_cast<gid_t>(-1));
+        ASSERT_TRUE(out.empty());
+        ASSERT_TRUE(err.empty());
+    }
+}
+
+/**
+ * @brief   Verify if passing user option to commandline succeeds
+ * @test    Expected result:
+ * - call handler indicates success
+ * - empty output stream
+ * - empty error stream
+ */
+TEST_F(CynaraCommandlineTest, userOptionUid) {
+    std::string err;
+    std::string out;
+
+    std::string userParam("1234");
+
+    for (const auto &userOpt : { "-u", "--user" }) {
+        clearOutput();
+        prepare_argv({ execName, userOpt, userParam});
+
+        SCOPED_TRACE(userOpt);
+        const auto options = Parser::handleCmdlineOptions(this->argc(), this->argv());
+        getOutput(out, err);
+
+        ASSERT_FALSE(options.m_error);
+        ASSERT_FALSE(options.m_exit);
+        ASSERT_FALSE(options.m_daemon);
+        ASSERT_EQ(options.m_mask, static_cast<mode_t>(-1));
+        ASSERT_EQ(options.m_uid, 1234);
+        ASSERT_EQ(options.m_gid, static_cast<gid_t>(-1));
+        ASSERT_TRUE(out.empty());
+        ASSERT_TRUE(err.empty());
+    }
+}
+
+/**
+ * @brief   Verify if passing invalid user option to commandline fails
+ * @test    Expected result:
+ * - call handler indicates success
+ * - help message in output stream
+ * - error message in error stream
+ */
+TEST_F(CynaraCommandlineTest, userOptionInvalid) {
+    std::string err;
+    std::string out;
+
+    std::string userParam("UserThatDoNotExist");
+
+    for (const auto &userOpt : { "-u", "--user" }) {
+        clearOutput();
+        prepare_argv({ execName, userOpt, userParam});
+
+        SCOPED_TRACE(userOpt);
+        const auto options = Parser::handleCmdlineOptions(this->argc(), this->argv());
+        getOutput(out, err);
+
+        ASSERT_TRUE(options.m_error);
+        ASSERT_TRUE(options.m_exit);
+        ASSERT_FALSE(options.m_daemon);
+        ASSERT_EQ(options.m_mask, static_cast<mode_t>(-1));
+        ASSERT_EQ(options.m_uid, static_cast<uid_t>(-1));
+        ASSERT_EQ(options.m_gid, static_cast<gid_t>(-1));
+        ASSERT_EQ(helpMessage, out);
+        ASSERT_EQ("Invalid param: UserThatDoNotExist\n", err);
+    }
+}
+
+/**
+ * @brief   Verify if passing no user option to commandline fails
+ * @test    Expected result:
+ * - call handler indicates failure
+ * - help message in output stream
+ * - error message in error stream
+ */
+TEST_F(CynaraCommandlineTest, userOptionNoParam) {
+    std::string err;
+    std::string out;
+
+    for (const auto &userOpt : { "-u", "--user" }) {
+        clearOutput();
+        prepare_argv({ execName, userOpt});
+
+        SCOPED_TRACE(userOpt);
+        const auto options = Parser::handleCmdlineOptions(this->argc(), this->argv());
+        getOutput(out, err);
+
+        ASSERT_TRUE(options.m_error);
+        ASSERT_TRUE(options.m_exit);
+        ASSERT_FALSE(options.m_daemon);
+        ASSERT_EQ(options.m_mask, static_cast<mode_t>(-1));
+        ASSERT_EQ(options.m_uid, static_cast<uid_t>(-1));
+        ASSERT_EQ(options.m_gid, static_cast<gid_t>(-1));
+        ASSERT_EQ(helpMessage, out);
+        ASSERT_EQ(std::string("Missing argument for option: ") + userOpt + "\n", err);
+    }
+}
+
+/**
+ * @brief   Verify if passing group option to commandline succeeds
+ * @test    Expected result:
+ * - call handler indicates success
+ * - empty output stream
+ * - empty error stream
+ */
+TEST_F(CynaraCommandlineTest, groupOptionName) {
+    std::string err;
+    std::string out;
+
+    std::string groupParam("root");
+
+    for (const auto &groupOpt : { "-g", "--group" }) {
+        clearOutput();
+        prepare_argv({ execName, groupOpt, groupParam});
+
+        SCOPED_TRACE(groupOpt);
+        const auto options = Parser::handleCmdlineOptions(this->argc(), this->argv());
+        getOutput(out, err);
+
+        ASSERT_FALSE(options.m_error);
+        ASSERT_FALSE(options.m_exit);
+        ASSERT_FALSE(options.m_daemon);
+        ASSERT_EQ(options.m_mask, static_cast<mode_t>(-1));
+        ASSERT_EQ(options.m_uid, static_cast<uid_t>(-1));
+        ASSERT_EQ(options.m_gid, 0);
+        ASSERT_TRUE(out.empty());
+        ASSERT_TRUE(err.empty());
+    }
+}
+
+/**
+ * @brief   Verify if passing group option to commandline succeeds
+ * @test    Expected result:
+ * - call handler indicates success
+ * - empty output stream
+ * - empty error stream
+ */
+TEST_F(CynaraCommandlineTest, groupOptionGid) {
+    std::string err;
+    std::string out;
+
+    std::string groupParam("1234");
+
+    for (const auto &groupOpt : { "-g", "--group" }) {
+        clearOutput();
+        prepare_argv({ execName, groupOpt, groupParam});
+
+        SCOPED_TRACE(groupOpt);
+        const auto options = Parser::handleCmdlineOptions(this->argc(), this->argv());
+        getOutput(out, err);
+
+        ASSERT_FALSE(options.m_error);
+        ASSERT_FALSE(options.m_exit);
+        ASSERT_FALSE(options.m_daemon);
+        ASSERT_EQ(options.m_mask, static_cast<mode_t>(-1));
+        ASSERT_EQ(options.m_uid, static_cast<uid_t>(-1));
+        ASSERT_EQ(options.m_gid, 1234);
+        ASSERT_TRUE(out.empty());
+        ASSERT_TRUE(err.empty());
+    }
+}
+
+/**
+ * @brief   Verify if passing invalid group option to commandline fails
+ * @test    Expected result:
+ * - call handler indicates success
+ * - help message in output stream
+ * - error message in error stream
+ */
+TEST_F(CynaraCommandlineTest, groupOptionInvalid) {
+    std::string err;
+    std::string out;
+
+    std::string groupParam("GroupThatDoNotExist");
+
+    for (const auto &groupOpt : { "-g", "--group" }) {
+        clearOutput();
+        prepare_argv({ execName, groupOpt, groupParam});
+
+        SCOPED_TRACE(groupOpt);
+        const auto options = Parser::handleCmdlineOptions(this->argc(), this->argv());
+        getOutput(out, err);
+
+        ASSERT_TRUE(options.m_error);
+        ASSERT_TRUE(options.m_exit);
+        ASSERT_FALSE(options.m_daemon);
+        ASSERT_EQ(options.m_mask, static_cast<mode_t>(-1));
+        ASSERT_EQ(options.m_uid, static_cast<uid_t>(-1));
+        ASSERT_EQ(options.m_gid, static_cast<gid_t>(-1));
+        ASSERT_EQ(helpMessage, out);
+        ASSERT_EQ("Invalid param: GroupThatDoNotExist\n", err);
+    }
+}
+
+/**
+ * @brief   Verify if passing no group option to commandline fails
+ * @test    Expected result:
+ * - call handler indicates failure
+ * - help message in output stream
+ * - error message in error stream
+ */
+TEST_F(CynaraCommandlineTest, groupOptionNoParam) {
+    std::string err;
+    std::string out;
+
+    for (const auto &groupOpt : { "-g", "--group" }) {
+        clearOutput();
+        prepare_argv({ execName, groupOpt});
+
+        SCOPED_TRACE(groupOpt);
+        const auto options = Parser::handleCmdlineOptions(this->argc(), this->argv());
+        getOutput(out, err);
+
+        ASSERT_TRUE(options.m_error);
+        ASSERT_TRUE(options.m_exit);
+        ASSERT_FALSE(options.m_daemon);
+        ASSERT_EQ(options.m_mask, static_cast<mode_t>(-1));
+        ASSERT_EQ(options.m_uid, static_cast<uid_t>(-1));
+        ASSERT_EQ(options.m_gid, static_cast<gid_t>(-1));
+        ASSERT_EQ(helpMessage, out);
+        ASSERT_EQ(std::string("Missing argument for option: ") + groupOpt + "\n", err);
+    }
 }

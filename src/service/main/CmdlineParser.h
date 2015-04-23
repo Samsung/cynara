@@ -25,6 +25,7 @@
 
 #include <ostream>
 #include <string>
+#include <sys/types.h>
 
 namespace Cynara {
 
@@ -32,16 +33,34 @@ namespace CmdlineParser {
 
 enum CmdlineOpt {
     Help = 'h',
-    Version = 'V'
+    Version = 'V',
+    Daemon = 'd',
+    Mask = 'm',
+    User = 'u',
+    Group = 'g',
+};
+
+struct CmdLineOptions {
+    bool m_error;
+    bool m_exit;
+
+    bool m_daemon;
+    mode_t m_mask;
+    uid_t m_uid;
+    gid_t m_gid;
 };
 
 std::ostream &operator<<(std::ostream &os, CmdlineOpt opt);
 
-bool handleCmdlineOptions(int argc, char * const *argv);
+struct CmdLineOptions handleCmdlineOptions(int argc, char * const *argv);
 void printHelp(const std::string &execName);
 void printVersion(void);
-void printUnknownOption(const std::string &execName);
-void printNoOptions(const std::string &execName);
+void printUnknownOption(const std::string &execName, const std::string &option);
+void printInvalidParam(const std::string &execName, const std::string &param);
+void printMissingArgument(const std::string &execName, const std::string &option);
+mode_t getMask(const char *mask);
+uid_t getUid(const char *user);
+gid_t getGid(const char *group);
 
 } /* namespace CmdlineOpts */
 

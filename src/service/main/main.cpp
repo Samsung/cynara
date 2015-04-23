@@ -38,13 +38,17 @@
 #include "Cynara.h"
 
 int main(int argc, char **argv) {
-    init_log();
-
     try {
-        if (1 < argc) {
-            auto handlingSuccess = Cynara::CmdlineParser::handleCmdlineOptions(argc, argv);
-            return (handlingSuccess ? EXIT_SUCCESS : EXIT_FAILURE);
-        }
+        Cynara::CmdlineParser::CmdLineOptions options
+            = Cynara::CmdlineParser::handleCmdlineOptions(argc, argv);
+        if (options.m_error)
+            return EXIT_FAILURE;
+        if (options.m_exit)
+            return EXIT_SUCCESS;
+
+        init_log();
+
+        //todo use other options
 
         Cynara::Cynara cynara;
         LOGI("Cynara service is starting ...");

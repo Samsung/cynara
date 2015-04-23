@@ -20,8 +20,11 @@
  * @brief       Helper namespace for Cynara's command-line options parsing
  */
 
+#include <cstdlib>
 #include <getopt.h>
+#include <grp.h>
 #include <iostream>
+#include <pwd.h>
 #include <sstream>
 
 #include "CmdlineParser.h"
@@ -34,17 +37,33 @@ std::ostream &operator<<(std::ostream &os, CmdlineOpt opt) {
     return os << static_cast<char>(opt);
 }
 
-bool handleCmdlineOptions(int argc, char * const *argv) {
+struct CmdLineOptions handleCmdlineOptions(int argc, char * const *argv) {
     const std::string execName(argv[0]);
     std::stringstream shortOpts;
-    shortOpts << ":" << CmdlineOpt::Help << CmdlineOpt::Version;
+    shortOpts << ":"
+              << CmdlineOpt::Help
+              << CmdlineOpt::Version
+              << CmdlineOpt::Daemon
+              << CmdlineOpt::Mask << ":"
+              << CmdlineOpt::User << ":"
+              << CmdlineOpt::Group << ":";
 
     const struct option longOpts[] = {
-        { "help",       no_argument,    NULL, CmdlineOpt::Help },
-        { "version",    no_argument,    NULL, CmdlineOpt::Version },
+        { "help",       no_argument,          NULL, CmdlineOpt::Help },
+        { "version",    no_argument,          NULL, CmdlineOpt::Version },
+        { "daemon",     no_argument,          NULL, CmdlineOpt::Daemon },
+        { "mask",       required_argument,    NULL, CmdlineOpt::Mask },
+        { "user",       required_argument,    NULL, CmdlineOpt::User },
+        { "group",      required_argument,    NULL, CmdlineOpt::Group },
         { NULL, 0, NULL, 0 }
     };
 
+    struct CmdLineOptions ret = {.m_error = false,
+                                 .m_exit = false,
+                                 .m_daemon = false,
+                                 .m_mask = static_cast<mode_t>(-1),
+                                 .m_uid = static_cast<uid_t>(-1),
+                                 .m_gid = static_cast<gid_t>(-1) };
 
     optind = 0; // On entry to `getopt', zero means this is the first call; initialize.
     int opt;
@@ -52,40 +71,140 @@ bool handleCmdlineOptions(int argc, char * const *argv) {
         switch (opt) {
             case CmdlineOpt::Help:
                 printHelp(execName);
-                return true;
+                ret.m_error = false;
+                ret.m_exit = true;
+                return ret;
             case CmdlineOpt::Version:
                 printVersion();
-                return true;
+                ret.m_error = false;
+                ret.m_exit = true;
+                return ret;
+            case CmdlineOpt::Daemon:
+                ret.m_daemon = true;
+                break;
+            case CmdlineOpt::Mask:
+                ret.m_mask = getMask(optarg);
+                if (ret.m_mask == static_cast<mode_t>(-1)) {
+                    printInvalidParam(execName, optarg);
+                    ret.m_error = true;
+                    ret.m_exit = true;
+                    return ret;
+                }
+                break;
+            case CmdlineOpt::User:
+                ret.m_uid = getUid(optarg);
+                if (ret.m_uid == static_cast<uid_t>(-1)) {
+                    printInvalidParam(execName, optarg);
+                    ret.m_error = true;
+                    ret.m_exit = true;
+                    return ret;
+                }
+                break;
+            case CmdlineOpt::Group:
+                ret.m_gid = getGid(optarg);
+                if (ret.m_gid == static_cast<gid_t>(-1)) {
+                    printInvalidParam(execName, optarg);
+                    ret.m_error = true;
+                    ret.m_exit = true;
+                    return ret;
+                }
+                break;
+            case ':': // Missing argument
+                ret.m_error = true;
+                ret.m_exit = true;
+                switch (optopt) {
+                    case CmdlineOpt::Mask:
+                    case CmdlineOpt::User:
+                    case CmdlineOpt::Group:
+                        printMissingArgument(execName, argv[optind - 1]);
+                        return ret;
+                }
+                //intentional fall to Unknown option
             case '?': // Unknown option
             default:
-                printUnknownOption(execName);
-                return false;
+                printUnknownOption(execName, argv[optind - 1]);
+                ret.m_error = true;
+                ret.m_exit = true;
+                return ret;
         }
     }
 
-    printNoOptions(execName);
-    return false;
+    return ret;
 }
 
 void printHelp(const std::string &execName) {
     std::cout << "Usage: " << execName << " [OPTIONS]" << std::endl << std::endl;
-    std::cout << "  -V, --version                  print version of " << execName << " and exit"
-              << std::endl;
-    std::cout << "  -h, --help                     print this help message and exit" << std::endl;
+    std::cout << "Information mode options [program exits after printing information]:" << std::endl;
+    std::cout << "  -V, --version                print version of " << execName << " and exit"
+                 << std::endl;
+    std::cout << "  -h, --help                   print this help message and exit" << std::endl;
+    std::cout << "Normal work mode options:" << std::endl;
+    std::cout << "  -d, --daemon                 daemonize "
+                 "[by default " << execName << " does not daemonize]" << std::endl;
+    std::cout << "  -m, --mask=MASK              set umask to MASK "
+                 "[by default no umask is set]" << std::endl;
+    std::cout << "  -u, --user=USER              change user to USER "
+                 "[by default uid is not changed]" << std::endl;
+    std::cout << "  -g, --group=GROUP            change group to GROUP "
+                 "[by default gid is not changed]" << std::endl;
 }
 
 void printVersion(void) {
     std::cout << std::string(CYNARA_VERSION) << std::endl;
 }
 
-void printUnknownOption(const std::string &execName) {
-    std::cerr << "Unknown option" << std::endl;
+void printUnknownOption(const std::string &execName, const std::string &option) {
+    std::cerr << "Unknown option: " << option << std::endl;
     printHelp(execName);
 }
 
-void printNoOptions(const std::string &execName) {
-    std::cerr << "No options given" << std::endl;
+void printInvalidParam(const std::string &execName, const std::string &param) {
+    std::cerr << "Invalid param: " << param << std::endl;
     printHelp(execName);
+}
+
+void printMissingArgument(const std::string &execName, const std::string &option) {
+    std::cerr << "Missing argument for option: " << option << std::endl;
+    printHelp(execName);
+}
+
+mode_t getMask(const char *mask) {
+    mode_t ret = static_cast<mode_t>(-1);
+    if (!mask)
+        return ret;
+    try {
+        ret = static_cast<mode_t>(std::stoi(mask, 0, 0));
+    } catch (...) {
+    }
+    return ret;
+}
+
+uid_t getUid(const char *user) {
+    uid_t ret = static_cast<uid_t>(-1);
+    if (!user)
+        return ret;
+    try {
+        ret = static_cast<uid_t>(std::stoi(user));
+    } catch (...) {
+        struct passwd *pwd = getpwnam(user);
+        if (pwd)
+            ret = pwd->pw_uid;
+    }
+    return ret;
+}
+
+gid_t getGid(const char *group) {
+    gid_t ret = static_cast<gid_t>(-1);
+    if (!group)
+        return ret;
+    try {
+        ret = static_cast<gid_t>(std::stoi(group));
+    } catch (...) {
+        struct group *grp = getgrnam(group);
+        if (grp)
+            ret = grp->gr_gid;
+    }
+    return ret;
 }
 
 } /* namespace CmdlineOpts */

@@ -24,8 +24,12 @@
  */
 
 #include <exception>
+#include <fcntl.h>
 #include <iostream>
 #include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #ifdef BUILD_WITH_SYSTEMD
 #include <systemd/sd-daemon.h>
@@ -37,6 +41,49 @@
 #include "CmdlineParser.h"
 #include "Cynara.h"
 
+void daemonize(void) {
+    switch (fork()) {
+        case -1:
+            exit(EXIT_FAILURE);
+        case 0:
+            break;
+        default:
+            exit(EXIT_SUCCESS);
+    }
+
+    if (setsid() == -1)
+        exit(EXIT_FAILURE);
+
+    switch (fork()) {
+        case -1:
+            exit(EXIT_FAILURE);
+        case 0:
+            break;
+        default:
+            exit(EXIT_SUCCESS);
+    }
+
+    if (chdir("/") == -1)
+        exit(EXIT_FAILURE);
+
+    int fd = TEMP_FAILURE_RETRY(open("/dev/null", O_RDWR));
+    if (fd < 0)
+        exit(EXIT_FAILURE);
+
+    for (auto stdFd : {STDIN_FILENO, STDOUT_FILENO, STDERR_FILENO})
+        if (TEMP_FAILURE_RETRY(dup2(fd, stdFd)) != stdFd)
+            exit(EXIT_FAILURE);
+
+    switch (fd) {
+        case STDIN_FILENO:
+        case STDOUT_FILENO:
+        case STDERR_FILENO:
+            break;
+        default:
+            close(fd);
+    }
+}
+
 int main(int argc, char **argv) {
     try {
         Cynara::CmdlineParser::CmdLineOptions options
@@ -46,9 +93,18 @@ int main(int argc, char **argv) {
         if (options.m_exit)
             return EXIT_SUCCESS;
 
-        init_log();
+        if (options.m_daemon)
+            daemonize();
+        if (options.m_mask != static_cast<mode_t>(-1))
+            umask(options.m_mask);
+        if (options.m_uid != static_cast<uid_t>(-1))
+            if (setuid(options.m_uid) == -1)
+                return EXIT_FAILURE;
+        if (options.m_gid != static_cast<gid_t>(-1))
+            if (setgid(options.m_gid) == -1)
+                return EXIT_FAILURE;
 
-        //todo use other options
+        init_log();
 
         Cynara::Cynara cynara;
         LOGI("Cynara service is starting ...");

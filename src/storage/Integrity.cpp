@@ -24,6 +24,7 @@
 #include <errno.h>
 #include <fstream>
 #include <functional>
+#include <memory>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -107,6 +108,15 @@ void Integrity::deleteNonIndexedFiles(BucketPresenceTester tester) {
         throw UnexpectedErrorException(err, strerror(err));
         return;
     }
+
+    std::unique_ptr<DIR, std::function<void(DIR*)>> dirStream(dirPtr,
+            [](DIR *dir) {
+                if (closedir(dir) < 0) {
+                    int err = errno;
+                    (void) err;
+                    LOGE("'closedir' function error [%d] : <%s>", err, strerror(err));
+                }
+            });
 
     while (errno = 0, (direntPtr = readdir(dirPtr)) != nullptr) {
         std::string filename = direntPtr->d_name;

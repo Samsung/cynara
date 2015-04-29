@@ -37,7 +37,7 @@ TEST(BucketRecordCorruptedException, line) {
     ASSERT_THAT(ex.what(), StartsWith(expected));
     ASSERT_EQ("line", ex.line());
     ASSERT_EQ("", ex.filename());
-    ASSERT_EQ(0, ex.lineNumber());
+    ASSERT_EQ(static_cast<size_t>(0), ex.lineNumber());
 }
 
 TEST(BucketRecordCorruptedException, line_lineno) {
@@ -49,7 +49,7 @@ TEST(BucketRecordCorruptedException, line_lineno) {
     ASSERT_THAT(ex.what(), StartsWith(expected));
     ASSERT_EQ("line", ex.line());
     ASSERT_EQ("", ex.filename());
-    ASSERT_EQ(10, ex.lineNumber());
+    ASSERT_EQ(static_cast<size_t>(10), ex.lineNumber());
 }
 
 TEST(BucketRecordCorruptedException, line_lineno_filename) {
@@ -61,7 +61,7 @@ TEST(BucketRecordCorruptedException, line_lineno_filename) {
     ASSERT_THAT(ex.what(), StartsWith(expected));
     ASSERT_EQ("line", ex.line());
     ASSERT_EQ("bucket.bkt", ex.filename());
-    ASSERT_EQ(10, ex.lineNumber());
+    ASSERT_EQ(static_cast<size_t>(10), ex.lineNumber());
 }
 
 TEST(BucketRecordCorruptedException, line_filename) {
@@ -73,7 +73,7 @@ TEST(BucketRecordCorruptedException, line_filename) {
     ASSERT_THAT(ex.what(), StartsWith(expected));
     ASSERT_EQ("line", ex.line());
     ASSERT_EQ("bucket.bkt", ex.filename());
-    ASSERT_EQ(0, ex.lineNumber());
+    ASSERT_EQ(static_cast<size_t>(0), ex.lineNumber());
 }
 
 TEST(BucketRecordCorruptedException, line_sliced) {
@@ -88,5 +88,5 @@ TEST(BucketRecordCorruptedException, line_sliced) {
     ASSERT_THAT(ex.what(), StartsWith(expected));
     ASSERT_EQ(line, ex.line());
     ASSERT_EQ("", ex.filename());
-    ASSERT_EQ(0, ex.lineNumber());
+    ASSERT_EQ(static_cast<size_t>(0), ex.lineNumber());
 }

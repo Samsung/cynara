@@ -82,7 +82,7 @@ protected:
 
     static void ASSERT_DB_VIRGIN(Cynara::Buckets &buckets)  {
         using ::testing::IsEmpty;
-        ASSERT_EQ(1, buckets.size());
+        ASSERT_EQ(static_cast<size_t>(1), buckets.size());
         auto defaultBucketIter = buckets.find(Cynara::defaultPolicyBucketId);
         ASSERT_NE(buckets.end(), defaultBucketIter);
         auto &defaultBucket = defaultBucketIter->second;
@@ -92,7 +92,7 @@ protected:
 
     static void ASSERT_DB_EMPTY(Cynara::Buckets &buckets) {
         using ::testing::IsEmpty;
-        ASSERT_EQ(0, buckets.size());
+        ASSERT_EQ(static_cast<size_t>(0), buckets.size());
         ASSERT_THAT(buckets, IsEmpty());
     }
 

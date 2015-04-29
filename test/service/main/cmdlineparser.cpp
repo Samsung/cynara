@@ -219,7 +219,7 @@ TEST_F(CynaraCommandlineTest, maskOption) {
         ASSERT_FALSE(options.m_error);
         ASSERT_FALSE(options.m_exit);
         ASSERT_FALSE(options.m_daemon);
-        ASSERT_EQ(options.m_mask, 0666);
+        ASSERT_EQ(options.m_mask, static_cast<mode_t>(0666));
         ASSERT_EQ(options.m_uid, static_cast<uid_t>(-1));
         ASSERT_EQ(options.m_gid, static_cast<gid_t>(-1));
         ASSERT_TRUE(out.empty());
@@ -314,7 +314,7 @@ TEST_F(CynaraCommandlineTest, userOptionName) {
         ASSERT_FALSE(options.m_exit);
         ASSERT_FALSE(options.m_daemon);
         ASSERT_EQ(options.m_mask, static_cast<mode_t>(-1));
-        ASSERT_EQ(options.m_uid, 0);
+        ASSERT_EQ(options.m_uid, static_cast<uid_t>(0));
         ASSERT_EQ(options.m_gid, static_cast<gid_t>(-1));
         ASSERT_TRUE(out.empty());
         ASSERT_TRUE(err.empty());
@@ -346,7 +346,7 @@ TEST_F(CynaraCommandlineTest, userOptionUid) {
         ASSERT_FALSE(options.m_exit);
         ASSERT_FALSE(options.m_daemon);
         ASSERT_EQ(options.m_mask, static_cast<mode_t>(-1));
-        ASSERT_EQ(options.m_uid, 1234);
+        ASSERT_EQ(options.m_uid, static_cast<uid_t>(1234));
         ASSERT_EQ(options.m_gid, static_cast<gid_t>(-1));
         ASSERT_TRUE(out.empty());
         ASSERT_TRUE(err.empty());
@@ -441,7 +441,7 @@ TEST_F(CynaraCommandlineTest, groupOptionName) {
         ASSERT_FALSE(options.m_daemon);
         ASSERT_EQ(options.m_mask, static_cast<mode_t>(-1));
         ASSERT_EQ(options.m_uid, static_cast<uid_t>(-1));
-        ASSERT_EQ(options.m_gid, 0);
+        ASSERT_EQ(options.m_gid, static_cast<gid_t>(0));
         ASSERT_TRUE(out.empty());
         ASSERT_TRUE(err.empty());
     }
@@ -473,7 +473,7 @@ TEST_F(CynaraCommandlineTest, groupOptionGid) {
         ASSERT_FALSE(options.m_daemon);
         ASSERT_EQ(options.m_mask, static_cast<mode_t>(-1));
         ASSERT_EQ(options.m_uid, static_cast<uid_t>(-1));
-        ASSERT_EQ(options.m_gid, 1234);
+        ASSERT_EQ(options.m_gid, static_cast<gid_t>(1234));
         ASSERT_TRUE(out.empty());
         ASSERT_TRUE(err.empty());
     }

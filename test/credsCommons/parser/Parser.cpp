@@ -139,8 +139,8 @@ TEST(parser, interpretValue_OK) {
                                                {"pid", CLIENT_METHOD_PID}};
     int method = NOT_A_METHOD_CODE;
     bool occurred = false;
-    EXPECT_EQ(true, credsBackend.interpretValue(clientCredsMap, method, "smack", occurred));
-    EXPECT_EQ(true, occurred);
+    EXPECT_TRUE(credsBackend.interpretValue(clientCredsMap, method, "smack", occurred));
+    EXPECT_TRUE(occurred);
     EXPECT_EQ(CLIENT_METHOD_SMACK, method);
 }
 
@@ -149,9 +149,9 @@ TEST(parser, interpretValueKeyNotInMap1) {
                                                {"pid", CLIENT_METHOD_PID}};
     int method = NOT_A_METHOD_CODE;
     bool occurred = false;
-    EXPECT_EQ(false,
+    EXPECT_FALSE(
               credsBackend.interpretValue(clientCredsMap, method, "NeitherSmackNorPid", occurred));
-    EXPECT_EQ(true, occurred);
+    EXPECT_TRUE(occurred);
     EXPECT_EQ(NOT_A_METHOD_CODE, method);
 }
 
@@ -160,9 +160,9 @@ TEST(parser, interpretValueKeyNotInMap2) {
                                                {"pid", CLIENT_METHOD_PID}};
     int method = NOT_A_METHOD_CODE;
     bool occurred = true;
-    EXPECT_EQ(false,
+    EXPECT_FALSE(
               credsBackend.interpretValue(clientCredsMap, method, "NeitherSmackNorPid", occurred));
-    EXPECT_EQ(true, occurred);
+    EXPECT_TRUE(occurred);
     EXPECT_EQ(NOT_A_METHOD_CODE, method);
 }
 
@@ -171,9 +171,9 @@ TEST(parser, interpretValueKeyAppearsAgain) {
                                                {"pid", CLIENT_METHOD_PID}};
     int method = NOT_A_METHOD_CODE;
     bool occurred = true;
-    EXPECT_EQ(false,
+    EXPECT_FALSE(
               credsBackend.interpretValue(clientCredsMap, method, "smack", occurred));
-    EXPECT_EQ(true, occurred);
+    EXPECT_TRUE(occurred);
     EXPECT_EQ(NOT_A_METHOD_CODE, method);
 }
 
@@ -182,9 +182,9 @@ TEST(parser, interpretValueKeyEmptyKey) {
                                                {"pid", CLIENT_METHOD_PID}};
     int method = NOT_A_METHOD_CODE;
     bool occurred = true;
-    EXPECT_EQ(false,
+    EXPECT_FALSE(
               credsBackend.interpretValue(clientCredsMap, method, "", occurred));
-    EXPECT_EQ(true, occurred);
+    EXPECT_TRUE(occurred);
     EXPECT_EQ(NOT_A_METHOD_CODE, method);
 }
 
@@ -192,9 +192,9 @@ TEST(parser, interpretValueEmptyMap1) {
     static const CredentialsMap clientCredsMap{};
     int method = NOT_A_METHOD_CODE;
     bool occurred = false;
-    EXPECT_EQ(false,
+    EXPECT_FALSE(
               credsBackend.interpretValue(clientCredsMap, method, "Anything", occurred));
-    EXPECT_EQ(true, occurred);
+    EXPECT_TRUE(occurred);
     EXPECT_EQ(NOT_A_METHOD_CODE, method);
 }
 
@@ -202,9 +202,9 @@ TEST(parser, interpretValueEmptyMap2) {
     static const CredentialsMap clientCredsMap{};
     int method = NOT_A_METHOD_CODE;
     bool occurred = true;
-    EXPECT_EQ(false,
+    EXPECT_FALSE(
               credsBackend.interpretValue(clientCredsMap, method, "Anything", occurred));
-    EXPECT_EQ(true, occurred);
+    EXPECT_TRUE(occurred);
     EXPECT_EQ(NOT_A_METHOD_CODE, method);
 }
 

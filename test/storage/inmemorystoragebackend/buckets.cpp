@@ -44,7 +44,7 @@ TEST_F(InMemoryStorageBackendFixture, createBucket) {
     PolicyBucketId bucketId = "new-bucket";
     backend.createBucket(bucketId, defaultPolicy);
 
-    ASSERT_EQ(1, m_buckets.size());
+    ASSERT_EQ(static_cast<size_t>(1), m_buckets.size());
     ASSERT_NE(m_buckets.end(), m_buckets.find(bucketId));
     ASSERT_EQ(defaultPolicy, m_buckets.at(bucketId).defaultPolicy());
     ASSERT_THAT(m_buckets.at(bucketId), IsEmpty());

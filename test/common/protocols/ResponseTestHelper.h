@@ -48,7 +48,7 @@ void testResponse(std::shared_ptr<R> response, Cynara::ProtocolPtr protocol) {
 
     auto extractedResponse = protocol->extractResponseFromBuffer(queue);
     ASSERT_TRUE(bool(extractedResponse));
-    ASSERT_EQ(queue->size(), 0);
+    ASSERT_EQ(queue->size(), static_cast<size_t>(0));
 
     compare(*response, dynamic_cast<R &>(*extractedResponse));
 }
@@ -63,7 +63,7 @@ void binaryTestResponse(Cynara::ResponsePtr response, Cynara::ProtocolPtr protoc
 
     auto extractedResponse = protocol->extractResponseFromBuffer(queue);
     ASSERT_TRUE(bool(extractedResponse));
-    ASSERT_EQ(queue->size(), 0);
+    ASSERT_EQ(queue->size(), static_cast<size_t>(0));
 
     extractedResponse->execute(*protocol, context);
     Cynara::RawBuffer data2(queue->size());

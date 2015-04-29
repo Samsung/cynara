@@ -17,7 +17,7 @@
  * @file        test/storage/inmemorystoragebackend/buckets.cpp
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
- * @brief       Tests of buckets in InMemeoryStorageBackend
+ * @brief       Tests of buckets in InMemoryStorageBackend
  */
 
 #include <gmock/gmock.h>
@@ -28,11 +28,11 @@
 #include <types/PolicyResult.h>
 
 #include "fakeinmemorystoragebackend.h"
-#include "inmemeorystoragebackendfixture.h"
+#include "inmemorystoragebackendfixture.h"
 
 using namespace Cynara;
 
-TEST_F(InMemeoryStorageBackendFixture, createBucket) {
+TEST_F(InMemoryStorageBackendFixture, createBucket) {
     using ::testing::ReturnRef;
     using ::testing::IsEmpty;
 
@@ -50,7 +50,7 @@ TEST_F(InMemeoryStorageBackendFixture, createBucket) {
     ASSERT_THAT(m_buckets.at(bucketId), IsEmpty());
 }
 
-TEST_F(InMemeoryStorageBackendFixture, updateBucket) {
+TEST_F(InMemoryStorageBackendFixture, updateBucket) {
     using ::testing::ReturnRef;
 
     FakeInMemoryStorageBackend backend(m_fakeDbPath);
@@ -66,7 +66,7 @@ TEST_F(InMemeoryStorageBackendFixture, updateBucket) {
     ASSERT_EQ(PredefinedPolicyType::DENY, bucket.defaultPolicy());
 }
 
-TEST_F(InMemeoryStorageBackendFixture, updateNonexistentBucket) {
+TEST_F(InMemoryStorageBackendFixture, updateNonexistentBucket) {
     using ::testing::ReturnRef;
 
     FakeInMemoryStorageBackend backend(m_fakeDbPath);
@@ -77,7 +77,7 @@ TEST_F(InMemeoryStorageBackendFixture, updateNonexistentBucket) {
                  BucketNotExistsException);
 }
 
-TEST_F(InMemeoryStorageBackendFixture, deleteBucket) {
+TEST_F(InMemoryStorageBackendFixture, deleteBucket) {
     using ::testing::ReturnRef;
     using ::testing::IsEmpty;
 
@@ -93,7 +93,7 @@ TEST_F(InMemeoryStorageBackendFixture, deleteBucket) {
     ASSERT_THAT(m_buckets, IsEmpty());
 }
 
-TEST_F(InMemeoryStorageBackendFixture, hasBucket) {
+TEST_F(InMemoryStorageBackendFixture, hasBucket) {
     using ::testing::ReturnRef;
     using ::testing::IsEmpty;
 
@@ -108,7 +108,7 @@ TEST_F(InMemeoryStorageBackendFixture, hasBucket) {
     ASSERT_FALSE(backend.hasBucket("non-existent"));
 }
 
-TEST_F(InMemeoryStorageBackendFixture, deleteNonexistentBucket) {
+TEST_F(InMemoryStorageBackendFixture, deleteNonexistentBucket) {
     using ::testing::ReturnRef;
 
     FakeInMemoryStorageBackend backend(m_fakeDbPath);

@@ -14,15 +14,15 @@
  *    limitations under the License.
  */
 /**
- * @file        test/storage/inmemorystoragebackend/inmemeorystoragebackendfixture.h
+ * @file        test/storage/inmemorystoragebackend/inmemorystoragebackendfixture.h
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @author      Pawel Wieczorek <p.wieczorek2@samsung.com>
  * @version     1.0
- * @brief       Fixture for InMemeoryStorageBackend tests
+ * @brief       Fixture for InMemoryStorageBackend tests
  */
 
-#ifndef INMEMEORYSTORAGEBACKENDFIXTURE_H_
-#define INMEMEORYSTORAGEBACKENDFIXTURE_H_
+#ifndef INMEMORYSTORAGEBACKENDFIXTURE_H_
+#define INMEMORYSTORAGEBACKENDFIXTURE_H_
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -38,7 +38,7 @@
 
 #include <TestDataCollection.h>
 
-class InMemeoryStorageBackendFixture : public ::testing::Test {
+class InMemoryStorageBackendFixture : public ::testing::Test {
 public:
     class Filter {
     public:
@@ -96,7 +96,7 @@ protected:
         ASSERT_THAT(buckets, IsEmpty());
     }
 
-    virtual ~InMemeoryStorageBackendFixture() {}
+    virtual ~InMemoryStorageBackendFixture() {}
 
     const Cynara::PolicyCollection &fullPoliciesCollection(void) {
         using Cynara::PredefinedPolicyType::ALLOW;
@@ -163,4 +163,4 @@ protected:
 };
 
 
-#endif /* INMEMEORYSTORAGEBACKENDFIXTURE_H_ */
+#endif /* INMEMORYSTORAGEBACKENDFIXTURE_H_ */

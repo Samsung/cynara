@@ -17,7 +17,7 @@
  * @file        test/storage/inmemorystoragebackend/search.cpp
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
- * @brief       Tests of search in InMemeoryStorageBackend
+ * @brief       Tests of search in InMemoryStorageBackend
  */
 
 #include <memory>
@@ -29,11 +29,11 @@
 
 #include "../../helpers.h"
 #include "fakeinmemorystoragebackend.h"
-#include "inmemeorystoragebackendfixture.h"
+#include "inmemorystoragebackendfixture.h"
 
 using namespace Cynara;
 
-TEST_F(InMemeoryStorageBackendFixture, searchDefault) {
+TEST_F(InMemoryStorageBackendFixture, searchDefault) {
     using ::testing::ReturnRef;
     using ::testing::UnorderedElementsAreArray;
     using ::testing::IsEmpty;

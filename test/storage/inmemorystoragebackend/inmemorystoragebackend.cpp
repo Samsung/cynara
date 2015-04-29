@@ -17,7 +17,7 @@
  * @file        test/storage/inmemorystoragebackend/inmemorystoragebackend.cpp
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
- * @brief       Tests of InMemeoryStorageBackend
+ * @brief       Tests of InMemoryStorageBackend
  */
 
 #include <gmock/gmock.h>
@@ -37,15 +37,15 @@
 
 #include "../../helpers.h"
 #include "fakeinmemorystoragebackend.h"
-#include "inmemeorystoragebackendfixture.h"
+#include "inmemorystoragebackendfixture.h"
 
 using namespace Cynara;
 
-const std::string InMemeoryStorageBackendFixture::m_indexFileName("buckets");
-const std::string InMemeoryStorageBackendFixture::m_backupFileNameSuffix("~");
-const std::string InMemeoryStorageBackendFixture::m_fakeDbPath("/fake/database/path");
+const std::string InMemoryStorageBackendFixture::m_indexFileName("buckets");
+const std::string InMemoryStorageBackendFixture::m_backupFileNameSuffix("~");
+const std::string InMemoryStorageBackendFixture::m_fakeDbPath("/fake/database/path");
 
-TEST_F(InMemeoryStorageBackendFixture, defaultPolicyIsDeny) {
+TEST_F(InMemoryStorageBackendFixture, defaultPolicyIsDeny) {
     using ::testing::ReturnRef;
 
     FakeInMemoryStorageBackend backend(m_fakeDbPath);
@@ -62,7 +62,7 @@ TEST_F(InMemeoryStorageBackendFixture, defaultPolicyIsDeny) {
 }
 
 // TODO: Refactorize this test to be shorter and clearer
-TEST_F(InMemeoryStorageBackendFixture, deleteLinking) {
+TEST_F(InMemoryStorageBackendFixture, deleteLinking) {
     using ::testing::ReturnRef;
     using ::testing::IsEmpty;
     using ::testing::UnorderedElementsAre;
@@ -117,7 +117,7 @@ TEST_F(InMemeoryStorageBackendFixture, deleteLinking) {
     ASSERT_THAT(m_buckets.at(testBucket3), IsEmpty());
 }
 
-TEST_F(InMemeoryStorageBackendFixture, insertPolicy) {
+TEST_F(InMemoryStorageBackendFixture, insertPolicy) {
     using ::testing::ReturnRef;
     using ::testing::UnorderedElementsAre;
     using PredefinedPolicyType::ALLOW;
@@ -135,7 +135,7 @@ TEST_F(InMemeoryStorageBackendFixture, insertPolicy) {
     ASSERT_THAT(m_buckets.at(bucketId), UnorderedElementsAre(policyToAdd));
 }
 
-TEST_F(InMemeoryStorageBackendFixture, insertPolicyToNonexistentBucket) {
+TEST_F(InMemoryStorageBackendFixture, insertPolicyToNonexistentBucket) {
     using ::testing::ReturnRef;
 
     FakeInMemoryStorageBackend backend(m_fakeDbPath);
@@ -145,7 +145,7 @@ TEST_F(InMemeoryStorageBackendFixture, insertPolicyToNonexistentBucket) {
     EXPECT_THROW(backend.insertPolicy("non-existent", nullptr), BucketNotExistsException);
 }
 
-TEST_F(InMemeoryStorageBackendFixture, deletePolicy) {
+TEST_F(InMemoryStorageBackendFixture, deletePolicy) {
     using ::testing::ReturnRef;
     using ::testing::IsEmpty;
     using ::testing::UnorderedElementsAre;
@@ -181,7 +181,7 @@ TEST_F(InMemeoryStorageBackendFixture, deletePolicy) {
     EXPECT_THAT(m_buckets.at(bucketId), UnorderedElementsAreArray(otherPolicies));
 }
 
-TEST_F(InMemeoryStorageBackendFixture, deletePolicyFromNonexistentBucket) {
+TEST_F(InMemoryStorageBackendFixture, deletePolicyFromNonexistentBucket) {
     using ::testing::ReturnRef;
     using ::testing::IsEmpty;
     using ::testing::UnorderedElementsAre;
@@ -195,7 +195,7 @@ TEST_F(InMemeoryStorageBackendFixture, deletePolicyFromNonexistentBucket) {
 }
 
 // Database dir is empty
-TEST_F(InMemeoryStorageBackendFixture, load_no_db) {
+TEST_F(InMemoryStorageBackendFixture, load_no_db) {
     using ::testing::ReturnRef;
     auto testDbPath = std::string(CYNARA_TESTS_DIR) + "/empty_db/";
     FakeInMemoryStorageBackend backend(testDbPath);
@@ -205,7 +205,7 @@ TEST_F(InMemeoryStorageBackendFixture, load_no_db) {
 }
 
 // Database dir contains index with default bucket, but no file for this bucket
-TEST_F(InMemeoryStorageBackendFixture, load_no_default) {
+TEST_F(InMemoryStorageBackendFixture, load_no_default) {
     using ::testing::ReturnRef;
     auto testDbPath = std::string(CYNARA_TESTS_DIR) + "/db2/";
     FakeInMemoryStorageBackend backend(testDbPath);
@@ -215,7 +215,7 @@ TEST_F(InMemeoryStorageBackendFixture, load_no_default) {
 }
 
 // Database contains index with default bucket and an empty bucket file
-TEST_F(InMemeoryStorageBackendFixture, load_default_only) {
+TEST_F(InMemoryStorageBackendFixture, load_default_only) {
     using ::testing::ReturnRef;
     using ::testing::Return;
     auto testDbPath = std::string(CYNARA_TESTS_DIR) + "/db3/";
@@ -228,7 +228,7 @@ TEST_F(InMemeoryStorageBackendFixture, load_default_only) {
 
 // Database contains index with default bucket and an additional bucket
 // There are files for both buckets present
-TEST_F(InMemeoryStorageBackendFixture, load_2_buckets) {
+TEST_F(InMemoryStorageBackendFixture, load_2_buckets) {
     using ::testing::ReturnRef;
     using ::testing::Return;
     using ::testing::IsEmpty;
@@ -253,7 +253,7 @@ TEST_F(InMemeoryStorageBackendFixture, load_2_buckets) {
 }
 
 // Database contains index with 2 buckets; 1st bucket is valid, but second is corrupted
-TEST_F(InMemeoryStorageBackendFixture, second_bucket_corrupted) {
+TEST_F(InMemoryStorageBackendFixture, second_bucket_corrupted) {
     using ::testing::ReturnRef;
     auto testDbPath = std::string(CYNARA_TESTS_DIR) + "/db5/";
     FakeInMemoryStorageBackend backend(testDbPath);
@@ -269,7 +269,7 @@ TEST_F(InMemeoryStorageBackendFixture, second_bucket_corrupted) {
  * - Execution of load() should use backup files (present, with different contents than primaries)
  * - Loaded database is checked - backup files were empty, so should recently loaded policies
  */
-TEST_F(InMemeoryStorageBackendFixture, load_from_backup) {
+TEST_F(InMemoryStorageBackendFixture, load_from_backup) {
     using ::testing::ReturnRef;
     using ::testing::Return;
     using ::testing::IsEmpty;
@@ -304,7 +304,7 @@ TEST_F(InMemeoryStorageBackendFixture, load_from_backup) {
  *     - try erase policies from "non-existing-bucket"
  *     - expect BucketNotExistsException is thrown
  */
-TEST_F(InMemeoryStorageBackendFixture, erasePoliciesEmptyBase) {
+TEST_F(InMemoryStorageBackendFixture, erasePoliciesEmptyBase) {
     using ::testing::ReturnRef;
 
     FakeInMemoryStorageBackend backend(m_fakeDbPath);
@@ -331,7 +331,7 @@ TEST_F(InMemeoryStorageBackendFixture, erasePoliciesEmptyBase) {
  *     - erase policies from "test-bucket"
  *     - check if received results match expected
  */
-TEST_F(InMemeoryStorageBackendFixture, erasePoliciesSingleBucket) {
+TEST_F(InMemoryStorageBackendFixture, erasePoliciesSingleBucket) {
     using ::testing::ReturnRef;
     using ::testing::UnorderedElementsAreArray;
 
@@ -365,7 +365,7 @@ TEST_F(InMemeoryStorageBackendFixture, erasePoliciesSingleBucket) {
  *     - check if received results match expected in case of "test-bucket"
  *     - check if policies in "test-bucket2" remain unaffected
  */
-TEST_F(InMemeoryStorageBackendFixture, erasePoliciesRecursiveNotLinkedBuckets) {
+TEST_F(InMemoryStorageBackendFixture, erasePoliciesRecursiveNotLinkedBuckets) {
     using ::testing::ReturnRef;
     using ::testing::UnorderedElementsAreArray;
 
@@ -406,7 +406,7 @@ TEST_F(InMemeoryStorageBackendFixture, erasePoliciesRecursiveNotLinkedBuckets) {
  *     - check if received results match expected in case of "test-bucket"
  *     - check if received results match expected in case of "test-bucket2"
  */
-TEST_F(InMemeoryStorageBackendFixture, erasePoliciesRecursiveLinkedBuckets) {
+TEST_F(InMemoryStorageBackendFixture, erasePoliciesRecursiveLinkedBuckets) {
     using ::testing::ReturnRef;
     using ::testing::UnorderedElementsAreArray;
 
@@ -456,7 +456,7 @@ TEST_F(InMemeoryStorageBackendFixture, erasePoliciesRecursiveLinkedBuckets) {
  *     - check if policies in "test-bucket" remain unaffected
  *     - check if received results match expected in case of "test-bucket2"
  */
-TEST_F(InMemeoryStorageBackendFixture, erasePoliciesRecursiveLinkedBucketsNoBackwardPropagation) {
+TEST_F(InMemoryStorageBackendFixture, erasePoliciesRecursiveLinkedBucketsNoBackwardPropagation) {
     using ::testing::ReturnRef;
     using ::testing::UnorderedElementsAreArray;
 
@@ -505,7 +505,7 @@ TEST_F(InMemeoryStorageBackendFixture, erasePoliciesRecursiveLinkedBucketsNoBack
  *     - check if received results match expected in case of "test-bucket"
  *     - check if policies in "test-bucket2" remain unaffected
  */
-TEST_F(InMemeoryStorageBackendFixture, erasePoliciesNonRecursiveLinkedBuckets) {
+TEST_F(InMemoryStorageBackendFixture, erasePoliciesNonRecursiveLinkedBuckets) {
     using ::testing::ReturnRef;
     using ::testing::UnorderedElementsAreArray;
 

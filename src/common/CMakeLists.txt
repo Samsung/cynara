@@ -105,23 +105,23 @@ TARGET_LINK_LIBRARIES(${TARGET_CYNARA_COMMON}
     dl
     )
 
-INSTALL(TARGETS ${TARGET_CYNARA_COMMON} DESTINATION ${LIB_INSTALL_DIR})
+INSTALL(TARGETS ${TARGET_CYNARA_COMMON} DESTINATION ${LIB_DIR})
 INSTALL(FILES
     ${COMMON_PATH}/attributes/attributes.h
-    DESTINATION ${INCLUDE_INSTALL_DIR}/cynara/attributes
+    DESTINATION ${INCLUDE_DIR}/cynara/attributes
     )
 INSTALL(FILES
     ${COMMON_PATH}/log/log.h
-    DESTINATION ${INCLUDE_INSTALL_DIR}/cynara/log
+    DESTINATION ${INCLUDE_DIR}/cynara/log
     )
 INSTALL(FILES
     ${COMMON_PATH}/types/ClientSession.h
     ${COMMON_PATH}/types/PolicyDescription.h
     ${COMMON_PATH}/types/PolicyResult.h
     ${COMMON_PATH}/types/PolicyType.h
-    DESTINATION ${INCLUDE_INSTALL_DIR}/cynara/types
+    DESTINATION ${INCLUDE_DIR}/cynara/types
     )
 INSTALL(FILES
     ${COMMON_PATH}/plugin/ExternalPluginInterface.h
-    DESTINATION ${INCLUDE_INSTALL_DIR}/cynara/plugin
+    DESTINATION ${INCLUDE_DIR}/cynara/plugin
     )

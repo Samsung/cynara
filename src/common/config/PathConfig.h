@@ -32,6 +32,8 @@ namespace PathConfig {
 extern const std::string statePath;
 extern const std::string libraryPath;
 extern const std::string clientPath;
+extern const std::string confPath;
+extern const std::string testsPath;
 
 namespace SocketPath {
 extern const std::string client;

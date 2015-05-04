@@ -37,11 +37,6 @@ BuildRequires: pkgconfig(libsmack)
 %global user_name %{name}
 %global group_name %{name}
 
-%global state_path %{_localstatedir}/%{name}/
-%global lib_path %{_libdir}/%{name}/
-%global tests_dir %{_datarootdir}/%{name}/tests/
-%global conf_path %{_sysconfdir}/%{name}/
-
 %if !%{defined build_type}
 %define build_type RELEASE
 %endif
@@ -204,17 +199,21 @@ export CXXFLAGS="$CXXFLAGS -DTIZEN_DEBUG_ENABLE"
 export CXXFLAGS="$CXXFLAGS -Wp,-U_FORTIFY_SOURCE"
 %endif
 
-export CXXFLAGS="$CXXFLAGS -DCYNARA_STATE_PATH=\\\"%{state_path}\\\" \
-                           -DCYNARA_LIB_PATH=\\\"%{lib_path}\\\" \
-                           -DCYNARA_TESTS_DIR=\\\"%{tests_dir}\\\" \
-                           -DCYNARA_CONFIGURATION_DIR=\\\"%{conf_path}\\\""
-
 export LDFLAGS+="-Wl,--rpath=%{_libdir}"
 
 %cmake . \
         -DBUILD_TESTS=ON \
         -DCMAKE_BUILD_TYPE=%{?build_type} \
         -DCMAKE_VERBOSE_MAKEFILE=ON \
+        -DLIB_DIR:PATH=%{_libdir} \
+        -DBIN_DIR:PATH=%{_bindir} \
+        -DSBIN_DIR:PATH=%{_sbindir} \
+        -DSYS_CONFIG_DIR:PATH=%{_sysconfdir} \
+        -DINCLUDE_DIR:PATH=%{_includedir} \
+        -DLOCAL_STATE_DIR:PATH=%{_localstatedir} \
+        -DDATA_ROOT_DIR:PATH=%{_datadir} \
+        -DSYSTEMD_UNIT_DIR:PATH=%{_unitdir} \
+        -DSOCKET_DIR:PATH=/run/%{name} \
         -DDB_FILES_SMACK_LABEL="System"
 make %{?jobs:-j%jobs}
 
@@ -222,19 +221,19 @@ make %{?jobs:-j%jobs}
 rm -rf %{buildroot}
 %make_install
 
-mkdir -p %{buildroot}/%{conf_path}
-cp ./conf/creds.conf %{buildroot}/%{conf_path}/creds.conf
+mkdir -p %{buildroot}/%{_sysconfdir}/%{name}
+cp ./conf/creds.conf %{buildroot}/%{_sysconfdir}/%{name}/creds.conf
 
-mkdir -p %{buildroot}/usr/lib/systemd/system/sockets.target.wants
-mkdir -p %{buildroot}/%{state_path}
-mkdir -p %{buildroot}/%{tests_dir}/empty_db
-mkdir -p %{buildroot}/%{lib_path}/plugin/client
-mkdir -p %{buildroot}/%{lib_path}/plugin/service
+mkdir -p %{buildroot}%{_unitdir}/sockets.target.wants
+mkdir -p %{buildroot}/%{_localstatedir}/%{name}
+mkdir -p %{buildroot}/%{_datarootdir}/%{name}/tests/empty_db
+mkdir -p %{buildroot}/%{_libdir}/%{name}/plugin/client
+mkdir -p %{buildroot}/%{_libdir}/%{name}/plugin/service
 
-cp -a db* %{buildroot}/%{tests_dir}
-ln -s ../cynara.socket %{buildroot}/usr/lib/systemd/system/sockets.target.wants/cynara.socket
-ln -s ../cynara-admin.socket %{buildroot}/usr/lib/systemd/system/sockets.target.wants/cynara-admin.socket
-ln -s ../cynara-agent.socket %{buildroot}/usr/lib/systemd/system/sockets.target.wants/cynara-agent.socket
+cp -a db* %{buildroot}/%{_datarootdir}/%{name}/tests/
+ln -s ../cynara.socket %{buildroot}%{_unitdir}/sockets.target.wants/cynara.socket
+ln -s ../cynara-admin.socket %{buildroot}%{_unitdir}/sockets.target.wants/cynara-admin.socket
+ln -s ../cynara-agent.socket %{buildroot}%{_unitdir}/sockets.target.wants/cynara-agent.socket
 
 %pre
 id -g %{group_name} > /dev/null 2>&1
@@ -266,7 +265,7 @@ if [ $1 = 1 ]; then
     systemctl enable %{name}.service
 fi
 
-chsmack -a System %{state_path}
+chsmack -a System %{_localstatedir}/%{name}
 
 systemctl restart %{name}.service
 
@@ -323,17 +322,17 @@ fi
 %files
 %manifest cynara.manifest
 %license LICENSE
-%attr(755,root,root) /usr/bin/cynara
-%attr(-,root,root) /usr/lib/systemd/system/cynara.service
-%attr(-,root,root) /usr/lib/systemd/system/cynara.target
-%attr(-,root,root) /usr/lib/systemd/system/sockets.target.wants/cynara.socket
-%attr(-,root,root) /usr/lib/systemd/system/cynara.socket
-%attr(-,root,root) /usr/lib/systemd/system/sockets.target.wants/cynara-admin.socket
-%attr(-,root,root) /usr/lib/systemd/system/cynara-admin.socket
-%attr(-,root,root) /usr/lib/systemd/system/sockets.target.wants/cynara-agent.socket
-%attr(-,root,root) /usr/lib/systemd/system/cynara-agent.socket
-%dir %attr(700,cynara,cynara) %{state_path}
-%dir %attr(755,cynara,cynara) %{lib_path}/plugin/service
+%attr(755,root,root) %{_bindir}/cynara
+%attr(-,root,root) %{_unitdir}/cynara.service
+%attr(-,root,root) %{_unitdir}/cynara.target
+%attr(-,root,root) %{_unitdir}/sockets.target.wants/cynara.socket
+%attr(-,root,root) %{_unitdir}/cynara.socket
+%attr(-,root,root) %{_unitdir}/sockets.target.wants/cynara-admin.socket
+%attr(-,root,root) %{_unitdir}/cynara-admin.socket
+%attr(-,root,root) %{_unitdir}/sockets.target.wants/cynara-agent.socket
+%attr(-,root,root) %{_unitdir}/cynara-agent.socket
+%dir %attr(700,cynara,cynara) %{_localstatedir}/%{name}
+%dir %attr(755,cynara,cynara) %{_libdir}/%{name}/plugin/service
 
 %files -n cynara-devel
 %{_includedir}/cynara/*.h
@@ -346,10 +345,10 @@ fi
 
 %files -n cynara-tests
 %manifest cynara-tests.manifest
-%attr(755,root,root) /usr/bin/cynara-tests
-%attr(755,root,root) /usr/bin/cynara-db-migration-tests
-%attr(755,root,root) %{tests_dir}/db*/*
-%dir %attr(755,root,root) %{tests_dir}/empty_db
+%attr(755,root,root) %{_bindir}/cynara-tests
+%attr(755,root,root) %{_bindir}/cynara-db-migration-tests
+%attr(755,root,root) %{_datarootdir}/%{name}/tests/db*/*
+%dir %attr(755,root,root) %{_datarootdir}/%{name}/tests/empty_db
 
 %files -n libcynara-client
 %manifest libcynara-client.manifest
@@ -357,7 +356,7 @@ fi
 %{_libdir}/libcynara-client.so.*
 %{_libdir}/libcynara-client-async.so.*
 %{_libdir}/libcynara-client-commons.so.*
-%dir %attr(755,cynara,cynara) %{lib_path}/plugin/client
+%dir %attr(755,cynara,cynara) %{_libdir}/%{name}/plugin/client
 
 %files -n libcynara-admin
 %manifest libcynara-admin.manifest
@@ -379,7 +378,7 @@ fi
 %manifest libcynara-creds-commons.manifest
 %license LICENSE
 %{_libdir}/libcynara-creds-commons.so.*
-%{conf_path}creds.conf
+%{_sysconfdir}/%{name}/creds.conf
 
 %files -n libcynara-creds-dbus
 %manifest libcynara-creds-dbus.manifest

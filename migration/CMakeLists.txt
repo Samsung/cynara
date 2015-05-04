@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+# Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -17,8 +17,10 @@
 # @brief       CMake for migration tool
 #
 
-INSTALL(FILES
-    ${CMAKE_SOURCE_DIR}/migration/cynara-db-migration
+CONFIGURE_FILE(cynara-db-migration.in cynara-db-migration @ONLY)
+
+INSTALL(PROGRAMS
+    ${CMAKE_BINARY_DIR}/migration/cynara-db-migration
     DESTINATION
-    ${SBIN_INSTALL_DIR}
+    ${SBIN_DIR}
     )

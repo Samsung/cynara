@@ -21,7 +21,7 @@
 
 ##### Constants (these must not be modified by shell)
 
-STATE_PATH='/var/cynara'
+STATE_PATH='@LOCAL_STATE_DIR@/@PROJECT_NAME@'
 DB_DIR='db'
 INDEX_NAME='buckets'
 DEFAULT_BUCKET_NAME='_'
@@ -143,7 +143,7 @@ generate_checksums() {
     # Actual checksums generation
     for FILE in $(find ${STATE_PATH}/${DB_DIR}/${WILDCARD} -type f ! -name "${CHECKSUM_NAME}*" \
                                                                    ! -name "${GUARD_NAME}"); do
-        CHECKSUM="$(/usr/sbin/cynara-db-chsgen ${FILE})"
+        CHECKSUM="$(@SBIN_DIR@/cynara-db-chsgen ${FILE})"
         if [ 0 -eq $? ] ; then
             echo "${CHECKSUM}" >> ${CHECKSUMS}
         else
@@ -250,7 +250,7 @@ Commands:
 Options:
   -f from   Set old version of database (mandatory for upgrade and uninstall)
   -t to     Set new version of database (mandatory for upgrade and install)
-  -p path   Set path for storing database (default: /var/cynara)
+  -p path   Set path for storing database (default: @LOCAL_STATE_DIR@/@PROJECT_NAME@)
   -u user   Set database owner (default: cynara)
   -g group  Set database group (default: cynara)
   -l label  Set SMACK label for database (default: System)

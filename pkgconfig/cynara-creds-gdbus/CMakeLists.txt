@@ -23,5 +23,5 @@ CONFIGURE_FILE(cynara-creds-gdbus.pc.in cynara-creds-gdbus.pc @ONLY)
 INSTALL(FILES
     ${CMAKE_BINARY_DIR}/pkgconfig/cynara-creds-gdbus/cynara-creds-gdbus.pc
     DESTINATION
-    ${LIB_INSTALL_DIR}/pkgconfig
+    ${LIB_DIR}/pkgconfig
     )

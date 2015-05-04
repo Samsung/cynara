@@ -28,22 +28,44 @@ namespace PathConfig {
 
 //main paths
 const std::string statePath(
-#ifdef CYNARA_STATE_PATH
-        CYNARA_STATE_PATH
+#ifdef LOCAL_STATE_DIR
+        LOCAL_STATE_DIR "/cynara/"
 #else
-        "/var/lib/cynara/"
+        "/var/cynara/"
 #endif
       );
 
 const std::string libraryPath(
-#ifdef CYNARA_LIB_PATH
-        CYNARA_LIB_PATH
+#ifdef LIB_DIR
+        LIB_DIR "/cynara/"
 #else
         "/usr/lib/cynara/"
 #endif
       );
 
-const std::string clientPath("/run/cynara/");
+const std::string clientPath(
+#ifdef SOCKET_DIR
+        SOCKET_DIR "/"
+#else
+        "/tmp/"
+#endif
+      );
+
+const std::string confPath(
+#ifdef SYS_CONFIG_DIR
+        SYS_CONFIG_DIR "/cynara/"
+#else
+        "/etc/cynara/"
+#endif
+      );
+
+const std::string testsPath(
+#ifdef DATA_ROOT_DIR
+        DATA_ROOT_DIR "/cynara/tests/"
+#else
+        "/usr/share/cynara/tests/"
+#endif
+      );
 
 namespace SocketPath {
 const std::string client(clientPath + "cynara.socket");

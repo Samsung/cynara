@@ -63,7 +63,7 @@ extern "C" {
  *
  * \par Method of function operation:
  * When this function is called for the first time it reads and returns the value of client_default
- * parameter from /etc/cynara/creds.conf file (the path is determined by CYNARA_CONFIGURATION_DIR).
+ * parameter from /etc/cynara/creds.conf file.
  * Returned value is cached so subsequent calls will not consult file again but use cached value.
  * This also means that after the initial call any changes in the file will be ignored for the
  * remaining lifetime of the process.
@@ -103,7 +103,7 @@ int cynara_creds_get_default_client_method(enum cynara_client_creds *method);
  *
  * \par Method of function operation:
  * When this function is called for the first time it reads and returns the value of user_default
- * parameter from /etc/cynara/creds.conf file (the path is determined by CYNARA_CONFIGURATION_DIR).
+ * parameter from /etc/cynara/creds.conf file.
  * Returned value is cached so subsequent calls will not consult file again but use cached value.
  * This also means that after the initial call any changes in the file will be ignored for the
  * remaining lifetime of the process.

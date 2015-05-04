@@ -34,6 +34,7 @@
 #include "types/PolicyKey.h"
 #include "types/PolicyResult.h"
 #include "types/PolicyType.h"
+#include "config/PathConfig.h"
 
 #include "../../helpers.h"
 #include "fakeinmemorystoragebackend.h"
@@ -197,7 +198,7 @@ TEST_F(InMemoryStorageBackendFixture, deletePolicyFromNonexistentBucket) {
 // Database dir is empty
 TEST_F(InMemoryStorageBackendFixture, load_no_db) {
     using ::testing::ReturnRef;
-    auto testDbPath = std::string(CYNARA_TESTS_DIR) + "/empty_db/";
+    auto testDbPath = Cynara::PathConfig::testsPath + "/empty_db/";
     FakeInMemoryStorageBackend backend(testDbPath);
     EXPECT_CALL(backend, buckets()).WillRepeatedly(ReturnRef(m_buckets));
     EXPECT_THROW(backend.load(), DatabaseCorruptedException);
@@ -207,7 +208,7 @@ TEST_F(InMemoryStorageBackendFixture, load_no_db) {
 // Database dir contains index with default bucket, but no file for this bucket
 TEST_F(InMemoryStorageBackendFixture, load_no_default) {
     using ::testing::ReturnRef;
-    auto testDbPath = std::string(CYNARA_TESTS_DIR) + "/db2/";
+    auto testDbPath = Cynara::PathConfig::testsPath + "/db2/";
     FakeInMemoryStorageBackend backend(testDbPath);
     EXPECT_CALL(backend, buckets()).WillRepeatedly(ReturnRef(m_buckets));
     EXPECT_THROW(backend.load(), DatabaseCorruptedException);
@@ -218,7 +219,7 @@ TEST_F(InMemoryStorageBackendFixture, load_no_default) {
 TEST_F(InMemoryStorageBackendFixture, load_default_only) {
     using ::testing::ReturnRef;
     using ::testing::Return;
-    auto testDbPath = std::string(CYNARA_TESTS_DIR) + "/db3/";
+    auto testDbPath = Cynara::PathConfig::testsPath + "/db3/";
     FakeInMemoryStorageBackend backend(testDbPath);
     EXPECT_CALL(backend, buckets()).WillRepeatedly(ReturnRef(m_buckets));
     EXPECT_CALL(backend, postLoadCleanup(false)).WillOnce(Return());
@@ -233,7 +234,7 @@ TEST_F(InMemoryStorageBackendFixture, load_2_buckets) {
     using ::testing::Return;
     using ::testing::IsEmpty;
 
-    auto testDbPath = std::string(CYNARA_TESTS_DIR) + "/db4/";
+    auto testDbPath = Cynara::PathConfig::testsPath + "/db4/";
 
     FakeInMemoryStorageBackend backend(testDbPath);
     EXPECT_CALL(backend, buckets()).WillRepeatedly(ReturnRef(m_buckets));
@@ -255,7 +256,7 @@ TEST_F(InMemoryStorageBackendFixture, load_2_buckets) {
 // Database contains index with 2 buckets; 1st bucket is valid, but second is corrupted
 TEST_F(InMemoryStorageBackendFixture, second_bucket_corrupted) {
     using ::testing::ReturnRef;
-    auto testDbPath = std::string(CYNARA_TESTS_DIR) + "/db5/";
+    auto testDbPath = Cynara::PathConfig::testsPath + "/db5/";
     FakeInMemoryStorageBackend backend(testDbPath);
     EXPECT_CALL(backend, buckets()).WillRepeatedly(ReturnRef(m_buckets));
     EXPECT_THROW(backend.load(), DatabaseCorruptedException);
@@ -275,7 +276,7 @@ TEST_F(InMemoryStorageBackendFixture, load_from_backup) {
     using ::testing::IsEmpty;
     using ::testing::InSequence;
 
-    auto testDbPath = std::string(CYNARA_TESTS_DIR) + "/db6/";
+    auto testDbPath = Cynara::PathConfig::testsPath + "/db6/";
     FakeInMemoryStorageBackend backend(testDbPath);
 
     {

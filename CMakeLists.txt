@@ -40,27 +40,62 @@ IF (SYSTEMD_DEP_FOUND)
     SET(BUILD_WITH_SYSTEMD ON)
 ENDIF (SYSTEMD_DEP_FOUND)
 
-#############################  install dirs  ##################################
+########################  directory configuration  ############################
 
-SET(LIB_INSTALL_DIR
+SET(LIB_DIR
     "${CMAKE_INSTALL_PREFIX}/lib"
     CACHE PATH
-    "Library installation directory")
+    "Object code libraries directory")
 
-SET(BIN_INSTALL_DIR
+SET(BIN_DIR
     "${CMAKE_INSTALL_PREFIX}/bin"
     CACHE PATH
-    "Binary installation directory")
+    "User executables directory")
 
-SET(SBIN_INSTALL_DIR
+SET(SBIN_DIR
     "${CMAKE_INSTALL_PREFIX}/sbin"
     CACHE PATH
-    "Administrative binary installation directory")
+    "System admin executables directory")
 
-SET(INCLUDE_INSTALL_DIR
+SET(SYS_CONFIG_DIR
+    "${CMAKE_INSTALL_PREFIX}/etc"
+    CACHE PATH
+    "Read-only single-machine data directory")
+
+SET(INCLUDE_DIR
     "${CMAKE_INSTALL_PREFIX}/include"
     CACHE PATH
-    "Include installation directory")
+    "Header files directory")
+
+SET(LOCAL_STATE_DIR
+    "${CMAKE_INSTALL_PREFIX}/var"
+    CACHE PATH
+    "Modifiable single-machine data directory")
+
+SET(DATA_ROOT_DIR
+    "${CMAKE_INSTALL_PREFIX}/share"
+    CACHE PATH
+    "Read-only architecture-independent data root directory")
+
+SET(SYSTEMD_UNIT_DIR
+    "${CMAKE_INSTALL_PREFIX}/lib/systemd/system"
+    CACHE PATH
+    "Systemd system unit file directory")
+
+SET(SOCKET_DIR
+    "${CMAKE_INSTALL_PREFIX}/tmp"
+    CACHE PATH
+    "Running system information directory")
+
+ADD_DEFINITIONS("-DLIB_DIR=\"${LIB_DIR}\"")
+ADD_DEFINITIONS("-DBIN_DIR=\"${BIN_DIR}\"")
+ADD_DEFINITIONS("-DSBIN_DIR=\"${SBIN_DIR}\"")
+ADD_DEFINITIONS("-DSYS_CONFIG_DIR=\"${SYS_CONFIG_DIR}\"")
+ADD_DEFINITIONS("-DINCLUDE_DIR=\"${INCLUDE_DIR}\"")
+ADD_DEFINITIONS("-DLOCAL_STATE_DIR=\"${LOCAL_STATE_DIR}\"")
+ADD_DEFINITIONS("-DDATA_ROOT_DIR=\"${DATA_ROOT_DIR}\"")
+ADD_DEFINITIONS("-DSYSTEMD_UNIT_DIR=\"${SYSTEMD_UNIT_DIR}\"")
+ADD_DEFINITIONS("-DRUN_DIR=\"${RUN_DIR}\"")
 
 ############################# compiler flags ##################################
 

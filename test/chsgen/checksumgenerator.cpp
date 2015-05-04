@@ -78,7 +78,7 @@ TEST_F(ChsgenCommandlineTest, recordGeneration) {
 
     for (const std::string &file : { "_", "buckets" }) {
         clearOutput();
-        prepare_argv({ execName, std::string(CYNARA_TESTS_DIR) + "/db3/" + file });
+        prepare_argv({ execName, Cynara::PathConfig::testsPath + "/db3/" + file });
         SCOPED_TRACE(file);
 
         Cynara::ChecksumGenerator chsgen(this->argc(), this->argv());
@@ -107,7 +107,7 @@ TEST_F(ChsgenCommandlineTest, suffixErasing) {
     for (const std::string &file : { "_", "_additional", "buckets" }) {
         clearOutput();
         prepare_argv({ execName,
-                       std::string(CYNARA_TESTS_DIR) + "/db6/" + file + backupFilenameSuffix });
+                       Cynara::PathConfig::testsPath + "/db6/" + file + backupFilenameSuffix });
         SCOPED_TRACE(file);
 
         Cynara::ChecksumGenerator chsgen(this->argc(), this->argv());

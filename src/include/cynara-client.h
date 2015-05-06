@@ -41,12 +41,12 @@ typedef struct cynara_configuration cynara_configuration;
  * API calls.
  *
  * \par Purpose:
- * For configuration parameter to be used in cynara initialization function, this API must be
+ * For configuration parameter to be used in cynara_initialize() function, this API must be
  * called before any other cynara configuration API function.
  * It will create cynara_configuration structure, an optional parameter of cynara initialization.
  *
  * \par Typical use case:
- * Once before setting parameters of cynara async configuration and passing to
+ * Once before setting parameters of cynara configuration and passing to
  * cynara_initialize().
  *
  * \par Method of function operation:
@@ -106,8 +106,8 @@ void cynara_configuration_destroy(cynara_configuration *p_conf);
  * This API is used to change default number of cached responses returned from cynara.
  *
  * \par Typical use case:
- * Once before setting parameters of cynara async configuration and passing to
- * cynara_initialize().
+ * Once after cynara_configuration is created with cynara_configuration_create()
+ * and before passing configuration to cynara_initialize().
  *
  * \par Method of function operation:
  * This API initializes cache with given capacity.
@@ -143,7 +143,7 @@ int cynara_configuration_set_cache_size(cynara_configuration *p_conf, size_t cac
  * Once before a service can call cynara_check.
  *
  * \par Method of function operation:
- * This API initializes inner library structures [TODO describe more details] and in case of success
+ * This API initializes inner library structures and in case of success
  * creates and returns cynara structure.
  *
  * \par Sync (or) Async:
@@ -154,7 +154,7 @@ int cynara_configuration_set_cache_size(cynara_configuration *p_conf, size_t cac
  * application from different threads, they must be put into mutex protected critical section.
  *
  * \par Important notes:
- * Structure cynara created by cynara_initialize call should be released with cynara_finish.
+ * Structure cynara created by cynara_initialize() call should be released with cynara_finish().
  *
  * \param[out] pp_cynara Place holder for created cynara structure.
  * \param[in] p_conf Configuration for cynara-client library. NULL for default parameters.
@@ -166,17 +166,16 @@ int cynara_initialize(cynara **pp_cynara, const cynara_configuration *p_conf);
 
 /**
  * \par Description:
- * Release cynara-client library and destroy structure created with cynara_initialize.
+ * Release cynara-client library and destroy structure created with cynara_initialize().
  *
  * \par Purpose:
  * This API should be used to clean up after usage of cynara-client library.
  *
  * \par Typical use case:
- * Once after last call to cynara_check.
+ * Once after last call to cynara_check().
  *
  * \par Method of function operation:
- * This API initializes releases inner library structures [TODO describe more details]
- * and destroys cynara structure.
+ * This API releases inner library structures and destroys cynara structure.
  *
  * \par Sync (or) Async:
  * This is a Synchronous API.
@@ -186,7 +185,7 @@ int cynara_initialize(cynara **pp_cynara, const cynara_configuration *p_conf);
  * application from different threads, they must be put into mutex protected critical section.
  *
  * \par Important notes:
- * No other call to libcynara-client should be made after call to cynara_finish.
+ * No other call to libcynara-client should be made after call to cynara_finish().
  *
  * \param[in] p_cynara Cynara structure.
  *
@@ -223,7 +222,7 @@ int cynara_finish(cynara *p_cynara);
  *
  * \par Important notes:
  * An external application may be launched to allow user interaction in granting or denying access.
- * Call to cynara_check needs cynara structure to be created first with call to cynara_initialize.
+ * Call to cynara_check needs cynara structure to be created first with call to cynara_initialize().
  *
  * \param[in] p_cynara Cynara structure.
  * \param[in] client Application or process identifier.
@@ -270,8 +269,8 @@ int cynara_check(cynara *p_cynara, const char *client, const char *client_sessio
  * If the answer cannot be resolved in one of CYNARA_API_PERMISSION_DENIED or
  * CYNARA_API_PERMISSION_ALLOWED without communicating with external application the API will return
  * CYNARA_API_ACCESS_NOT_RESOLVED.
- * Call to cynara_simple_check needs cynara structure to be created first with call to
- * cynara_initialize.
+ * Call to cynara_simple_check() needs cynara structure to be created first with call to
+ * cynara_initialize().
  *
  * \param[in] p_cynara Cynara structure.
  * \param[in] client Application or process identifier.

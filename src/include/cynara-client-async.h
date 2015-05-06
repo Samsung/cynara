@@ -86,15 +86,15 @@ typedef enum {
  *    (CYNARA_CALL_CAUSE_FINISH)
  * 4) when connection to cynara service was broken and cannot be established again
  *    - probably cynara is unoperational (CYNARA_CALL_CAUSE_SERVICE_NOT_AVAILABLE)
- * Api functions called during this callback with CYNARA_CALL_CAUSE_SERVICE_NOT_AVAILABLE
+ * API functions called during this callback with CYNARA_CALL_CAUSE_SERVICE_NOT_AVAILABLE
  * or CYNARA_CALL_CAUSE_FINISH cause will return CYNARA_API_OPERATION_NOT_ALLOWED.
  * cynara_async_finish() will be ignored if called from within this callback.
  *
  * \param[in] check_id Number identifying check request. Number is generated in
- *            cynara_async_create_request() or cynara_async_create_simple_request and returned to
- *            user. It can be used to match response with sent request.
+ *            cynara_async_create_request() or cynara_async_create_simple_request()
+ *            and returned to user. It can be used to match response with sent request.
  *            Number is valid since cynara_async_create_request() call or
- *            cynara_async_create_simple_request call till callback call.
+ *            cynara_async_create_simple_request() call till callback call.
  *            After that the number can be reused by cynara to run new request.
  * \param[in] cause Cause of triggering this callback.
  * \param[in] response Response for created request. Should be ignored if cause is not
@@ -116,7 +116,7 @@ typedef void (*cynara_response_callback) (cynara_check_id check_id, cynara_async
  * Status change is triggered when check_request or cancel needs to be send to
  * cynara service or sending data has finished and there is nothing more to send to cynara
  * service.
- * Note, that provided file descriptor is used internally by libcynara
+ * Note, that provided file descriptor is used internally by libcynara-client-async
  * so user should not use it in other way than waiting on it in event loop.
  * In particular user should not write to, read from or close this fd.
  * CYNARA_API_OPERATION_NOT_ALLOWED will be returned for every api function called in this callback.
@@ -464,9 +464,9 @@ int cynara_async_create_request(cynara_async *p_cynara, const char *client,
  * \par Method of function operation:
  * This function is very similar to cynara_async_create_request() with the difference, that in case
  * of answer not being one of CYNARA_API_PERMISSION_DENIED or CYNARA_API_PERMISSION_ALLOWED,
- * no external application will be consulted. Instead, CYNARA_API_ACCESS_NOT_RESOLVED is returned,
- * meaning, that only creating full request through cynara_async_create_request API would yield
- * eventual answer.
+ * no external application will be consulted. Instead, CYNARA_API_ACCESS_NOT_RESOLVED is returned
+ * by a callback, meaning, that only creating full request through cynara_async_create_request() API
+ * would yield eventual answer.
  * If access permission cannot be acquired without usage of external agents, callback can be
  * called with CYNARA_CALL_CAUSE_ANSWER and response value being CYNARA_API_ACCESS_NOT_RESOLVED.
  *

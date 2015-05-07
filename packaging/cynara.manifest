@@ -2,4 +2,7 @@
 	<request>
 		<domain name="_" />
 	</request>
+	<assign>
+		<filesystem path="/var/cynara/" label="System" />
+	</assign>
 </manifest>

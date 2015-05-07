@@ -188,7 +188,6 @@ cp -a %{SOURCE1011} .
 cp -a %{SOURCE1012} .
 cp -a %{SOURCE1013} .
 cp -a %{SOURCE1014} .
-cp -a test/db/db* .
 
 %build
 %if 0%{?sec_build_binary_debug_enable}
@@ -221,16 +220,7 @@ make %{?jobs:-j%jobs}
 rm -rf %{buildroot}
 %make_install
 
-mkdir -p %{buildroot}/%{_sysconfdir}/%{name}
-cp ./conf/creds.conf %{buildroot}/%{_sysconfdir}/%{name}/creds.conf
-
 mkdir -p %{buildroot}%{_unitdir}/sockets.target.wants
-mkdir -p %{buildroot}/%{_localstatedir}/%{name}
-mkdir -p %{buildroot}/%{_datarootdir}/%{name}/tests/empty_db
-mkdir -p %{buildroot}/%{_libdir}/%{name}/plugin/client
-mkdir -p %{buildroot}/%{_libdir}/%{name}/plugin/service
-
-cp -a db* %{buildroot}/%{_datarootdir}/%{name}/tests/
 ln -s ../cynara.socket %{buildroot}%{_unitdir}/sockets.target.wants/cynara.socket
 ln -s ../cynara-admin.socket %{buildroot}%{_unitdir}/sockets.target.wants/cynara-admin.socket
 ln -s ../cynara-agent.socket %{buildroot}%{_unitdir}/sockets.target.wants/cynara-agent.socket
@@ -264,8 +254,6 @@ systemctl daemon-reload
 if [ $1 = 1 ]; then
     systemctl enable %{name}.service
 fi
-
-chsmack -a System %{_localstatedir}/%{name}
 
 systemctl restart %{name}.service
 

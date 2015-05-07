@@ -91,7 +91,7 @@ struct ProtocolSerialization {
     static void serialize(IStream &stream, const std::string &str) {
         uint32_t length = htole32(static_cast<uint32_t>(str.size()));
         stream.write(sizeof(length), &length);
-        stream.write(length, str.c_str());
+        stream.write(str.size(), str.c_str());
     }
     static void serializeNoSize(IStream &stream, const std::string &str) {
         int length = str.size();

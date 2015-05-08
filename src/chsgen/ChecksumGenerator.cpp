@@ -26,12 +26,10 @@
 #include <memory>
 #include <new>
 #include <stdexcept>
+#include <string>
 #include <unistd.h>
 
 #include <cynara-error.h>
-
-#include <exceptions/FileNotFoundException.h>
-#include <exceptions/UnexpectedErrorException.h>
 
 #include "ChecksumGenerator.h"
 
@@ -53,21 +51,9 @@ int ChecksumGenerator::run(void) {
         copyFileStream();
         printRecord();
         return CYNARA_API_SUCCESS;
-    } catch (const FileNotFoundException &ex) {
-        std::cerr << ex.message() << std::endl;
-        return CYNARA_API_INVALID_COMMANDLINE_PARAM;
-    } catch (const UnexpectedErrorException &ex) {
-        std::cerr << ex.message() << std::endl;
-        return CYNARA_API_UNKNOWN_ERROR;
-    } catch (const std::ios_base::failure &ex) {
+    } catch (const std::exception &ex) {
         std::cerr << ex.what() << std::endl;
         return CYNARA_API_UNKNOWN_ERROR;
-    } catch (const std::length_error &ex) {
-        std::cerr << ex.what() << std::endl;
-        return CYNARA_API_UNKNOWN_ERROR;
-    } catch (const std::bad_alloc &ex) {
-        std::cerr << ex.what() << std::endl;
-        return CYNARA_API_OUT_OF_MEMORY;
     }
 }
 
@@ -85,7 +71,7 @@ const std::string ChecksumGenerator::generate(const std::string &data) {
             std::cerr << "'crypt' function error [" << err << "] : <" << strerror(err) << ">"
                 << std::endl;
         }
-        throw UnexpectedErrorException(err, strerror(err));
+        throw std::runtime_error(strerror(err));
     }
 };
 
@@ -93,7 +79,7 @@ void ChecksumGenerator::openFileStream(void) {
     m_inputStream.open(m_pathname);
 
     if (!m_inputStream.is_open()) {
-        throw FileNotFoundException(m_pathname);
+        throw std::runtime_error(std::string("File not found: ") + m_pathname);
     }
 }
 

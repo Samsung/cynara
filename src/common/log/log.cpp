@@ -27,6 +27,7 @@
 #include <cstring>
 #include <stdlib.h>
 
+#ifndef CYNARA_NO_LOGS
 #ifdef BUILD_TYPE_DEBUG
 int __log_level = LOG_DEBUG;
 #else
@@ -60,3 +61,9 @@ void init_log(void) {
         __log_level = strlog2intlog(env_val);
     }
 }
+
+#else
+
+void init_log(void) {}
+
+#endif //CYNARA_NO_LOGS

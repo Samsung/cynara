@@ -95,8 +95,9 @@ int Logic::simpleCheck(const std::string &client, const ClientSession &session,
     PolicyResult result;
     ret = requestSimpleResult(key, result);
     if (ret != CYNARA_API_SUCCESS) {
-        if (ret != CYNARA_API_ACCESS_NOT_RESOLVED)
+        if (ret != CYNARA_API_ACCESS_NOT_RESOLVED) {
             LOGE("Error fetching response for simpleCheck.");
+        }
         return ret;
     }
 

@@ -37,6 +37,7 @@
 #include <systemd/sd-daemon.h>
 #endif
 
+#include <attributes/attributes.h>
 #include <log/log.h>
 #include <common.h>
 #include <config/PathConfig.h>
@@ -204,7 +205,7 @@ void SocketManager::readyForAccept(int fd) {
     unsigned int clientLen = sizeof(clientAddr);
     int clientFd = accept4(fd, (struct sockaddr*) &clientAddr, &clientLen, SOCK_NONBLOCK);
     if (clientFd == -1) {
-        int err = errno;
+        UNUSED int err = errno;
         LOGW("Error in accept on socket [%d]: <%s>", fd, strerror(err));
         return;
     }
@@ -275,7 +276,7 @@ int SocketManager::createDomainSocketHelp(const std::string &path, mode_t mask) 
     int fd;
 
     if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
-        int err = errno;
+        UNUSED int err = errno;
         LOGE("Error during UNIX socket creation: <%s>",  strerror(err));
         throw InitException();
     }
@@ -284,7 +285,7 @@ int SocketManager::createDomainSocketHelp(const std::string &path, mode_t mask) 
     if ((flags = fcntl(fd, F_GETFL, 0)) == -1)
         flags = 0;
     if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) == -1) {
-        int err = errno;
+        UNUSED int err = errno;
         close(fd);
         LOGE("Error setting \"O_NONBLOCK\" on descriptor [%d] with fcntl: <%s>",
              fd, strerror(err));
@@ -306,7 +307,7 @@ int SocketManager::createDomainSocketHelp(const std::string &path, mode_t mask) 
     originalUmask = umask(mask);
 
     if (bind(fd, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) == -1) {
-        int err = errno;
+        UNUSED int err = errno;
         close(fd);
         LOGE("Error in bind socket descriptor [%d] to path <%s>: <%s>",
              fd, path.c_str(), strerror(err));
@@ -316,7 +317,7 @@ int SocketManager::createDomainSocketHelp(const std::string &path, mode_t mask) 
     umask(originalUmask);
 
     if (listen(fd, 5) == -1) {
-        int err = errno;
+        UNUSED int err = errno;
         close(fd);
         LOGE("Error setting listen on file descriptor [%d], path <%s>: <%s>",
              fd, path.c_str(), strerror(err));

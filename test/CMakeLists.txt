@@ -84,7 +84,9 @@ SET(CYNARA_TESTS_SOURCES
     common/protocols/admin/eraserequest.cpp
     common/protocols/admin/listrequest.cpp
     common/protocols/admin/listresponse.cpp
+    common/protocols/ProtocolSerialization.cpp
     common/types/policybucket.cpp
+    common/types/string_validation.cpp
     credsCommons/parser/Parser.cpp
     cyad/commandline.cpp
     cyad/commandline_errors.cpp

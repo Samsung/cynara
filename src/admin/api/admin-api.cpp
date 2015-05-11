@@ -16,6 +16,7 @@
 /**
  * @file        src/admin/api/admin-api.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @author      Oskar Świtalski <o.switalski@samsung.com>
  * @version     1.0
  * @brief       Implementation of external libcynara-admin API
  */
@@ -39,9 +40,11 @@
 #include <types/PolicyKey.h>
 #include <types/PolicyResult.h>
 #include <types/PolicyType.h>
+#include <types/string_validation.h>
 
 #include <cynara-admin.h>
 #include <cynara-error.h>
+#include <cynara-limits.h>
 
 #include <api/ApiInterface.h>
 #include <logic/Logic.h>
@@ -124,8 +127,14 @@ int cynara_admin_set_policies(struct cynara_admin *p_cynara_admin,
         });
 
         for (auto i = policies; *i; i++) {
+            if (i - policies >= CYNARA_MAX_VECTOR_SIZE)
+                return CYNARA_API_INVALID_PARAM;
+
             const cynara_admin_policy *policy = *i;
-            if(!policy->bucket || !policy->client || !policy->user || !policy->privilege)
+
+            if (!isStringValid(policy->bucket) || !isStringValid(policy->client))
+                return CYNARA_API_INVALID_PARAM;
+            if (!isStringValid(policy->user) || !isStringValid(policy->privilege))
                 return CYNARA_API_INVALID_PARAM;
 
             switch (policy->result) {
@@ -135,7 +144,7 @@ int cynara_admin_set_policies(struct cynara_admin *p_cynara_admin,
                     remove[policy->bucket].push_back(key(policy));
                     break;
                 case CYNARA_ADMIN_BUCKET:
-                    if (!policy->result_extra)
+                    if (!isStringValid(policy->result_extra))
                         return CYNARA_API_INVALID_PARAM;
                 default:
                 {
@@ -161,7 +170,7 @@ int cynara_admin_set_bucket(struct cynara_admin *p_cynara_admin, const char *buc
                             int operation, const char *extra) {
     if (!p_cynara_admin || !p_cynara_admin->impl)
         return CYNARA_API_INVALID_PARAM;
-    if (!bucket)
+    if (!isStringValid(bucket) || !isExtraStringValid(extra))
         return CYNARA_API_INVALID_PARAM;
 
     return Cynara::tryCatch([&]() {
@@ -198,11 +207,11 @@ int cynara_admin_check(struct cynara_admin *p_cynara_admin,
                        int *result, char **result_extra) {
     if (!p_cynara_admin || !p_cynara_admin->impl)
         return CYNARA_API_INVALID_PARAM;
-    if (!start_bucket)
-        return CYNARA_API_INVALID_PARAM;
-    if (!client || !user || !privilege)
-        return CYNARA_API_INVALID_PARAM;
     if (!result || !result_extra)
+        return CYNARA_API_INVALID_PARAM;
+    if (!isStringValid(start_bucket) || !isStringValid(client))
+        return CYNARA_API_INVALID_PARAM;
+    if (!isStringValid(user)|| !isStringValid(privilege))
         return CYNARA_API_INVALID_PARAM;
 
     return Cynara::tryCatch([&]() {
@@ -281,9 +290,11 @@ int cynara_admin_list_policies(struct cynara_admin *p_cynara_admin, const char *
                                struct cynara_admin_policy ***policies) {
     if (!p_cynara_admin || !p_cynara_admin->impl)
         return CYNARA_API_INVALID_PARAM;
-    if (!bucket || !client || !user || !privilege)
-        return CYNARA_API_INVALID_PARAM;
     if (!policies)
+        return CYNARA_API_INVALID_PARAM;
+    if (!isStringValid(bucket) || !isStringValid(client))
+        return CYNARA_API_INVALID_PARAM;
+    if (!isStringValid(user) || !isStringValid(privilege))
         return CYNARA_API_INVALID_PARAM;
 
     return Cynara::tryCatch([&]() {
@@ -355,7 +366,9 @@ int cynara_admin_erase(struct cynara_admin *p_cynara_admin,
                        const char *client, const char *user, const char *privilege) {
     if (!p_cynara_admin || !p_cynara_admin->impl)
         return CYNARA_API_INVALID_PARAM;
-    if (!start_bucket || !client || !user || !privilege)
+    if (!isStringValid(start_bucket) || !isStringValid(client))
+        return CYNARA_API_INVALID_PARAM;
+    if (!isStringValid(user) || !isStringValid(privilege))
         return CYNARA_API_INVALID_PARAM;
 
     return Cynara::tryCatch([&]() {

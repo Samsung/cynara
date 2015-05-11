@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 /**
  * @file        src/common/exceptions/TryCatch.h
  * @author      Marcin Niesluchowski <m.niesluchow@samsung.com>
+ * @author      Oskar Świtalski <o.switalski@samsung.com>
  * @version     1.0
  * @brief       This file contains functions for catching exceptions
  */
@@ -27,6 +28,7 @@
 #include <functional>
 #include <new>
 
+#include <exceptions/InvalidProtocolException.h>
 #include <exceptions/NoMemoryException.h>
 #include <log/log.h>
 
@@ -43,6 +45,9 @@ int tryCatch(const std::function<int(void)> &func) {
     } catch (const NoMemoryException &e) {
         LOGE("%s", e.what());
         return CYNARA_API_OUT_OF_MEMORY;
+    } catch (const InvalidProtocolException &e) {
+        LOGE("%s", e.what());
+        return CYNARA_API_INVALID_PARAM;
     } catch (const std::exception &e) {
         LOGE("%s", e.what());
         return CYNARA_API_UNKNOWN_ERROR;

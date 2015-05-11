@@ -17,6 +17,7 @@
  * @file        src/client/api/client-api.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @author      Zofia Abramowska <z.abramowska@samsung.com>
+ * @author      Oskar Świtalski <o.switalski@samsung.com>
  * @version     1.0
  * @brief       Implementation of external libcynara-client API
  */
@@ -24,9 +25,9 @@
 #include <new>
 
 #include <common.h>
-
 #include <exceptions/TryCatch.h>
 #include <log/log.h>
+#include <types/string_validation.h>
 
 #include <configuration/Configuration.h>
 #include <cynara-client.h>
@@ -120,9 +121,11 @@ CYNARA_API
 int cynara_check(cynara *p_cynara, const char *client, const char *client_session, const char *user,
     const char *privilege)
 {
-    if(!p_cynara || !p_cynara->impl)
+    if (!p_cynara || !p_cynara->impl)
         return CYNARA_API_INVALID_PARAM;
-    if(!client || !client_session || !user || !privilege)
+    if (!isStringValid(client) || !isStringValid(client_session))
+        return CYNARA_API_INVALID_PARAM;
+    if (!isStringValid(user) || !isStringValid(privilege))
         return CYNARA_API_INVALID_PARAM;
 
     return Cynara::tryCatch([&]() {
@@ -149,7 +152,9 @@ int cynara_simple_check(cynara *p_cynara, const char *client, const char *client
                         const char *user, const char *privilege) {
     if (!p_cynara || !p_cynara->impl)
         return CYNARA_API_INVALID_PARAM;
-    if (!client || !client_session || !user || !privilege)
+    if (!isStringValid(client) || !isStringValid(client_session))
+        return CYNARA_API_INVALID_PARAM;
+    if (!isStringValid(user) || !isStringValid(privilege))
         return CYNARA_API_INVALID_PARAM;
 
     return Cynara::tryCatch([&]() {

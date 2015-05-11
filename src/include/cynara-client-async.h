@@ -29,6 +29,7 @@
 #include <stdint.h>
 
 #include <cynara-error.h>
+#include <cynara-limits.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -177,7 +178,6 @@ typedef void (*cynara_status_callback) (int old_fd, int new_fd, cynara_async_sta
  */
 int cynara_async_configuration_create(cynara_async_configuration **pp_conf);
 
-
 /**
  * \par Description:
  * Release cynara_async_configuration structure created with cynara_async_configuration_create().
@@ -235,6 +235,7 @@ void cynara_async_configuration_destroy(cynara_async_configuration *p_conf);
  */
 int cynara_async_configuration_set_cache_size(cynara_async_configuration *p_conf,
                                               size_t cache_size);
+
 /**
  * \par Description:
  * Initialize cynara-async-client library with given configuration. Create structure used in
@@ -351,6 +352,8 @@ void cynara_async_finish(cynara_async *p_cynara);
  * from within cynara_status_callback or cynara_response_callback with
  * CYNARA_CALL_CAUSE_SERVICE_NOT_AVAILABLE or CYNARA_CALL_CAUSE_FINISH cause will return
  * CYNARA_API_OPERATION_NOT_ALLOWED.
+ * String length cannot exceed CYNARA_MAX_ID_LENGTH, otherwise CYNARA_API_INVALID_PARAM will be
+ * returned.
  *
  * \param[in] p_cynara cynara_async structure.
  * \param[in] client Application or process identifier.
@@ -419,6 +422,8 @@ int cynara_async_check_cache(cynara_async *p_cynara, const char *client, const c
  * cynara_async_create_request() called from within cynara_status_callback or
  * cynara_response_callback with CYNARA_CALL_CAUSE_SERVICE_NOT_AVAILABLE or CYNARA_CALL_CAUSE_FINISH
  * cause will return CYNARA_API_OPERATION_NOT_ALLOWED.
+ * String length cannot exceed CYNARA_MAX_ID_LENGTH ,otherwise CYNARA_API_INVALID_PARAM will be
+ * returned.
  *
  * \param[in] p_cynara cynara_async structure.
  * \param[in] client Application or process identifier.
@@ -442,7 +447,6 @@ int cynara_async_create_request(cynara_async *p_cynara, const char *client,
                                 const char *client_session, const char *user, const char *privilege,
                                 cynara_check_id *p_check_id, cynara_response_callback callback,
                                 void *user_response_data);
-
 
 /**
  * \par Description:
@@ -486,6 +490,8 @@ int cynara_async_create_request(cynara_async *p_cynara, const char *client,
  * If the answer cannot be resolved in one of CYNARA_API_ACCESS_ALLOWED or
  * CYNARA_API_ACCESS_DENIED without communicating with external application, response returned
  * through callback will have value CYNARA_API_ACCESS_NOT_RESOLVED.
+ * String length cannot exceed CYNARA_MAX_ID_LENGTH, otherwise CYNARA_API_INVALID_PARAM will be
+ * returned.
  *
  * \param[in] p_cynara cynara_async structure.
  * \param[in] client Application or process identifier.

@@ -27,6 +27,7 @@
 #include <stddef.h>
 
 #include <cynara-error.h>
+#include <cynara-limits.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -72,7 +73,6 @@ typedef struct cynara_configuration cynara_configuration;
  *         or negative error code on error.
  */
 int cynara_configuration_create(cynara_configuration **pp_conf);
-
 
 /**
  * \par Description:
@@ -223,6 +223,8 @@ int cynara_finish(cynara *p_cynara);
  * \par Important notes:
  * An external application may be launched to allow user interaction in granting or denying access.
  * Call to cynara_check needs cynara structure to be created first with call to cynara_initialize().
+ * String length cannot exceed CYNARA_MAX_ID_LENGTH, otherwise CYNARA_API_INVALID_PARAM will be
+ * returned.
  *
  * \param[in] p_cynara Cynara structure.
  * \param[in] client Application or process identifier.
@@ -271,6 +273,8 @@ int cynara_check(cynara *p_cynara, const char *client, const char *client_sessio
  * CYNARA_API_ACCESS_NOT_RESOLVED.
  * Call to cynara_simple_check() needs cynara structure to be created first with call to
  * cynara_initialize().
+ * String length cannot exceed CYNARA_MAX_ID_LENGTH, otherwise CYNARA_API_INVALID_PARAM will be
+ * returned.
  *
  * \param[in] p_cynara Cynara structure.
  * \param[in] client Application or process identifier.

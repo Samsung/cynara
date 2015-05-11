@@ -17,6 +17,7 @@
  * @file        src/client-async/api/client-async-api.cpp
  * @author      Marcin Niesluchowski <m.niesluchow@samsung.com>
  * @author      Zofia Abramowska <z.abramowska@samsung.com>
+ * @author      Oskar Świtalski <o.switalski@samsung.com>
  * @version     1.0
  * @brief       Implementation of external libcynara-client-async API
  */
@@ -26,6 +27,7 @@
 #include <common.h>
 #include <exceptions/TryCatch.h>
 #include <log/log.h>
+#include <types/string_validation.h>
 
 #include <api/ApiInterface.h>
 #include <configuration/Configuration.h>
@@ -122,7 +124,9 @@ int cynara_async_check_cache(cynara_async *p_cynara, const char *client, const c
                              const char *user, const char *privilege) {
     if (!p_cynara || !p_cynara->impl)
         return CYNARA_API_INVALID_PARAM;
-    if (!client || !client_session || !user || !privilege)
+    if (!isStringValid(client) || !isStringValid(client_session))
+        return CYNARA_API_INVALID_PARAM;
+    if (!isStringValid(user) || !isStringValid(privilege))
         return CYNARA_API_INVALID_PARAM;
 
     return Cynara::tryCatch([&]() {
@@ -151,7 +155,9 @@ int cynara_async_create_request(cynara_async *p_cynara, const char *client,
                                 void *user_response_data) {
     if (!p_cynara || !p_cynara->impl)
         return CYNARA_API_INVALID_PARAM;
-    if (!client || !client_session || !user || !privilege)
+    if (!isStringValid(client) || !isStringValid(client_session))
+        return CYNARA_API_INVALID_PARAM;
+    if (!isStringValid(user) || !isStringValid(privilege))
         return CYNARA_API_INVALID_PARAM;
 
     return Cynara::tryCatch([&]() {
@@ -186,7 +192,9 @@ int cynara_async_create_simple_request(cynara_async *p_cynara, const char *clien
                                        cynara_response_callback callback, void *user_response_data){
     if (!p_cynara || !p_cynara->impl)
         return CYNARA_API_INVALID_PARAM;
-    if (!client || !client_session || !user || !privilege)
+    if (!isStringValid(client) || !isStringValid(client_session))
+        return CYNARA_API_INVALID_PARAM;
+    if (!isStringValid(user) || !isStringValid(privilege))
         return CYNARA_API_INVALID_PARAM;
 
     return Cynara::tryCatch([&]() {

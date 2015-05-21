@@ -47,7 +47,7 @@ const OptionsMap commandlineOptions = {
           "", OptHasArg::NoArgument } },
     { CmdlineOpt::ListPolicies,
         { "list-policies", CmdlineOpt::ListPolicies, "list-policies=<bucket>",
-          "name of bucket to erase policies from", OptHasArg::RequiredArgument } },
+          "name of bucket to list policies from", OptHasArg::RequiredArgument } },
     { CmdlineOpt::ListPoliciesDesc,
         { "list-policies-descriptions", CmdlineOpt::ListPoliciesDesc, "list-policies-descriptions",
           "", OptHasArg::NoArgument } },

@@ -49,11 +49,11 @@ public:
     }
 
     static PolicyKeyFeature createWildcard(void) {
-        return PolicyKeyFeature(m_wildcardValue);
+        return PolicyKeyFeature(wildcardValue());
     }
 
     static PolicyKeyFeature createAny(void) {
-        return PolicyKeyFeature(m_anyValue);
+        return PolicyKeyFeature(anyValue());
     }
 
     // TODO: Different features (client, user, privilege)
@@ -86,8 +86,8 @@ public:
 
 protected:
     explicit PolicyKeyFeature(const ValueType &value) : m_value(value),
-        m_isWildcard(value == PolicyKeyFeature::m_wildcardValue),
-        m_isAny(value == PolicyKeyFeature::m_anyValue) {}
+        m_isWildcard(value == wildcardValue()),
+        m_isAny(value == anyValue()) {}
 
     static bool anyAny(const PolicyKeyFeature &pkf1, const PolicyKeyFeature &pkf2) {
         return pkf1.isAny() || pkf2.isAny();
@@ -106,8 +106,8 @@ private:
     bool m_isWildcard;
     bool m_isAny;
 
-    const static std::string m_wildcardValue;
-    const static std::string m_anyValue;
+    const static std::string &wildcardValue(void);
+    const static std::string &anyValue(void);
 };
 
 class PolicyKey

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -29,8 +29,15 @@
 
 namespace Cynara {
 
-const std::string PolicyKeyFeature::m_wildcardValue = CYNARA_ADMIN_WILDCARD;
-const std::string PolicyKeyFeature::m_anyValue = CYNARA_ADMIN_ANY;
+const std::string &PolicyKeyFeature::wildcardValue(void) {
+    static const std::string value(CYNARA_ADMIN_WILDCARD);
+    return value;
+}
+
+const std::string &PolicyKeyFeature::anyValue(void) {
+    static const std::string value(CYNARA_ADMIN_ANY);
+    return value;
+}
 
 const std::string &PolicyKeyFeature::toString(void) const {
     return value();

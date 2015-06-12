@@ -33,7 +33,7 @@
 namespace {
 
 const std::string execName("./cynara-db-chsgen");
-const std::string backupFilenameSuffix(Cynara::PathConfig::StoragePath::backupFilenameSuffix);
+const std::string &backupFilenameSuffix = Cynara::PathConfig::StoragePath::backupFilenameSuffix;
 const char fieldSeparator(Cynara::PathConfig::StoragePath::fieldSeparator);
 
 } // namespace

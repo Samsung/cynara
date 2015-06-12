@@ -41,14 +41,9 @@ namespace Cynara {
 
 namespace StorageConfig = PathConfig::StoragePath;
 
-const std::string Integrity::m_guardFilename(StorageConfig::guardFilename);
-const std::string Integrity::m_indexFilename(StorageConfig::indexFilename);
-const std::string Integrity::m_backupFilenameSuffix(StorageConfig::backupFilenameSuffix);
-const std::string Integrity::m_bucketFilenamePrefix(StorageConfig::bucketFilenamePrefix);
-
 bool Integrity::backupGuardExists(void) const {
     struct stat buffer;
-    std::string guardFilename = m_dbPath + m_guardFilename;
+    std::string guardFilename = m_dbPath + StorageConfig::guardFilename;
 
     int ret = stat(guardFilename.c_str(), &buffer);
 
@@ -65,7 +60,7 @@ bool Integrity::backupGuardExists(void) const {
 }
 
 void Integrity::createBackupGuard(void) const {
-    syncElement(m_dbPath + m_guardFilename, O_CREAT | O_EXCL | O_WRONLY | O_TRUNC);
+    syncElement(m_dbPath + StorageConfig::guardFilename, O_CREAT | O_EXCL | O_WRONLY | O_TRUNC);
     syncDirectory(m_dbPath);
 }
 
@@ -73,17 +68,18 @@ void Integrity::syncDatabase(const Buckets &buckets, bool syncBackup) {
     std::string suffix = "";
 
     if (syncBackup) {
-        suffix += m_backupFilenameSuffix;
+        suffix += StorageConfig::backupFilenameSuffix;
     }
 
     for (const auto &bucketIter : buckets) {
         const auto &bucketId = bucketIter.first;
-        const auto &bucketFilename = m_dbPath + m_bucketFilenamePrefix + bucketId + suffix;
+        const auto &bucketFilename = m_dbPath + StorageConfig::bucketFilenamePrefix +
+                bucketId + suffix;
 
         syncElement(bucketFilename);
     }
 
-    syncElement(m_dbPath + m_indexFilename + suffix);
+    syncElement(m_dbPath + StorageConfig::indexFilename + suffix);
     syncElement(m_dbPath + PathConfig::StoragePath::checksumFilename + suffix);
     syncDirectory(m_dbPath);
 }
@@ -92,7 +88,7 @@ void Integrity::revalidatePrimaryDatabase(const Buckets &buckets) {
     createPrimaryHardLinks(buckets);
     syncDatabase(buckets, false);
 
-    deleteHardLink(m_dbPath + m_guardFilename);
+    deleteHardLink(m_dbPath + StorageConfig::guardFilename);
     syncDirectory(m_dbPath);
 
     deleteBackupHardLinks(buckets);
@@ -127,7 +123,7 @@ void Integrity::deleteNonIndexedFiles(BucketPresenceTester tester) {
 
         std::string bucketId;
         auto nameLength = filename.length();
-        auto prefixLength = m_bucketFilenamePrefix.length();
+        auto prefixLength = StorageConfig::bucketFilenamePrefix.length();
 
         //remove if it is impossible that it is a bucket file
         if (nameLength < prefixLength) {
@@ -137,7 +133,7 @@ void Integrity::deleteNonIndexedFiles(BucketPresenceTester tester) {
 
         //remove if there is no bucket filename prefix
         //0 is returned from string::compare() if strings are equal
-        if (0 != filename.compare(0, prefixLength, m_bucketFilenamePrefix)) {
+        if (0 != filename.compare(0, prefixLength, StorageConfig::bucketFilenamePrefix)) {
             deleteHardLink(m_dbPath + filename);
             continue;
         }
@@ -199,32 +195,33 @@ void Integrity::syncDirectory(const std::string &dirname, mode_t mode) {
 void Integrity::createPrimaryHardLinks(const Buckets &buckets) {
     for (const auto &bucketIter : buckets) {
         const auto &bucketId = bucketIter.first;
-        const auto &bucketFilename = m_dbPath + m_bucketFilenamePrefix + bucketId;
+        const auto &bucketFilename = m_dbPath + StorageConfig::bucketFilenamePrefix + bucketId;
 
         deleteHardLink(bucketFilename);
-        createHardLink(bucketFilename + m_backupFilenameSuffix, bucketFilename);
+        createHardLink(bucketFilename + StorageConfig::backupFilenameSuffix, bucketFilename);
     }
 
-    const auto &indexFilename = m_dbPath + m_indexFilename;
+    const auto &indexFilename = m_dbPath + StorageConfig::indexFilename;
     const auto &checksumFilename = m_dbPath + PathConfig::StoragePath::checksumFilename;
 
     deleteHardLink(indexFilename);
-    createHardLink(indexFilename + m_backupFilenameSuffix, indexFilename);
+    createHardLink(indexFilename + StorageConfig::backupFilenameSuffix, indexFilename);
     deleteHardLink(checksumFilename);
-    createHardLink(checksumFilename + m_backupFilenameSuffix, checksumFilename);
+    createHardLink(checksumFilename + StorageConfig::backupFilenameSuffix, checksumFilename);
 }
 
 void Integrity::deleteBackupHardLinks(const Buckets &buckets) {
     for (const auto &bucketIter : buckets) {
         const auto &bucketId = bucketIter.first;
-        const auto &bucketFilename = m_dbPath + m_bucketFilenamePrefix +
-                                     bucketId + m_backupFilenameSuffix;
+        const auto &bucketFilename = m_dbPath + StorageConfig::bucketFilenamePrefix +
+                                     bucketId + StorageConfig::backupFilenameSuffix;
 
         deleteHardLink(bucketFilename);
     }
 
-    deleteHardLink(m_dbPath + m_indexFilename + m_backupFilenameSuffix);
-    deleteHardLink(m_dbPath + PathConfig::StoragePath::checksumFilename + m_backupFilenameSuffix);
+    deleteHardLink(m_dbPath + StorageConfig::indexFilename + StorageConfig::backupFilenameSuffix);
+    deleteHardLink(m_dbPath + StorageConfig::checksumFilename +
+            StorageConfig::backupFilenameSuffix);
 }
 
 void Integrity::createHardLink(const std::string &oldName, const std::string &newName) {

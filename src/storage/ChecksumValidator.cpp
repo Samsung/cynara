@@ -38,10 +38,6 @@
 
 namespace Cynara {
 
-const std::string ChecksumValidator::m_checksumFilename(PathConfig::StoragePath::checksumFilename);
-const std::string ChecksumValidator::m_backupFilenameSuffix(
-        PathConfig::StoragePath::backupFilenameSuffix);
-
 void ChecksumValidator::load(std::istream &stream) {
     m_sums.clear();
 
@@ -94,10 +90,11 @@ void ChecksumValidator::compare(std::istream &stream, const std::string &pathnam
     std::stringstream copyStream;
 
     if (isBackupValid) {
-        auto backupSuffixPos = filename.rfind(m_backupFilenameSuffix);
+        auto backupSuffixPos = filename.rfind(PathConfig::StoragePath::backupFilenameSuffix);
+        size_t suffixSize = PathConfig::StoragePath::backupFilenameSuffix.size();
 
         if ((std::string::npos != backupSuffixPos) &&
-            (filename.size() == (backupSuffixPos + m_backupFilenameSuffix.size()))) {
+            (filename.size() == (backupSuffixPos + suffixSize))) {
             filename.erase(backupSuffixPos);
         }
     }
@@ -135,8 +132,9 @@ const std::string ChecksumValidator::parseChecksum(const std::string &line,
 }
 
 bool ChecksumValidator::isChecksumIndex(const std::string &filename) const {
-    auto checksum = m_dbPath + m_checksumFilename;
-    return (filename == checksum || filename == checksum + m_backupFilenameSuffix);
+    auto checksum = m_dbPath + PathConfig::StoragePath::checksumFilename;
+    return (filename == checksum ||
+            filename == checksum + PathConfig::StoragePath::backupFilenameSuffix);
 }
 
 } // namespace Cynara

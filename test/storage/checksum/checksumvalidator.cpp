@@ -41,8 +41,7 @@ using namespace Cynara;
 const std::string ChecksumValidatorFixture::m_dbPath("/fake/path/");
 const std::string ChecksumValidatorFixture::m_filename("fakeFilename");
 const std::string ChecksumValidatorFixture::m_checksum("$1$$fakeChecksum");
-const std::string ChecksumValidatorFixture::m_backupFilenameSuffix(
-        PathConfig::StoragePath::backupFilenameSuffix);
+
 const char ChecksumValidatorFixture::m_fieldSeparator(PathConfig::StoragePath::fieldSeparator);
 const char ChecksumValidatorFixture::m_recordSeparator(PathConfig::StoragePath::recordSeparator);
 const size_t ChecksumValidatorFixture::m_firstLine(1);
@@ -120,7 +119,8 @@ TEST_F(ChecksumValidatorFixture, compareBasicAndBackup) {
         SCOPED_TRACE(filename);
 
         ASSERT_NO_THROW(validator.compare(fakeFile, filename, false));
-        ASSERT_NO_THROW(validator.compare(fakeFile, filename + m_backupFilenameSuffix, true));
+        ASSERT_NO_THROW(validator.compare(fakeFile, filename +
+                PathConfig::StoragePath::backupFilenameSuffix, true));
 
         ASSERT_EQ(contents, fakeFile.str());
     }

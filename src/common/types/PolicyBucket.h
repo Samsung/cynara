@@ -110,7 +110,7 @@ private:
     PolicyMap m_policyCollection;
     PolicyResult m_defaultPolicy;
     PolicyBucketId m_id;
-    static const std::string m_idSeparators;
+    static const char m_idSeparators[];
 };
 
 } /* namespace Cynara */

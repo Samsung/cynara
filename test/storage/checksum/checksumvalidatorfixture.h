@@ -45,7 +45,6 @@ protected:
     static const std::string m_dbPath;
     static const std::string m_filename;
     static const std::string m_checksum;
-    static const std::string m_backupFilenameSuffix;
     static const char m_fieldSeparator;
     static const char m_recordSeparator;
     static const size_t m_firstLine;

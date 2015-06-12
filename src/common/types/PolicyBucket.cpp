@@ -20,6 +20,7 @@
  * @brief       Implementation of Cynara::PolicyBucket methods
  */
 
+#include <cstring>
 #include <sstream>
 
 #include <exceptions/InvalidBucketIdException.h>
@@ -30,7 +31,7 @@
 
 namespace Cynara {
 
-const std::string PolicyBucket::m_idSeparators = "-_";
+const char PolicyBucket::m_idSeparators[] = "-_";
 
 PolicyBucket::PolicyBucket(const PolicyBucketId &id, const PolicyResult &defaultPolicy)
     : m_defaultPolicy(defaultPolicy), m_id(id) {
@@ -129,7 +130,7 @@ void PolicyBucket::idValidator(const PolicyBucketId &id) {
 }
 
 bool PolicyBucket::isIdSeparator(char c) {
-    return m_idSeparators.end() != find(m_idSeparators.begin(), m_idSeparators.end(), c);
+    return strchr(m_idSeparators, c) != nullptr;
 }
 
 }  // namespace Cynara

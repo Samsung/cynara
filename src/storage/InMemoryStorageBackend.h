@@ -86,10 +86,6 @@ private:
     Buckets m_buckets;
     ChecksumValidator m_checksum;
     Integrity m_integrity;
-    static const std::string m_chsFilename;
-    static const std::string m_indexFilename;
-    static const std::string m_backupFilenameSuffix;
-    static const std::string m_bucketFilenamePrefix;
 
 protected:
     virtual Buckets &buckets(void) {

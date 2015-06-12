@@ -53,13 +53,6 @@
 
 namespace Cynara {
 
-const std::string InMemoryStorageBackend::m_chsFilename(PathConfig::StoragePath::checksumFilename);
-const std::string InMemoryStorageBackend::m_indexFilename(PathConfig::StoragePath::indexFilename);
-const std::string InMemoryStorageBackend::m_backupFilenameSuffix(
-        PathConfig::StoragePath::backupFilenameSuffix);
-const std::string InMemoryStorageBackend::m_bucketFilenamePrefix(
-        PathConfig::StoragePath::bucketFilenamePrefix);
-
 InMemoryStorageBackend::InMemoryStorageBackend(const std::string &path) : m_dbPath(path),
     m_checksum(path), m_integrity(path) {
 }
@@ -67,13 +60,13 @@ InMemoryStorageBackend::InMemoryStorageBackend(const std::string &path) : m_dbPa
 void InMemoryStorageBackend::load(void) {
     bool isBackupValid = m_integrity.backupGuardExists();
     std::string bucketSuffix = "";
-    std::string indexFilename = m_dbPath + m_indexFilename;
-    std::string chsFilename = m_dbPath + m_chsFilename;
+    std::string indexFilename = m_dbPath + PathConfig::StoragePath::indexFilename;
+    std::string chsFilename = m_dbPath + PathConfig::StoragePath::checksumFilename;
 
     if (isBackupValid) {
-        bucketSuffix += m_backupFilenameSuffix;
-        indexFilename += m_backupFilenameSuffix;
-        chsFilename += m_backupFilenameSuffix;
+        bucketSuffix += PathConfig::StoragePath::backupFilenameSuffix;
+        indexFilename += PathConfig::StoragePath::backupFilenameSuffix;
+        chsFilename += PathConfig::StoragePath::backupFilenameSuffix;
     }
 
     try {
@@ -106,9 +99,10 @@ void InMemoryStorageBackend::load(void) {
 }
 
 void InMemoryStorageBackend::save(void) {
-    std::string checksumFilename = m_dbPath + m_chsFilename;
+    std::string checksumFilename = m_dbPath + PathConfig::StoragePath::checksumFilename;
     auto chsStream = std::make_shared<std::ofstream>();
-    openDumpFileStream<std::ofstream>(*chsStream, checksumFilename + m_backupFilenameSuffix);
+    openDumpFileStream<std::ofstream>(*chsStream,
+            checksumFilename + PathConfig::StoragePath::backupFilenameSuffix);
 
     dumpDatabase(chsStream);
 
@@ -230,9 +224,11 @@ void InMemoryStorageBackend::erasePolicies(const PolicyBucketId &bucketId, bool 
 }
 
 void InMemoryStorageBackend::dumpDatabase(const std::shared_ptr<std::ofstream> &chsStream) {
-    auto indexStream = std::make_shared<ChecksumStream>(m_indexFilename, chsStream);
-    std::string indexFilename = m_dbPath + m_indexFilename;
-    openDumpFileStream<ChecksumStream>(*indexStream, indexFilename + m_backupFilenameSuffix);
+    auto indexStream = std::make_shared<ChecksumStream>(PathConfig::StoragePath::indexFilename,
+            chsStream);
+    std::string indexFilename = m_dbPath + PathConfig::StoragePath::indexFilename;
+    openDumpFileStream<ChecksumStream>(*indexStream,
+            indexFilename + PathConfig::StoragePath::backupFilenameSuffix);
 
     StorageSerializer<ChecksumStream> storageSerializer(indexStream);
     storageSerializer.dump(buckets(), std::bind(&InMemoryStorageBackend::bucketDumpStreamOpener,
@@ -254,7 +250,8 @@ void InMemoryStorageBackend::openFileStream(std::ifstream &stream, const std::st
 
 std::shared_ptr<BucketDeserializer> InMemoryStorageBackend::bucketStreamOpener(
         const PolicyBucketId &bucketId, const std::string &filenameSuffix, bool isBackupValid) {
-    std::string bucketFilename = m_dbPath + m_bucketFilenamePrefix + bucketId + filenameSuffix;
+    std::string bucketFilename = m_dbPath + PathConfig::StoragePath::bucketFilenamePrefix +
+            bucketId + filenameSuffix;
     auto bucketStream = std::make_shared<std::ifstream>();
     try {
         openFileStream(*bucketStream, bucketFilename, isBackupValid);
@@ -268,10 +265,10 @@ std::shared_ptr<BucketDeserializer> InMemoryStorageBackend::bucketStreamOpener(
 
 std::shared_ptr<StorageSerializer<ChecksumStream> > InMemoryStorageBackend::bucketDumpStreamOpener(
         const PolicyBucketId &bucketId, const std::shared_ptr<std::ofstream> &chsStream) {
-    std::string bucketFilename = m_dbPath + m_bucketFilenamePrefix +
-                                 bucketId + m_backupFilenameSuffix;
-    auto bucketStream = std::make_shared<ChecksumStream>(m_bucketFilenamePrefix + bucketId,
-                                                         chsStream);
+    std::string bucketFilename = m_dbPath + PathConfig::StoragePath::bucketFilenamePrefix +
+                                 bucketId + PathConfig::StoragePath::backupFilenameSuffix;
+    auto bucketStream = std::make_shared<ChecksumStream>(
+            PathConfig::StoragePath::bucketFilenamePrefix + bucketId, chsStream);
 
     openDumpFileStream<ChecksumStream>(*bucketStream, bucketFilename);
     return std::make_shared<StorageSerializer<ChecksumStream> >(bucketStream);

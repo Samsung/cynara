@@ -42,8 +42,8 @@ public:
         if (connection == nullptr)
             throw CYNARA_API_INVALID_PARAM;
 
-        m_message = dbus_message_new_method_call(m_dbusName.c_str(), m_dbusObject.c_str(),
-                                                 m_dbusInterface.c_str(), method.c_str());
+        m_message = dbus_message_new_method_call(m_dbusName, m_dbusObject,
+                                                 m_dbusInterface, method.c_str());
 
         if (m_message == nullptr)
             throw CYNARA_API_OUT_OF_MEMORY;
@@ -104,14 +104,14 @@ private:
     DBusMessage *m_message = nullptr;
     DBusMessageIter *m_argsIter = nullptr;
 
-    static const std::string m_dbusName;
-    static const std::string m_dbusObject;
-    static const std::string m_dbusInterface;
+    static const char m_dbusName[];
+    static const char m_dbusObject[];
+    static const char m_dbusInterface[];
 };
 
-const std::string DBusMethod::m_dbusName = "org.freedesktop.DBus";
-const std::string DBusMethod::m_dbusObject = "/org/freedesktop/DBus";
-const std::string DBusMethod::m_dbusInterface = "org.freedesktop.DBus";
+const char DBusMethod::m_dbusName[] = "org.freedesktop.DBus";
+const char DBusMethod::m_dbusObject[] = "/org/freedesktop/DBus";
+const char DBusMethod::m_dbusInterface[] = "org.freedesktop.DBus";
 
 
 int getIdFromConnection(DBusConnection *connection, const char *uniqueName,

@@ -56,8 +56,6 @@ protected:
 
     Checksums m_sums;
     const std::string m_dbPath;
-    static const std::string m_checksumFilename;
-    static const std::string m_backupFilenameSuffix;
 };
 
 } // namespace Cynara

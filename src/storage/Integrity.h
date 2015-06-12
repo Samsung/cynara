@@ -60,10 +60,6 @@ protected:
 
 private:
     const std::string m_dbPath;
-    static const std::string m_indexFilename;
-    static const std::string m_backupFilenameSuffix;
-    static const std::string m_bucketFilenamePrefix;
-    static const std::string m_guardFilename;
 };
 
 } // namespace Cynara

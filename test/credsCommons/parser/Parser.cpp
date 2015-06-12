@@ -60,52 +60,52 @@ TEST(parser, getKeyAndValue) {
 
     static std::vector<struct getKeyAndValueTestEntry>  getKeyAndValueTestEntries;
     // test cases initialization key and value are checked only if expectedResult is true
-    getKeyAndValueTestEntries.push_back({"", std::locale("en_US.UTF8"), false, "", ""});
-    getKeyAndValueTestEntries.push_back({"#", std::locale("en_US.UTF8"), false, "", ""});
-    getKeyAndValueTestEntries.push_back({"a", std::locale("en_US.UTF8"), false, "", ""});
-    getKeyAndValueTestEntries.push_back({"=", std::locale("en_US.UTF8"), false, "", ""});
-    getKeyAndValueTestEntries.push_back({"\n", std::locale("en_US.UTF8"), false, "", ""});
-    getKeyAndValueTestEntries.push_back({"aa", std::locale("en_US.UTF8"), false, "", ""});
-    getKeyAndValueTestEntries.push_back({"=#", std::locale("en_US.UTF8"), false, "", ""});
-    getKeyAndValueTestEntries.push_back({"=\n", std::locale("en_US.UTF8"), false, "", ""});
-    getKeyAndValueTestEntries.push_back({"\n=", std::locale("en_US.UTF8"), false, "", ""});
-    getKeyAndValueTestEntries.push_back({"==", std::locale("en_US.UTF8"), false, "", "="});
-    getKeyAndValueTestEntries.push_back({"#=", std::locale("en_US.UTF8"), false, "", ""});
-    getKeyAndValueTestEntries.push_back({"aa", std::locale("en_US.UTF8"), false, "", ""});
-    getKeyAndValueTestEntries.push_back({"##", std::locale("en_US.UTF8"), false, "", ""});
-    getKeyAndValueTestEntries.push_back({"a=b", std::locale("en_US.UTF8"), true, "a", "b"});
-    getKeyAndValueTestEntries.push_back({"=aa", std::locale("en_US.UTF8"), false, "", "aa"});
-    getKeyAndValueTestEntries.push_back({"aa=", std::locale("en_US.UTF8"), true, "aa", ""});
-    getKeyAndValueTestEntries.push_back({"#a=", std::locale("en_US.UTF8"), false, "", ""});
-    getKeyAndValueTestEntries.push_back({"a=#", std::locale("en_US.UTF8"), true, "a", ""});
-    getKeyAndValueTestEntries.push_back({"=#a", std::locale("en_US.UTF8"), false, "", ""});
-    getKeyAndValueTestEntries.push_back({"==a", std::locale("en_US.UTF8"), false, "", ""});
-    getKeyAndValueTestEntries.push_back({"=a=", std::locale("en_US.UTF8"), false, "", ""});
-    getKeyAndValueTestEntries.push_back({"a=#\nb", std::locale("en_US.UTF8"), true, "a", ""});
-    getKeyAndValueTestEntries.push_back({"a=#b\n", std::locale("en_US.UTF8"), true, "a", ""});
-    getKeyAndValueTestEntries.push_back({"a\nb", std::locale("en_US.UTF8"), false, "", ""});
-    getKeyAndValueTestEntries.push_back({"\na=b", std::locale("en_US.UTF8"), true, "a", "b"});
-    getKeyAndValueTestEntries.push_back({"a=#\nb", std::locale("en_US.UTF8"), true, "a", ""});
-    getKeyAndValueTestEntries.push_back({"=a\nb", std::locale("en_US.UTF8"), false, "", ""});
-    getKeyAndValueTestEntries.push_back({"a=\nb=c#", std::locale("en_US.UTF8"), true, "a", ""});
-    getKeyAndValueTestEntries.push_back({"=a\nb=c#", std::locale("en_US.UTF8"), true, "b", "c"});
-    getKeyAndValueTestEntries.push_back({"aa\nkey=value", std::locale("en_US.UTF8"), true, "key",
+    getKeyAndValueTestEntries.push_back({"", std::locale::classic(), false, "", ""});
+    getKeyAndValueTestEntries.push_back({"#", std::locale::classic(), false, "", ""});
+    getKeyAndValueTestEntries.push_back({"a", std::locale::classic(), false, "", ""});
+    getKeyAndValueTestEntries.push_back({"=", std::locale::classic(), false, "", ""});
+    getKeyAndValueTestEntries.push_back({"\n", std::locale::classic(), false, "", ""});
+    getKeyAndValueTestEntries.push_back({"aa", std::locale::classic(), false, "", ""});
+    getKeyAndValueTestEntries.push_back({"=#", std::locale::classic(), false, "", ""});
+    getKeyAndValueTestEntries.push_back({"=\n", std::locale::classic(), false, "", ""});
+    getKeyAndValueTestEntries.push_back({"\n=", std::locale::classic(), false, "", ""});
+    getKeyAndValueTestEntries.push_back({"==", std::locale::classic(), false, "", "="});
+    getKeyAndValueTestEntries.push_back({"#=", std::locale::classic(), false, "", ""});
+    getKeyAndValueTestEntries.push_back({"aa", std::locale::classic(), false, "", ""});
+    getKeyAndValueTestEntries.push_back({"##", std::locale::classic(), false, "", ""});
+    getKeyAndValueTestEntries.push_back({"a=b", std::locale::classic(), true, "a", "b"});
+    getKeyAndValueTestEntries.push_back({"=aa", std::locale::classic(), false, "", "aa"});
+    getKeyAndValueTestEntries.push_back({"aa=", std::locale::classic(), true, "aa", ""});
+    getKeyAndValueTestEntries.push_back({"#a=", std::locale::classic(), false, "", ""});
+    getKeyAndValueTestEntries.push_back({"a=#", std::locale::classic(), true, "a", ""});
+    getKeyAndValueTestEntries.push_back({"=#a", std::locale::classic(), false, "", ""});
+    getKeyAndValueTestEntries.push_back({"==a", std::locale::classic(), false, "", ""});
+    getKeyAndValueTestEntries.push_back({"=a=", std::locale::classic(), false, "", ""});
+    getKeyAndValueTestEntries.push_back({"a=#\nb", std::locale::classic(), true, "a", ""});
+    getKeyAndValueTestEntries.push_back({"a=#b\n", std::locale::classic(), true, "a", ""});
+    getKeyAndValueTestEntries.push_back({"a\nb", std::locale::classic(), false, "", ""});
+    getKeyAndValueTestEntries.push_back({"\na=b", std::locale::classic(), true, "a", "b"});
+    getKeyAndValueTestEntries.push_back({"a=#\nb", std::locale::classic(), true, "a", ""});
+    getKeyAndValueTestEntries.push_back({"=a\nb", std::locale::classic(), false, "", ""});
+    getKeyAndValueTestEntries.push_back({"a=\nb=c#", std::locale::classic(), true, "a", ""});
+    getKeyAndValueTestEntries.push_back({"=a\nb=c#", std::locale::classic(), true, "b", "c"});
+    getKeyAndValueTestEntries.push_back({"aa\nkey=value", std::locale::classic(), true, "key",
         "value"});
     getKeyAndValueTestEntries.push_back({" key with spaces  = value with spaces #\n",
-                                         std::locale("en_US.UTF8"), true, "key with spaces",
+                                         std::locale::classic(), true, "key with spaces",
                                          "value with spaces"});
     getKeyAndValueTestEntries.push_back({"VeryLongKey1111111111111111111111111111111111111111111"
                                          "111111111111111111111111111111111111111111111111111111"
-                                         "111111111 = 1\nnoImportant", std::locale("en_US.UTF8"),
+                                         "111111111 = 1\nnoImportant", std::locale::classic(),
                                          true,
                                          "verylongkey1111111111111111111111111111111111111111111"
                                          "111111111111111111111111111111111111111111111111111111"
                                          "111111111", "1"});
-    getKeyAndValueTestEntries.push_back({"key=value", std::locale("en_US.UTF8"), true, "key",
+    getKeyAndValueTestEntries.push_back({"key=value", std::locale::classic(), true, "key",
                                          "value"});
-    getKeyAndValueTestEntries.push_back({"CAPSON=CaPSon", std::locale("en_US.UTF8"), true,
+    getKeyAndValueTestEntries.push_back({"CAPSON=CaPSon", std::locale::classic(), true,
                                          "capson", "capson"});
-    getKeyAndValueTestEntries.push_back({" soMe_spacEs_ = vaLue# ", std::locale("en_US.UTF8"),
+    getKeyAndValueTestEntries.push_back({" soMe_spacEs_ = vaLue# ", std::locale::classic(),
     	                                   true, "some_spaces_", "value"});
     int i = 0;
     for (auto it = getKeyAndValueTestEntries.begin(); it != getKeyAndValueTestEntries.end(); ++it)

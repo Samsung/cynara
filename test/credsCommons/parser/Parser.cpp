@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 /**
  * @file        test/credsCommons/parser/Parser.cpp
  * @author      Radoslaw Bartosiak <r.bartosiak@samsung.com>
- * @version     1.0
+ * @version     1.1
  * @brief       Tests of internal implementation of credential commons functions
  */
 
@@ -25,6 +25,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <iostream>
+#include <sstream>
 
 #include "FakeCredsCommonsInnerBackend.h"
 
@@ -221,9 +222,9 @@ TEST(parser, getMethodFromConfigurationFileOK2Lines) {
     EXPECT_CALL(fakeBackend, interpretValue(_, _,"smack", Eq(false)))
     .WillOnce(DoAll(SetArgReferee<1>(CLIENT_METHOD_SMACK), SetArgReferee<3>(true),
               Return(true)));
-
+    std::istringstream iss("unimportant as the configuration file content is mocked above");
     EXPECT_EQ(CYNARA_API_SUCCESS,
-              fakeBackend.getMethodFromConfigurationFile(clientCredsMap, "client_default",
+              fakeBackend.getMethodFromConfigurationFile(iss, clientCredsMap, "client_default",
                                                          method));
     EXPECT_EQ(CLIENT_METHOD_SMACK, method);
 }
@@ -240,9 +241,9 @@ TEST(parser, getMethodFromConfigurationFileOK3Lines) {
     EXPECT_CALL(fakeBackend, interpretValue(_, _,"smack", Eq(false)))
     .WillOnce(DoAll(SetArgReferee<1>(CLIENT_METHOD_SMACK), SetArgReferee<3>(true),
               Return(true)));
-
+    std::istringstream iss("unimportant as the configuration file content is mocked above");
     EXPECT_EQ(CYNARA_API_SUCCESS,
-              fakeBackend.getMethodFromConfigurationFile(clientCredsMap, "client_default",
+              fakeBackend.getMethodFromConfigurationFile(iss, clientCredsMap, "client_default",
                                                          method));
     EXPECT_EQ(CLIENT_METHOD_SMACK, method);
 }
@@ -259,8 +260,9 @@ TEST(parser, getMethodFromConfigurationFileBadNoEntry) {
     .WillOnce(DoAll(SetArgReferee<2>("client_default"), SetArgReferee<3>("someWrongValue"), Return(true)))
     .WillOnce(Return(false));
     //user default is not in the file (contrary to A,B, client_default)
+    std::istringstream iss("unimportant as the configuration file content is mocked above");
     EXPECT_EQ(CYNARA_API_CONFIGURATION_ERROR,
-              fakeBackend.getMethodFromConfigurationFile(clientCredsMap, "user_default",
+              fakeBackend.getMethodFromConfigurationFile(iss, clientCredsMap, "user_default",
                                                          method));
     EXPECT_EQ(NOT_A_METHOD_CODE, method);
 }
@@ -278,9 +280,9 @@ TEST(parser, getMethodFromConfigurationFileBadValueInEntry) {
     .WillOnce(DoAll(SetArgReferee<2>("client_default"), SetArgReferee<3>("someWrongValue"), Return(true)));
     EXPECT_CALL(fakeBackend, interpretValue(clientCredsMap, _, "someWrongValue", Eq(false)))
     .WillOnce(Return(false));
-
+    std::istringstream iss("unimportant as the configuration file content is mocked above");
     EXPECT_EQ(CYNARA_API_CONFIGURATION_ERROR,
-              fakeBackend.getMethodFromConfigurationFile(clientCredsMap, "client_default",
+              fakeBackend.getMethodFromConfigurationFile(iss, clientCredsMap, "client_default",
                                                          method));
     EXPECT_EQ(NOT_A_METHOD_CODE, method);
 }
@@ -301,9 +303,9 @@ TEST(parser, getMethodFromConfigurationFileBadTwoEntries) {
                           Return(true)));
     EXPECT_CALL(fakeBackend, interpretValue(clientCredsMap, _, "someWrongValue", Eq(true)))
     .WillOnce(Return(false));
-
+    std::istringstream iss("unimportant as the configuration file content is mocked above");
     EXPECT_EQ(CYNARA_API_CONFIGURATION_ERROR,
-              fakeBackend.getMethodFromConfigurationFile(clientCredsMap, "client_default",
+              fakeBackend.getMethodFromConfigurationFile(iss, clientCredsMap, "client_default",
                                                          method));
     EXPECT_EQ(NOT_A_METHOD_CODE, method);
 }
@@ -323,8 +325,9 @@ TEST(parser, getMethodFromConfigurationFileManyStrangeKeyAndValues) {
     .WillOnce(DoAll(SetArgReferee<2>(""), SetArgReferee<3>(""), Return(true)))
     .WillOnce(DoAll(SetArgReferee<2>("key5"), SetArgReferee<3>("value5"), Return(true)))
     .WillOnce(Return(false));
+    std::istringstream iss("unimportant as the configuration file content is mocked above");
     EXPECT_EQ(CYNARA_API_SUCCESS,
-              fakeBackend.getMethodFromConfigurationFile(clientCredsMap, "client_default",
+              fakeBackend.getMethodFromConfigurationFile(iss, clientCredsMap, "client_default",
                                                          method));
     EXPECT_EQ(CLIENT_METHOD_PID, method);
 }
@@ -341,9 +344,9 @@ TEST(parser, getMethodFromConfigurationFileFoundTheKeyAgain) {
                     Return(true)))
     .WillOnce(DoAll(SetArgReferee<2>("client_default"), SetArgReferee<3>("smack"),
                     Return(true)));
-
+    std::istringstream iss("unimportant as the configuration file content is mocked above");
     EXPECT_EQ(CYNARA_API_CONFIGURATION_ERROR,
-              fakeBackend.getMethodFromConfigurationFile(clientCredsMap, "client_default",
+              fakeBackend.getMethodFromConfigurationFile(iss, clientCredsMap, "client_default",
                                                          method));
     EXPECT_EQ(NOT_A_METHOD_CODE, method);
 }
@@ -361,9 +364,9 @@ TEST(parser, getMethodFromConfigurationFileTheKeyNotFound) {
     .WillOnce(DoAll(SetArgReferee<2>("other_default"), SetArgReferee<3>("smack"),
                     Return(true)))
     .WillOnce(Return(false));
-
+    std::istringstream iss("unimportant as the configuration file content is mocked above");
     EXPECT_EQ(CYNARA_API_CONFIGURATION_ERROR,
-              fakeBackend.getMethodFromConfigurationFile(clientCredsMap, "client_default",
+              fakeBackend.getMethodFromConfigurationFile(iss, clientCredsMap, "client_default",
                                                          method));
     EXPECT_EQ(NOT_A_METHOD_CODE, method);
 }
@@ -378,9 +381,22 @@ TEST(parser, getMethodFromConfigurationFileFoundTheKeyWithWrongValue) {
     .WillOnce(DoAll(SetArgReferee<2>("user_default"), SetArgReferee<3>("gid"), Return(true)))
     .WillOnce(DoAll(SetArgReferee<2>("client_default"), SetArgReferee<3>("noSmackNoPid"),
                     Return(true)));
-
+    std::istringstream iss("unimportant as the configuration file content is mocked above");
     EXPECT_EQ(CYNARA_API_CONFIGURATION_ERROR,
-              fakeBackend.getMethodFromConfigurationFile(clientCredsMap, "client_default",
+              fakeBackend.getMethodFromConfigurationFile(iss, clientCredsMap, "client_default",
                                                          method));
     EXPECT_EQ(NOT_A_METHOD_CODE, method);
+}
+
+
+TEST(parser, getMethodFromConfigurationFileWithoutMockupFileOK) {
+    static const CredentialsMap clientCredsMap{{"smack", CLIENT_METHOD_SMACK},
+                                               {"pid", CLIENT_METHOD_PID}};
+    int method = NOT_A_METHOD_CODE;
+    CredsCommonsInnerBackend backend;
+    std::istringstream iss("client_default=smack\nuser_default=uid");
+    EXPECT_EQ(CYNARA_API_SUCCESS,
+              backend.getMethodFromConfigurationFile(iss, clientCredsMap, "client_default",
+                                                     method));
+    EXPECT_EQ(CLIENT_METHOD_SMACK, method);
 }

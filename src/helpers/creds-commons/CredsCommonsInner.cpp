@@ -16,7 +16,7 @@
  /**
  * @file        src/helpers/creds-commons/CredsCommonsInner.cpp
  * @author      Radoslaw Bartosiak <r.bartosiak@samsung.com>
- * @version     1.0
+ * @version     1.1
  * @brief       Implementation of internal credential commons functions
  */
 
@@ -24,6 +24,7 @@
 #include <cctype>
 #include <fstream>
 #include <functional>
+#include <fstream>
 #include <sstream>
 #include <string>
 
@@ -37,8 +38,11 @@
 
 namespace Cynara {
 
-std::string CredsCommonsInnerBackend::credsConfigurationFile(void) {
-    return Cynara::PathConfig::confPath + "/creds.conf";
+int CredsCommonsInnerBackend::credsConfigurationFile(std::ifstream &f) {
+    f.open(Cynara::PathConfig::confPath + "/creds.conf", std::fstream::in);
+    if (!f.is_open())
+        return CYNARA_API_CONFIGURATION_ERROR;
+    return CYNARA_API_SUCCESS;
 }
 // parses stream with configuration skipping comments (from # till the end of line)
 // untill a line of form <non empty key>=<empty or no empty value>
@@ -78,13 +82,10 @@ bool CredsCommonsInnerBackend::interpretValue(const CredentialsMap &methodCodeMa
     return true;
 }
 
-int CredsCommonsInnerBackend::getMethodFromConfigurationFile(const CredentialsMap &methodCodeMap,
+int CredsCommonsInnerBackend::getMethodFromConfigurationFile(std::istream &f,
+                                                             const CredentialsMap &methodCodeMap,
                                                              const std::string &methodName,
                                                              int &method) {
-    std::ifstream f(credsConfigurationFile());
-    if (!f.is_open())
-        return CYNARA_API_CONFIGURATION_ERROR;
-
     std::locale loc = f.getloc();
     bool occurred = false;
     std::string key, value;

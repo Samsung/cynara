@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,13 +16,15 @@
 /**
  * @file        test/credsCommons/parser/CredsCommonsInner.h
  * @author      Radoslaw Bartosiak <r.bartosiak@samsung.com>
- * @version     1.0
+ * @version     1.1
  * @brief       Declaration of internal credential commons functions for gmock tests
  */
 
 #ifndef TEST_CREDSCOMMONS_PARSER_CREDSCOMMONSINNER_H_
 #define TEST_CREDSCOMMONS_PARSER_CREDSCOMMONSINNER_H_
 
+#include <istream>
+#include <fstream>
 #include <map>
 #include <string>
 
@@ -32,13 +34,14 @@ typedef std::map<std::string, int> CredentialsMap;
 
 class CredsCommonsInnerBackend {
     public:
-        static std::string credsConfigurationFile(void);
+        static int credsConfigurationFile(std::ifstream &f);
         virtual ~CredsCommonsInnerBackend() {};
         virtual bool getKeyAndValue(std::istream &f, const std::locale &loc, std::string &key,
                                     std::string &value);
         virtual bool interpretValue(const CredentialsMap &methodCodeMap, int &method,
                                     const std::string &value, bool &occurred);
-        virtual int getMethodFromConfigurationFile(const CredentialsMap &methodCodeMap,
+        virtual int getMethodFromConfigurationFile(std::istream &f,
+                                                   const CredentialsMap &methodCodeMap,
                                                    const std::string &methodName, int &method);
     private:
         // trim from the start

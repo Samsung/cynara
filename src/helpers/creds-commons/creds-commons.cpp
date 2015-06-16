@@ -19,9 +19,11 @@
  * @author      Radoslaw Bartosiak <r.bartosiak@samsung.com>
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @author      Jacek Bukarewicz <j.bukarewicz@samsung.com>
- * @version     1.0
+ * @version     1.1
  * @brief       Implementation of external libcynara-creds-commons API
  */
+
+#include <fstream>
 
 #include <attributes/attributes.h>
 #include <exceptions/TryCatch.h>
@@ -39,9 +41,13 @@ int cynara_creds_get_default_client_method(enum cynara_client_creds *method) {
 
     if (cachedMethodCode == -1) {
         int ret = Cynara::tryCatch([&] () {
-            return Cynara::CredsCommonsInnerBackend::
-                      getMethodFromConfigurationFile(clientCredsMap, "client_default",
-                                                     cachedMethodCode);
+            std::ifstream f;
+            int r = Cynara::CredsCommonsInnerBackend::credsConfigurationFile(f);
+            if (r != CYNARA_API_SUCCESS)
+                return r;
+
+            return Cynara::CredsCommonsInnerBackend::getMethodFromConfigurationFile(
+                     f, clientCredsMap, "client_default", cachedMethodCode);
         });
         if (ret != CYNARA_API_SUCCESS)
             return ret;
@@ -59,10 +65,12 @@ int cynara_creds_get_default_user_method(enum cynara_user_creds *method) {
 
     if (cachedMethodCode == -1) {
         int ret = Cynara::tryCatch([&] () {
-            return Cynara::CredsCommonsInnerBackend::
-                                       getMethodFromConfigurationFile(userCredsMap,
-                                                                      "user_default",
-                                                                      cachedMethodCode);
+            std::ifstream f;
+            int r = Cynara::CredsCommonsInnerBackend::credsConfigurationFile(f);
+            if (r != CYNARA_API_SUCCESS)
+                return r;
+            return Cynara::CredsCommonsInnerBackend::getMethodFromConfigurationFile(
+                     f, userCredsMap, "user_default", cachedMethodCode);
         });
         if (ret != CYNARA_API_SUCCESS)
             return ret;

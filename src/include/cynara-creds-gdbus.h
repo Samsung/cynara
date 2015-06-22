@@ -44,7 +44,7 @@ extern "C" {
  * \par Typical use case:
  * The function is called before the call of one of ...check() functions.
  * Returned string is used as client parameter in ...check() function.
- * String is released with free() function when it is no longer needed.
+ * String is released with g_free() function when it is no longer needed.
  *
  * \par Method of function operation:
  * The function generates client string by calling a method from DBus Interface
@@ -88,7 +88,7 @@ int cynara_creds_gdbus_get_client(GDBusConnection *connection, const gchar *uniq
  * \par Typical use case:
  * The function is called before the call of one of ...check() functions.
  * Returned string is used as user parameter in ...check() function.
- * String is released with free() function when it is no longer needed.
+ * String is released with g_free() function when it is no longer needed.
  *
  * \par Method of function operation:
  * The function generates user string by calling a method from DBus Interface

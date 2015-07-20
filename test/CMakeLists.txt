@@ -23,6 +23,7 @@ ADD_DEFINITIONS("-DCYNARA_NO_LOGS")
 SET(CYNARA_SRC ${PROJECT_SOURCE_DIR}/src)
 
 SET(CYNARA_SOURCES_FOR_TESTS
+    ${CYNARA_SRC}/client-async/sequence/SequenceContainer.cpp
     ${CYNARA_SRC}/common/config/PathConfig.cpp
     ${CYNARA_SRC}/common/containers/BinaryQueue.cpp
     ${CYNARA_SRC}/common/protocol/ProtocolAdmin.cpp
@@ -74,6 +75,7 @@ SET(CYNARA_SOURCES_FOR_TESTS
 SET(CYNARA_TESTS_SOURCES
     TestEventListenerProxy.cpp
     chsgen/checksumgenerator.cpp
+    client-async/sequence/sequencecontainer.cpp
     common/exceptions/bucketrecordcorrupted.cpp
     common/protocols/admin/admincheckrequest.cpp
     common/protocols/admin/admincheckresponse.cpp

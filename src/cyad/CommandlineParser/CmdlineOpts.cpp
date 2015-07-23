@@ -16,6 +16,7 @@
 /**
  * @file        src/cyad/CommandlineParser/CmdlineOpts.cpp
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
+ * @author      Oskar Świtalski <o.switalski@samsung.com>
  * @version     1.0
  * @brief       Command-line structs and helpers
  */
@@ -32,57 +33,61 @@ namespace CmdlineOpts {
 const OptionsMap commandlineOptions = {
     { CmdlineOpt::SetBucket,
         { "set-bucket", CmdlineOpt::SetBucket, "set-bucket=<name>",
-           "name of bucket to add or alter", OptHasArg::RequiredArgument } },
+           "name of bucket to add or alter", OptHasArg::RequiredArgument, OptIsReq::NotRequired } },
     { CmdlineOpt::DeleteBucket,
         { "delete-bucket", CmdlineOpt::DeleteBucket, "delete-bucket=<name>",
-          "name of bucket to delete", OptHasArg::RequiredArgument } },
+          "name of bucket to delete", OptHasArg::RequiredArgument, OptIsReq::Required } },
     { CmdlineOpt::SetPolicy,
         { "set-policy", CmdlineOpt::SetPolicy, "",
-          "", OptHasArg::NoArgument } },
+          "", OptHasArg::NoArgument, OptIsReq::NotRequired } },
     { CmdlineOpt::Erase,
         { "erase", CmdlineOpt::Erase, "erase=<name>",
-          "name of bucket to erase policies from", OptHasArg::RequiredArgument } },
+          "name of bucket to erase policies from", OptHasArg::RequiredArgument,
+          OptIsReq::Required } },
     { CmdlineOpt::Check,
         { "check", CmdlineOpt::Check, "check",
-          "", OptHasArg::NoArgument } },
+          "", OptHasArg::NoArgument, OptIsReq::NotRequired } },
     { CmdlineOpt::ListPolicies,
         { "list-policies", CmdlineOpt::ListPolicies, "list-policies=<bucket>",
-          "name of bucket to list policies from", OptHasArg::RequiredArgument } },
+          "name of bucket to list policies from", OptHasArg::RequiredArgument,
+          OptIsReq::Required } },
     { CmdlineOpt::ListPoliciesDesc,
         { "list-policies-descriptions", CmdlineOpt::ListPoliciesDesc, "list-policies-descriptions",
-          "", OptHasArg::NoArgument } },
+          "", OptHasArg::NoArgument, OptIsReq::NotRequired } },
 
     { CmdlineOpt::Type,
         { "type", CmdlineOpt::Type, "type=<type>",
-          "policy type", OptHasArg::RequiredArgument } },
+          "policy type", OptHasArg::RequiredArgument, OptIsReq::Required } },
     { CmdlineOpt::Metadata,
         { "metadata", CmdlineOpt::Metadata, "metadata=<metadata>",
-          "metadata for policy", OptHasArg::RequiredArgument } },
+          "metadata for policy", OptHasArg::RequiredArgument, OptIsReq::NotRequired } },
 
     { CmdlineOpt::Client,
         { "client", CmdlineOpt::Client, "client=<client>",
-          "client value", OptHasArg::RequiredArgument } },
+          "client value", OptHasArg::RequiredArgument, OptIsReq::Required } },
     { CmdlineOpt::User,
         { "user", CmdlineOpt::User, "user=<user>",
-          "user value", OptHasArg::RequiredArgument } },
+          "user value", OptHasArg::RequiredArgument, OptIsReq::Required } },
     { CmdlineOpt::Privilege,
         { "privilege", CmdlineOpt::Privilege, "privilege=<privilege>",
-          "privilege value", OptHasArg::RequiredArgument } },
+          "privilege value", OptHasArg::RequiredArgument, OptIsReq::Required } },
 
     { CmdlineOpt::Bulk,
         { "bulk", CmdlineOpt::Bulk, "bulk=<filename>",
-          "path or - for stdin", OptHasArg::RequiredArgument } },
+          "path or - for stdin", OptHasArg::RequiredArgument, OptIsReq::NotRequired } },
 
     { CmdlineOpt::Bucket,
         { "bucket", CmdlineOpt::Bucket, "bucket=<name>",
-          "name of bucket; omit for default", OptHasArg::RequiredArgument } },
+          "name of bucket; omit for default", OptHasArg::RequiredArgument,
+          OptIsReq::NotRequired } },
     { CmdlineOpt::Recursive,
         { "recursive", CmdlineOpt::Recursive, "recursive=<yes|no>",
-          "if linked buckets should be processed as well", OptHasArg::RequiredArgument } },
+          "if linked buckets should be processed as well", OptHasArg::RequiredArgument,
+          OptIsReq::Required } },
 
     { CmdlineOpt::Help,
         { "help", CmdlineOpt::Help, "help",
-          "print help message", OptHasArg::NoArgument } }
+          "print help message", OptHasArg::NoArgument, OptIsReq::NotRequired } }
 };
 
 std::vector<option> makeLongOptions(const std::vector<CmdlineOpt> &opts) {
@@ -125,7 +130,8 @@ std::string makeHelp(void) {
                     + ", --" + commandlineOptions.at(opt).helpArgument;
         auto spaceLen = optWidth > prefix.length() ? optWidth - prefix.length() : 1;
         return prefix + std::string(spaceLen, ' ')
-                      + commandlineOptions.at(opt).helpDescription;
+                      + commandlineOptions.at(opt).helpDescription
+                      + (commandlineOptions.at(opt).isReq == Required ? " - required" : "");
     };
 
     std::stringstream helpStr;
@@ -150,6 +156,13 @@ std::string makeHelp(void) {
     helpStr << opt(CmdlineOpt::Type) << std::endl;
     helpStr << opt(CmdlineOpt::Metadata) << std::endl;
     helpStr << opt(CmdlineOpt::Bulk) << std::endl;
+    helpStr << std::endl;
+
+    helpStr << "Bulk file" << std::endl;
+    helpStr << "  For each policy a single line should be present with the folowing information:";
+    helpStr << std::endl;
+    helpStr << "    <bucket>;<client>;<user>;<privilege>;<type as decimal>;[metadata]" << std::endl;
+    helpStr << "  In stdin input mode, double empty line ends this mode." << std::endl;
     helpStr << std::endl;
 
     helpStr << head("Policy erase options", CmdlineOpt::Erase) << std::endl;

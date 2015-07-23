@@ -16,6 +16,7 @@
 /**
  * @file        src/cyad/CommandlineParser/CmdlineOpts.h
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
+ * @author      Oskar Świtalski <o.switalski@samsung.com>
  * @version     1.0
  * @brief       Command-line structs and helpers
  */
@@ -59,12 +60,18 @@ enum OptHasArg {
     RequiredArgument = required_argument
 };
 
+enum OptIsReq {
+    NotRequired = 0,
+    Required,
+};
+
 struct CmdlineOptDesc {
     const char *longOption;
     char shortOption;
     const char *helpArgument;
     const char *helpDescription;
     OptHasArg hasArg;
+    OptIsReq isReq;
 };
 
 typedef std::unordered_map<CmdlineOpt, const CmdlineOptDesc, std::hash<int>> OptionsMap;

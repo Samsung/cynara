@@ -16,6 +16,7 @@
 /**
  * @file        src/cyad/CommandsDispatcher.cpp
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
+ * @author      Oskar Świtalski <o.switalski@samsung.com>
  * @version     1.0
  * @brief       CommandsDispatcher class (implementation)
  */
@@ -74,9 +75,8 @@ int CommandsDispatcher::execute(HelpCyadCommand &) {
 
 int CommandsDispatcher::execute(ErrorCyadCommand &result) {
     m_io.cerr() << "There was an error in command-line options:" << std::endl;
-    m_io.cerr() << result.message() << std::endl;
+    m_io.cerr() << result.message() << ", use '-h' or '--help' to print help message" << std::endl;
 
-    m_io.cerr() << std::endl << CmdlineOpts::makeHelp() << std::endl;
     return CYNARA_API_INVALID_COMMANDLINE_PARAM;
 }
 

@@ -43,7 +43,7 @@ ENDIF (SYSTEMD_DEP_FOUND)
 ########################  directory configuration  ############################
 
 SET(LIB_DIR
-    "${CMAKE_INSTALL_PREFIX}/lib"
+    "${CMAKE_INSTALL_LIBDIR}"
     CACHE PATH
     "Object code libraries directory")
 

@@ -27,6 +27,7 @@ set(CYNARA_VERSION 0.8.0)
 
 INCLUDE(FindPkgConfig)
 INCLUDE(CheckCXXCompilerFlag)
+INCLUDE(GNUInstallDirs)
 
 ########################## search for packages ################################
 
@@ -43,32 +44,32 @@ ENDIF (SYSTEMD_DEP_FOUND)
 ########################  directory configuration  ############################
 
 SET(LIB_DIR
-    "${CMAKE_INSTALL_PREFIX}/lib"
+    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}"
     CACHE PATH
     "Object code libraries directory")
 
 SET(BIN_DIR
-    "${CMAKE_INSTALL_PREFIX}/bin"
+    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}"
     CACHE PATH
     "User executables directory")
 
 SET(SBIN_DIR
-    "${CMAKE_INSTALL_PREFIX}/sbin"
+    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_SBINDIR}"
     CACHE PATH
     "System admin executables directory")
 
 SET(SYS_CONFIG_DIR
-    "${CMAKE_INSTALL_PREFIX}/etc"
+    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_SYSCONFDIR}"
     CACHE PATH
     "Read-only single-machine data directory")
 
 SET(INCLUDE_DIR
-    "${CMAKE_INSTALL_PREFIX}/include"
+    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}"
     CACHE PATH
     "Header files directory")
 
 SET(LOCAL_STATE_DIR
-    "${CMAKE_INSTALL_PREFIX}/var"
+    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALSTATEDIR}"
     CACHE PATH
     "Modifiable single-machine data directory")
 

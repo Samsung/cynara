@@ -48,6 +48,7 @@ enum CmdlineOpt {
     Client = 'c',
     User = 'u',
     Privilege = 'p',
+    All = 'A',
     Bulk = 'f',
     Bucket = 'k',
     Recursive = 'r',

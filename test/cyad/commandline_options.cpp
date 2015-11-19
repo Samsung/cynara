@@ -30,7 +30,7 @@ TEST(CommandlineOptions, allOptionsPresent) {
     using Cynara::CmdlineOpts::commandlineOptions;
 
     // A cheap trick to make sure this test is updated, when new options are added
-    ASSERT_EQ(16, commandlineOptions.size());
+    ASSERT_EQ(17, commandlineOptions.size());
 
     ASSERT_NO_THROW(commandlineOptions.at(CmdlineOpt::SetBucket));
     ASSERT_NO_THROW(commandlineOptions.at(CmdlineOpt::DeleteBucket));
@@ -45,6 +45,7 @@ TEST(CommandlineOptions, allOptionsPresent) {
     ASSERT_NO_THROW(commandlineOptions.at(CmdlineOpt::Client));
     ASSERT_NO_THROW(commandlineOptions.at(CmdlineOpt::User));
     ASSERT_NO_THROW(commandlineOptions.at(CmdlineOpt::Privilege));
+    ASSERT_NO_THROW(commandlineOptions.at(CmdlineOpt::All));
     ASSERT_NO_THROW(commandlineOptions.at(CmdlineOpt::Bulk));
     ASSERT_NO_THROW(commandlineOptions.at(CmdlineOpt::Bucket));
     ASSERT_NO_THROW(commandlineOptions.at(CmdlineOpt::Recursive));

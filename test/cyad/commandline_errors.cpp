@@ -130,3 +130,10 @@ TEST_F(CyadCommandlineTest, listPoliciesNoBucket) {
     Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
     ASSERT_ERROR_MSG(Errors::optionMissing(CmdlineOpt::ListPolicies), parser.parseMain());
 }
+
+TEST_F(CyadCommandlineTest, listPoliciesAllWithArgument) {
+    prepare_argv({ "./cyad", "--list-policies",
+                   "", "--all=all" });
+    Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
+    ASSERT_ERROR_MSG(Errors::unknownOption(CmdlineOpt::ListPolicies), parser.parseMain());
+}

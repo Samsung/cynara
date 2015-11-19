@@ -243,6 +243,42 @@ TEST_F(CyadCommandlineTest, listPoliciesOtherBucket) {
     ASSERT_EQ(Cynara::PolicyKey("c", "u", "p"), result->policyKey());
 }
 
+TEST_F(CyadCommandlineTest, listPoliciesAll) {
+    prepare_argv({ "./cyad", "--list-policies=",
+                   "--all" });
+    Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
+
+    auto result = std::dynamic_pointer_cast<Cynara::ListPoliciesCyadCommand>(parser.parseMain());
+    ASSERT_NE(nullptr, result);
+    ASSERT_EQ(CYNARA_ADMIN_DEFAULT_BUCKET, result->bucketId());
+    ASSERT_EQ(Cynara::PolicyKey(CYNARA_ADMIN_ANY, CYNARA_ADMIN_ANY, CYNARA_ADMIN_ANY),
+              result->policyKey());
+}
+
+TEST_F(CyadCommandlineTest, listPoliciesAllAdditionalOption) {
+    prepare_argv({ "./cyad", "--list-policies=",
+                   "--all", "--user=u" });
+    Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
+
+    auto result = std::dynamic_pointer_cast<Cynara::ListPoliciesCyadCommand>(parser.parseMain());
+    ASSERT_NE(nullptr, result);
+    ASSERT_EQ(CYNARA_ADMIN_DEFAULT_BUCKET, result->bucketId());
+    ASSERT_EQ(Cynara::PolicyKey(CYNARA_ADMIN_ANY, "u", CYNARA_ADMIN_ANY),
+              result->policyKey());
+}
+
+TEST_F(CyadCommandlineTest, listPoliciesAllAdditionalOptions) {
+    prepare_argv({ "./cyad", "--list-policies=",
+                   "--all", "--user=u", "--client=c", "--privilege=p" });
+    Cynara::CyadCommandlineParser parser(this->argc(), this->argv());
+
+    auto result = std::dynamic_pointer_cast<Cynara::ListPoliciesCyadCommand>(parser.parseMain());
+    ASSERT_NE(nullptr, result);
+    ASSERT_EQ(CYNARA_ADMIN_DEFAULT_BUCKET, result->bucketId());
+    ASSERT_EQ(Cynara::PolicyKey("c", "u", "p"),
+              result->policyKey());
+}
+
 TEST_F(CyadCommandlineTest, listPoliciesDesc) {
     prepare_argv({ "./cyad", "--list-policies-descriptions" });
     Cynara::CyadCommandlineParser parser(this->argc(), this->argv());

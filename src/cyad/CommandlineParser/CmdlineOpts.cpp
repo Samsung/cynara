@@ -71,6 +71,9 @@ const OptionsMap commandlineOptions = {
     { CmdlineOpt::Privilege,
         { "privilege", CmdlineOpt::Privilege, "privilege=<privilege>",
           "privilege value", OptHasArg::RequiredArgument, OptIsReq::Required } },
+    { CmdlineOpt::All,
+        { "all", CmdlineOpt::All, "all", "list all - equivalent to -c \"#\" -u \"#\" -p \"#\"",
+          OptHasArg::NoArgument, OptIsReq::NotRequired } },
 
     { CmdlineOpt::Bulk,
         { "bulk", CmdlineOpt::Bulk, "bulk=<filename>",
@@ -186,6 +189,7 @@ std::string makeHelp(void) {
     helpStr << opt(CmdlineOpt::Client) << std::endl;
     helpStr << opt(CmdlineOpt::User) << std::endl;
     helpStr << opt(CmdlineOpt::Privilege) << std::endl;
+    helpStr << opt(CmdlineOpt::All) << std::endl;
     helpStr << std::endl;
 
     helpStr << head("Policies descriptions list options", CmdlineOpt::ListPoliciesDesc)

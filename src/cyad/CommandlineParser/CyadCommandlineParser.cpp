@@ -16,6 +16,7 @@
 /**
  * @file        src/cyad/CommandlineParser/CyadCommandlineParser.cpp
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
+ * @author      Oskar Świtalski <o.switalski@samsung.com>
  * @version     1.0
  * @brief       Commandline parser for Cyad
  */
@@ -353,7 +354,8 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseListPolicies(const std:
     std::vector<CmdlineOpt> opts = {
         CmdlineOpt::Client,
         CmdlineOpt::User,
-        CmdlineOpt::Privilege
+        CmdlineOpt::Privilege,
+        CmdlineOpt::All
     };
 
     const auto longOpts = Opts::makeLongOptions(opts);
@@ -365,12 +367,16 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseListPolicies(const std:
                              { CmdlineOpt::Privilege, std::string() } };
 
     int opt;
+    bool listAll = false;
     while ((opt = getopt_long(m_argc, m_argv, shortOpts.data(), longOpts.data(), nullptr)) != -1) {
         switch (opt) {
             case CmdlineOpt::Client:
             case CmdlineOpt::User:
             case CmdlineOpt::Privilege:
                 values[opt] = optarg;
+                break;
+            case CmdlineOpt::All:
+                listAll = true;
                 break;
             case ':': // Missing argument
                 return sharedError(Err::argumentMissing(CmdlineOpt::ListPolicies));
@@ -379,10 +385,14 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseListPolicies(const std:
         }
     }
 
-    for (const auto &val : values) {
+    for (auto &val : values) {
         if (val.second.empty()) {
-            // TODO: Identify actual option
-            return sharedError(Err::optionMissing(CmdlineOpt::ListPolicies));
+            if (listAll) {
+                val.second = CYNARA_ADMIN_ANY;
+            } else {
+                // TODO: Identify actual option
+                return sharedError(Err::optionMissing(CmdlineOpt::ListPolicies));
+            }
         }
     }
 

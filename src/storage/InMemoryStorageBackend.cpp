@@ -206,10 +206,10 @@ void InMemoryStorageBackend::erasePolicies(const PolicyBucketId &bucketId, bool 
 
     while (!bucketIds.empty()) {
         auto it = bucketIds.begin();
-        PolicyBucketId bucketId = *it;
+        PolicyBucketId policyBucketId = *it;
         bucketIds.erase(it);
         try {
-            auto &policyBucket = buckets().at(bucketId);
+            auto &policyBucket = buckets().at(policyBucketId);
             if (recursive) {
                 auto subBuckets = policyBucket.getSubBuckets();
                 bucketIds.insert(subBuckets.begin(), subBuckets.end());
@@ -218,7 +218,7 @@ void InMemoryStorageBackend::erasePolicies(const PolicyBucketId &bucketId, bool 
                  return policy->key().matchFilter(filter);
             });
         } catch (const std::out_of_range &) {
-            throw BucketNotExistsException(bucketId);
+            throw BucketNotExistsException(policyBucketId);
         }
     }
 }

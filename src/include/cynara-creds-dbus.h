@@ -20,8 +20,8 @@
  * @author      Oskar Switalski <o.switalski@samsung.com>
  * @version     1.0
  * @brief       This file contains Cynara credentials helper APIs for dbus clients.
+ * @example     cynara-creds-dbus.example
  */
-
 
 #ifndef CYNARA_CREDS_DBUS_H
 #define CYNARA_CREDS_DBUS_H

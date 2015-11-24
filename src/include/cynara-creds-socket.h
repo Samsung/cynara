@@ -21,8 +21,8 @@
  * @author      Oskar Switalski <o.switalski@samsung.com>
  * @version     1.0
  * @brief       This file contains Cynara credentials helper APIs for socket clients.
+ * @example     cynara-creds-socket.example
  */
-
 
 #ifndef CYNARA_CREDS_SOCKET_H
 #define CYNARA_CREDS_SOCKET_H

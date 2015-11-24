@@ -1,0 +1,119 @@
+/*
+ * Admin api example:
+ * - set bucket
+ * - set policies
+ * - remove bucket
+ */
+
+(...)
+
+void cynara_log(const char *string, int cynara_status) {
+    char buf[BUFSIZ];
+
+    int ret = cynara_strerror(cynara_status, buf, BUFSIZ);
+    if (ret != CYNARA_API_SUCCESS) {
+        strncpy(buf, "cynara_strerror failed", BUFSIZ);
+        buf[BUFSIZ - 1] = '\0';
+    }
+    if (cynara_status < 0)
+        log_error("%s: %s", string, buf);
+    else
+        log_debug("%s: %s", string, buf);
+}
+
+int ret;
+cynara_admin *p_cynara_admin = NULL;
+
+(...)
+
+ret = cynara_admin_initialize(&p_cynara_admin);
+if (ret != CYNARA_ADMIN_API_SUCCESS) {
+    /* error */
+    cynara_log("cynara_admin_initialize", ret);
+}
+
+(...)
+
+ret = cynara_admin_set_bucket(p_cynara_admin, "bucket1", CYNARA_ADMIN_ALLOW, NULL);
+if (ret != CYNARA_ADMIN_API_SUCCESS) {
+    /* error */
+    cynara_log("cynara_admin_set_bucket", ret);
+}
+
+ret = cynara_admin_set_bucket(p_cynara_admin, "bucket2", CYNARA_ADMIN_DENY, NULL);
+if (ret != CYNARA_ADMIN_API_SUCCESS) {
+    /* error */
+    cynara_log("cynara_admin_set_bucket", ret);
+}
+
+(...)
+
+cynara_admin_policy *policies1[6];
+
+policy11 = { CYNARA_ADMIN_DEFAULT_BUCKET, CYNARA_ADMIN_WILDCARD, "user1", CYNARA_ADMIN_WILDCARD,
+             CYNARA_ADMIN_BUCKET, "bucket1" };
+policy12 = { "bucket1", "client1", "user1", "privilege1", CYNARA_ADMIN_DENY, NULL };
+policy13 = { "bucket2", "client2", "user1", "privilege2", CYNARA_ADMIN_ALLOW, NULL };
+policy14 = { "bucket1", CYNARA_ADMIN_WILDCARD, CYNARA_ADMIN_WILDCARD, "privilege2",
+             CYNARA_ADMIN_BUCKET, "bucket2" };
+policy15 = { CYNARA_ADMIN_DEFAULT_BUCKET, "client3", CYNARA_ADMIN_WILDCARD, CYNARA_ADMIN_WILDCARD,
+             CYNARA_ADMIN_ALLOW, NULL };
+
+policies[6] = {
+    &policy11,
+    &policy12,
+    &policy13,
+    &policy14,
+    &policy15,
+    NULL
+}
+
+ret = cynara_admin_set_policies(p_cynara_admin, &policies1);
+if (ret != CYNARA_ADMIN_API_SUCCESS) {
+    /* error */
+    cynara_log("cynara_admin_set_policies", ret);
+}
+
+(...)
+
+ret = cynara_admin_erase(p_cynara_admin, "bucket2", FALSE, CYNARA_ADMIN_ANY, "user1", "privilege2");
+if (ret != CYNARA_ADMIN_API_SUCCESS) {
+    /* error */
+    cynara_log("cynara_admin_erase", ret);
+}
+
+(...)
+
+ret = cynara_admin_set_bucket(p_cynara_admin, "bucket2", CYNARA_ADMIN_DELETE);
+if (ret != CYNARA_ADMIN_API_SUCCESS) {
+    /* error */
+    cynara_log("cynara_admin_set_bucket", ret);
+}
+
+(...)
+
+cynara_admin_policy *policies2[3];
+
+policy21 = { "bucket1", CYNARA_ADMIN_WILDCARD, CYNARA_ADMIN_WILDCARD, "privilege2",
+             CYNARA_ADMIN_DELETE, NULL };
+policy22 = { CYNARA_ADMIN_DEFAULT_BUCKET, "client3", CYNARA_ADMIN_WILDCARD, CYNARA_ADMIN_WILDCARD,
+             CYNARA_ADMIN_DELETE, NULL };
+
+policies2[3] = {
+    &policy21,
+    &policy22,
+    NULL
+}
+
+ret = cynara_admin_set_policies(p_cynara_admin, &policies2);
+if (ret != CYNARA_ADMIN_API_SUCCESS) {
+    /* error */
+    cynara_log("cynara_admin_set_policies", ret);
+}
+
+(...)
+
+cynara_admin_finish(p_cynara_admin);
+p_cynara_admin = NULL;
+
+(...)

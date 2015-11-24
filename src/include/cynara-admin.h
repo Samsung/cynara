@@ -20,6 +20,7 @@
  * \author      Oskar Switalski <o.switalski@samsung.com>
  * \version     1.0
  * \brief       This file contains administration APIs of cynara available with libcynara-admin.
+ * \example     cynara-admin.example
  */
 
 #ifndef CYNARA_ADMIN_H

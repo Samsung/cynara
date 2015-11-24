@@ -23,7 +23,6 @@
  * @brief       This file contains common APIs for Cynara credentials helper.
  */
 
-
 #ifndef CYNARA_CREDS_COMMONS_H
 #define CYNARA_CREDS_COMMONS_H
 

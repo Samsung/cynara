@@ -18,6 +18,7 @@
  * @author      Radoslaw Bartosiak <r.bartosiak@samsung.com>
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @author      Oskar Switalski <o.switalski@samsung.com>
  * @version     1.0
  * @brief       This file contains Cynara credentials helper APIs for socket clients.
  */
@@ -40,12 +41,14 @@ extern "C" {
  * side of socket.
  *
  * \par Purpose:
- * Client identification string is required for cynara_check() and cynara_async_check() functions.
+ * Client identification string is required for cynara_check() and cynara_async_create_request()
+ * functions.
  *
  * \par Typical use case:
- * The function is called before the call of one of ...check() functions.
- * Returned string is used as client parameter in ...check() function.
- * String is released with free() function when it is no longer needed.
+ * The function is called before the call of cynara_check() or cynara_async_create_request()
+ * function. Returned string is used as client parameter in cynara_check() or
+ * cynara_async_create_request() function. String is released with free() function when it is no
+ * longer needed.
  *
  * \par Method of function operation:
  * The function generates client string using SO_PEERCRED on socket.
@@ -67,12 +70,12 @@ extern "C" {
  * \param[out] client Placeholder for allocated string containing client id
  *
  * \return CYNARA_API_SUCCESS on success
- *         CYNARA_API_INVALID_PARAM when client is NULL or socket_fd is not valid connected socket
+ * \return CYNARA_API_INVALID_PARAM when client is NULL or socket_fd is not valid connected socket
  *                                  descriptor
- *         CYNARA_API_METHOD_NOT_SUPPORTED when requested method is not supported
- *         CYNARA_API_CONFIGURATION_ERROR if the configuration file can not be opened or
- *                                        there are errors in configuration file.
- *         CYNARA_API_OUT_OF_MEMORY when there was error allocating memory
+ * \return CYNARA_API_METHOD_NOT_SUPPORTED when requested method is not supported
+ * \return CYNARA_API_CONFIGURATION_ERROR if the configuration file can not be opened or
+ *                                        there are errors in configuration file
+ * \return CYNARA_API_OUT_OF_MEMORY when there was error allocating memory
  */
 int cynara_creds_socket_get_client(int socket_fd, enum cynara_client_creds method, char **client);
 
@@ -82,12 +85,14 @@ int cynara_creds_socket_get_client(int socket_fd, enum cynara_client_creds metho
  * at the other side of socket.
  *
  * \par Purpose:
- * User identification string is required for cynara_check() and cynara_async_check() functions.
+ * User identification string is required for cynara_check() and cynara_async_create_request()
+ * functions.
  *
  * \par Typical use case:
- * The function is called before the call of one of ...check() functions.
- * Returned string is used as user parameter in ...check() function.
- * String is released with free() function when it is no longer needed.
+ * The function is called before the call of cynara_check() or cynara_async_create_request()
+ * function. Returned string is used as user parameter in cynara_check() or
+ * cynara_async_create_request() function. String is released with free() function when it is no
+ * longer needed.
  *
  * \par Method of function operation:
  * The function generates user string using SO_PEERCRED on socket.
@@ -109,12 +114,12 @@ int cynara_creds_socket_get_client(int socket_fd, enum cynara_client_creds metho
  * \param[out] user Placeholder for allocated string containing user id
  *
  * \return CYNARA_API_SUCCESS on success
- *         CYNARA_API_INVALID_PARAM when user is NULL or socket_fd is not valid connected socket
+ * \return CYNARA_API_INVALID_PARAM when user is NULL or socket_fd is not valid connected socket
  *                                  descriptor
- *         CYNARA_API_METHOD_NOT_SUPPORTED when requested method is not supported
- *         CYNARA_API_CONFIGURATION_ERROR if the configuration file can not be opened or
- *                                        there are errors in configuration file.
- *         CYNARA_API_OUT_OF_MEMORY when there was error allocating memory
+ * \return CYNARA_API_METHOD_NOT_SUPPORTED when requested method is not supported
+ * \return CYNARA_API_CONFIGURATION_ERROR if the configuration file can not be opened or
+ *                                        there are errors in configuration file
+ * \return CYNARA_API_OUT_OF_MEMORY when there was error allocating memory
  */
 int cynara_creds_socket_get_user(int socket_fd, enum cynara_user_creds method, char **user);
 
@@ -125,7 +130,7 @@ int cynara_creds_socket_get_user(int socket_fd, enum cynara_user_creds method, c
  * \par Purpose:
  * PID may be used for client_session creation with cynara_session_from_pid() function
  * from libcynara-session library. Client_session is needed for cynara_check()
- * and cynara_async_check() functions.
+ * and cynara_async_create_request() functions.
  *
  * \par Typical use case:
  * The function is called before the call of cynara_session_from_pid() function.
@@ -144,8 +149,8 @@ int cynara_creds_socket_get_user(int socket_fd, enum cynara_user_creds method, c
  * \param[out] pid Placeholder for pid
  *
  * \return CYNARA_API_SUCCESS on success
- *         CYNARA_API_INVALID_PARAM when socket_fd is not valid connected socket descriptor
- *         CYNARA_API_UNKNOWN_ERROR when system function fails in incredible situation
+ * \return CYNARA_API_INVALID_PARAM when socket_fd is not valid connected socket descriptor
+ * \return CYNARA_API_UNKNOWN_ERROR when system function fails in incredible situation
  */
 int cynara_creds_socket_get_pid(int socket_fd, pid_t *pid);
 

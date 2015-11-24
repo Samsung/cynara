@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 /**
  * @file        src/include/cynara-plugin.h
  * @author      Zofia Abramowska <z.abramowska@samsung.com>
+ * @author      Oskar Switalski <o.switalski@samsung.com>
  * @version     1.0
  * @brief       This file defines cynara service side  of external plugin interface -
  *              ServicePluginInterface
@@ -60,11 +61,11 @@ public:
      * Enum indicating status of calling plugin method.
      */
     enum class PluginStatus {
-        SUCCESS,                /** < update() finished successfully*/
-        ANSWER_READY,           /** < check() returns answer immediately through argument*/
-        ANSWER_NOTREADY,        /** < check() cannot return answer immediately,
-                                    < communication with agent is required */
-        ERROR                   /** < either check() or update() fails */
+        SUCCESS,                /**<  update() finished successfully */
+        ANSWER_READY,           /**<  check() returns answer immediately through argument */
+        ANSWER_NOTREADY,        /**<  check() cannot return answer immediately,
+                                      communication with agent is required */
+        ERROR                   /**<  either check() or update() fails */
     };
 
     /**

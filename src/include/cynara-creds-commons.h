@@ -18,6 +18,7 @@
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @author      Radoslaw Bartosiak <r.bartosiak@samsung.com>
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
+ * @author      Oskar Switalski <o.switalski@samsung.com>
  * @version     1.0
  * @brief       This file contains common APIs for Cynara credentials helper.
  */
@@ -78,10 +79,10 @@ extern "C" {
  *                     (like CLIENT_METHOD_SMACK, CLIENT_METHOD_PID)
  *
  * \return CYNARA_API_SUCCESS on success
- *         CYNARA_API_CONFIGURATION_ERROR if the configuration file can not be opened or
- *                                        there are errors in configuration file.
- *         CYNARA_API_OUT_OF_MEMORY if there is error in memory allocation.
- *         CYNARA_API_UNKNOWN_ERROR if there is other error.
+ * \return CYNARA_API_CONFIGURATION_ERROR if the configuration file can not be opened or
+ *                                        there are errors in configuration file
+ * \return CYNARA_API_OUT_OF_MEMORY if there is error in memory allocation
+ * \return CYNARA_API_UNKNOWN_ERROR if there is other error
  *
  */
 int cynara_creds_get_default_client_method(enum cynara_client_creds *method);
@@ -118,10 +119,10 @@ int cynara_creds_get_default_client_method(enum cynara_client_creds *method);
  * (like USER_METHOD_UID, USER_METHOD_GID)
  *
  * \return CYNARA_API_SUCCESS on success
- *         CYNARA_API_CONFIGURATION_ERROR if the configuration file can not be opened or
- *                                        there are errors in configuration file.
- *         CYNARA_API_OUT_OF_MEMORY if there is error in memory allocation.
- *         CYNARA_API_UNKNOWN_ERROR if there is other error.
+ * \return CYNARA_API_CONFIGURATION_ERROR if the configuration file can not be opened or
+ *                                        there are errors in configuration file
+ * \return CYNARA_API_OUT_OF_MEMORY if there is error in memory allocation
+ * \return CYNARA_API_UNKNOWN_ERROR if there is other error
  */
 int cynara_creds_get_default_user_method(enum cynara_user_creds *method);
 

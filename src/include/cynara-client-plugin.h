@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 /**
  * @file        src/include/cynara-client-plugin.h
  * @author      Zofia Abramowska <z.abramowska@samsung.com>
+ * @author      Oskar Switalski <o.switalski@samsung.com>
  * @version     1.0
  * @brief       This file defines cynara client side of external plugin interface -
  *              ClientPluginInterface.
@@ -37,13 +38,14 @@ typedef std::shared_ptr<ClientPluginInterface> ClientPluginInterfacePtr;
 
 /**
  * A class defining external plugins interface.
+ *
  * These plugins work inside of cynara client library. They interpret
  * PolicyResult returned by cynara in terms of:
- * a) cacheability - tells, whether value should be cached (for e.g. policyType like
- *                   ALLOW_ONCE should not be cached)
- * b) usability - whether cache entry can still be used (for e.g. policy allowing access for
- *                given type)
- * c) value - translates PolicyResult to CYNARA_API_ACCESS_ALLOWED or CYNARA_API_ACCESS_DENIED
+ * * cacheability - tells, whether value should be cached (for e.g. policyType like
+ *                  ALLOW_ONCE should not be cached)
+ * * usability - whether cache entry can still be used (for e.g. policy allowing access for
+ *               given type)
+ * * value - translates PolicyResult to CYNARA_API_ACCESS_ALLOWED or CYNARA_API_ACCESS_DENIED
  *
  * Plugin implementing ClientPluginInterface must implement ExternalPluginInterface.
  * Creation/destruction functions with signatures compatible to Cynara::create_t and

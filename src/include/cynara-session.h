@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,9 +15,10 @@
  */
 /**
  * @file        src/include/cynara-session.h
- * \author      Aleksander Zdyb <a.zdyb@samsung.com>
- * \author      Radoslaw Bartosiak <r.bartosiak@samsung.com.pl>
+ * @author      Aleksander Zdyb <a.zdyb@samsung.com>
+ * @author      Radoslaw Bartosiak <r.bartosiak@samsung.com.pl>
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
+ * @author      Oskar Switalski <o.switalski@samsung.com>
  * @version     1.0
  * @brief       This file contains Cynara session helper APIs.
  */
@@ -38,12 +39,12 @@ extern "C" {
  *
  * \par Purpose:
  * This function can be used to create session string identifier used in cynara_check()
- * and cynara_async_check() functions defined in  client libraries.
+ * and cynara_async_create_request() functions defined in  client libraries.
  *
  * \par Typical use case:
- * The function is called before the call of one of ...check() functions.
- * Returned string is used as client_session param in ...check() function.
- * String is released with free() function.
+ * The function is called before the call of cynara_check() or cynara_async_create_request()
+ * function. Returned string is used as client_session param in cynara_check() or
+ * cynara_async_create_request() function. String is released with free() function.
  *
  * \par Method of function operation:
  * The function generates client session based on the pid and start time of the client process.
@@ -61,7 +62,7 @@ extern "C" {
  * \param[in] client_pid client application process identifier (PID).
  *
  * \return session string on success
- *         or NULL on error.
+ * \return NULL on error
  */
 char *cynara_session_from_pid(pid_t client_pid);
 

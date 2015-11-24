@@ -30,8 +30,7 @@
 
 /**
  * \name Return Codes
- * exported by the foundation API.
- * result codes beginning with negative codes indicate an error.
+ * Exported by the foundation API. Return codes beginning with negative codes indicate an error.
  * @{
 */
 /*! \brief  indicating access that cannot be resolved without further actions*/

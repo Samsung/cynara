@@ -17,6 +17,7 @@
  * @file        src/include/cynara-client.h
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @author      Zofia Abramowska <z.abramowska@samsung.com>
+ * @author      Oskar Switalski <o.switalski@samsung.com>
  * @version     1.0
  * @brief       This file contains client APIs of Cynara available with libcynara-client.
  */
@@ -137,10 +138,10 @@ int cynara_configuration_set_cache_size(cynara_configuration *p_conf, size_t cac
  * Create structured used in following API calls.
  *
  * \par Purpose:
- * This API must be used by prior calling cynara_check function.
+ * This API must be used by prior calling cynara_check() function.
  *
  * \par Typical use case:
- * Once before a service can call cynara_check.
+ * Once before a service can call cynara_check().
  *
  * \par Method of function operation:
  * This API initializes inner library structures and in case of success
@@ -221,10 +222,15 @@ int cynara_finish(cynara *p_cynara);
  * application from different threads, they must be put into mutex protected critical section.
  *
  * \par Important notes:
+ * \parblock
  * An external application may be launched to allow user interaction in granting or denying access.
- * Call to cynara_check needs cynara structure to be created first with call to cynara_initialize().
+ *
+ * Call to cynara_check() needs cynara structure to be created first with call to
+ * cynara_initialize().
+ *
  * String length cannot exceed CYNARA_MAX_ID_LENGTH, otherwise CYNARA_API_INVALID_PARAM will be
  * returned.
+ * \endparblock
  *
  * \param[in] p_cynara Cynara structure.
  * \param[in] client Application or process identifier.
@@ -267,14 +273,16 @@ int cynara_check(cynara *p_cynara, const char *client, const char *client_sessio
  * application from different threads, they must be put into mutex protected critical section.
  *
  * \par Important notes:
+ * \parblock
  * The answer will be taken from Cynara's database without consulting any external applications.
  * If the answer cannot be resolved in one of CYNARA_API_PERMISSION_DENIED or
  * CYNARA_API_PERMISSION_ALLOWED without communicating with external application the API will return
  * CYNARA_API_ACCESS_NOT_RESOLVED.
+ *
  * Call to cynara_simple_check() needs cynara structure to be created first with call to
- * cynara_initialize().
- * String length cannot exceed CYNARA_MAX_ID_LENGTH, otherwise CYNARA_API_INVALID_PARAM will be
- * returned.
+ * cynara_initialize(). String length cannot exceed CYNARA_MAX_ID_LENGTH, otherwise
+ * CYNARA_API_INVALID_PARAM will be returned.
+ * \endparblock
  *
  * \param[in] p_cynara Cynara structure.
  * \param[in] client Application or process identifier.

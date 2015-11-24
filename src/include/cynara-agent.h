@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 /**
  * @file        src/include/cynara-agent.h
  * @author      Adam Malinowski <a.malinowsk2@partner.samsung.com>
+ * @author      Oskar Switalski <o.switalski@samsung.com>
  * @version     1.0
  * @brief       This file contains agent APIs available with libcynara-agent.
  */
@@ -51,7 +52,7 @@ typedef enum {
 
 /**
  * \par Description:
- * Initialize cynara-agent library.
+ * Initialize cynara-agent structure.
  * Create structure used in following API calls.
  *
  * \par Purpose:
@@ -72,7 +73,7 @@ typedef enum {
  * application from different threads, they must be put into protected critical section.
  *
  * \par Important notes:
- * Structure cynara_agent created by this function should be released with cynara_agent_finish.
+ * Structure cynara_agent created by this function should be released with cynara_agent_finish().
  *
  * \param[out] pp_cynara_agent Place holder for created cynara_agent structure.
  * \param[in]  p_agent_type Type (name) of agent used by cynara for communication agent<->plugin.
@@ -83,7 +84,7 @@ int cynara_agent_initialize(cynara_agent **pp_cynara_agent, const char *p_agent_
 
 /**
  * \par Description:
- * Release cynara-agent library and destroy structure created with cynara_agent_initialize().
+ * Destroy structure created with cynara_agent_initialize().
  *
  * \par Purpose:
  * This API should be used to clean up after usage of cynara-agent library.
@@ -124,13 +125,16 @@ int cynara_agent_finish(cynara_agent *p_cynara_agent);
  * perform or cancel an action.
  *
  * \par Method of function operation:
+ * \parblock
  * Function reads data incoming from cynara service and if at least one complete request is ready
  * then returns with CYNARA_API_SUCCESS code. Request type, request id and specific
  * plugin data are stored in given arguments. Function returns exactly one request. If there are
  * more then one requests ready to get then one must call this function multiple times.
+ *
  * This function is blocking which means that if there is no request from cynara service it will not
  * return. On success, buffer for plugin specific data is allocated and size is set. Developer is
  * responsible for freeing this memory using free() function.
+ * \endparblock
  *
  * \par Sync (or) Async:
  * This is a synchronous API.
@@ -140,10 +144,13 @@ int cynara_agent_finish(cynara_agent *p_cynara_agent);
  * application from different threads, they must be put into protected critical section.
  *
  * \par Important notes:
+ * \parblock
  * Call to cynara_agent_get_request() needs cynara_agent structure to be created first.
  * Use cynara_agent_initialize() before calling this function.
+ *
  * After CYNARA_API_ACCESS_DENIED error is returned agent should be terminated or at least should
  * not invoke neither cynara_agent_get_request() nor cynara_agent_put_response() functions.
+ * \endparblock
  *
  * \param[in]  p_cynara_agent cynara_agent structure.
  * \param[out] req_type Request type, demand an action or cancel this action.

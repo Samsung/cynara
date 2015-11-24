@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,8 +25,7 @@
 
 /**
  * \name Operation Codes
- * operation codes that define action type to be taken in below defined functions
- * they are used mostly to define policy result
+ * Operation codes that define action type to be taken
  * @{
  */
 

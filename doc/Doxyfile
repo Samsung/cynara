@@ -1,0 +1,42 @@
+PROJECT_NAME           = "Cynara API"
+PROJECT_LOGO           = ./images/logo.png
+OUTPUT_DIRECTORY       = .
+FULL_PATH_NAMES        = NO
+OPTIMIZE_OUTPUT_FOR_C  = YES
+EXTRACT_LOCAL_CLASSES  = NO
+SHOW_GROUPED_MEMB_INC  = YES
+SORT_MEMBER_DOCS       = NO
+GENERATE_TODOLIST      = NO
+GENERATE_TESTLIST      = NO
+GENERATE_BUGLIST       = NO
+GENERATE_DEPRECATEDLIST= NO
+QUIET                  = YES
+WARNINGS               = NO
+WARN_IF_UNDOCUMENTED   = NO
+WARN_IF_DOC_ERROR      = YES
+WARN_NO_PARAMDOC       = NO
+INPUT                  = mainpage.md \
+                         ../src/common/plugin/ExternalPluginInterface.h \
+                         ../src/include
+FILE_PATTERNS          = *.c \
+                         *.cpp \
+                         *.h \
+                         *.md
+RECURSIVE              = YES
+EXAMPLE_PATH           = examples
+USE_MDFILE_AS_MAINPAGE = mainpage.md
+SOURCE_BROWSER         = YES
+HTML_HEADER            = headerFile
+HTML_EXTRA_STYLESHEET  = custom.css
+HTML_EXTRA_FILES       = ./images/favicon.ico
+HTML_COLORSTYLE_HUE    = 237
+HTML_COLORSTYLE_SAT    = 72
+HTML_COLORSTYLE_GAMMA  = 70
+GENERATE_TREEVIEW      = YES
+GENERATE_LATEX         = NO
+GENERATE_RTF           = NO
+GENERATE_MAN           = NO
+GENERATE_XML           = NO
+GENERATE_DOCBOOK       = NO
+GENERATE_AUTOGEN_DEF   = NO
+GENERATE_PERLMOD       = NO

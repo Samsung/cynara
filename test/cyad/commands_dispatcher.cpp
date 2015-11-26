@@ -352,6 +352,68 @@ TEST_F(CyadCommandlineDispatcherTest, listPoliciesTwo) {
               m_io.coutRaw().str());
 }
 
+TEST_F(CyadCommandlineDispatcherTest, listPoliciesAllSimpleTypes) {
+    using ::testing::_;
+    using ::testing::DoAll;
+    using ::testing::NotNull;
+    using ::testing::Return;
+    using ::testing::SetArgPointee;
+    using ::testing::StrEq;
+
+    Cynara::CommandsDispatcher dispatcher(m_io, m_adminApi, m_errorApi);
+
+    Cynara::ListPoliciesCyadCommand command("", { "client", "user", "privilege" });
+
+    Cynara::CynaraAdminPolicies resultPolicies;
+    resultPolicies.add("bucket", { CYNARA_ADMIN_DENY, "metadata" }, {"cli", "usr", "privilege"} );
+    resultPolicies.add("bucket-2", { CYNARA_ADMIN_ALLOW, "" }, {"cli", "usr", "privilege"} );
+    resultPolicies.add("bucket", { CYNARA_ADMIN_BUCKET, "bucket" }, {"*", "*", "*"} );
+    resultPolicies.add("bucket", { CYNARA_ADMIN_NONE, "" }, {"*", "*", "*"} );
+    resultPolicies.seal();
+    auto policies = resultPolicies.duplicate();
+
+    EXPECT_CALL(m_adminApi, cynara_admin_list_policies(_, StrEq(""), StrEq("client"), StrEq("user"),
+                                                     StrEq("privilege"), NotNull()))
+        .WillOnce(DoAll(SetArgPointee<5>(policies), Return(CYNARA_API_SUCCESS)));
+
+    dispatcher.execute(command);
+
+    ASSERT_EQ("bucket;cli;usr;privilege;0;metadata\nbucket-2;cli;usr;privilege;65535;\n"
+              "bucket;*;*;*;65534;bucket\nbucket;*;*;*;1;\n",
+              m_io.coutRaw().str());
+}
+
+TEST_F(CyadCommandlineDispatcherTest, listPoliciesAllSimpleTypesHumanize) {
+    using ::testing::_;
+    using ::testing::DoAll;
+    using ::testing::NotNull;
+    using ::testing::Return;
+    using ::testing::SetArgPointee;
+    using ::testing::StrEq;
+
+    Cynara::CommandsDispatcher dispatcher(m_io, m_adminApi, m_errorApi);
+
+    Cynara::ListPoliciesCyadCommand command("", { "client", "user", "privilege" }, true);
+
+    Cynara::CynaraAdminPolicies resultPolicies;
+    resultPolicies.add("bucket", { CYNARA_ADMIN_DENY, "metadata" }, {"cli", "usr", "privilege"} );
+    resultPolicies.add("bucket-2", { CYNARA_ADMIN_ALLOW, "" }, {"cli", "usr", "privilege"} );
+    resultPolicies.add("bucket", { CYNARA_ADMIN_BUCKET, "bucket" }, {"*", "*", "*"} );
+    resultPolicies.add("bucket", { CYNARA_ADMIN_NONE, "" }, {"*", "*", "*"} );
+    resultPolicies.seal();
+    auto policies = resultPolicies.duplicate();
+
+    EXPECT_CALL(m_adminApi, cynara_admin_list_policies(_, StrEq(""), StrEq("client"), StrEq("user"),
+                                                     StrEq("privilege"), NotNull()))
+        .WillOnce(DoAll(SetArgPointee<5>(policies), Return(CYNARA_API_SUCCESS)));
+
+    dispatcher.execute(command);
+
+    ASSERT_EQ("bucket;cli;usr;privilege;deny;metadata\nbucket-2;cli;usr;privilege;allow;\n"
+              "bucket;*;*;*;bucket;bucket\nbucket;*;*;*;none;\n",
+              m_io.coutRaw().str());
+}
+
 TEST_F(CyadCommandlineDispatcherTest, listPoliciesDesc) {
     using ::testing::_;
     using ::testing::DoAll;

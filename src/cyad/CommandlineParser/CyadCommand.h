@@ -182,8 +182,10 @@ private:
 
 class CheckCyadCommand : public CyadCommand {
 public:
-    CheckCyadCommand(const PolicyBucketId &bucketId, bool recursive, const PolicyKey &policyKey)
-        : m_bucketId(bucketId), m_recursive(recursive), m_policyKey(policyKey) {}
+    CheckCyadCommand(const PolicyBucketId &bucketId, bool recursive, const PolicyKey &policyKey,
+                     const bool humanize = false)
+        : m_bucketId(bucketId), m_recursive(recursive), m_policyKey(policyKey),
+        m_humanize(humanize) {}
 
     virtual ~CheckCyadCommand() {}
 
@@ -201,16 +203,22 @@ public:
         return m_policyKey;
     }
 
+    bool humanize(void) const {
+        return m_humanize;
+    }
+
 private:
     PolicyBucketId m_bucketId;
     bool m_recursive;
     PolicyKey m_policyKey;
+    bool m_humanize;
 };
 
 class ListPoliciesCyadCommand : public CyadCommand {
 public:
-    ListPoliciesCyadCommand(const PolicyBucketId &bucketId, const PolicyKey &policyKey)
-        : m_bucketId(bucketId), m_policyKey(policyKey) {}
+    ListPoliciesCyadCommand(const PolicyBucketId &bucketId, const PolicyKey &policyKey,
+                            const bool humanize = false) : m_bucketId(bucketId),
+                            m_policyKey(policyKey), m_humanize(humanize) {}
 
     virtual ~ListPoliciesCyadCommand() {}
 
@@ -224,9 +232,14 @@ public:
         return m_policyKey;
     }
 
+    bool humanize(void) const {
+        return m_humanize;
+    }
+
 private:
     PolicyBucketId m_bucketId;
     PolicyKey m_policyKey;
+    bool m_humanize;
 };
 
 class ListPoliciesDescCyadCommand : public CyadCommand {

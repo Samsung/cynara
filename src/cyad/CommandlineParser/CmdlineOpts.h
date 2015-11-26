@@ -53,7 +53,8 @@ enum CmdlineOpt {
     Bucket = 'k',
     Recursive = 'r',
 
-    Help = 'h'
+    Help = 'h',
+    Humanize = 'H',
 };
 
 enum OptHasArg {

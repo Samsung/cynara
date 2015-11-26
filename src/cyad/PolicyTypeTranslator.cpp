@@ -31,6 +31,11 @@
 
 namespace Cynara {
 
+namespace {
+    const std::string BUCKET_LITERAL = "bucket";
+    const std::string NONE_LITERAL = "none";
+} /* namespace anonymous */
+
 PolicyTypeTranslator::PolicyTypeTranslator() {}
 
 PolicyTypeTranslator::~PolicyTypeTranslator() {}
@@ -57,9 +62,9 @@ PolicyType PolicyTypeTranslator::translate(const std::string &rawPolicy) {
     if (it != m_descs.end())
         return it->first;
 
-    if (policy == "none")
+    if (policy == NONE_LITERAL)
         return CYNARA_ADMIN_NONE;
-    if (policy == "bucket")
+    if (policy == BUCKET_LITERAL)
         return CYNARA_ADMIN_BUCKET;
 
     try {
@@ -67,6 +72,25 @@ PolicyType PolicyTypeTranslator::translate(const std::string &rawPolicy) {
     } catch (const std::logic_error &) {
         throw PolicyParsingException();
     }
+}
+
+std::string PolicyTypeTranslator::humanize(int policy) {
+    auto descComp = [policy] (const PolicyDescriptions::value_type &it) -> bool {
+        return it.first == policy;
+    };
+
+    const auto it = std::find_if(m_descs.begin(), m_descs.end(), descComp);
+
+    if (it != m_descs.end()) {
+        return it->second;
+    }
+
+    if (policy == CYNARA_ADMIN_NONE)
+        return NONE_LITERAL;
+    if (policy == CYNARA_ADMIN_BUCKET)
+        return BUCKET_LITERAL;
+
+    return std::to_string(policy);
 }
 
 } /* namespace Cynara */

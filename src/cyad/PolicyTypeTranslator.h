@@ -23,6 +23,7 @@
 #ifndef SRC_CYAD_POLICYTYPETRANSLATOR_H_
 #define SRC_CYAD_POLICYTYPETRANSLATOR_H_
 
+#include <string>
 #include <vector>
 
 #include <cynara-admin-types.h>
@@ -41,6 +42,7 @@ public:
     ~PolicyTypeTranslator();
 
     PolicyType translate(const std::string &rawPolicy);
+    std::string humanize(int policy);
 
     void setDescriptions(cynara_admin_policy_descr **descs);
 

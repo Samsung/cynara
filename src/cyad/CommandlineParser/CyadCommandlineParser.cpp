@@ -298,7 +298,8 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseCheck(void) {
         CmdlineOpt::Recursive,
         CmdlineOpt::Client,
         CmdlineOpt::User,
-        CmdlineOpt::Privilege
+        CmdlineOpt::Privilege,
+        CmdlineOpt::Humanize,
     };
 
     const auto longOpts = Opts::makeLongOptions(opts);
@@ -313,6 +314,7 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseCheck(void) {
     std::string bucketId = CYNARA_ADMIN_DEFAULT_BUCKET;
 
     int opt;
+    bool humanize = false;
     while ((opt = getopt_long(m_argc, m_argv, shortOpts.data(), longOpts.data(), nullptr)) != -1) {
         switch (opt) {
             case CmdlineOpt::Recursive:
@@ -323,6 +325,9 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseCheck(void) {
                 break;
             case CmdlineOpt::Bucket:
                 bucketId = optarg;
+                break;
+            case CmdlineOpt::Humanize:
+                humanize = true;
                 break;
             case ':': // Missing argument
                 return sharedError(Err::argumentMissing(CmdlineOpt::Check));
@@ -343,7 +348,8 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseCheck(void) {
     return std::make_shared<CheckCyadCommand>(bucketId, recursive,
                                               PolicyKey(values[CmdlineOpt::Client],
                                                         values[CmdlineOpt::User],
-                                                        values[CmdlineOpt::Privilege]));
+                                                        values[CmdlineOpt::Privilege]),
+                                              humanize);
 }
 
 std::shared_ptr<CyadCommand> CyadCommandlineParser::parseListPolicies(const std::string &bucketId) {
@@ -355,7 +361,8 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseListPolicies(const std:
         CmdlineOpt::Client,
         CmdlineOpt::User,
         CmdlineOpt::Privilege,
-        CmdlineOpt::All
+        CmdlineOpt::All,
+        CmdlineOpt::Humanize,
     };
 
     const auto longOpts = Opts::makeLongOptions(opts);
@@ -368,6 +375,8 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseListPolicies(const std:
 
     int opt;
     bool listAll = false;
+    bool humanize = false;
+
     while ((opt = getopt_long(m_argc, m_argv, shortOpts.data(), longOpts.data(), nullptr)) != -1) {
         switch (opt) {
             case CmdlineOpt::Client:
@@ -377,6 +386,9 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseListPolicies(const std:
                 break;
             case CmdlineOpt::All:
                 listAll = true;
+                break;
+            case CmdlineOpt::Humanize:
+                humanize = true;
                 break;
             case ':': // Missing argument
                 return sharedError(Err::argumentMissing(CmdlineOpt::ListPolicies));
@@ -399,7 +411,8 @@ std::shared_ptr<CyadCommand> CyadCommandlineParser::parseListPolicies(const std:
     return std::make_shared<ListPoliciesCyadCommand>(bucketId,
                                                      PolicyKey(values[CmdlineOpt::Client],
                                                                values[CmdlineOpt::User],
-                                                               values[CmdlineOpt::Privilege]));
+                                                               values[CmdlineOpt::Privilege]),
+                                                     humanize);
 }
 
 } /* namespace Cynara */

@@ -60,11 +60,8 @@ Requires:   libcynara-agent = %{version}-%{release}
 Requires:   libcynara-client = %{version}-%{release}
 Requires:   libcynara-commons = %{version}-%{release}
 Requires:   libcynara-creds-commons = %{version}-%{release}
-Requires:   libcynara-creds-dbus = %{version}-%{release}
-Requires:   libcynara-creds-gdbus = %{version}-%{release}
 Requires:   libcynara-creds-socket = %{version}-%{release}
 Requires:   libcynara-session = %{version}-%{release}
-Requires:   pkgconfig(dbus-1)
 Requires:   pkgconfig(libsystemd-journal)
 Obsoletes:  libcynara-admin-devel
 Obsoletes:  libcynara-agent-devel
@@ -73,7 +70,6 @@ Obsoletes:  libcynara-client-commons-devel
 Obsoletes:  libcynara-client-devel
 Obsoletes:  libcynara-commons-devel
 Obsoletes:  libcynara-creds-commons-devel
-Obsoletes:  libcynara-creds-dbus-devel
 Obsoletes:  libcynara-creds-socket-devel
 Obsoletes:  libcynara-plugin-devel
 Obsoletes:  libcynara-session-devel
@@ -81,6 +77,24 @@ Obsoletes:  libcynara-storage-devel
 
 %description devel
 Cynara development files
+
+%package -n libcynara-creds-dbus-devel
+Summary:    Development files for dbus helpers library
+Requires:   cynara-devel = %{version}-%{release}
+Requires:   libcynara-creds-dbus = %{version}-%{release}
+Requires:   pkgconfig(dbus-1)
+
+%description -n libcynara-creds-dbus-devel
+Development files for dbus helpers library
+
+%package -n libcynara-creds-gdbus-devel
+Summary:    Development files for gdbus helpers library
+Requires:   cynara-devel = %{version}-%{release}
+Requires:   libcynara-creds-gdbus = %{version}-%{release}
+Requires:   pkgconfig(glib-2.0)
+
+%description -n libcynara-creds-gdbus-devel
+Development files for gdbus helpers library
 
 %package tests
 Summary:    Cynara - cynara test binaries
@@ -324,12 +338,28 @@ fi
 
 %files -n cynara-devel
 %{_includedir}/cynara/*.h
+%exclude %{_includedir}/cynara/cynara-creds-dbus.h
+%exclude %{_includedir}/cynara/cynara-creds-gdbus.h
 %{_includedir}/cynara/attributes/*.h
 %{_includedir}/cynara/log/*.h
 %{_includedir}/cynara/plugin/*.h
 %{_includedir}/cynara/types/*.h
 %{_libdir}/pkgconfig/*.pc
+%exclude %{_libdir}/pkgconfig/cynara-creds-dbus.pc
+%exclude %{_libdir}/pkgconfig/cynara-creds-gdbus.pc
 %{_libdir}/*.so
+%exclude %{_libdir}/libcynara-creds-dbus.so
+%exclude %{_libdir}/libcynara-creds-gdbus.so
+
+%files -n libcynara-creds-dbus-devel
+%{_includedir}/cynara/cynara-creds-dbus.h
+%{_libdir}/pkgconfig/cynara-creds-dbus.pc
+%{_libdir}/libcynara-creds-dbus.so
+
+%files -n libcynara-creds-gdbus-devel
+%{_includedir}/cynara/cynara-creds-gdbus.h
+%{_libdir}/pkgconfig/cynara-creds-gdbus.pc
+%{_libdir}/libcynara-creds-gdbus.so
 
 %files -n cynara-tests
 %manifest cynara-tests.manifest

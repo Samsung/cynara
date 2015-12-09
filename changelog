@@ -1,5 +1,38 @@
 ###############################
 
+Release: 0.9.0
+Date:    2015.12.09
+Name:    Default credential method type, credential configuration caching.
+
+Libraries:
+libcynara-admin.0.9.0
+libcynara-agent.0.9.0
+libcynara-client-async.0.9.0
+libcynara-client-commmons.0.9.0
+libcynara-client.0.9.0
+libcynara-commons.0.9.0
+libcynara-creds-commons.0.9.0
+libcynara-creds-dbus.0.9.0
+libcynara-creds-gdbus.0.9.0
+libcynara-creds-socket.0.9.0
+libcynara-session.0.9.0
+libcynara-storage.0.9.0
+
+Executables:
+cyad
+cynara
+
+Description:
+Secure log format strings.
+Limit length of string identifiers in API.
+Fix installation paths.
+Allow building cynara with no systemd support.
+Split devel packages to avoid circular dependencies in dbus.
+Apply ASLR.
+Humanize policy types output in cyad.
+
+###############################
+
 Release: 0.8.0
 Date:    2015.04.14
 Name:    Default credential method type, credential configuration caching.

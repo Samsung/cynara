@@ -1,0 +1,28 @@
+var searchData=
+[
+  ['cynara_5fadmin_5fallow',['CYNARA_ADMIN_ALLOW',['../cynara-policy-types_8h.html#a878822d96c690c34d62373a670919ccd',1,'cynara-policy-types.h']]],
+  ['cynara_5fadmin_5fbucket',['CYNARA_ADMIN_BUCKET',['../cynara-policy-types_8h.html#a2ef05fca9a11b3e850b7b501551de299',1,'cynara-policy-types.h']]],
+  ['cynara_5fadmin_5fdelete',['CYNARA_ADMIN_DELETE',['../cynara-policy-types_8h.html#aef1f5bfde87b493944ce0081888ec722',1,'cynara-policy-types.h']]],
+  ['cynara_5fadmin_5fdeny',['CYNARA_ADMIN_DENY',['../cynara-policy-types_8h.html#abeeed15840efec646b8d43f5690a3d97',1,'cynara-policy-types.h']]],
+  ['cynara_5fadmin_5fnone',['CYNARA_ADMIN_NONE',['../cynara-policy-types_8h.html#ad5887e38a2e5f4405e33d2471c005433',1,'cynara-policy-types.h']]],
+  ['cynara_5fapi_5faccess_5fallowed',['CYNARA_API_ACCESS_ALLOWED',['../cynara-error_8h.html#a9cd4eb7d12d8a753d05a9204e61dcb68',1,'cynara-error.h']]],
+  ['cynara_5fapi_5faccess_5fdenied',['CYNARA_API_ACCESS_DENIED',['../cynara-error_8h.html#ad5336cace7f7ac0cdbd2b7c2b20d3ce0',1,'cynara-error.h']]],
+  ['cynara_5fapi_5faccess_5fnot_5fresolved',['CYNARA_API_ACCESS_NOT_RESOLVED',['../cynara-error_8h.html#ab7a1525d6fe1326e4ba31a8f3fef1d6f',1,'cynara-error.h']]],
+  ['cynara_5fapi_5fbucket_5fnot_5ffound',['CYNARA_API_BUCKET_NOT_FOUND',['../cynara-error_8h.html#affdab73511ce8cab768398dccc8680a3',1,'cynara-error.h']]],
+  ['cynara_5fapi_5fbuffer_5ftoo_5fshort',['CYNARA_API_BUFFER_TOO_SHORT',['../cynara-error_8h.html#a64520c656ef605e9dfcf824eec77496e',1,'cynara-error.h']]],
+  ['cynara_5fapi_5fcache_5fmiss',['CYNARA_API_CACHE_MISS',['../cynara-error_8h.html#af6612e85891c7fcfd5466abb5c97c635',1,'cynara-error.h']]],
+  ['cynara_5fapi_5fconfiguration_5ferror',['CYNARA_API_CONFIGURATION_ERROR',['../cynara-error_8h.html#a382117f5e5b71c8820b44ae61e22e96f',1,'cynara-error.h']]],
+  ['cynara_5fapi_5fdatabase_5fcorrupted',['CYNARA_API_DATABASE_CORRUPTED',['../cynara-error_8h.html#a3bd5edac507313df827cde205bc522f7',1,'cynara-error.h']]],
+  ['cynara_5fapi_5finvalid_5fcommandline_5fparam',['CYNARA_API_INVALID_COMMANDLINE_PARAM',['../cynara-error_8h.html#a1963e89abb1e8974ed0141d853b00984',1,'cynara-error.h']]],
+  ['cynara_5fapi_5finvalid_5fparam',['CYNARA_API_INVALID_PARAM',['../cynara-error_8h.html#a83aeb7336193ab5e16609387ea001a26',1,'cynara-error.h']]],
+  ['cynara_5fapi_5fmax_5fpending_5frequests',['CYNARA_API_MAX_PENDING_REQUESTS',['../cynara-error_8h.html#a0fe4fd3d79afcd83afb2060107f92c97',1,'cynara-error.h']]],
+  ['cynara_5fapi_5fmethod_5fnot_5fsupported',['CYNARA_API_METHOD_NOT_SUPPORTED',['../cynara-error_8h.html#a0df30ed75bb36090daa6a601d9e8fec3',1,'cynara-error.h']]],
+  ['cynara_5fapi_5foperation_5ffailed',['CYNARA_API_OPERATION_FAILED',['../cynara-error_8h.html#a1f5c2df28997245e0f756c93bd048e6b',1,'cynara-error.h']]],
+  ['cynara_5fapi_5foperation_5fnot_5fallowed',['CYNARA_API_OPERATION_NOT_ALLOWED',['../cynara-error_8h.html#a134b262055aecd149cdbc3fb8537e4cb',1,'cynara-error.h']]],
+  ['cynara_5fapi_5fout_5fof_5fmemory',['CYNARA_API_OUT_OF_MEMORY',['../cynara-error_8h.html#aa1dce4515df4e2dabc96c013c1cde250',1,'cynara-error.h']]],
+  ['cynara_5fapi_5fservice_5fnot_5favailable',['CYNARA_API_SERVICE_NOT_AVAILABLE',['../cynara-error_8h.html#a4fdd9de2f3f48ae80653acdcd9bb00be',1,'cynara-error.h']]],
+  ['cynara_5fapi_5fsuccess',['CYNARA_API_SUCCESS',['../cynara-error_8h.html#afb85a9d4421852900bbe8f20254600c8',1,'cynara-error.h']]],
+  ['cynara_5fapi_5funknown_5ferror',['CYNARA_API_UNKNOWN_ERROR',['../cynara-error_8h.html#ac6a4efdd8c6ac822771553c1f807c5f5',1,'cynara-error.h']]],
+  ['cynara_5fmax_5fid_5flength',['CYNARA_MAX_ID_LENGTH',['../cynara-limits_8h.html#ab479132032c05e82537d1b2ed5904931',1,'cynara-limits.h']]],
+  ['cynara_5fmax_5fvector_5fsize',['CYNARA_MAX_VECTOR_SIZE',['../cynara-limits_8h.html#a9c5bdba0538b235982a44691345dc65d',1,'cynara-limits.h']]]
+];

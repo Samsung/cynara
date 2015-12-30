@@ -22,10 +22,8 @@ Source1013:    cyad.manifest
 Source1014:    cynara-db-chsgen.manifest
 Requires:      default-ac-domains
 Requires:      libcynara-commons = %{version}-%{release}
-Requires(pre): pwdutils
 Requires(pre): cynara-db-migration >= %{version}-%{release}
 Requires(post):   smack
-Requires(postun): pwdutils
 Requires(postun): cynara-db-migration >= %{version}-%{release}
 BuildRequires: cmake
 BuildRequires: zip
@@ -33,9 +31,6 @@ BuildRequires: pkgconfig(libsystemd-daemon)
 BuildRequires: pkgconfig(libsystemd-journal)
 BuildRequires: pkgconfig(libsmack)
 %{?systemd_requires}
-
-%global user_name %{name}
-%global group_name %{name}
 
 %if !%{defined build_type}
 %define build_type RELEASE
@@ -240,16 +235,6 @@ ln -s ../cynara-admin.socket %{buildroot}%{_unitdir}/sockets.target.wants/cynara
 ln -s ../cynara-agent.socket %{buildroot}%{_unitdir}/sockets.target.wants/cynara-agent.socket
 
 %pre
-id -g %{group_name} > /dev/null 2>&1
-if [ $? -eq 1 ]; then
-    groupadd %{group_name} -r > /dev/null 2>&1
-fi
-
-id -u %{user_name} > /dev/null 2>&1
-if [ $? -eq 1 ]; then
-    useradd -d /var/lib/empty -s /sbin/nologin -r -g %{group_name} %{user_name} > /dev/null 2>&1
-fi
-
 if [ $1 -gt 1 ] ; then
     # upgrade
     %{_sbindir}/cynara-db-migration upgrade -f 0.0.0 -t %{version}
@@ -280,8 +265,6 @@ fi
 %postun
 if [ $1 = 0 ]; then
     %{_sbindir}/cynara-db-migration uninstall -f %{version}
-    userdel -r %{user_name} > /dev/null 2>&1
-    groupdel %{user_name} > /dev/null 2>&1
     systemctl daemon-reload
 fi
 

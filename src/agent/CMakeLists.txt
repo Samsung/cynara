@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
+# Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 #
 
 SET(LIB_CYNARA_AGENT_VERSION_MAJOR 0)
-SET(LIB_CYNARA_AGENT_VERSION ${LIB_CYNARA_AGENT_VERSION_MAJOR}.9.0)
+SET(LIB_CYNARA_AGENT_VERSION ${LIB_CYNARA_AGENT_VERSION_MAJOR}.9.1)
 
 SET(CYNARA_LIB_CYNARA_AGENT_PATH ${CYNARA_PATH}/agent)
 

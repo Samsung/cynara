@@ -1,5 +1,34 @@
 ###############################
 
+Release: 0.9.1
+Date:    2016.01.18
+Name:    Default credential method type, credential configuration caching.
+
+Libraries:
+libcynara-admin.0.9.1
+libcynara-agent.0.9.1
+libcynara-client-async.0.9.1
+libcynara-client-commmons.0.9.1
+libcynara-client.0.9.1
+libcynara-commons.0.9.1
+libcynara-creds-commons.0.9.1
+libcynara-creds-dbus.0.9.1
+libcynara-creds-gdbus.0.9.1
+libcynara-creds-socket.0.9.1
+libcynara-session.0.9.1
+libcynara-storage.0.9.1
+
+Executables:
+cyad
+cynara
+
+Description:
+Remove pwdutils dependency in spec file.
+Add documentation - examples.
+Fix creation of doxygen and github documentation.
+
+###############################
+
 Release: 0.9.0
 Date:    2015.12.09
 Name:    Default credential method type, credential configuration caching.

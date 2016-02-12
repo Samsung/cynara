@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -98,13 +98,17 @@ void InMemoryStorageBackend::load(void) {
     postLoadCleanup(isBackupValid);
 }
 
-void InMemoryStorageBackend::save(void) {
+void InMemoryStorageBackend::saveBackup(void) {
     std::string checksumFilename = m_dbPath + PathConfig::StoragePath::checksumFilename;
     auto chsStream = std::make_shared<std::ofstream>();
     openDumpFileStream<std::ofstream>(*chsStream,
             checksumFilename + PathConfig::StoragePath::backupFilenameSuffix);
 
     dumpDatabase(chsStream);
+}
+
+void InMemoryStorageBackend::save(void) {
+    saveBackup();
 
     m_integrity.syncDatabase(buckets(), true);
     m_integrity.createBackupGuard();

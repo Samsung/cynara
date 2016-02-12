@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -80,6 +80,7 @@ protected:
             const PolicyBucketId &bucketId, const std::shared_ptr<std::ofstream> &chsStream);
 
     virtual void postLoadCleanup(bool isBackupValid);
+    void saveBackup(void);
 
 private:
     std::string m_dbPath;

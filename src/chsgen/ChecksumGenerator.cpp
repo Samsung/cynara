@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2015-2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -25,39 +25,48 @@
 #include <iostream>
 #include <memory>
 #include <new>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <unistd.h>
 
 #include <cynara-error.h>
+#include <md5wrapper.h>
 
 #include "ChecksumGenerator.h"
 
 namespace Cynara {
+namespace {
 
-const char ChecksumGenerator::m_fieldSeparator(';');
-const char ChecksumGenerator::m_recordSeparator('\n');
-const std::string ChecksumGenerator::m_backupFilenameSuffix("~");
+// command line options
+enum CommandLineOption {
+    ExtraParameter = '-',
+    Algorithm = 'a',
+    Help = 'h'
+};
 
-ChecksumGenerator::ChecksumGenerator(int argc, char * const *argv) {
-    if (argc > 1) {
-        m_pathname = argv[1];
+const char OptionRequiresParameter = ':';
+const int CommandLineExtraParameter = 1;
+
+const std::string OPTION_MD5   = "md5";
+const std::string OPTION_CRYPT = "crypt";
+
+void printHelp(const char *exeName) {
+    static int done = 0;
+    if (!done) {
+        std::cout << "Usage: " << exeName << " FILE [OPTION]" << std::endl << std::endl <<
+               "Options:\n"
+               "\t-" << static_cast<char>(CommandLineOption::Algorithm) <<
+               " ALGORITHM   use selected algorith to count hash. Currently this "
+               "tool supports 'crypt' and 'md5'. 'crypt' is used as the default value " <<
+               "for backward compatibility." << std::endl <<
+               "\t-" << static_cast<char>(CommandLineOption::Help) <<
+               "             print this help" << std::endl;
+        done = 1;
     }
 }
 
-int ChecksumGenerator::run(void) {
-    try {
-        openFileStream();
-        copyFileStream();
-        printRecord();
-        return CYNARA_API_SUCCESS;
-    } catch (const std::exception &ex) {
-        std::cerr << ex.what() << std::endl;
-        return CYNARA_API_UNKNOWN_ERROR;
-    }
-}
-
-const std::string ChecksumGenerator::generate(const std::string &data) {
+std::string generateCrypt(const std::string &data) {
     const char *checksum = crypt(data.c_str(), "$1$");
 
     if (nullptr != checksum) {
@@ -73,6 +82,69 @@ const std::string ChecksumGenerator::generate(const std::string &data) {
         }
         throw std::runtime_error(strerror(err));
     }
+}
+
+std::ostream &operator<<(std::ostream &os, CommandLineOption opt) {
+    return os << static_cast<char>(opt);
+}
+
+} // namespace
+
+const char ChecksumGenerator::m_fieldSeparator(';');
+const char ChecksumGenerator::m_recordSeparator('\n');
+const std::string ChecksumGenerator::m_backupFilenameSuffix("~");
+
+ChecksumGenerator::ChecksumGenerator(int argc, char * const *argv)
+    : m_algorithm(OPTION_CRYPT)
+{
+    optind = 0;
+
+    const char *exeName = "cynara-db-chsgen";
+    if (argc > 0 && argv[0])
+        exeName = argv[0];
+
+    int option;
+    std::stringstream shortOptions;
+    shortOptions << CommandLineOption::ExtraParameter << CommandLineOption::Help
+                 << CommandLineOption::Algorithm << OptionRequiresParameter;
+    while ((option = getopt(argc, argv, shortOptions.str().c_str())) != -1) {
+        switch(option) {
+        default:
+            throw std::runtime_error("Unknown option. Please read help for list of supported "
+                                     "options.");
+            break;
+        case CommandLineExtraParameter:
+            m_pathname = optarg;
+            break;
+        case CommandLineOption::Algorithm:
+            m_algorithm = optarg;
+            break;
+        case CommandLineOption::Help:
+            printHelp(exeName);
+            break;
+        }
+    }
+}
+
+int ChecksumGenerator::run(void) {
+    try {
+        openFileStream();
+        copyFileStream();
+        printRecord();
+        return CYNARA_API_SUCCESS;
+    } catch (const std::exception &ex) {
+        std::cerr << ex.what() << std::endl;
+        return CYNARA_API_UNKNOWN_ERROR;
+    }
+}
+
+const std::string ChecksumGenerator::generate(const std::string &data) const {
+    if (m_algorithm == OPTION_CRYPT)
+        return generateCrypt(data);
+    if (m_algorithm == OPTION_MD5)
+        return generateMD5(data);
+
+    throw std::runtime_error("Unknown option value.");
 };
 
 void ChecksumGenerator::openFileStream(void) {

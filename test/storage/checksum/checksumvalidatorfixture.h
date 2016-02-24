@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2015 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2015-2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,8 +35,8 @@ class ChecksumValidatorFixture : public ::testing::Test {
 protected:
     void simpleChecksumsContents(std::string &contents) {
         std::stringstream buffer;
-        buffer << "_" << m_fieldSeparator << "$1$$qRPK7m23GJusamGpoGLby/" << m_recordSeparator
-               << "buckets" << m_fieldSeparator << "$1$$6ZlVs5lw2nZgVmiw0BdY21"
+        buffer << "_" << m_fieldSeparator << "d41d8cd98f00b204e9800998ecf8427e" << m_recordSeparator
+               << "buckets" << m_fieldSeparator << "4f15a73541bf5a52e25ef4c2b990d224"
                << m_recordSeparator;
 
         contents = buffer.str();

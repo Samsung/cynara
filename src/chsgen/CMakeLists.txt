@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Samsung Electronics Co., Ltd All Rights Reserved
+# Copyright (c) 2015-2016 Samsung Electronics Co., Ltd All Rights Reserved
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -21,11 +21,14 @@ SET(CHSGEN_PATH ${CYNARA_PATH}/chsgen)
 SET(CHSGEN_SOURCES
     ${CHSGEN_PATH}/ChecksumGenerator.cpp
     ${CHSGEN_PATH}/main.cpp
+    ${CYNARA_EXTERNAL_SRC_PATH}/md5.c
+    ${CYNARA_EXTERNAL_SRC_PATH}/md5wrapper.cpp
     )
 
 INCLUDE_DIRECTORIES(
     ${CYNARA_PATH}
     ${CYNARA_PATH}/include
+    ${CYNARA_EXTERNAL_SRC_PATH}
     )
 
 ADD_EXECUTABLE(${TARGET_CHSGEN} ${CHSGEN_SOURCES})

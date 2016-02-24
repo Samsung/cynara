@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2015-2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -22,22 +22,23 @@
 
 #include <iostream>
 #include <new>
+#include <stdexcept>
 
 #include <cynara-error.h>
 
 #include <chsgen/ChecksumGenerator.h>
 
 int main(int argc, char **argv) {
-    if (2 != argc) {
-        std::cerr << "Invalid commandline parameters for chsgen" << std::endl;
-        return CYNARA_API_INVALID_COMMANDLINE_PARAM;
-    }
-
     try {
         Cynara::ChecksumGenerator chsgen(argc, argv);
         return chsgen.run();
     } catch (const std::bad_alloc &) {
         std::cerr << "Chsgen could not allocate memory" << std::endl;
         return CYNARA_API_OUT_OF_MEMORY;
+    } catch (const std::runtime_error &e) {
+        std::cerr << e.what() << std::endl;
+    } catch (...) {
+        std::cerr << "Unknown exception, this is a bug in application" << std::endl;
     }
+    return CYNARA_API_UNKNOWN_ERROR;
 }

@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
+# Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ GREATER=1
 
 # Cynara version which introduced checksums
 CHS_INTRO_VERSION='0.6.0'
+CHS_MD5_VERSION='0.10.0'
 
 ##### Variables, with default values (optional)
 
@@ -143,7 +144,13 @@ generate_checksums() {
     # Actual checksums generation
     for FILE in $(find ${STATE_PATH}/${DB_DIR}/${WILDCARD} -type f ! -name "${CHECKSUM_NAME}*" \
                                                                    ! -name "${GUARD_NAME}"); do
-        CHECKSUM="$(@SBIN_DIR@/cynara-db-chsgen ${FILE})"
+        CHECKSUM=""
+        if [ 1 -eq $(version_compare ${CHS_MD5_VERSION} ${NEW_VERSION}) ] ; then
+            CHECKSUM="$(@SBIN_DIR@/cynara-db-chsgen ${FILE})"
+        else
+            CHECKSUM="$(@SBIN_DIR@/cynara-db-chsgen ${FILE} -a md5)"
+        fi
+
         if [ 0 -eq $? ] ; then
             echo "${CHECKSUM}" >> ${CHECKSUMS}
         else

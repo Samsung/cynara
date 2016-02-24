@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2015 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2015-2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,12 +27,12 @@
 #include <memory>
 #include <new>
 #include <sstream>
-#include <unistd.h>
 
 #include <config/PathConfig.h>
 #include <exceptions/ChecksumRecordCorruptedException.h>
 #include <exceptions/UnexpectedErrorException.h>
 #include <log/log.h>
+#include <md5wrapper.h>
 
 #include "ChecksumValidator.h"
 
@@ -58,20 +58,8 @@ void ChecksumValidator::load(std::istream &stream) {
 };
 
 const std::string ChecksumValidator::generate(const std::string &data) {
-    const char *checksum = crypt(data.c_str(), "$1$");
-
-    if (nullptr != checksum) {
-        return checksum;
-    }
-
-    int err = errno;
-    if (err == ENOSYS) {
-        LOGE("'crypt' function was not implemented; error [%d] : <%s>", err, strerror(err));
-    } else {
-        LOGE("'crypt' function error [%d] : <%s>", err, strerror(err));
-    }
-    throw UnexpectedErrorException(err, strerror(err));
-};
+    return generateMD5(data);
+}
 
 void ChecksumValidator::compare(std::istream &stream, const std::string &pathname,
                                 bool isBackupValid) {

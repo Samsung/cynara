@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
+# Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -70,6 +70,8 @@ SET(CYNARA_SOURCES_FOR_TESTS
     ${CYNARA_SRC}/storage/Integrity.cpp
     ${CYNARA_SRC}/storage/Storage.cpp
     ${CYNARA_SRC}/storage/StorageDeserializer.cpp
+    ${CYNARA_SRC}/external/md5.c
+    ${CYNARA_SRC}/external/md5wrapper.cpp
 )
 
 SET(CYNARA_TESTS_SOURCES
@@ -122,6 +124,7 @@ INCLUDE_DIRECTORIES(
     ${CYNARA_SRC}/common
     ${CYNARA_SRC}/include
     ${CYNARA_SRC}
+    ${CYNARA_SRC}/external
     test-common
     credsCommons/parser
     common/protocols

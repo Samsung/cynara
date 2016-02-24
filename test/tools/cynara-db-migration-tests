@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (c) 2015 Samsung Electronics Co., Ltd All Rights Reserved
+# Copyright (c) 2015-2016 Samsung Electronics Co., Ltd All Rights Reserved
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -35,8 +35,9 @@ FAIL_FILE='fail.log'
 CHS_INTRO_VERSION='0.6.0'
 PRECHS_HIGH_VERSION='0.4.2'
 PRECHS_LOW_VERSION='0.2.4'
-POSTCHS_HIGH_VERSION='4.2.0'
-POSTCHS_LOW_VERSION='2.4.0'
+POSTCHS_HIGH_VERSION='0.9.9'
+POSTCHS_LOW_VERSION='0.9.5'
+CHS_MD5_VERSION='0.10.0'
 
 # Messages
 MIGRATE_FAIL_MSG="$MIGRATE failed."
@@ -220,15 +221,27 @@ run db10_postchs_bcp db10_postchs_bcp "down_postchs_postchs_bcp" \
 run db10_postchs_bcp db10_postchs_bcp "migr_same_ver_bcp" \
     "upgrade -f $POSTCHS_HIGH_VERSION -t $POSTCHS_HIGH_VERSION"
 
+# Test case 18: migration from old hash to md5
+run db8_postchs db11_md5 "from crypto to md5" \
+    "upgrade -f $POSTCHS_HIGH_VERSION -t $CHS_MD5_VERSION"
+
+# Test case 19: migration from md5 to old hash
+run db11_md5 db8_postchs "from md5 to crypto" \
+    "upgrade -f $CHS_MD5_VERSION -t $POSTCHS_HIGH_VERSION"
+
+# Test case 20: no migration just update without database change
+run db11_md5 db11_md5 "from md5 to md5" \
+    "upgrade -f $CHS_MD5_VERSION -t $CHS_MD5_VERSION"
+
 ##############################################################################
-# Test case 18: check if cynara-db-chsgen does not depend on cynara libraries
+# Test case 21: check if cynara-db-chsgen does not depend on cynara libraries
 TEST_18_DEPS=`ldd /usr/sbin/cynara-db-chsgen | grep -c libcynara`
 if [ $TEST_18_DEPS -eq 0 ] ; then
-    success_msg "18" "cynara-db-chsgen dependencies"
+    success_msg "21" "cynara-db-chsgen dependencies"
 else
     mkdir -p ${TESTS_DIR}/18/
     ldd /usr/sbin/cynara-db-chsgen | grep libcynara > ${TESTS_DIR}/18/${FAIL_FILE}
-    fail_msg "18" "cynara-db-chsgen dependencies"
+    fail_msg "21" "cynara-db-chsgen dependencies"
 fi
 
 ##############################################################################

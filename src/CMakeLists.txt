@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
+# Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ INCLUDE_DIRECTORIES(SYSTEM
     )
 
 SET(CYNARA_PATH ${PROJECT_SOURCE_DIR}/src)
+SET(CYNARA_EXTERNAL_SRC_PATH ${PROJECT_SOURCE_DIR}/src/external)
 
 INCLUDE_DIRECTORIES(
     ${CYNARA_PATH}/common

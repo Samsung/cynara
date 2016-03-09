@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014 Samsung Electronics Co.
+ *  Copyright (c) 2014-2016 Samsung Electronics Co.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,15 +14,15 @@
  *  limitations under the License
  */
 /**
- * @file        src/admin/logic/Utility.h
+ * @file        src/common/utils/Lists.h
  * @author      Zofia Abramowska <z.abramowska@samsung.com>
  * @version     1.0
  * @brief       This file contains implementation of utility function for managing null pointer
  *              terminated lists.
  */
 
-#ifndef SRC_ADMIN_LOGIC_UTILITY_H_
-#define SRC_ADMIN_LOGIC_UTILITY_H_
+#ifndef SRC_COMMON_UTILS_LISTS_H_
+#define SRC_COMMON_UTILS_LISTS_H_
 
 #include <cstdlib>
 #include <functional>
@@ -66,4 +66,4 @@ static int createNullTerminatedArray(const std::vector<V> &vectorized, T ***arra
 
 } // namespace Cynara
 
-#endif /* SRC_ADMIN_LOGIC_UTILITY_H_ */
+#endif /* SRC_COMMON_UTILS_LISTS_H_ */

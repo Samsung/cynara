@@ -14,23 +14,13 @@
 #
 # @file        CMakeLists.txt
 # @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
-# @author      Radoslaw Bartosiak <r.bartosiak@samsung.com>
+# @brief
 #
 
-IF (BUILD_COMMONS)
-    ADD_SUBDIRECTORY(cynara-client)
-    ADD_SUBDIRECTORY(cynara-client-async)
-    ADD_SUBDIRECTORY(cynara-admin)
-    ADD_SUBDIRECTORY(cynara-agent)
-    ADD_SUBDIRECTORY(cynara-creds-commons)
-    ADD_SUBDIRECTORY(cynara-creds-socket)
-    ADD_SUBDIRECTORY(cynara-plugin)
-    ADD_SUBDIRECTORY(cynara-session)
-    ADD_SUBDIRECTORY(cynara-commons)
-ENDIF (BUILD_COMMONS)
+CONFIGURE_FILE(cynara-commons.pc.in cynara-commons.pc @ONLY)
 
-IF (BUILD_DBUS)
-    ADD_SUBDIRECTORY(cynara-creds-dbus)
-    ADD_SUBDIRECTORY(cynara-creds-gdbus)
-ENDIF (BUILD_DBUS)
-
+INSTALL(FILES
+    ${CMAKE_BINARY_DIR}/pkgconfig/cynara-commons/cynara-commons.pc
+    DESTINATION
+    ${LIB_DIR}/pkgconfig
+    )

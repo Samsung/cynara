@@ -29,17 +29,45 @@ INCLUDE(FindPkgConfig)
 INCLUDE(CheckCXXCompilerFlag)
 INCLUDE(GNUInstallDirs)
 
+###################### choose modules to compile ##############################
+
+SET(BUILD_COMMONS OFF CACHE BOOL "Build commons")
+SET(BUILD_SERVICE OFF CACHE BOOL "Build service")
+SET(BUILD_DBUS OFF CACHE BOOL "Build helpers for dbus")
+
+IF (NOT BUILD_COMMONS AND NOT BUILD_SERVICE AND NOT BUILD_DBUS)
+    SET(BUILD_COMMONS ON)
+    SET(BUILD_SERVICE ON)
+    SET(BUILD_DBUS ON)
+ENDIF (NOT BUILD_COMMONS AND NOT BUILD_SERVICE AND NOT BUILD_DBUS)
+
 ########################## search for packages ################################
 
-PKG_CHECK_MODULES(SYSTEMD_DEP
-    QUIET
-    libsystemd-daemon
-    libsystemd-journal
-    )
+#1st case. User choose to build with systemd.
+IF (DEFINED BUILD_WITH_SYSTEMD AND BUILD_WITH_SYSTEMD)
+    PKG_CHECK_MODULES(SYSTEMD_DEP
+        REQUIRED
+        libsystemd-daemon
+        libsystemd-journal
+        )
+ENDIF (DEFINED BUILD_WITH_SYSTEMD AND BUILD_WITH_SYSTEMD)
 
-IF (SYSTEMD_DEP_FOUND)
-    SET(BUILD_WITH_SYSTEMD ON)
-ENDIF (SYSTEMD_DEP_FOUND)
+#2nd case. User choose not to build with systemd. Noting to do in this case.
+#IF (DEFINED BUILD_WITH_SYSTEMD AND NOT BUILD_WITH_SYSTEMD)
+#ENDIF (DEFINED BUILD_WITH_SYSTEMD AND NOT BUILD_WITH_SYSTEMD)
+
+#3rd case. User did not choose. If we can we will use systemd.
+IF (NOT DEFINED BUILD_WITH_SYSTEMD)
+    PKG_CHECK_MODULES(SYSTEMD_DEP
+        QUIET
+        libsystemd-daemon
+        libsystemd-journal
+        )
+
+    IF (SYSTEMD_DEP_FOUND)
+        SET(BUILD_WITH_SYSTEMD ON)
+    ENDIF (SYSTEMD_DEP_FOUND)
+ENDIF (NOT DEFINED BUILD_WITH_SYSTEMD)
 
 ########################  directory configuration  ############################
 
@@ -141,33 +169,43 @@ IF (CYNARA_NO_LOGS)
     ADD_DEFINITIONS("-DCYNARA_NO_LOGS")
 ENDIF (CYNARA_NO_LOGS)
 
-SET(TARGET_CYNARA "cynara")
-SET(TARGET_LIB_CYNARA "cynara-client")
-SET(TARGET_LIB_CYNARA_ASYNC "cynara-client-async")
-SET(TARGET_LIB_CYNARA_COMMON "cynara-client-commons")
-SET(TARGET_LIB_CYNARA_ADMIN "cynara-admin")
-SET(TARGET_LIB_CYNARA_AGENT "cynara-agent")
-SET(TARGET_CYNARA_COMMON "cynara-commons")
-SET(TARGET_CYNARA_TESTS "cynara-tests")
-SET(TARGET_LIB_CREDS_COMMONS "cynara-creds-commons")
-SET(TARGET_LIB_CREDS_DBUS "cynara-creds-dbus")
-SET(TARGET_LIB_CREDS_GDBUS "cynara-creds-gdbus")
-SET(TARGET_LIB_CREDS_SOCKET "cynara-creds-socket")
-SET(TARGET_LIB_SESSION "cynara-session")
-SET(TARGET_LIB_CYNARA_STORAGE "cynara-storage")
-SET(TARGET_CYAD "cyad")
-SET(TARGET_CHSGEN "cynara-db-chsgen")
+IF (BUILD_SERVICE)
+    SET(TARGET_CYNARA "cynara")
+ENDIF (BUILD_SERVICE)
+
+IF (BUILD_COMMONS)
+    SET(TARGET_LIB_CYNARA "cynara-client")
+    SET(TARGET_LIB_CYNARA_ASYNC "cynara-client-async")
+    SET(TARGET_LIB_CYNARA_COMMON "cynara-client-commons")
+    SET(TARGET_LIB_CYNARA_ADMIN "cynara-admin")
+    SET(TARGET_LIB_CYNARA_AGENT "cynara-agent")
+    SET(TARGET_CYNARA_COMMON "cynara-commons")
+    SET(TARGET_CYNARA_TESTS "cynara-tests")
+    SET(TARGET_LIB_CREDS_COMMONS "cynara-creds-commons")
+    SET(TARGET_LIB_CREDS_SOCKET "cynara-creds-socket")
+    SET(TARGET_LIB_SESSION "cynara-session")
+    SET(TARGET_LIB_CYNARA_STORAGE "cynara-storage")
+    SET(TARGET_CYAD "cyad")
+    SET(TARGET_CHSGEN "cynara-db-chsgen")
+ENDIF (BUILD_COMMONS)
+
+IF (BUILD_DBUS)
+    SET(TARGET_LIB_CREDS_DBUS "cynara-creds-dbus")
+    SET(TARGET_LIB_CREDS_GDBUS "cynara-creds-gdbus")
+ENDIF (BUILD_DBUS)
 
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(pkgconfig)
-ADD_SUBDIRECTORY(conf)
 
-IF (BUILD_WITH_SYSTEMD)
+IF (BUILD_COMMONS)
+    ADD_SUBDIRECTORY(migration)
+    ADD_SUBDIRECTORY(conf)
+ENDIF (BUILD_COMMONS)
+
+IF (BUILD_WITH_SYSTEMD AND BUILD_SERVICE)
     ADD_SUBDIRECTORY(systemd)
-ENDIF (BUILD_WITH_SYSTEMD)
+ENDIF (BUILD_WITH_SYSTEMD AND BUILD_SERVICE)
 
-ADD_SUBDIRECTORY(migration)
-
-IF (BUILD_TESTS)
+IF (BUILD_TESTS AND BUILD_COMMONS)
     ADD_SUBDIRECTORY(test)
-ENDIF (BUILD_TESTS)
+ENDIF (BUILD_TESTS AND BUILD_COMMONS)

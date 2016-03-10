@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
+# Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -17,6 +17,18 @@
 #
 
 SET(CYNARA_SERVICE_PATH ${CYNARA_PATH}/service)
+
+IF (BUILD_COMMONS)
+    SET(CYNARA_COMMON_AND_STORAGE_LIB
+        ${TARGET_CYNARA_COMMON}
+        ${TARGET_LIB_CYNARA_STORAGE})
+ELSE (BUILD_COMMONS)
+    PKG_CHECK_MODULES(LIB_COMMON_DEP
+        REQUIRED
+        cynara-commons
+        )
+    SET(CYNARA_COMMON_AND_STORAGE_LIB ${LIB_COMMON_DEP_LIBRARIES})
+ENDIF (BUILD_COMMONS)
 
 SET(CYNARA_SOURCES
     ${CYNARA_SERVICE_PATH}/agent/AgentManager.cpp
@@ -41,9 +53,8 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIE")
 ADD_EXECUTABLE(${TARGET_CYNARA} ${CYNARA_SOURCES})
 
 TARGET_LINK_LIBRARIES(${TARGET_CYNARA}
+    ${CYNARA_COMMON_AND_STORAGE_LIB}
     ${CYNARA_DEP_LIBRARIES}
-    ${TARGET_CYNARA_COMMON}
-    ${TARGET_LIB_CYNARA_STORAGE}
     "-pie"
     )
 

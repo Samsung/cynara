@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
+# Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -16,21 +16,29 @@
 # @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
 #
 
-INSTALL(FILES
-    ${CYNARA_PATH}/include/cynara-admin.h
-    ${CYNARA_PATH}/include/cynara-admin-types.h
-    ${CYNARA_PATH}/include/cynara-agent.h
-    ${CYNARA_PATH}/include/cynara-client.h
-    ${CYNARA_PATH}/include/cynara-client-async.h
-    ${CYNARA_PATH}/include/cynara-client-plugin.h
-    ${CYNARA_PATH}/include/cynara-creds-commons.h
-    ${CYNARA_PATH}/include/cynara-creds-dbus.h
-    ${CYNARA_PATH}/include/cynara-creds-gdbus.h
-    ${CYNARA_PATH}/include/cynara-creds-socket.h
-    ${CYNARA_PATH}/include/cynara-error.h
-    ${CYNARA_PATH}/include/cynara-limits.h
-    ${CYNARA_PATH}/include/cynara-plugin.h
-    ${CYNARA_PATH}/include/cynara-policy-types.h
-    ${CYNARA_PATH}/include/cynara-session.h
-    DESTINATION ${INCLUDE_DIR}/cynara
-    )
+IF (BUILD_COMMONS)
+    INSTALL(FILES
+        ${CYNARA_PATH}/include/cynara-admin.h
+        ${CYNARA_PATH}/include/cynara-admin-types.h
+        ${CYNARA_PATH}/include/cynara-agent.h
+        ${CYNARA_PATH}/include/cynara-client.h
+        ${CYNARA_PATH}/include/cynara-client-async.h
+        ${CYNARA_PATH}/include/cynara-client-plugin.h
+        ${CYNARA_PATH}/include/cynara-creds-commons.h
+        ${CYNARA_PATH}/include/cynara-creds-socket.h
+        ${CYNARA_PATH}/include/cynara-error.h
+        ${CYNARA_PATH}/include/cynara-limits.h
+        ${CYNARA_PATH}/include/cynara-plugin.h
+        ${CYNARA_PATH}/include/cynara-policy-types.h
+        ${CYNARA_PATH}/include/cynara-session.h
+        DESTINATION ${INCLUDE_DIR}/cynara
+        )
+ENDIF (BUILD_COMMONS)
+
+IF (BUILD_DBUS)
+    INSTALL(FILES
+        ${CYNARA_PATH}/include/cynara-creds-dbus.h
+        ${CYNARA_PATH}/include/cynara-creds-gdbus.h
+        DESTINATION ${INCLUDE_DIR}/cynara
+        )
+ENDIF (BUILD_DBUS)

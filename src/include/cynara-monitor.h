@@ -57,12 +57,12 @@ typedef struct cynara_monitor_entry cynara_monitor_entry;
  * to created cynara_monitor_configuration structure.
  *
  * \par Sync (or) Async:
- * This as a synchronous API.
+ * This is a synchronous API.
  *
  * \par Thread-safety:
  * \parblock
- * This function is NOT thread-safe. If functions from described API are called by multithreaded
- * application from different threads, they must be put into protected critical section.
+ * This function is NOT thread-safe. If this function is called simultaneously with other functions
+ * from described API in different threads, they must be put into protected critical section.
  *
  * \par Important notes:
  * Structure cynara_monitor_configuration created by cynara_monitor_configuration_create() call
@@ -96,8 +96,8 @@ int cynara_monitor_configuration_create(cynara_monitor_configuration **pp_conf);
  * This is a synchronous API.
  *
  * \par Thread-safety:
- * This function is NOT thread-safe. If functions from described API are called by multithreaded
- * application from different threads, they must be put into protected critical section.
+ * This function is NOT thread-safe. If this function is called simultaneously with other functions
+ * from described API in different threads, they must be put into protected critical section.
  *
  * \param[in] p_conf cynara_monitor_configuration structure. If NULL, the call has no effect.
  */
@@ -119,11 +119,11 @@ void cynara_monitor_configuration_destroy(cynara_monitor_configuration *p_conf);
  * This API initializes buffer with given capacity.
  *
  * \par Sync (or) Async:
- * This as a synchronous API.
+ * This is a synchronous API.
  *
  * \par Thread-safety:
- * This function is NOT thread-safe. If functions from described API are called by multithreaded
- * application from different threads, they must be put into protected critical section.
+ * This function is NOT thread-safe. If this function is called simultaneously with other functions
+ * from described API in different threads, they must be put into protected critical section.
  *
  * \par Important notes:
  * After passing cynara_configuration to cynara_monitor_initialize() calling this API will have
@@ -161,8 +161,8 @@ int cynara_monitor_configuration_set_buffer_size(cynara_monitor_configuration *p
  * This is a Synchronous API.
  *
  * \par Thread-safeness:
- * This function is NOT thread-safe. If functions from described API are called by multithreaded
- * application from different threads, they must be put into mutex protected critical section.
+ * This function is NOT thread-safe. If this function is called simultaneously with other functions
+ * from described API in different threads, they must be put into protected critical section.
  *
  * \par Important notes:
  * Structure cynara_monitor created by cynara_monitor_initialize() call should be released
@@ -170,7 +170,6 @@ int cynara_monitor_configuration_set_buffer_size(cynara_monitor_configuration *p
  *
  * \param[out] pp_cynara_monitor Placeholder for created cynara_monitor structure.
  * \param[in] p_conf Configuration for cynara-monitor library. NULL for default parameters.
- * [TODO define and describe functions for custom parameters].
  *
  * \return CYNARA_API_SUCCESS on success, or error code on error.
  */
@@ -194,8 +193,8 @@ int cynara_monitor_initialize(cynara_monitor **pp_cynara_monitor,
  * This is a Synchronous API.
  *
  * \par Thread-safeness:
- * This function is NOT thread-safe. If functions from described API are called by multithreaded
- * application from different threads, they must be put into mutex protected critical section.
+ * This function is NOT thread-safe. If this function is called simultaneously with other functions
+ * from described API in different threads, they must be put into protected critical section.
  *
  * \par Important notes:
  * No other call to libcynara-monitor should be made after call to cynara_monitor_finish().

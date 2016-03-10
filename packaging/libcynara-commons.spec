@@ -17,6 +17,7 @@ Source1011:    libcynara-session.manifest
 Source1012:    cynara-db-migration.manifest
 Source1013:    cyad.manifest
 Source1014:    cynara-db-chsgen.manifest
+Source1015:    libcynara-monitor.manifest
 Requires:      default-ac-domains
 Requires(post):   smack
 BuildRequires: cmake
@@ -132,6 +133,13 @@ Requires:   libcynara-commons = %{version}-%{release}
 %description -n cyad
 Command-line tool to manage Cynara's database
 
+%package -n libcynara-monitor
+Summary:    Cynara - monitor client library
+Requires:   cynara = %{version}-%{release}
+
+%description -n libcynara-monitor
+Monitor client library for obtaining check logs
+
 %prep
 %setup -q
 cp -a %{SOURCE1002} .
@@ -145,6 +153,7 @@ cp -a %{SOURCE1011} .
 cp -a %{SOURCE1012} .
 cp -a %{SOURCE1013} .
 cp -a %{SOURCE1014} .
+cp -a %{SOURCE1015} .
 
 %build
 %if 0%{?sec_build_binary_debug_enable}
@@ -206,6 +215,10 @@ make %{?jobs:-j%jobs}
 %post -n libcynara-session -p /sbin/ldconfig
 
 %postun -n libcynara-session -p /sbin/ldconfig
+
+%post -n libcynara-monitor -p /sbin/ldconfig
+
+%postun -n libcynara-monitor -p /sbin/ldconfig
 
 %files -n cynara-devel
 %{_includedir}/cynara/*.h
@@ -272,3 +285,8 @@ make %{?jobs:-j%jobs}
 %files -n cyad
 %manifest cyad.manifest
 %attr(700,root,root) %{_sbindir}/cyad
+
+%files -n libcynara-monitor
+%manifest libcynara-monitor.manifest
+%license LICENSE
+%{_libdir}/libcynara-monitor.so.*

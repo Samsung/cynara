@@ -31,6 +31,7 @@ IF (BUILD_COMMONS)
         ${CYNARA_PATH}/include/cynara-plugin.h
         ${CYNARA_PATH}/include/cynara-policy-types.h
         ${CYNARA_PATH}/include/cynara-session.h
+        ${CYNARA_PATH}/include/cynara-monitor.h
         DESTINATION ${INCLUDE_DIR}/cynara
         )
 ENDIF (BUILD_COMMONS)

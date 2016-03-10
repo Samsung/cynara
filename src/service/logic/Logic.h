@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -82,6 +82,8 @@ public:
     virtual void execute(const RequestContext &context, const EraseRequest &request);
     virtual void execute(const RequestContext &context, const InsertOrUpdateBucketRequest &request);
     virtual void execute(const RequestContext &context, const ListRequest &request);
+    virtual void execute(const RequestContext &context, const MonitorGetEntriesRequest &request);
+    virtual void execute(const RequestContext &context, const MonitorGetFlushRequest &request);
     virtual void execute(const RequestContext &context, const RemoveBucketRequest &request);
     virtual void execute(const RequestContext &context, const SetPoliciesRequest &request);
     virtual void execute(const RequestContext &context, const SignalRequest &request);

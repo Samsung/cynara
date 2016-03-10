@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2015 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2015-2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,5 +28,8 @@
 
 /*! \brief Maximum size of vector accepted by Cynara */
 #define CYNARA_MAX_VECTOR_SIZE                  4096
+
+/*! \brief Maximum size of monitor entries buffer accepted by Cynara */
+#define CYNARA_MAX_MONITOR_BUFFER_SIZE          65535
 
 #endif /* CYNARA_LIMITS_H */

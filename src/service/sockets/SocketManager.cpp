@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -50,6 +50,7 @@
 #include <protocol/ProtocolAdmin.h>
 #include <protocol/ProtocolAgent.h>
 #include <protocol/ProtocolClient.h>
+#include <protocol/ProtocolMonitorGet.h>
 #include <protocol/ProtocolSignal.h>
 #include <request/pointers.h>
 #include <request/RequestContext.h>
@@ -77,6 +78,7 @@ void SocketManager::init(void) {
     const mode_t clientSocketUMask(0);
     const mode_t adminSocketUMask(0077);
     const mode_t agentSocketUMask(0);
+    const mode_t monitorSocketUMask(0);
 
     createDomainSocket(std::make_shared<ProtocolClient>(), PathConfig::SocketPath::client,
                        clientSocketUMask, true);
@@ -84,6 +86,8 @@ void SocketManager::init(void) {
                        adminSocketUMask, false);
     createDomainSocket(std::make_shared<ProtocolAgent>(), PathConfig::SocketPath::agent,
                        agentSocketUMask, false);
+    createDomainSocket(std::make_shared<ProtocolMonitorGet>(), PathConfig::SocketPath::monitorGet,
+                       monitorSocketUMask, false);
     createSignalSocket(std::make_shared<ProtocolSignal>());
     LOGI("SocketManger init done");
 }

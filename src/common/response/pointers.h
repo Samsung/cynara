@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -51,6 +51,9 @@ typedef std::shared_ptr<DescriptionListResponse> DescriptionListResponsePtr;
 
 class ListResponse;
 typedef std::shared_ptr<ListResponse> ListResponsePtr;
+
+class MonitorGetEntriesResponse;
+typedef std::shared_ptr<MonitorGetEntriesResponse> MonitorGetEntriesResponsePtr;
 
 class Response;
 typedef std::shared_ptr<Response> ResponsePtr;

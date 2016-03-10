@@ -30,11 +30,14 @@ SET(CYNARA_SOURCES_FOR_TESTS
     ${CYNARA_SRC}/common/protocol/ProtocolFrame.cpp
     ${CYNARA_SRC}/common/protocol/ProtocolFrameHeader.cpp
     ${CYNARA_SRC}/common/protocol/ProtocolFrameSerializer.cpp
+    ${CYNARA_SRC}/common/protocol/ProtocolMonitorGet.cpp
     ${CYNARA_SRC}/common/request/AdminCheckRequest.cpp
     ${CYNARA_SRC}/common/request/DescriptionListRequest.cpp
     ${CYNARA_SRC}/common/request/EraseRequest.cpp
     ${CYNARA_SRC}/common/request/InsertOrUpdateBucketRequest.cpp
     ${CYNARA_SRC}/common/request/ListRequest.cpp
+    ${CYNARA_SRC}/common/request/MonitorGetEntriesRequest.cpp
+    ${CYNARA_SRC}/common/request/MonitorGetFlushRequest.cpp
     ${CYNARA_SRC}/common/request/RemoveBucketRequest.cpp
     ${CYNARA_SRC}/common/request/RequestTaker.cpp
     ${CYNARA_SRC}/common/request/SetPoliciesRequest.cpp
@@ -43,6 +46,7 @@ SET(CYNARA_SOURCES_FOR_TESTS
     ${CYNARA_SRC}/common/response/CheckResponse.cpp
     ${CYNARA_SRC}/common/response/CodeResponse.cpp
     ${CYNARA_SRC}/common/response/ListResponse.cpp
+    ${CYNARA_SRC}/common/response/MonitorGetEntriesResponse.cpp
     ${CYNARA_SRC}/common/response/ResponseTaker.cpp
     ${CYNARA_SRC}/common/types/PolicyBucket.cpp
     ${CYNARA_SRC}/common/types/PolicyKey.cpp

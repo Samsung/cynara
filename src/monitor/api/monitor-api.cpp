@@ -26,7 +26,9 @@
 #include <common.h>
 #include <configuration/MonitorConfiguration.h>
 #include <exceptions/TryCatch.h>
+#include <types/ProtocolFields.h>
 #include <cynara-error.h>
+#include <cynara-limits.h>
 #include <cynara-monitor.h>
 #include <log/log.h>
 #include <logic/Logic.h>
@@ -80,6 +82,9 @@ int cynara_monitor_configuration_set_buffer_size(cynara_monitor_configuration *p
                                                  size_t buffer_size) {
     if (!p_conf || !p_conf->impl)
         return CYNARA_API_INVALID_PARAM;
+    if (buffer_size > CYNARA_MAX_MONITOR_BUFFER_SIZE) {
+        return CYNARA_API_INVALID_PARAM;
+    }
 
     return Cynara::tryCatch([&]() {
         p_conf->impl->setBufferSize(buffer_size);

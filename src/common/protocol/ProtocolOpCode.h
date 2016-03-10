@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Contact: Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  *
@@ -62,6 +62,14 @@ enum ProtocolOpCode : uint8_t {
     OpAgentRegisterResponse,
     OpAgentActionRequest,
     OpAgentActionResponse,
+
+    /** Opcodes 44 - 49 are reserved for future use */
+
+    /** Monitor get operations */
+    OpMonitorGetEntriesRequest = 50,
+    OpMonitorGetEntriesResponse,
+    OpMonitorGetFlushRequest,
+
 };
 
 } /* namespace Cynara */

@@ -39,6 +39,7 @@ SET(COMMON_SOURCES
     ${COMMON_PATH}/protocol/ProtocolFrame.cpp
     ${COMMON_PATH}/protocol/ProtocolFrameHeader.cpp
     ${COMMON_PATH}/protocol/ProtocolFrameSerializer.cpp
+    ${COMMON_PATH}/protocol/ProtocolMonitorGet.cpp
     ${COMMON_PATH}/protocol/ProtocolSerialization.cpp
     ${COMMON_PATH}/protocol/ProtocolSignal.cpp
     ${COMMON_PATH}/request/AdminCheckRequest.cpp
@@ -50,6 +51,8 @@ SET(COMMON_SOURCES
     ${COMMON_PATH}/request/EraseRequest.cpp
     ${COMMON_PATH}/request/InsertOrUpdateBucketRequest.cpp
     ${COMMON_PATH}/request/ListRequest.cpp
+    ${COMMON_PATH}/request/MonitorGetEntriesRequest.cpp
+    ${COMMON_PATH}/request/MonitorGetFlushRequest.cpp
     ${COMMON_PATH}/request/RemoveBucketRequest.cpp
     ${COMMON_PATH}/request/RequestTaker.cpp
     ${COMMON_PATH}/request/SetPoliciesRequest.cpp
@@ -63,6 +66,7 @@ SET(COMMON_SOURCES
     ${COMMON_PATH}/response/CodeResponse.cpp
     ${COMMON_PATH}/response/DescriptionListResponse.cpp
     ${COMMON_PATH}/response/ListResponse.cpp
+    ${COMMON_PATH}/response/MonitorGetEntriesResponse.cpp
     ${COMMON_PATH}/response/ResponseTaker.cpp
     ${COMMON_PATH}/response/SimpleCheckResponse.cpp
     ${COMMON_PATH}/sockets/Socket.cpp

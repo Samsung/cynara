@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -54,6 +54,12 @@ typedef std::shared_ptr<InsertOrUpdateBucketRequest> InsertOrUpdateBucketRequest
 
 class ListRequest;
 typedef std::shared_ptr<ListRequest> ListRequestPtr;
+
+class MonitorGetEntriesRequest;
+typedef std::shared_ptr<MonitorGetEntriesRequest> MonitorGetEntriesRequestPtr;
+
+class MonitorGetFlushRequest;
+typedef std::shared_ptr<MonitorGetFlushRequest> MonitorGetFlushRequestPtr;
 
 class RemoveBucketRequest;
 typedef std::shared_ptr<RemoveBucketRequest> RemoveBucketRequestPtr;

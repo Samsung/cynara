@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2015 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2011-2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -79,6 +79,18 @@ struct ProtocolSerialization {
         stream.write(sizeof(value), &_value);
     }
 
+    // unsigned 64-bit int
+    static void serialize(IStream &stream, const uint64_t value) {
+        uint64_t _value = htole64(value);
+        stream.write(sizeof(value), &_value);
+    }
+
+    // 64-bit int
+    static void serialize(IStream &stream, const int64_t value) {
+        int64_t _value = htole64(value);
+        stream.write(sizeof(value), &_value);
+    }
+
     // bool
     static void serialize(IStream &stream, const bool value) {
         uint8_t bVal = static_cast<uint8_t>(value);
@@ -150,6 +162,18 @@ struct ProtocolDeserialization {
     static void deserialize(IStream &stream, uint32_t &value) {
         stream.read(sizeof(value), &value);
         value = le32toh(value);
+    }
+
+    // 64-bit int
+    static void deserialize(IStream &stream, int64_t &value) {
+        stream.read(sizeof(value), &value);
+        value = le64toh(value);
+    }
+
+    // unsigned 64-bit int
+    static void deserialize(IStream &stream, uint64_t &value) {
+        stream.read(sizeof(value), &value);
+        value = le64toh(value);
     }
 
     // bool

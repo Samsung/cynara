@@ -36,6 +36,7 @@ public:
 
     virtual int entriesGet(std::vector<MonitorEntry> &entries) = 0;
     virtual int entriesFlush(void) = 0;
+    virtual void notifyFinish(void) = 0;
 };
 
 } // namespace Cynara

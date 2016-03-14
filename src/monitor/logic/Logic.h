@@ -29,6 +29,8 @@
 
 #include <api/ApiInterface.h>
 #include <configuration/MonitorConfiguration.h>
+#include <notify/FdNotifyObject.h>
+#include <socket/MonitorSocketClient.h>
 
 namespace Cynara {
 
@@ -39,17 +41,27 @@ typedef std::unique_ptr<Logic> LogicUniquePtr;
 class Logic : public ApiInterface {
 public:
     explicit Logic(const MonitorConfiguration &conf = MonitorConfiguration())
-        : m_conf(conf) {}
-
+        : m_conf(conf), m_connectionResolved(false), m_isRunning(false) {}
+    int init(void);
     int entriesGet(std::vector<MonitorEntry> &entries);
     int entriesFlush(void);
+    void notifyFinish(void);
 
 private:
-    std::condition_variable m_conditionVariable;
+    bool isRunning(void);
+    bool connect(void);
+    bool waitForConnectionResolved(void);
+    int sendAndFetch(std::vector<MonitorEntry> &entries);
+    std::condition_variable m_connectedCV;
+    std::condition_variable m_finishedCV;
     std::mutex m_mutexCond;
-    std::mutex m_mutexGuard;
+    std::mutex m_reentrantGuard;
     MonitorConfiguration m_conf;
-    bool m_go;
+
+    FdNotifyObject m_notify;
+    MonitorSocketClient m_client;
+    bool m_connectionResolved;
+    bool m_isRunning;
 };
 
 } // namespace Cynara

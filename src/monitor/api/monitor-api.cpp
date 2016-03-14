@@ -107,6 +107,12 @@ int cynara_monitor_initialize(cynara_monitor **pp_cynara_monitor,
         } else {
             ptr.reset(new Cynara::Logic());
         }
+
+        int ret = ptr->init();
+        if (ret != CYNARA_API_SUCCESS) {
+            LOGE("Couldn't initialize cynara monitor");
+            return ret;
+        }
         *pp_cynara_monitor = new cynara_monitor(ptr.get());
         ptr.release();
 
@@ -118,6 +124,9 @@ int cynara_monitor_initialize(cynara_monitor **pp_cynara_monitor,
 
 CYNARA_API
 int cynara_monitor_finish(cynara_monitor *p_cynara_monitor) {
+    if (p_cynara_monitor && p_cynara_monitor->impl) {
+        p_cynara_monitor->impl->notifyFinish();
+    }
     delete p_cynara_monitor;
     return CYNARA_API_SUCCESS;
 }

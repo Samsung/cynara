@@ -161,27 +161,47 @@ void cynara_monitor_entries_free(cynara_monitor_entry **monitor_entries) {
 
 CYNARA_API
 const char *cynara_monitor_entry_get_client(const cynara_monitor_entry *monitor_entry) {
+    if (!monitor_entry) {
+        LOGW("NULL passed to %s", __FUNCTION__);
+        return nullptr;
+    }
     return monitor_entry->m_monitorEntry.key().client().toString().c_str();
 }
 
 CYNARA_API
 const char *cynara_monitor_entry_get_user(const cynara_monitor_entry *monitor_entry) {
+    if (!monitor_entry) {
+        LOGW("NULL passed to %s", __FUNCTION__);
+        return nullptr;
+    }
     return monitor_entry->m_monitorEntry.key().user().toString().c_str();
 }
 
 CYNARA_API
 const char *cynara_monitor_entry_get_privilege(const cynara_monitor_entry *monitor_entry) {
+    if (!monitor_entry) {
+        LOGW("NULL passed to %s", __FUNCTION__);
+        return nullptr;
+    }
     return monitor_entry->m_monitorEntry.key().privilege().toString().c_str();
 }
 
 CYNARA_API
 int cynara_monitor_entry_get_result(const cynara_monitor_entry *monitor_entry) {
+    if (!monitor_entry) {
+        LOGW("NULL passed to %s", __FUNCTION__);
+        return CYNARA_API_INVALID_PARAM;
+    }
     return monitor_entry->m_monitorEntry.result();
 }
 
 CYNARA_API
 const struct timespec *cynara_monitor_entry_get_timestamp(
         const cynara_monitor_entry *monitor_entry) {
+    if (!monitor_entry) {
+        LOGW("NULL passed to %s", __FUNCTION__);
+        return nullptr;
+    }
     return &monitor_entry->m_monitorEntry.timestamp();
 }
 

@@ -4,7 +4,7 @@ Version:    0.11.0
 Release:    1
 Group:      Security/Application Privilege
 License:    Apache-2.0
-Source0:    %{name}-%{version}.tar.gz
+Source0:    cynara-%{version}.tar.gz
 Source1000:    %{name}-rpmlintrc
 Source1008:    libcynara-creds-dbus.manifest
 Source1009:    libcynara-creds-gdbus.manifest
@@ -64,7 +64,7 @@ Requires:   libcynara-creds-commons = %{version}
 Cynara credentials helpers library for gdbus clients
 
 %prep
-%setup -q
+%setup -q -n cynara-%{version}
 cp -a %{SOURCE1008} .
 cp -a %{SOURCE1009} .
 

@@ -4,7 +4,7 @@ Version:    0.11.0
 Release:    1
 Group:      Security/Application Privilege
 License:    Apache-2.0
-Source0:    %{name}-%{version}.tar.gz
+Source0:    cynara-%{version}.tar.gz
 Source1000:    %{name}-rpmlintrc
 Source1002:    libcynara-client.manifest
 Source1003:    libcynara-admin.manifest
@@ -141,7 +141,7 @@ Requires:   cynara = %{version}
 Monitor client library for obtaining check logs
 
 %prep
-%setup -q
+%setup -q -n cynara-%{version}
 cp -a %{SOURCE1002} .
 cp -a %{SOURCE1003} .
 cp -a %{SOURCE1004} .

@@ -36,7 +36,7 @@ agent library, helper libraries (libcynara-session, libcynara-creds-common, libc
 libcynara-creds-socket) and tests (cynara-tests)
 
 %prep
-%setup -q
+%setup -q -n cynara-%{version}
 cp -a %{SOURCE1001} .
 
 %build

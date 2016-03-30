@@ -318,6 +318,8 @@ void cynara_monitor_entries_free(cynara_monitor_entry **monitor_entries);
  * The returned pointer is valid as long as given monitor_entry is.
  *
  * \param[in] monitor_entry cynara_monitor_entry to be accessed.
+ *
+ * \return valid const char * pointer or NULL in case of error.
  */
 const char *cynara_monitor_entry_get_client(const cynara_monitor_entry *monitor_entry);
 
@@ -338,6 +340,8 @@ const char *cynara_monitor_entry_get_client(const cynara_monitor_entry *monitor_
  * The returned pointer is valid as long as given monitor_entry is.
  *
  * \param[in] monitor_entry cynara_monitor_entry to be accessed.
+ *
+ * \return valid const char * pointer or NULL in case of error.
  */
 const char *cynara_monitor_entry_get_user(const cynara_monitor_entry *monitor_entry);
 
@@ -358,6 +362,8 @@ const char *cynara_monitor_entry_get_user(const cynara_monitor_entry *monitor_en
  * The returned pointer is valid as long as given monitor_entry is.
  *
  * \param[in] monitor_entry cynara_monitor_entry to be accessed.
+ *
+ * \return valid const char * pointer or NULL in case of error.
  */
 const char *cynara_monitor_entry_get_privilege(const cynara_monitor_entry *monitor_entry);
 
@@ -366,7 +372,8 @@ const char *cynara_monitor_entry_get_privilege(const cynara_monitor_entry *monit
  *
  * \par Description:
  * Gives access to result field of monitor_entry given as a parameter.
- * The result is one of CYNARA_API_ACCESS_ALLOWED or CYNARA_API_ACCESS_DENIED.
+ * In case of successful get, the result is one of CYNARA_API_ACCESS_ALLOWED
+ * or CYNARA_API_ACCESS_DENIED. In case of error a negative code error is returned.
  * Please refer to cynara-error.h for more information.
  *
  * \par Sync (or) Async:
@@ -376,6 +383,9 @@ const char *cynara_monitor_entry_get_privilege(const cynara_monitor_entry *monit
  * This function is thread-safe.
  *
  * \param[in] monitor_entry cynara_monitor_entry to be accessed.
+ *
+ * \return CYNARA_API_ACCESS_ALLOWED on access allowed, CYNARA_API_ACCESS_DENIED on access denial
+ * or other error code on error.
  */
 int cynara_monitor_entry_get_result(const cynara_monitor_entry *monitor_entry);
 
@@ -397,6 +407,8 @@ int cynara_monitor_entry_get_result(const cynara_monitor_entry *monitor_entry);
  * The returned pointer is valid as long as given monitor_entry is.
  *
  * \param[in] monitor_entry cynara_monitor_entry to be accessed.
+ *
+ * \return valid const istruct timspec * pointer or NULL in case of error.
  */
 const struct timespec *cynara_monitor_entry_get_timestamp(
         const cynara_monitor_entry *monitor_entry);

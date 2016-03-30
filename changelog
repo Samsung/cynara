@@ -1,5 +1,39 @@
 ###############################
 
+Release: 0.12.0
+Date:    2016.03.30
+Name:    Release Cynara Monitor API
+
+Libraries:
+libcynara-admin.0.12.0
+libcynara-agent.0.12.0
+libcynara-client-async.0.12.0
+libcynara-client-commmons.0.12.0
+libcynara-client.0.12.0
+libcynara-commons.0.12.0
+libcynara-creds-commons.0.12.0
+libcynara-creds-dbus.0.12.0
+libcynara-creds-gdbus.0.12.0
+libcynara-creds-socket.0.12.0
+libcynara-monitor.0.12.0
+libcynara-session.0.12.0
+libcynara-storage.0.12.0
+
+Executables:
+cynara
+cyad
+cynara-db-chsgen
+
+Description:
+Dummy implementation of Cynara Monitor is released. Monitor API is used to gather audit logs
+from cynara service and clients (via service).
+There are also 2 changes in .spec files:
+1. All 3 spec files have common source tar.gz
+2. rpm packages requires only the same version of cynara packages, they don't require same
+ version of OBS release
+
+###############################
+
 Release: 0.11.0
 Date:    2016.03.22
 Name:    Split cynara.spec into 3 files

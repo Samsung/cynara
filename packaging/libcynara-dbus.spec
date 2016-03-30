@@ -1,6 +1,6 @@
 Name:       libcynara-creds-dbus
 Summary:    Cynara service with client libraries
-Version:    0.11.0
+Version:    0.12.0
 Release:    1
 Group:      Security/Application Privilege
 License:    Apache-2.0

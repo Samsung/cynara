@@ -14,7 +14,7 @@
  *  limitations under the License
  */
 /**
- * @file        src/monitor/api/client-api.cpp
+ * @file        src/monitor/api/monitor-api.cpp
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       Implementation of external libcynara-monitor API

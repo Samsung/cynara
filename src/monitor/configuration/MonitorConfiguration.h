@@ -14,7 +14,7 @@
  *  limitations under the License
  */
 /**
- * @file        src/monitor/configuration/Configuration.h
+ * @file        src/monitor/configuration/MonitorConfiguration.h
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       This file contains monitor configuration class.

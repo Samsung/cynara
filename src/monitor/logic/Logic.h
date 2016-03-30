@@ -14,7 +14,7 @@
  *  limitations under the License
  */
 /**
- * @file        src/monitor/logic/logic.h
+ * @file        src/monitor/logic/Logic.h
  * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       This file contains definition of Logic class -- main libcynara-monitor class

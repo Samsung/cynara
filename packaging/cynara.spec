@@ -8,10 +8,10 @@ Source0:    %{name}-%{version}.tar.gz
 Source1000:    %{name}-rpmlintrc
 Source1001:    cynara.manifest
 Requires:      default-ac-domains
-Requires:      libcynara-commons = %{version}-%{release}
-Requires(pre): cynara-db-migration >= %{version}-%{release}
+Requires:      libcynara-commons = %{version}
+Requires(pre): cynara-db-migration >= %{version}
 Requires(post):   smack
-Requires(postun): cynara-db-migration >= %{version}-%{release}
+Requires(postun): cynara-db-migration >= %{version}
 BuildRequires: cmake
 BuildRequires: zip
 BuildRequires: pkgconfig(libsystemd-daemon)

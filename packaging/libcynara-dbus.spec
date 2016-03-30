@@ -9,12 +9,12 @@ Source1000:    %{name}-rpmlintrc
 Source1008:    libcynara-creds-dbus.manifest
 Source1009:    libcynara-creds-gdbus.manifest
 Requires:      default-ac-domains
-Requires:      libcynara-commons = %{version}-%{release}
+Requires:      libcynara-commons = %{version}
 Requires:      dbus
-Requires:      libcynara-creds-commons = %{version}-%{release}
-Requires(pre): cynara-db-migration >= %{version}-%{release}
+Requires:      libcynara-creds-commons = %{version}
+Requires(pre): cynara-db-migration >= %{version}
 Requires(post):   smack
-Requires(postun): cynara-db-migration >= %{version}-%{release}
+Requires(postun): cynara-db-migration >= %{version}
 BuildRequires: cmake
 BuildRequires: zip
 BuildRequires: pkgconfig(libsmack)
@@ -36,8 +36,8 @@ BuildRequires: pkgconfig(libunwind)
 
 %package -n libcynara-creds-dbus-devel
 Summary:    Development files for dbus helpers library
-Requires:   cynara-devel = %{version}-%{release}
-Requires:   libcynara-creds-dbus = %{version}-%{release}
+Requires:   cynara-devel = %{version}
+Requires:   libcynara-creds-dbus = %{version}
 Requires:   pkgconfig(dbus-1)
 
 %description -n libcynara-creds-dbus-devel
@@ -45,8 +45,8 @@ Development files for dbus helpers library
 
 %package -n libcynara-creds-gdbus-devel
 Summary:    Development files for gdbus helpers library
-Requires:   cynara-devel = %{version}-%{release}
-Requires:   libcynara-creds-gdbus = %{version}-%{release}
+Requires:   cynara-devel = %{version}
+Requires:   libcynara-creds-gdbus = %{version}
 Requires:   pkgconfig(glib-2.0)
 
 %description -n libcynara-creds-gdbus-devel
@@ -58,7 +58,7 @@ Cynara credentials helpers library for dbus clients
 %package -n libcynara-creds-gdbus
 Summary:    Cynara credentials helpers library for gdbus client
 BuildRequires: pkgconfig(gio-2.0)
-Requires:   libcynara-creds-commons = %{version}-%{release}
+Requires:   libcynara-creds-commons = %{version}
 
 %description -n libcynara-creds-gdbus
 Cynara credentials helpers library for gdbus clients

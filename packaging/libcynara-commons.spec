@@ -41,13 +41,13 @@ BuildRequires: pkgconfig(libunwind)
 
 %package -n cynara-devel
 Summary:    Cynara development files
-Requires:   libcynara-admin = %{version}-%{release}
-Requires:   libcynara-agent = %{version}-%{release}
-Requires:   libcynara-client = %{version}-%{release}
-Requires:   libcynara-commons = %{version}-%{release}
-Requires:   libcynara-creds-commons = %{version}-%{release}
-Requires:   libcynara-creds-socket = %{version}-%{release}
-Requires:   libcynara-session = %{version}-%{release}
+Requires:   libcynara-admin = %{version}
+Requires:   libcynara-agent = %{version}
+Requires:   libcynara-client = %{version}
+Requires:   libcynara-commons = %{version}
+Requires:   libcynara-creds-commons = %{version}
+Requires:   libcynara-creds-socket = %{version}
+Requires:   libcynara-session = %{version}
 Requires:   pkgconfig(libsystemd-journal)
 Obsoletes:  libcynara-admin-devel
 Obsoletes:  libcynara-agent-devel
@@ -73,7 +73,7 @@ Cynara tests
 
 %package -n libcynara-client
 Summary:    Cynara - client libraries
-Requires:   cynara = %{version}-%{release}
+Requires:   cynara = %{version}
 Obsoletes:  libcynara-client-commons
 Obsoletes:  libcynara-client-async
 
@@ -82,14 +82,14 @@ Client libraries for checking policies: synchronous and asynchronous
 
 %package -n libcynara-admin
 Summary:    Cynara - admin client library
-Requires:   cynara = %{version}-%{release}
+Requires:   cynara = %{version}
 
 %description -n libcynara-admin
 admin client library for setting, listing and removing policies
 
 %package -n libcynara-agent
 Summary:    Cynara - agent client library
-Requires:   cynara = %{version}-%{release}
+Requires:   cynara = %{version}
 
 %description -n libcynara-agent
 agent client library for communication with cynara service and plugins
@@ -99,21 +99,21 @@ cynara common library with common functionalities
 
 %package -n libcynara-creds-commons
 Summary:    Base library for cynara credentials helpers
-Requires:   libcynara-commons = %{version}-%{release}
+Requires:   libcynara-commons = %{version}
 
 %description -n libcynara-creds-commons
 Base library for cynara credentials helpers
 
 %package -n libcynara-creds-socket
 Summary:    Cynara credentials helpers library for socket clients
-Requires:   libcynara-creds-commons = %{version}-%{release}
+Requires:   libcynara-creds-commons = %{version}
 
 %description -n libcynara-creds-socket
 Cynara credentials helpers library for socket clients
 
 %package -n libcynara-session
 Summary:    Cynara helper client session string creation library
-Requires:   libcynara-commons = %{version}-%{release}
+Requires:   libcynara-commons = %{version}
 
 %description -n libcynara-session
 Cynara helper client session string creation library
@@ -127,15 +127,15 @@ Migration tools for Cynara's database
 
 %package -n cyad
 Summary: Cynara's command-line tool
-Requires:   libcynara-admin = %{version}-%{release}
-Requires:   libcynara-commons = %{version}-%{release}
+Requires:   libcynara-admin = %{version}
+Requires:   libcynara-commons = %{version}
 
 %description -n cyad
 Command-line tool to manage Cynara's database
 
 %package -n libcynara-monitor
 Summary:    Cynara - monitor client library
-Requires:   cynara = %{version}-%{release}
+Requires:   cynara = %{version}
 
 %description -n libcynara-monitor
 Monitor client library for obtaining check logs

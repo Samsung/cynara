@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -39,6 +39,8 @@ typedef Cynara::PolicyKeyFeature PKF;
 namespace Keys {
     static const Cynara::PolicyKey k_nun(PKF::create(""), PKF::create("u"), PKF::create(""));
     static const Cynara::PolicyKey k_cup(PKF::create("c"), PKF::create("u"), PKF::create("p"));
+    static const Cynara::PolicyKey k_cup2(PKF::create("amanda"), PKF::create("to"),
+                                          PKF::create("troll"));
     static const Cynara::PolicyKey k_wup(PKF::createWildcard(), PKF::create("u"), PKF::create("p"));
     static const Cynara::PolicyKey k_cwp(PKF::create("c"), PKF::createWildcard(), PKF::create("p"));
     static const Cynara::PolicyKey k_cuw(PKF::create("c"), PKF::create("u"), PKF::createWildcard());

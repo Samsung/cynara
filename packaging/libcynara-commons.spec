@@ -48,7 +48,6 @@ Requires:   libcynara-commons = %{version}
 Requires:   libcynara-creds-commons = %{version}
 Requires:   libcynara-creds-socket = %{version}
 Requires:   libcynara-session = %{version}
-Requires:   pkgconfig(libsystemd-journal)
 Obsoletes:  libcynara-admin-devel
 Obsoletes:  libcynara-agent-devel
 Obsoletes:  libcynara-client-async-devel
@@ -73,7 +72,6 @@ Cynara tests
 
 %package -n libcynara-client
 Summary:    Cynara - client libraries
-Requires:   cynara = %{version}
 Obsoletes:  libcynara-client-commons
 Obsoletes:  libcynara-client-async
 
@@ -82,14 +80,12 @@ Client libraries for checking policies: synchronous and asynchronous
 
 %package -n libcynara-admin
 Summary:    Cynara - admin client library
-Requires:   cynara = %{version}
 
 %description -n libcynara-admin
 admin client library for setting, listing and removing policies
 
 %package -n libcynara-agent
 Summary:    Cynara - agent client library
-Requires:   cynara = %{version}
 
 %description -n libcynara-agent
 agent client library for communication with cynara service and plugins
@@ -135,7 +131,6 @@ Command-line tool to manage Cynara's database
 
 %package -n libcynara-monitor
 Summary:    Cynara - monitor client library
-Requires:   cynara = %{version}
 
 %description -n libcynara-monitor
 Monitor client library for obtaining check logs

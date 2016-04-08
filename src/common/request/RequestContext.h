@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -33,13 +33,13 @@
 namespace Cynara {
 
 class RequestContext {
-private:
-    ResponseTakerWeakPtr m_responseTaker;
-    BinaryQueueWeakPtr m_responseQueue;
-
 public:
-    RequestContext(ResponseTakerPtr responseTaker, BinaryQueuePtr responseQueue)
-        : m_responseTaker(responseTaker), m_responseQueue(responseQueue) {
+    typedef int ClientId;
+    static const int InvalidClientId = -1;
+
+    RequestContext(ResponseTakerPtr responseTaker, BinaryQueuePtr responseQueue,
+                   ClientId clientId = InvalidClientId)
+        : m_responseTaker(responseTaker), m_responseQueue(responseQueue), m_clientId(clientId) {
     }
 
     void returnResponse(const Response &response) const {
@@ -54,6 +54,15 @@ public:
             return bbqPtr;
         throw ContextErrorException();
     }
+
+    ClientId clientId(void) const {
+        return m_clientId;
+    }
+
+private:
+    ResponseTakerWeakPtr m_responseTaker;
+    BinaryQueueWeakPtr m_responseQueue;
+    ClientId m_clientId;
 };
 
 } // namespace Cynara

@@ -1,5 +1,35 @@
 ###############################
 
+Release: 0.13.0
+Date:    2016.04.11
+Name:    Release Cynara Monitor API
+
+Libraries:
+libcynara-admin.0.13.0
+libcynara-agent.0.13.0
+libcynara-client-async.0.13.0
+libcynara-client-commmons.0.13.0
+libcynara-client.0.13.0
+libcynara-commons.0.13.0
+libcynara-creds-commons.0.13.0
+libcynara-creds-dbus.0.13.0
+libcynara-creds-gdbus.0.13.0
+libcynara-creds-socket.0.13.0
+libcynara-monitor.0.13.0
+libcynara-session.0.13.0
+libcynara-storage.0.13.0
+
+Executables:
+cynara
+cyad
+cynara-db-chsgen
+
+Description:
+Remove dependencies Journald is not used by cynara libs. The runtime dependency
+libcynara to cynara must be removed to break cycle dependency during build.
+
+###############################
+
 Release: 0.12.0
 Date:    2016.03.30
 Name:    Release Cynara Monitor API

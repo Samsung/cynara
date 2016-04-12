@@ -1,5 +1,34 @@
 ###############################
 
+Release: 0.13.1
+Date:    2016.04.12
+Name:    Fix /var/cynara creation bug.
+
+Libraries:
+libcynara-admin.0.13.1
+libcynara-agent.0.13.1
+libcynara-client-async.0.13.1
+libcynara-client-commmons.0.13.1
+libcynara-client.0.13.1
+libcynara-commons.0.13.1
+libcynara-creds-commons.0.13.1
+libcynara-creds-dbus.0.13.1
+libcynara-creds-gdbus.0.13.1
+libcynara-creds-socket.0.13.1
+libcynara-monitor.0.13.1
+libcynara-session.0.13.1
+libcynara-storage.0.13.1
+
+Executables:
+cynara
+cyad
+cynara-db-chsgen
+
+Description:
+Fix /var/cynara creation bug.
+
+###############################
+
 Release: 0.13.0
 Date:    2016.04.11
 Name:    Release Cynara Monitor API

@@ -19,7 +19,9 @@ Source1013:    cyad.manifest
 Source1014:    cynara-db-chsgen.manifest
 Source1015:    libcynara-monitor.manifest
 Requires:      default-ac-domains
+Requires(pre): cynara-db-migration >= %{version}
 Requires(post):   smack
+Requires(postun): cynara-db-migration >= %{version}
 BuildRequires: cmake
 BuildRequires: zip
 BuildRequires: pkgconfig(libsmack)
@@ -195,9 +197,24 @@ make %{?jobs:-j%jobs}
 
 %postun -n libcynara-agent -p /sbin/ldconfig
 
+%pre -n libcynara-commons
+
+if [ $1 -gt 1 ] ; then
+    # upgrade
+    %{_sbindir}/cynara-db-migration upgrade -f 0.0.0 -t %{version}
+else
+    # install
+    %{_sbindir}/cynara-db-migration install -t %{version}
+fi
+
 %post -n libcynara-commons -p /sbin/ldconfig
 
 %postun -n libcynara-commons -p /sbin/ldconfig
+
+if [ $1 = 0 ]; then
+    %{_sbindir}/cynara-db-migration uninstall -f %{version}
+    systemctl daemon-reload
+fi
 
 %post -n libcynara-creds-commons -p /sbin/ldconfig
 

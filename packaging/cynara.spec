@@ -9,9 +9,7 @@ Source1000:    %{name}-rpmlintrc
 Source1001:    cynara.manifest
 Requires:      default-ac-domains
 Requires:      libcynara-commons = %{version}
-Requires(pre): cynara-db-migration >= %{version}
 Requires(post):   smack
-Requires(postun): cynara-db-migration >= %{version}
 BuildRequires: cmake
 BuildRequires: zip
 BuildRequires: pkgconfig(libsystemd-daemon)
@@ -77,15 +75,6 @@ ln -s ../cynara.socket %{buildroot}%{_unitdir}/sockets.target.wants/cynara.socke
 ln -s ../cynara-admin.socket %{buildroot}%{_unitdir}/sockets.target.wants/cynara-admin.socket
 ln -s ../cynara-agent.socket %{buildroot}%{_unitdir}/sockets.target.wants/cynara-agent.socket
 
-%pre
-if [ $1 -gt 1 ] ; then
-    # upgrade
-    %{_sbindir}/cynara-db-migration upgrade -f 0.0.0 -t %{version}
-else
-    # install
-    %{_sbindir}/cynara-db-migration install -t %{version}
-fi
-
 %post
 ### Add file capabilities if needed
 ### setcap/getcap binary are useful. To use them you must install libcap and libcap-tools packages
@@ -103,12 +92,6 @@ systemctl restart %{name}.service
 if [ $1 = 0 ]; then
     # unistall
     systemctl stop cynara.service
-fi
-
-%postun
-if [ $1 = 0 ]; then
-    %{_sbindir}/cynara-db-migration uninstall -f %{version}
-    systemctl daemon-reload
 fi
 
 %files

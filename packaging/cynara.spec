@@ -123,6 +123,5 @@ fi
 %attr(-,root,root) %{_unitdir}/cynara-admin.socket
 %attr(-,root,root) %{_unitdir}/sockets.target.wants/cynara-agent.socket
 %attr(-,root,root) %{_unitdir}/cynara-agent.socket
-%dir %attr(700,cynara,cynara) %{_localstatedir}/%{name}
 %dir %attr(755,cynara,cynara) %{_libdir}/%{name}/plugin/service
 

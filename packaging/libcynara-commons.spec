@@ -254,6 +254,7 @@ make %{?jobs:-j%jobs}
 %license LICENSE
 %{_libdir}/libcynara-commons.so.*
 %{_libdir}/libcynara-storage.so.*
+%dir %attr(700,cynara,cynara) %{_localstatedir}/cynara
 
 %files -n libcynara-creds-commons
 %manifest libcynara-creds-commons.manifest

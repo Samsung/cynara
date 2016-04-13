@@ -209,8 +209,9 @@ fi
 
 %post -n libcynara-commons -p /sbin/ldconfig
 
-%postun -n libcynara-commons -p /sbin/ldconfig
+%postun -n libcynara-commons
 
+/sbin/ldconfig
 if [ $1 = 0 ]; then
     %{_sbindir}/cynara-db-migration uninstall -f %{version}
     systemctl daemon-reload

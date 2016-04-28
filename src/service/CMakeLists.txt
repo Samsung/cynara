@@ -38,6 +38,7 @@ SET(CYNARA_SOURCES
     ${CYNARA_SERVICE_PATH}/main/Cynara.cpp
     ${CYNARA_SERVICE_PATH}/main/main.cpp
     ${CYNARA_SERVICE_PATH}/monitor/EntriesQueue.cpp
+    ${CYNARA_SERVICE_PATH}/monitor/EntriesManager.cpp
     ${CYNARA_SERVICE_PATH}/request/CheckRequestManager.cpp
     ${CYNARA_SERVICE_PATH}/sockets/Descriptor.cpp
     ${CYNARA_SERVICE_PATH}/sockets/SocketManager.cpp

@@ -34,11 +34,13 @@
 #include <protocol/ProtocolSerialization.h>
 #include <request/CancelRequest.h>
 #include <request/CheckRequest.h>
+#include <request/MonitorEntriesPutRequest.h>
 #include <request/RequestContext.h>
 #include <request/SimpleCheckRequest.h>
 #include <response/CancelResponse.h>
 #include <response/CheckResponse.h>
 #include <response/SimpleCheckResponse.h>
+#include <types/MonitorEntry.h>
 #include <types/PolicyKey.h>
 #include <types/PolicyResult.h>
 #include <types/PolicyType.h>
@@ -90,6 +92,36 @@ RequestPtr ProtocolClient::deserializeSimpleCheckRequest(void) {
                                                 m_frameHeader.sequenceNumber());
 }
 
+RequestPtr ProtocolClient::deserializeMonitorEntriesPutRequest(void) {
+    ProtocolFrameFieldsCount entriesCount;
+
+    ProtocolDeserialization::deserialize(m_frameHeader, entriesCount);
+    std::vector<MonitorEntry> entries;
+    entries.reserve(entriesCount);
+
+    for (ProtocolFrameFieldsCount fields = 0; fields < entriesCount; fields++) {
+        std::string clientId, userId, privilegeId;
+        int64_t result, tv_sec, tv_nsec;
+
+        ProtocolDeserialization::deserialize(m_frameHeader, clientId);
+        ProtocolDeserialization::deserialize(m_frameHeader, userId);
+        ProtocolDeserialization::deserialize(m_frameHeader, privilegeId);
+        ProtocolDeserialization::deserialize(m_frameHeader, result);
+        ProtocolDeserialization::deserialize(m_frameHeader, tv_sec);
+        ProtocolDeserialization::deserialize(m_frameHeader, tv_nsec);
+
+        PolicyKey key(clientId, userId, privilegeId);
+        struct timespec timestamp;
+        timestamp.tv_sec = static_cast<__time_t>(tv_sec);
+        timestamp.tv_nsec = static_cast<__syscall_slong_t>(tv_nsec);
+        entries.emplace_back(MonitorEntry(key, static_cast<size_t>(result), timestamp));
+    }
+
+    LOGD("Deserialized MonitorEntriesPutRequest: number of entries [%" PRIu16 "]", entriesCount);
+
+    return std::make_shared<MonitorEntriesPutRequest>(entries, m_frameHeader.sequenceNumber());
+}
+
 RequestPtr ProtocolClient::extractRequestFromBuffer(BinaryQueuePtr bufferQueue) {
     ProtocolFrameSerializer::deserializeHeader(m_frameHeader, bufferQueue);
 
@@ -107,6 +139,8 @@ RequestPtr ProtocolClient::extractRequestFromBuffer(BinaryQueuePtr bufferQueue) 
             return deserializeCancelRequest();
         case OpSimpleCheckPolicyRequest:
             return deserializeSimpleCheckRequest();
+        case OpMonitorEntriesPutRequest:
+            return deserializeMonitorEntriesPutRequest();
         default:
             throw InvalidProtocolException(InvalidProtocolException::WrongOpCode);
             break;
@@ -217,6 +251,30 @@ void ProtocolClient::execute(const RequestContext &context, const SimpleCheckReq
     ProtocolSerialization::serialize(frame, request.key().privilege().value());
 
     ProtocolFrameSerializer::finishSerialization(frame, *(context.responseQueue()));
+}
+
+void ProtocolClient::execute(const RequestContext &context,
+                             const MonitorEntriesPutRequest &request) {
+    ProtocolFrameFieldsCount entriesCount
+            = static_cast<ProtocolFrameFieldsCount>(request.monitorEntries().size());
+    LOGD("Serializing MonitorEntriesPutRequest: op [%" PRIu8 "], sequenceNumber [%" PRIu16 "], "
+            "number of entries [%" PRIu16 "]",
+         OpMonitorEntriesPutRequest, request.sequenceNumber(), entriesCount);
+
+    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request.sequenceNumber());
+
+    ProtocolSerialization::serialize(frame, OpMonitorEntriesPutRequest);
+    ProtocolSerialization::serialize(frame, entriesCount);
+    for (const auto &entry : request.monitorEntries()) {
+        ProtocolSerialization::serialize(frame, entry.key().client().toString());
+        ProtocolSerialization::serialize(frame, entry.key().user().toString());
+        ProtocolSerialization::serialize(frame, entry.key().privilege().toString());
+        ProtocolSerialization::serialize(frame, static_cast<int64_t>(entry.result()));
+        ProtocolSerialization::serialize(frame, static_cast<int64_t>(entry.timestamp().tv_sec));
+        ProtocolSerialization::serialize(frame, static_cast<int64_t>(entry.timestamp().tv_nsec));
+    }
+
+    ProtocolFrameSerializer::finishSerialization(frame, *context.responseQueue());
 }
 
 void ProtocolClient::execute(const RequestContext &context, const CancelResponse &response) {

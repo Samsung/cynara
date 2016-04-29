@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
  * @file        src/client/logic/Logic.cpp
  * @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  * @author      Zofia Abramowska <z.abramowska@samsung.com>
+ * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       This file contains implementation of Logic class - main libcynara-client class
  */
@@ -34,6 +35,7 @@
 #include <plugins/NaiveInterpreter.h>
 #include <protocol/Protocol.h>
 #include <protocol/ProtocolClient.h>
+#include <request/MonitorEntriesPutRequest.h>
 #include <request/CheckRequest.h>
 #include <request/pointers.h>
 #include <request/SimpleCheckRequest.h>
@@ -60,6 +62,10 @@ Logic::Logic(const Configuration &conf) :
     }
 }
 
+Logic::~Logic() {
+    flushMonitor();
+}
+
 int Logic::check(const std::string &client, const ClientSession &session, const std::string &user,
                  const std::string &privilege) {
     if (!ensureConnection())
@@ -68,6 +74,7 @@ int Logic::check(const std::string &client, const ClientSession &session, const 
     PolicyKey key(client, user, privilege);
     int ret = m_cache.get(session, key);
     if (ret != CYNARA_API_CACHE_MISS) {
+        updateMonitor(key, ret);
         return ret;
     }
 
@@ -77,6 +84,8 @@ int Logic::check(const std::string &client, const ClientSession &session, const 
         LOGE("Error fetching new entry.");
         return ret;
     }
+
+    updateMonitor(key, ret);
 
     return m_cache.update(session, key, result);
 }
@@ -163,8 +172,36 @@ int Logic::requestSimpleResult(const PolicyKey &key, PolicyResult &result) {
     return CYNARA_API_SUCCESS;
 }
 
+bool Logic::requestMonitorEntriesPut() {
+    ProtocolFrameSequenceNumber sequenceNumber = generateSequenceNumber();
+    MonitorEntriesPutRequest request(m_monitorCache.entries(), sequenceNumber);
+    return m_socketClient.sendAndForget(request);
+}
+
 void Logic::onDisconnected(void) {
     m_cache.clear();
+}
+
+void Logic::updateMonitor(const PolicyKey &policyKey, int result) {
+    m_monitorCache.update(policyKey, result);
+
+    if (m_monitorCache.shouldFlush())
+        flushMonitor();
+}
+
+void Logic::flushMonitor() {
+    if (m_monitorCache.entries().size() == 0)
+        return;
+
+    if (!ensureConnection()) {
+        LOGE("Could not flush monitor entries: connection lost");
+        return;
+    }
+
+    auto flushSuccess = requestMonitorEntriesPut();
+    if (flushSuccess) {
+        m_monitorCache.clear();
+    }
 }
 
 } // namespace Cynara

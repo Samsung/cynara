@@ -78,4 +78,17 @@ ResponsePtr SocketClient::askCynaraServer(const Request &request) {
     }
 }
 
+bool SocketClient::sendAndForget(const Request &request) {
+    //pass request to protocol
+    RequestContext context(ResponseTakerPtr(), m_writeQueue);
+    request.execute(*m_protocol, context);
+
+    //send request to cynara
+    if (m_socket.sendToServer(*m_writeQueue) == Socket::SendStatus::CONNECTION_LOST) {
+        LOGW("Disconnected while sending request to Cynara.");
+        return false;
+    }
+
+    return true;
+}
 } // namespace Cynara

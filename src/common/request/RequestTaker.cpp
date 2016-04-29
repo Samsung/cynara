@@ -85,6 +85,11 @@ void RequestTaker::execute(const RequestContext &context UNUSED,
 }
 
 void RequestTaker::execute(const RequestContext &context UNUSED,
+                           const MonitorEntriesPutRequest &request UNUSED) {
+    throw NotImplementedException();
+}
+
+void RequestTaker::execute(const RequestContext &context UNUSED,
                            const RemoveBucketRequest &request UNUSED) {
     throw NotImplementedException();
 }

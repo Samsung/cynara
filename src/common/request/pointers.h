@@ -61,6 +61,9 @@ typedef std::shared_ptr<MonitorGetEntriesRequest> MonitorGetEntriesRequestPtr;
 class MonitorGetFlushRequest;
 typedef std::shared_ptr<MonitorGetFlushRequest> MonitorGetFlushRequestPtr;
 
+class MonitorEntriesPutRequest;
+typedef std::shared_ptr<MonitorEntriesPutRequest> MonitorEntriesPutRequestPtr;
+
 class RemoveBucketRequest;
 typedef std::shared_ptr<RemoveBucketRequest> RemoveBucketRequestPtr;
 

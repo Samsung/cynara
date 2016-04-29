@@ -51,6 +51,7 @@
 #include <request/InsertOrUpdateBucketRequest.h>
 #include <request/ListRequest.h>
 #include <request/MonitorEntriesPutRequest.h>
+#include <request/MonitorEntryPutRequest.h>
 #include <request/MonitorGetEntriesRequest.h>
 #include <request/MonitorGetFlushRequest.h>
 #include <request/RemoveBucketRequest.h>
@@ -468,6 +469,11 @@ void Logic::execute(const RequestContext &context, const MonitorGetFlushRequest 
 }
 
 void Logic::execute(const RequestContext &context, const MonitorEntriesPutRequest &request) {
+    (void) context;
+    (void) request;
+}
+
+void Logic::execute(const RequestContext &context, const MonitorEntryPutRequest &request) {
     (void) context;
     (void) request;
 }

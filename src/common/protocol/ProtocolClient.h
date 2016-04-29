@@ -47,6 +47,7 @@ public:
     virtual void execute(const RequestContext &context, const CheckRequest &request);
     virtual void execute(const RequestContext &context, const SimpleCheckRequest &request);
     virtual void execute(const RequestContext &context, const MonitorEntriesPutRequest &request);
+    virtual void execute(const RequestContext &context, const MonitorEntryPutRequest &request);
 
     virtual void execute(const RequestContext &context, const CancelResponse &response);
     virtual void execute(const RequestContext &context, const CheckResponse &response);
@@ -57,6 +58,7 @@ private:
     RequestPtr deserializeCheckRequest(void);
     RequestPtr deserializeSimpleCheckRequest(void);
     RequestPtr deserializeMonitorEntriesPutRequest(void);
+    RequestPtr deserializeMonitorEntryPutRequest(void);
 
     ResponsePtr deserializeCancelResponse(void);
     ResponsePtr deserializeCheckResponse(void);

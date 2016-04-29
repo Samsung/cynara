@@ -40,6 +40,7 @@ enum ProtocolOpCode : uint8_t {
     OpSimpleCheckPolicyRequest,
     OpSimpleCheckPolicyResponse,
     OpMonitorEntriesPutRequest,
+    OpMonitorEntryPutRequest,
 
     /** Opcodes 6 - 19 are reserved for future use */
 

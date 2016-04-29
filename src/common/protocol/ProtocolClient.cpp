@@ -35,6 +35,7 @@
 #include <request/CancelRequest.h>
 #include <request/CheckRequest.h>
 #include <request/MonitorEntriesPutRequest.h>
+#include <request/MonitorEntryPutRequest.h>
 #include <request/RequestContext.h>
 #include <request/SimpleCheckRequest.h>
 #include <response/CancelResponse.h>
@@ -122,6 +123,30 @@ RequestPtr ProtocolClient::deserializeMonitorEntriesPutRequest(void) {
     return std::make_shared<MonitorEntriesPutRequest>(entries, m_frameHeader.sequenceNumber());
 }
 
+RequestPtr ProtocolClient::deserializeMonitorEntryPutRequest(void) {
+    std::string clientId, userId, privilegeId;
+    int64_t result, tv_sec, tv_nsec;
+
+    ProtocolDeserialization::deserialize(m_frameHeader, clientId);
+    ProtocolDeserialization::deserialize(m_frameHeader, userId);
+    ProtocolDeserialization::deserialize(m_frameHeader, privilegeId);
+    ProtocolDeserialization::deserialize(m_frameHeader, result);
+    ProtocolDeserialization::deserialize(m_frameHeader, tv_sec);
+    ProtocolDeserialization::deserialize(m_frameHeader, tv_nsec);
+
+    PolicyKey key(clientId, userId, privilegeId);
+    struct timespec timestamp;
+    timestamp.tv_sec = static_cast<__time_t>(tv_sec);
+    timestamp.tv_nsec = static_cast<__syscall_slong_t>(tv_nsec);
+
+    LOGD("Deserialized MonitorEntryPutRequest: client <%s>, user <%s>, privilege <%s>",
+         clientId.c_str(), userId.c_str(), privilegeId.c_str());
+
+    return std::make_shared<MonitorEntryPutRequest>(MonitorEntry(key, static_cast<size_t>(result),
+                                                                 timestamp),
+                                                    m_frameHeader.sequenceNumber());
+}
+
 RequestPtr ProtocolClient::extractRequestFromBuffer(BinaryQueuePtr bufferQueue) {
     ProtocolFrameSerializer::deserializeHeader(m_frameHeader, bufferQueue);
 
@@ -141,6 +166,8 @@ RequestPtr ProtocolClient::extractRequestFromBuffer(BinaryQueuePtr bufferQueue) 
             return deserializeSimpleCheckRequest();
         case OpMonitorEntriesPutRequest:
             return deserializeMonitorEntriesPutRequest();
+        case OpMonitorEntryPutRequest:
+            return deserializeMonitorEntryPutRequest();
         default:
             throw InvalidProtocolException(InvalidProtocolException::WrongOpCode);
             break;
@@ -275,6 +302,22 @@ void ProtocolClient::execute(const RequestContext &context,
     }
 
     ProtocolFrameSerializer::finishSerialization(frame, *context.responseQueue());
+}
+
+void ProtocolClient::execute(const RequestContext &context, const MonitorEntryPutRequest &request) {
+    ProtocolFrame frame = ProtocolFrameSerializer::startSerialization(request.sequenceNumber());
+
+    LOGD("Serializing MonitorEntryPutRequest op [%" PRIu8 "]", OpMonitorEntryPutRequest);
+
+    const auto &entry = request.monitorEntry();
+    ProtocolSerialization::serialize(frame, OpMonitorEntryPutRequest);
+    ProtocolSerialization::serialize(frame, entry.key().client().toString());
+    ProtocolSerialization::serialize(frame, entry.key().user().toString());
+    ProtocolSerialization::serialize(frame, entry.key().privilege().toString());
+    ProtocolSerialization::serialize(frame, static_cast<int64_t>(entry.result()));
+    ProtocolSerialization::serialize(frame, static_cast<int64_t>(entry.timestamp().tv_sec));
+    ProtocolSerialization::serialize(frame, static_cast<int64_t>(entry.timestamp().tv_nsec));
+    ProtocolFrameSerializer::finishSerialization(frame, *(context.responseQueue()));
 }
 
 void ProtocolClient::execute(const RequestContext &context, const CancelResponse &response) {

@@ -85,6 +85,7 @@ public:
     virtual void execute(const RequestContext &context, const MonitorGetEntriesRequest &request);
     virtual void execute(const RequestContext &context, const MonitorGetFlushRequest &request);
     virtual void execute(const RequestContext &context, const MonitorEntriesPutRequest &request);
+    virtual void execute(const RequestContext &context, const MonitorEntryPutRequest &request);
     virtual void execute(const RequestContext &context, const RemoveBucketRequest &request);
     virtual void execute(const RequestContext &context, const SetPoliciesRequest &request);
     virtual void execute(const RequestContext &context, const SignalRequest &request);

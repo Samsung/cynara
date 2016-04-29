@@ -17,6 +17,7 @@
  * @file        src/client-async/logic/Logic.cpp
  * @author      Marcin Niesluchowski <m.niesluchow@samsung.com>
  * @author      Zofia Abramowska <z.abramowska@samsung.com>
+ * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       This file contains implementation of Logic class - main
  *              libcynara-client-async class
@@ -36,6 +37,8 @@
 #include <protocol/ProtocolClient.h>
 #include <request/CancelRequest.h>
 #include <request/CheckRequest.h>
+#include <request/MonitorEntryPutRequest.h>
+#include <request/MonitorEntriesPutRequest.h>
 #include <request/SimpleCheckRequest.h>
 #include <response/CancelResponse.h>
 #include <response/CheckResponse.h>
@@ -43,7 +46,13 @@
 #include <sockets/Socket.h>
 
 #include "Logic.h"
+
 namespace Cynara {
+
+static ProtocolFrameSequenceNumber generateSequenceNumber(void) {
+    static ProtocolFrameSequenceNumber sequenceNumber = 0;
+    return ++sequenceNumber;
+}
 
 Logic::Logic(cynara_status_callback callback, void *userStatusData, const Configuration &conf)
     : m_statusCallback(callback, userStatusData), m_cache(conf.getCacheSize()),
@@ -58,10 +67,24 @@ Logic::Logic(cynara_status_callback callback, void *userStatusData, const Config
 
 Logic::~Logic() {
     m_operationPermitted = false;
+
+    // The client invoked cynara_async_finish(), so it's basically game over.
+    // Just try to flush as many entries as possible, before the socket is replete.
+    for (const auto &entry : m_monitorCache.entries()) {
+        ProtocolFrameSequenceNumber sequenceNumber = generateSequenceNumber();
+        MonitorEntryPutRequest request(entry, sequenceNumber);
+        m_socketClient.appendRequest(request);
+    }
+
+    if (m_socketClient.sendToCynara() != Socket::SendStatus::ALL_DATA_SENT) {
+        LOGW("Some monitor entries were lost");
+    }
+
     for (auto &kv : m_checks) {
         if (!kv.second.cancelled())
             kv.second.callback().onFinish(kv.first);
     }
+
     m_statusCallback.onDisconnected();
 }
 
@@ -73,7 +96,19 @@ int Logic::checkCache(const std::string &client, const std::string &session,
     if (!checkCacheValid())
         return CYNARA_API_CACHE_MISS;
 
-    return m_cache.get(session, PolicyKey(client, user, privilege));
+    auto ret = m_cache.get(session, PolicyKey(client, user, privilege));
+
+    // Cache returns only CYNARA_API_ACCESS_ALLOWED, CYNARA_API_ACCESS_DENIED
+    // and CYNARA_API_CACHE_MISS. The condition below must be revamped it this invariant changes.
+    if (ret != CYNARA_API_CACHE_MISS) {
+        updateMonitor({client, user, privilege}, ret);
+    }
+
+    if (m_monitorCache.shouldFlush()) {
+        flushMonitor();
+    }
+
+    return ret;
 }
 
 int Logic::createCheckRequest(const std::string &client, const std::string &session,
@@ -223,6 +258,10 @@ void Logic::processCheckResponse(const CheckResponse &checkResponse) {
                                  checkResponse.m_resultRef);
     CheckData checkData(std::move(it->second));
     releaseRequest(it);
+
+    // Please mind that updating monitor here makes only successful checks count.
+    // This is an arbitrary decision.
+    updateMonitor(checkData.key(), result);
 
     if (!checkData.cancelled()) {
         bool onAnswerCancel = m_inAnswerCancelResponseCallback;
@@ -375,6 +414,32 @@ void Logic::onDisconnected(void) {
     m_cache.clear();
     m_statusCallback.onDisconnected();
     m_operationPermitted = true;
+}
+
+void Logic::updateMonitor(const PolicyKey &policyKey, int result) {
+    m_monitorCache.update(policyKey, result);
+
+    if (m_monitorCache.shouldFlush())
+        flushMonitor();
+}
+
+void Logic::flushMonitor() {
+    if (m_monitorCache.entries().size() == 0)
+        return;
+
+    if (!ensureConnection()) {
+        LOGE("Could not flush monitor entries: connection lost");
+        return;
+    }
+
+    ProtocolFrameSequenceNumber sequenceNumber = generateSequenceNumber();
+
+    MonitorEntriesPutRequest request(m_monitorCache.entries(), sequenceNumber);
+    m_socketClient.appendRequest(request);
+
+    onStatusChange(m_socketClient.getSockFd(), cynara_async_status::CYNARA_STATUS_FOR_RW);
+
+    m_monitorCache.clear();
 }
 
 } // namespace Cynara

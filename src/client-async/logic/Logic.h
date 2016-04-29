@@ -17,6 +17,7 @@
  * @file        src/client-async/logic/Logic.h
  * @author      Marcin Niesluchowski <m.niesluchow@samsung.com>
  * @author      Zofia Abramowska <z.abramowska@samsung.com>
+ * @author      Aleksander Zdyb <a.zdyb@samsung.com>
  * @version     1.0
  * @brief       This file contains declaration of Logic class - main
  *              libcynara-client-async class
@@ -28,6 +29,7 @@
 #include <memory>
 
 #include <cache/CacheInterface.h>
+#include <cache/MonitorCache.h>
 #include <configuration/Configuration.h>
 #include <types/ProtocolFields.h>
 
@@ -74,6 +76,7 @@ private:
     SequenceContainer m_sequenceContainer;
     bool m_operationPermitted;
     bool m_inAnswerCancelResponseCallback;
+    MonitorCache m_monitorCache;
 
     bool checkCacheValid(void);
     int createRequest(bool simple, const std::string &client, const std::string &session,
@@ -96,6 +99,9 @@ private:
     void onStatusChange(int sock, cynara_async_status status);
     void onServiceNotAvailable(void);
     void onDisconnected(void);
+
+    void updateMonitor(const PolicyKey &policyKey, int result);
+    void flushMonitor();
 };
 
 } // namespace Cynara

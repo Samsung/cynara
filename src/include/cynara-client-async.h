@@ -115,8 +115,9 @@ typedef void (*cynara_response_callback) (cynara_check_id check_id, cynara_async
 
 /**
  * \brief Callback used by cynara async API when status of cynara socket is changed in
- * cynara_async_initialize(), cynara_async_create_request(), cynara_async_create_simple_request(),
- * cynara_async_process(), cynara_async_cancel_request() or cynara_async_finish().
+ * cynara_async_initialize(), cynara_async_check_cache(), cynara_async_create_request(),
+ * cynara_async_create_simple_request(), cynara_async_process(), cynara_async_cancel_request()
+ * or cynara_async_finish().
  *
  * File descriptor changes every time cynara library connects or disconnects cynara service.
  * Status change is triggered when check_request or cancel needs to be send to
@@ -342,7 +343,7 @@ void cynara_async_finish(cynara_async *p_cynara);
  * If cache is invalid it is cleared and call returns same as access not found.
  * Additional parameter client_session
  * may be used to distinguish between client session (e.g. for allowing access only for this
- * particular application launch). Empty string "" can be used, when session differentation
+ * particular application launch). Empty string "" can be used, when session differentiation
  * is not needed.
  *
  * \par Sync (or) Async:
@@ -359,6 +360,10 @@ void cynara_async_finish(cynara_async *p_cynara);
  * from within cynara_status_callback or cynara_response_callback with
  * CYNARA_CALL_CAUSE_SERVICE_NOT_AVAILABLE or CYNARA_CALL_CAUSE_FINISH cause will return
  * CYNARA_API_OPERATION_NOT_ALLOWED.
+ *
+ * Socket status may occasionally be changed to CYNARA_STATUS_FOR_RW, to ensure
+ * that cynara_async_process() is triggered in event loop after socket is ready to send
+ * monitor logs to Cynara service.
  *
  * String length cannot exceed CYNARA_MAX_ID_LENGTH, otherwise CYNARA_API_INVALID_PARAM will be
  * returned.

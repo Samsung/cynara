@@ -37,6 +37,8 @@ public:
     typedef int ClientId;
     static const int InvalidClientId = -1;
 
+    RequestContext() : m_clientId(InvalidClientId) {}
+
     RequestContext(ResponseTakerPtr responseTaker, BinaryQueuePtr responseQueue,
                    ClientId clientId = InvalidClientId)
         : m_responseTaker(responseTaker), m_responseQueue(responseQueue), m_clientId(clientId) {

@@ -68,6 +68,7 @@ SET(CYNARA_SOURCES_FOR_TESTS
     ${CYNARA_SRC}/helpers/creds-commons/CredsCommonsInner.cpp
     ${CYNARA_SRC}/helpers/creds-commons/creds-commons.cpp
     ${CYNARA_SRC}/service/main/CmdlineParser.cpp
+    ${CYNARA_SRC}/service/monitor/EntriesManager.cpp
     ${CYNARA_SRC}/service/monitor/EntriesQueue.cpp
     ${CYNARA_SRC}/storage/BucketDeserializer.cpp
     ${CYNARA_SRC}/storage/ChecksumStream.cpp
@@ -110,6 +111,7 @@ SET(CYNARA_TESTS_SOURCES
     cyad/policy_parser.cpp
     helpers.cpp
     service/main/cmdlineparser.cpp
+    service/monitor/entriesmanager.cpp
     service/monitor/entriesqueue.cpp
     storage/checksum/checksumvalidator.cpp
     storage/performance/bucket.cpp

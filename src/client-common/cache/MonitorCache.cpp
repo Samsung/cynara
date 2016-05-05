@@ -29,10 +29,13 @@
 
 namespace Cynara {
 
+MonitorCache::MonitorCache(ClockFunction clockFunction)
+        : m_clockFunction(clockFunction) {}
+
 void MonitorCache::update(const PolicyKey &policyKey, int result) {
     struct timespec ts;
     // https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=da15cfdae03351c689736f8d142618592e3cebc3
-    auto ret = clock_gettime(CLOCK_REALTIME_COARSE, &ts);
+    auto ret = m_clockFunction(CLOCK_REALTIME_COARSE, &ts);
     if (ret != 0) {
         LOGE("Could not update monitor entries. clock_gettime() failed with [%d]", ret);
         // TODO: Decide what to do. Something very bad must have happened, if clock_gettime() failed

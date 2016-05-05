@@ -32,7 +32,9 @@ namespace Cynara {
 
 class MonitorCache {
 public:
+    typedef int (*ClockFunction)(int, struct timespec *);
 
+    MonitorCache(ClockFunction clockFunction = ::clock_gettime);
     static const __time_t MAX_LOG_AGE_SEC = 120;
     static const std::size_t CACHE_CAPACITY = 100;
 
@@ -47,6 +49,7 @@ public:
 private:
     std::vector<MonitorEntry> m_monitorEntries;
     __time_t m_cacheAgeSec;
+    ClockFunction m_clockFunction;
 };
 
 } // namespace Cynara

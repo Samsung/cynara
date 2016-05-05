@@ -22,6 +22,7 @@
 
 
 #include "helpers.h"
+#include "types/MonitorEntry.h"
 #include "types/PolicyKey.h"
 
 namespace Cynara {
@@ -40,5 +41,15 @@ PolicyBucketId generateBucketId(const PolicyBucketId &sufix) {
 }
 
 } // namespace Helpers
+
+bool operator ==(const MonitorEntry &me1, const MonitorEntry &me2) {
+    return me1.key() == me2.key()
+           && me1.result() == me2.result()
+           && me1.timestamp() == me2.timestamp();
+}
+
 } // namespace Cynara
 
+bool operator ==(const timespec &t1, const timespec &t2) {
+    return t1.tv_sec == t2.tv_sec && t1.tv_nsec == t2.tv_nsec;
+}

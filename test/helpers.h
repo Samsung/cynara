@@ -23,8 +23,10 @@
 #ifndef HELPERS_H
 #define HELPERS_H
 
+#include <ctime>
 #include <vector>
 
+#include "types/MonitorEntry.h"
 #include "types/PolicyKey.h"
 #include "types/PolicyBucketId.h"
 
@@ -45,8 +47,14 @@ Collection pickFromCollection(const Collection &original, const std::vector<unsi
     return filtered;
 }
 
+
+
 } // namespace Helpers
 
+bool operator ==(const MonitorEntry &me1, const MonitorEntry &me2);
+
 } // namespace Cynara
+
+bool operator ==(const timespec &t1, const timespec &t2);
 
 #endif // HELPERS_H

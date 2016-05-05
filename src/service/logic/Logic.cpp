@@ -28,6 +28,7 @@
 #include <memory>
 #include <vector>
 
+#include <attributes/attributes.h>
 #include <log/log.h>
 #include <common.h>
 #include <log/log.h>
@@ -458,14 +459,26 @@ void Logic::execute(const RequestContext &context, const SimpleCheckRequest &req
                                                request.sequenceNumber()));
 }
 
-void Logic::execute(const RequestContext &context, const MonitorGetEntriesRequest &request) {
-    (void)context;
-    (void)request;
+void Logic::sendMonitorResponses(void) {
+    if (m_monitorLogic.shouldSend()) {
+        auto responses = m_monitorLogic.getResponses();
+        for (auto &response : responses) {
+            auto responseInfo = response.info;
+            auto &responseVec = response.entries;
+            responseInfo.context.returnResponse(MonitorGetEntriesResponse(responseVec,
+                                                                          responseInfo.seq));
+        }
+    }
 }
 
-void Logic::execute(const RequestContext &context, const MonitorGetFlushRequest &request) {
-    context.returnResponse(MonitorGetEntriesResponse(std::vector<MonitorEntry>(),
-                           request.sequenceNumber()));
+void Logic::execute(const RequestContext &context, const MonitorGetEntriesRequest &request) {
+    m_monitorLogic.addClient(context, request.sequenceNumber(), request.bufferSize());
+    sendMonitorResponses();
+}
+
+void Logic::execute(const RequestContext &context, const MonitorGetFlushRequest &request UNUSED) {
+    m_monitorLogic.flushClient(context);
+    sendMonitorResponses();
 }
 
 void Logic::execute(const RequestContext &context, const MonitorEntriesPutRequest &request) {
@@ -510,6 +523,7 @@ void Logic::contextClosed(const RequestContext &context) {
     m_checkRequestManager.cancelRequests(linkId,
                                          [&](const CheckContextPtr &checkContextPtr) -> void {
                                          handleClientDisconnection(checkContextPtr); });
+    m_monitorLogic.removeClient(context);
 }
 
 void Logic::onPoliciesChanged(void) {

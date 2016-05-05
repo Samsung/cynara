@@ -43,6 +43,8 @@
 
 #include <cynara-plugin.h>
 
+#include <monitor/MonitorLogic.h>
+
 namespace Cynara {
 
 class Logic : public RequestTaker {
@@ -101,6 +103,7 @@ private:
     StoragePtr m_storage;
     SocketManagerPtr m_socketManager;
     AuditLog m_auditLog;
+    MonitorLogic m_monitorLogic;
     bool m_dbCorrupted;
 
     bool check(const RequestContext &context, const PolicyKey &key,
@@ -116,7 +119,7 @@ private:
     void checkSinglePolicyType(const PolicyType &policyType, bool allowBucket, bool allowNone);
     void handleAgentTalkerDisconnection(const AgentTalkerPtr &agentTalkerPtr);
     void handleClientDisconnection(const CheckContextPtr &checkContextPtr);
-
+    void sendMonitorResponses(void);
     void onPoliciesChanged(void);
 };
 

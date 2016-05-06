@@ -225,7 +225,7 @@ void SocketManager::readyForAccept(int fd) {
 void SocketManager::closeSocket(int fd) {
     LOGD("SocketManger closeSocket fd [%d] start", fd);
     Descriptor &desc = m_fds[fd];
-    requestTaker()->contextClosed(RequestContext(nullptr, desc.writeQueue()));
+    requestTaker()->contextClosed(RequestContext(nullptr, desc.writeQueue(), fd));
     removeReadSocket(fd);
     removeWriteSocket(fd);
     desc.clear();
@@ -247,7 +247,7 @@ bool SocketManager::handleRead(int fd, const RawBuffer &readbuffer) {
             LOGD("request extracted");
 
             //build context
-            RequestContext context(desc.responseTaker(), desc.writeQueue());
+            RequestContext context(desc.responseTaker(), desc.writeQueue(), fd);
             //pass request to request taker
             req->execute(*requestTaker(), context);
         }

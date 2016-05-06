@@ -481,14 +481,16 @@ void Logic::execute(const RequestContext &context, const MonitorGetFlushRequest 
     sendMonitorResponses();
 }
 
-void Logic::execute(const RequestContext &context, const MonitorEntriesPutRequest &request) {
-    (void) context;
-    (void) request;
+void Logic::execute(const RequestContext &context UNUSED, const MonitorEntriesPutRequest &request) {
+    for (unsigned i = 0; i < request.monitorEntries().size(); i++) {
+        m_monitorLogic.addEntry(request.monitorEntries()[i]);
+        sendMonitorResponses();
+    }
 }
 
-void Logic::execute(const RequestContext &context, const MonitorEntryPutRequest &request) {
-    (void) context;
-    (void) request;
+void Logic::execute(const RequestContext &context UNUSED, const MonitorEntryPutRequest &request) {
+    m_monitorLogic.addEntry(request.monitorEntry());
+    sendMonitorResponses();
 }
 
 void Logic::checkPoliciesTypes(const std::map<PolicyBucketId, std::vector<Policy>> &policies,

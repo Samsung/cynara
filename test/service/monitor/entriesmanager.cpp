@@ -310,3 +310,49 @@ TEST(EntriesManager, user9) {
 
     ASSERT_THAT(entriesManager.fetchEntriesForClient(666), IsEmpty());
 }
+
+TEST(EntriesManager, userFlush) {
+    using ::testing::ElementsAre;
+
+    EntriesManager entriesManager;
+    MonitorEntry entry1{{"c1", "u", "p"}, 0, {0, 0}};
+    MonitorEntry entry2{{"c2", "u", "p"}, 0, {0, 0}};
+    MonitorEntry entry3{{"c3", "u", "p"}, 0, {0, 0}};
+
+    ASSERT_TRUE(entriesManager.addClient(666, 4));
+
+    ASSERT_TRUE(entriesManager.addEntry(entry1));
+    ASSERT_TRUE(entriesManager.addEntry(entry2));
+    ASSERT_TRUE(entriesManager.addEntry(entry3));
+
+    ASSERT_THAT(entriesManager.fetchEntriesForClient(666, true), ElementsAre(entry1, entry2, entry3));
+}
+
+TEST(EntriesManager, userFlushNone) {
+    using ::testing::ElementsAre;
+
+    EntriesManager entriesManager;
+    ASSERT_TRUE(entriesManager.addClient(666, 4));
+    ASSERT_THAT(entriesManager.fetchEntriesForClient(666, true), ElementsAre());
+}
+
+TEST(EntriesManager, userFetchFlush) {
+    using ::testing::ElementsAre;
+
+    EntriesManager entriesManager;
+    MonitorEntry entry1{{"c1", "u", "p"}, 0, {0, 0}};
+    MonitorEntry entry2{{"c2", "u", "p"}, 0, {0, 0}};
+    MonitorEntry entry3{{"c3", "u", "p"}, 0, {0, 0}};
+    MonitorEntry entry4{{"c4", "u", "p"}, 0, {0, 0}};
+
+    ASSERT_TRUE(entriesManager.addClient(666, 3));
+
+    ASSERT_TRUE(entriesManager.addEntry(entry1));
+    ASSERT_TRUE(entriesManager.addEntry(entry2));
+    ASSERT_TRUE(entriesManager.addEntry(entry3));
+    ASSERT_THAT(entriesManager.fetchEntriesForClient(666), ElementsAre(entry1, entry2, entry3));
+
+    ASSERT_TRUE(entriesManager.addEntry(entry4));
+    ASSERT_TRUE(entriesManager.modifyClient(666, 3));
+    ASSERT_THAT(entriesManager.fetchEntriesForClient(666, true), ElementsAre(entry4));
+}

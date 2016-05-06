@@ -47,7 +47,18 @@ Collection pickFromCollection(const Collection &original, const std::vector<unsi
     return filtered;
 }
 
+template <class Collection>
+Collection sliced(typename Collection::iterator from, typename Collection::iterator to) {
+    Collection sliced;
+    sliced.reserve(to - from);
+    std::copy(from, to, std::back_inserter(sliced));
+    return sliced;
+}
 
+template <class Collection>
+Collection sliced(typename Collection::iterator from, std::size_t count) {
+    return sliced<Collection>(from, from + count);
+}
 
 } // namespace Helpers
 

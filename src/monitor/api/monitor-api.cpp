@@ -73,7 +73,7 @@ int cynara_monitor_configuration_create(cynara_monitor_configuration **pp_conf) 
 }
 
 CYNARA_API
-void cynara_configuration_destroy(cynara_monitor_configuration *p_conf) {
+void cynara_monitor_configuration_destroy(cynara_monitor_configuration *p_conf) {
     delete p_conf;
 }
 

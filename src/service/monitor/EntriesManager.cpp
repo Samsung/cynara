@@ -186,23 +186,6 @@ void EntriesManager::cleanup() {
     m_container.popUntil(lowestWaitedEntryIdIt->first);
 }
 
-template <class Pred>
-EntriesManager::ClientEntryIdMap::iterator
-squashEntries(EntriesManager::ClientEntryIdMap::iterator from,
-              EntriesManager::ClientEntryIdMap::iterator to,
-              EntriesQueue::EntryId newId,
-              std::list<EntriesManager::ClientInfoMap::iterator> &listToUpdate, Pred p) {
-    auto it = from;
-    for (; it != to && p(it); it++) {
-        auto &clientItList = it->second;
-        for (auto &clientIt : clientItList) {
-            clientIt->second.from = newId;
-            listToUpdate.push_back(clientIt);
-        }
-    }
-    return it;
-}
-
 void EntriesManager::squashRequests() {
     /*
      * This is ugly. If container got overflowed, it's front Id value change, meaning that all

@@ -125,7 +125,31 @@ private:
      * Mapping entry id to list of clients waiting from given id.
      */
     ClientEntryIdMap m_entryCountMap;
+
+    template <class Pred>
+    ClientEntryIdMap::iterator
+    friend squashEntries(ClientEntryIdMap::iterator from,
+                         ClientEntryIdMap::iterator to,
+                         EntriesQueue::EntryId newId,
+                         std::list<ClientInfoMap::iterator> &listToUpdate, Pred p);
 };
+
+template <class Pred>
+EntriesManager::ClientEntryIdMap::iterator
+squashEntries(EntriesManager::ClientEntryIdMap::iterator from,
+              EntriesManager::ClientEntryIdMap::iterator to,
+              EntriesQueue::EntryId newId,
+              std::list<EntriesManager::ClientInfoMap::iterator> &listToUpdate, Pred p) {
+    auto it = from;
+    for (; it != to && p(it); it++) {
+        auto &clientItList = it->second;
+        for (auto &clientIt : clientItList) {
+            clientIt->second.from = newId;
+            listToUpdate.push_back(clientIt);
+        }
+    }
+    return it;
+}
 
 } /* namespace Cynara */
 

@@ -104,7 +104,7 @@ bool EntriesManager::addClient(RequestContext::ClientId clientId, uint16_t buffe
 bool EntriesManager::removeClient(RequestContext::ClientId clientId) {
     auto clientIt = m_clients.find(clientId);
     if (clientIt == m_clients.end()) {
-        LOGE("Requested client [" << clientId << "] not found");
+        LOGD("Requested client [" << clientId << "] not found");
         return false;
     }
 

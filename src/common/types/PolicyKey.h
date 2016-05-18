@@ -25,8 +25,9 @@
 #ifndef CYNARA_COMMON_TYPES_POLICYKEY_H_
 #define CYNARA_COMMON_TYPES_POLICYKEY_H_
 
-#include <tuple>
 #include <string>
+
+#include <containers/SharedString.h>
 
 namespace Cynara {
 
@@ -69,7 +70,7 @@ public:
     const std::string &toString(void) const;
 
     const ValueType &value(void) const {
-        return m_value;
+        return m_value.toString();
     }
 
     bool isAny(void) const {
@@ -93,7 +94,7 @@ protected:
     }
 
 private:
-    ValueType m_value;
+    SharedString m_value;
     bool m_isAny;
 
     const static std::string &wildcardValue(void);

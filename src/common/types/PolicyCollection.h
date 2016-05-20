@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -24,15 +24,51 @@
 #ifndef SRC_COMMON_TYPES_POLICYCOLLECTION_H_
 #define SRC_COMMON_TYPES_POLICYCOLLECTION_H_
 
+#include <functional>
 #include <unordered_map>
 #include <vector>
 
 #include "types/pointers.h"
+#include <containers/SharedString.h>
 
 namespace Cynara {
 
 typedef std::vector<PolicyPtr> PolicyCollection;
-typedef std::unordered_map<std::string, PolicyPtr> PolicyMap;
+
+typedef std::vector<SharedString> SharedStringVector;
+
+struct SharedStringVectorHash {
+    std::size_t operator()(const SharedStringVector &input) const {
+        std::size_t result = 0x9e3779b9;
+        std::hash<std::string> shasher;
+        std::hash<std::size_t> thasher;
+        for (auto &e : input)
+            result = thasher(result ^ shasher(e.toString()));
+        return result;
+    }
+};
+
+struct SharedStringVectorEqual {
+    bool operator()(const SharedStringVector &first, const SharedStringVector &second) const {
+        if (first.size() != second.size())
+            return false;
+
+        auto it1 = first.begin();
+        auto it2 = second.begin();
+
+        for (; it1 != first.end() && it2 != second.end(); ++it1, ++it2)
+            if (it1->toString() != it2->toString())
+                return false;
+
+        return true;
+    }
+};
+
+typedef std::unordered_map<
+        SharedStringVector,
+        PolicyPtr,
+        SharedStringVectorHash,
+        SharedStringVectorEqual> PolicyMap;
 
 class const_policy_iterator : public PolicyMap::const_iterator
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -25,16 +25,17 @@
 #include <string>
 #include <vector>
 
+#include <types/PolicyCollection.h>
 #include <types/PolicyKey.h>
 
 namespace Cynara {
 
 class PolicyKeyHelpers {
 public:
-    static std::string glueKey(const PolicyKey &client);
-    static std::string glueKey(const PolicyKeyFeature &client, const PolicyKeyFeature &user,
-                               const PolicyKeyFeature &privilege);
-    static std::vector<std::string> keyVariants(const PolicyKey &key);
+    static SharedStringVector glueKey(const PolicyKey &client);
+    static SharedStringVector glueKey(const PolicyKeyFeature &client, const PolicyKeyFeature &user,
+                                      const PolicyKeyFeature &privilege);
+    static std::vector<SharedStringVector> keyVariants(const PolicyKey &key);
 };
 
 } /* namespace Cynara */

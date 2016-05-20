@@ -73,6 +73,10 @@ public:
         return m_value.toString();
     }
 
+    SharedString toSharedString(void) const {
+        return m_value;
+    }
+
     bool isAny(void) const {
         return m_isAny;
     }

@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2000 - 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2000 - 2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@
 #include <sys/un.h>
 #include <unistd.h>
 
+#include <exceptions/AccessDeniedException.h>
 #include <exceptions/InitException.h>
 #include <exceptions/NoMemoryException.h>
 #include <exceptions/UnexpectedErrorException.h>
@@ -154,6 +155,11 @@ Socket::ConnectionStatus Socket::connectSocket(void) {
             case ECONNREFUSED:
                 //no one is listening
                 return ConnectionStatus::CONNECTION_FAILED;
+            case EACCES:
+                LOGE("Insufficient permissions to connect to socket at <%s>",
+                     m_socketPath.c_str());
+                throw AccessDeniedException("Connecting to cynara socket <" +
+                                             m_socketPath + ">");
             default:
                 close();
                 LOGE("'connect' function error [%d] : <%s>", err, strerror(err));

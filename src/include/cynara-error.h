@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -86,6 +86,9 @@
 
 /*! \brief   indicating that database is corrupted */
 #define CYNARA_API_DATABASE_CORRUPTED           -14
+
+/*! \brief   indicating that user doesn't have enough permission to perform action */
+#define CYNARA_API_PERMISSION_DENIED            -15
 /** @}*/
 
 #ifdef __cplusplus

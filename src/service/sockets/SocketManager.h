@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -80,7 +80,7 @@ private:
     void createDomainSocket(ProtocolPtr protocol, const std::string &path, mode_t mask,
                             bool client);
     static int createDomainSocketHelp(const std::string &path, mode_t mask);
-#ifdef BUILD_WITH_SYSTEMD
+#ifdef BUILD_WITH_SYSTEMD_DAEMON
     static int getSocketFromSystemD(const std::string &path);
 #endif
     void createSignalSocket(ProtocolPtr protocol);

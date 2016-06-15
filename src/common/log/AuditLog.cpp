@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2015-2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@
  * @brief       This file implements privilege check logging utility.
  */
 
-#ifdef BUILD_WITH_SYSTEMD
+#ifdef BUILD_WITH_SYSTEMD_JOURNAL
 #include <systemd/sd-journal.h>
 #else
 #include <syslog.h>
@@ -81,18 +81,18 @@ void AuditLog::log(const PolicyKey &policyKey, const PolicyResult &policyResult)
     if (m_logLevel == AL_ALL || (m_logLevel == AL_DENY && policyType == PPT::DENY) ||
         (m_logLevel == AL_ALLOW && policyType == PPT::ALLOW) ||
         (m_logLevel == AL_OTHER && policyType != PPT::ALLOW && policyType != PPT::DENY)) {
-#ifdef BUILD_WITH_SYSTEMD
+#ifdef BUILD_WITH_SYSTEMD_JOURNAL
             sd_journal_send("MESSAGE=%s;%s;%s => %s", policyKey.client().toString().c_str(),
                             policyKey.user().toString().c_str(),
                             policyKey.privilege().toString().c_str(),
                             policyResultToString(policyResult), "PRIORITY=%i", LOG_INFO,
                             "CYNARA_LOG_TYPE=AUDIT", NULL);
-#else // BUILD_WITH_SYSTEMD
+#else // BUILD_WITH_SYSTEMD_JOURNAL
             syslog(LOG_INFO, "CYNARA AUDIT MESSAGE=%s;%s;%s => %s", policyKey.client().toString().c_str(),
                    policyKey.user().toString().c_str(),
                    policyKey.privilege().toString().c_str(),
                    policyResultToString(policyResult));
-#endif // BUILD_WITH_SYSTEMD
+#endif // BUILD_WITH_SYSTEMD_JOURNAL
     }
 }
 

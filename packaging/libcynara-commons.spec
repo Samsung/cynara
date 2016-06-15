@@ -177,7 +177,8 @@ export LDFLAGS+="-Wl,--rpath=%{_libdir}"
 %cmake . \
         -DBUILD_TESTS=ON \
         -DBUILD_COMMONS=ON \
-        -DBUILD_WITH_SYSTEMD=OFF \
+        -DBUILD_WITH_SYSTEMD_DAEMON=OFF \
+        -DBUILD_WITH_SYSTEMD_JOURNAL=OFF \
         -DCMAKE_BUILD_TYPE=%{?build_type} \
         -DCMAKE_VERBOSE_MAKEFILE=ON \
         -DLIB_DIR:PATH=%{_libdir} \

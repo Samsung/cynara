@@ -50,7 +50,8 @@ export LDFLAGS+="-Wl,--rpath=%{_libdir}"
 
 %cmake . \
         -DBUILD_TESTS=OFF \
-        -DBUILD_WITH_SYSTEMD=ON \
+        -DBUILD_WITH_SYSTEMD_DAEMON=ON \
+        -DBUILD_WITH_SYSTEMD_JOURNAL=ON \
         -DBUILD_SERVICE=ON \
         -DCMAKE_BUILD_TYPE=%{?build_type} \
         -DCMAKE_VERBOSE_MAKEFILE=ON \

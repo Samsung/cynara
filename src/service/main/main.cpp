@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Contact: Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  *
@@ -31,7 +31,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#ifdef BUILD_WITH_SYSTEMD
+#ifdef BUILD_WITH_SYSTEMD_DAEMON
 #include <systemd/sd-daemon.h>
 #endif
 
@@ -111,7 +111,7 @@ int main(int argc, char **argv) {
         cynara.init();
         LOGI("Cynara service is started");
 
-#ifdef BUILD_WITH_SYSTEMD
+#ifdef BUILD_WITH_SYSTEMD_DAEMON
         int ret = sd_notify(0, "READY=1");
         if (ret == 0) {
             LOGW("Cynara was not configured to notify its status");

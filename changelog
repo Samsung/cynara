@@ -1,3 +1,32 @@
+Release: 0.14.1
+Date:    2016.06.23
+Name:    Changed monitor socket access permissions
+
+Libraries:
+libcynara-admin.0.14.1
+libcynara-agent.0.14.1
+libcynara-client-async.0.14.1
+libcynara-client-commons.0.14.1
+libcynara-client.0.14.1
+libcynara-commons.0.14.1
+libcynara-creds-commons.0.14.1
+libcynara-creds-dbus.0.14.1
+libcynara-creds-gdbus.0.14.1
+libcynara-creds-socket.0.14.1
+libcynara-monitor.0.14.1
+libcynara-session.0.14.1
+libcynara-storage.0.14.1
+
+Executables:
+cynara
+cyad
+cynara-db-chsgen
+
+Description:
+Changed monitor socket access permissions & minor code refactoring
+
+###############################
+
 Release: 0.14.0
 Date:    2016.05.08
 Name:    Release functional Cynara Monitor API

@@ -18,6 +18,7 @@ Source1012:    cynara-db-migration.manifest
 Source1013:    cyad.manifest
 Source1014:    cynara-db-chsgen.manifest
 Source1015:    libcynara-monitor.manifest
+Source1016:    libcynara-creds-self.manifest
 Requires:      default-ac-domains
 Requires(pre): cynara-db-migration >= %{version}
 Requires(post):   smack
@@ -48,6 +49,7 @@ Requires:   libcynara-agent = %{version}
 Requires:   libcynara-client = %{version}
 Requires:   libcynara-commons = %{version}
 Requires:   libcynara-creds-commons = %{version}
+Requires:   libcynara-creds-self = %{version}
 Requires:   libcynara-creds-socket = %{version}
 Requires:   libcynara-session = %{version}
 Obsoletes:  libcynara-admin-devel
@@ -102,6 +104,13 @@ Requires:   libcynara-commons = %{version}
 %description -n libcynara-creds-commons
 Base library for cynara credentials helpers
 
+%package -n libcynara-creds-self
+Summary:    Cynara credentials helpers library for current process
+Requires:   libcynara-creds-commons = %{version}
+
+%description -n libcynara-creds-self
+Cynara credentials helpers library for current context process
+
 %package -n libcynara-creds-socket
 Summary:    Cynara credentials helpers library for socket clients
 Requires:   libcynara-creds-commons = %{version}
@@ -151,6 +160,7 @@ cp -a %{SOURCE1012} .
 cp -a %{SOURCE1013} .
 cp -a %{SOURCE1014} .
 cp -a %{SOURCE1015} .
+cp -a %{SOURCE1016} .
 
 %build
 %if 0%{?sec_build_binary_debug_enable}
@@ -221,6 +231,10 @@ fi
 
 %postun -n libcynara-creds-commons -p /sbin/ldconfig
 
+%post -n libcynara-creds-self -p /sbin/ldconfig
+
+%postun -n libcynara-creds-self -p /sbin/ldconfig
+
 %post -n libcynara-creds-socket -p /sbin/ldconfig
 
 %postun -n libcynara-creds-socket -p /sbin/ldconfig
@@ -279,6 +293,11 @@ fi
 %license LICENSE
 %{_libdir}/libcynara-creds-commons.so.*
 %{_sysconfdir}/%{project_name}/creds.conf
+
+%files -n libcynara-creds-self
+%manifest libcynara-creds-self.manifest
+%license LICENSE
+%{_libdir}/libcynara-creds-self.so.*
 
 %files -n libcynara-creds-socket
 %manifest libcynara-creds-socket.manifest

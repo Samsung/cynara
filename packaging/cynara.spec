@@ -31,7 +31,7 @@ BuildRequires: pkgconfig(libunwind)
 %description
 service, client libraries (libcynara-client, libcynara-admin),
 agent library, helper libraries (libcynara-session, libcynara-creds-common, libcynara-creds-dbus,
-libcynara-creds-socket) and tests (cynara-tests)
+libcynara-creds-socket, libcynara-creds-self) and tests (cynara-tests)
 
 %prep
 %setup -q -n cynara-%{version}

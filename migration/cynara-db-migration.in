@@ -21,6 +21,7 @@
 
 ##### Constants (these must not be modified by shell)
 
+PATH=/bin:/usr/bin:/sbin:/usr/sbin
 STATE_PATH='@LOCAL_STATE_DIR@/@PROJECT_NAME@'
 DB_DIR='db'
 INDEX_NAME='buckets'

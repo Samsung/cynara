@@ -25,6 +25,7 @@ IF (BUILD_COMMONS)
         ${CYNARA_PATH}/include/cynara-client-async.h
         ${CYNARA_PATH}/include/cynara-client-plugin.h
         ${CYNARA_PATH}/include/cynara-creds-commons.h
+        ${CYNARA_PATH}/include/cynara-creds-self.h
         ${CYNARA_PATH}/include/cynara-creds-socket.h
         ${CYNARA_PATH}/include/cynara-error.h
         ${CYNARA_PATH}/include/cynara-limits.h

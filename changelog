@@ -1,6 +1,6 @@
 Release: 0.14.2
 Date:    2016.06.28
-Name:    Define PATH environment variable in the script; add self-helpers
+Name:    Add credential helpers for self process, pass access denied error to clients
 
 Libraries:
 libcynara-admin.0.14.2
@@ -12,6 +12,7 @@ libcynara-commons.0.14.2
 libcynara-creds-commons.0.14.2
 libcynara-creds-dbus.0.14.2
 libcynara-creds-gdbus.0.14.2
+libcynara-creds-self.0.14.2
 libcynara-creds-socket.0.14.2
 libcynara-monitor.0.14.2
 libcynara-session.0.14.2
@@ -23,7 +24,11 @@ cyad
 cynara-db-chsgen
 
 Description:
-PATH env. variable changes & additional error messages/return values added; added self helpers.
+Add new library libcynara-creds-self helper for getting credentials of own user and client.
+Add new type of cynara error code CYNARA_API_PERMISSION_DENIED, which is returned
+when there is not enough permission to perform an action.
+Add PATH variable to database migration scripts to avoid running basic system commands
+from malformed env PATH.
 
 ###############################
 

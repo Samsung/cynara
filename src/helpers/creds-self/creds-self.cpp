@@ -22,8 +22,8 @@
  */
 
 #include <cstring>
+#include <fstream>
 #include <string>
-#include <sys/smack.h>
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -34,17 +34,6 @@
 #include <cynara-creds-self.h>
 
 namespace {
-    int getSelfSmackLabel(char **client) {
-        return Cynara::tryCatch([&client](){
-            ssize_t ret = smack_new_label_from_self(client);
-            if (ret < 0) {
-                LOGE("smack_new_label_from_self failed with %zd", ret);
-                return CYNARA_API_UNKNOWN_ERROR;
-            }
-            return CYNARA_API_SUCCESS;
-        });
-    }
-
     int copyStr(char **client, const std::string &str) {
         char *clientTmp = strdup(str.c_str());
         if (!clientTmp) {
@@ -53,6 +42,24 @@ namespace {
         }
         *client = clientTmp;
         return CYNARA_API_SUCCESS;
+    }
+
+    int getSelfSmackLabel(char **client) {
+        return Cynara::tryCatch([&client](){
+            std::ifstream current("/proc/self/attr/current");
+            if (!current) {
+                LOGE("Couldn't open proc file");
+                return CYNARA_API_UNKNOWN_ERROR;
+            }
+            std::string label;
+            current >> label;
+            if (!current) {
+                LOGE("Couldn't read label from file");
+                return CYNARA_API_UNKNOWN_ERROR;
+            }
+
+            return copyStr(client, label);
+        });
     }
 
     int getSelfPid(char **client) {

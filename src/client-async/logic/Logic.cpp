@@ -37,8 +37,8 @@
 #include <protocol/ProtocolClient.h>
 #include <request/CancelRequest.h>
 #include <request/CheckRequest.h>
-#include <request/MonitorEntryPutRequest.h>
 #include <request/MonitorEntriesPutRequest.h>
+#include <request/MonitorEntryPutRequest.h>
 #include <request/SimpleCheckRequest.h>
 #include <response/CancelResponse.h>
 #include <response/CheckResponse.h>

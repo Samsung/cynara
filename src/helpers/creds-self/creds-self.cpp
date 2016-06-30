@@ -89,7 +89,7 @@ int cynara_creds_self_get_client(enum cynara_client_creds method, char **client)
     if (method == cynara_client_creds::CLIENT_METHOD_DEFAULT) {
         int ret = cynara_creds_get_default_client_method(&method);
         if (ret != CYNARA_API_SUCCESS)
-            return getSelfSmackLabel(client);
+            return ret;
     }
 
     switch (method) {

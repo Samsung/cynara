@@ -23,7 +23,7 @@
 
 (...)
 
-void cynara_log(const char *string, int cynara_status) {
+void cynara_log(const char *message, int cynara_status) {
     char buf[BUFSIZ];
 
     int ret = cynara_strerror(cynara_status, buf, BUFSIZ);
@@ -32,9 +32,9 @@ void cynara_log(const char *string, int cynara_status) {
         buf[BUFSIZ - 1] = '\0';
     }
     if (cynara_status < 0)
-        log_error("%s: %s", string, buf);
+        log_error("%s: %s", message, buf);
     else
-        log_debug("%s: %s", string, buf);
+        log_debug("%s: %s", message, buf);
 }
 
 int ret;

@@ -18,6 +18,20 @@
  * Get client credentials from socket fd
  */
 
+void cynara_log(const char *message, int cynara_status) {
+    char buf[BUFSIZ];
+
+    int ret = cynara_strerror(cynara_status, buf, BUFSIZ);
+    if (ret != CYNARA_API_SUCCESS) {
+        strncpy(buf, "cynara_strerror failed", BUFSIZ);
+        buf[BUFSIZ - 1] = '\0';
+    }
+    if (cynara_status < 0)
+        log_error("%s: %s", message, buf);
+    else
+        log_debug("%s: %s", message, buf);
+}
+
 struct Creds {
     char *client = NULL;
     char *user = NULL;
@@ -40,19 +54,19 @@ int get_credentials(int fd, Creds *creds)
 
     ret = cynara_creds_socket_get_user(fd, USER_METHOD_DEFAULT, &(creds->user));
     if (ret != CYNARA_API_SUCCESS) {
-        LOGE("cynara_creds_socket_get_user() failed");
+        cynara_log("cynara_creds_socket_get_user() failed", ret);
         return INVALID_OPERATION;
     }
 
     ret = cynara_creds_socket_get_client(fd, CLIENT_METHOD_DEFAULT, &(creds->client));
     if (ret != CYNARA_API_SUCCESS) {
-        LOGE("cynara_creds_socket_get_client() failed");
+        cynara_log("cynara_creds_socket_get_client() failed", ret);
         return INVALID_OPERATION;
     }
 
     ret = cynara_creds_socket_get_pid(fd, &pid);
     if (ret != CYNARA_API_SUCCESS) {
-        LOGE("cynara_creds_socket_get_pid() failed");
+        cynara_log("cynara_creds_socket_get_pid() failed", ret);
         return INVALID_OPERATION;
     }
 

@@ -18,6 +18,20 @@
  * Get client credentials from DBusConnection
  */
 
+void cynara_log(const char *message, int cynara_status) {
+    char buf[BUFSIZ];
+
+    int ret = cynara_strerror(cynara_status, buf, BUFSIZ);
+    if (ret != CYNARA_API_SUCCESS) {
+        strncpy(buf, "cynara_strerror failed", BUFSIZ);
+        buf[BUFSIZ - 1] = '\0';
+    }
+    if (cynara_status < 0)
+        log_error("%s: %s", message, buf);
+    else
+        log_debug("%s: %s", message, buf);
+}
+
 struct Creds {
     char *client = NULL;
     char *user = NULL;
@@ -40,13 +54,13 @@ int get_credentials(DBusConnection *connection, Creds *creds)
 
     char *unique_name = dbus_bus_get_id(connection, &ret);
     if (!unique_name) {
-        LOGE("dbus_bus_get_id() failed");
+        log_error("%s", "dbus_bus_get_id() failed");
         return INVALID_OPERATION;
     }
 
     ret = cynara_creds_dbus_get_user(connection, unique_name, USER_METHOD_DEFAULT, &(creds->user));
     if (ret != CYNARA_API_SUCCESS) {
-        LOGE("cynara_creds_dbus_get_user() failed");
+        cynara_log("cynara_creds_dbus_get_user() failed", ret);
         dbus_free(unique_name);
         return INVALID_OPERATION;
     }
@@ -54,14 +68,14 @@ int get_credentials(DBusConnection *connection, Creds *creds)
     ret = cynara_creds_dbus_get_client(connection, unique_name, CLIENT_METHOD_DEFAULT,
                                        &(creds->client));
     if (ret != CYNARA_API_SUCCESS) {
-        LOGE("cynara_creds_dbus_get_client() failed");
+        cynara_log("cynara_creds_dbus_get_client() failed", ret);
         dbus_free(unique_name);
         return INVALID_OPERATION;
     }
 
     ret = cynara_creds_dbus_get_pid(connection, unique_name, &pid);
     if (ret != CYNARA_API_SUCCESS) {
-        LOGE("cynara_creds_dbus_get_pid() failed");
+        cynara_log("cynara_creds_dbus_get_pid() failed", ret);
         dbus_free(unique_name);
         return INVALID_OPERATION;
     }

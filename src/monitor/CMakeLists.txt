@@ -29,7 +29,6 @@ INCLUDE_DIRECTORIES(
 SET(LIB_CYNARA_MONITOR_SOURCES
     ${LIB_CYNARA_MONITOR_PATH}/api/monitor-api.cpp
     ${LIB_CYNARA_MONITOR_PATH}/logic/Logic.cpp
-    ${LIB_CYNARA_MONITOR_PATH}/notify/FdNotifyObject.cpp
     ${LIB_CYNARA_MONITOR_PATH}/socket/MonitorSocketClient.cpp
     )
 

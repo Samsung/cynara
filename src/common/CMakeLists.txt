@@ -32,6 +32,7 @@ SET(COMMON_SOURCES
     ${COMMON_PATH}/lock/FileLock.cpp
     ${COMMON_PATH}/log/AuditLog.cpp
     ${COMMON_PATH}/log/log.cpp
+    ${COMMON_PATH}/notify/FdNotifyObject.cpp
     ${COMMON_PATH}/plugin/PluginManager.cpp
     ${COMMON_PATH}/protocol/ProtocolAdmin.cpp
     ${COMMON_PATH}/protocol/ProtocolAgent.cpp

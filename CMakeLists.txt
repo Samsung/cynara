@@ -72,37 +72,37 @@ ENDIF (NOT DEFINED BUILD_WITH_SYSTEMD)
 ########################  directory configuration  ############################
 
 SET(LIB_DIR
-    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}"
+    "${CMAKE_INSTALL_FULL_LIBDIR}"
     CACHE PATH
     "Object code libraries directory")
 
 SET(BIN_DIR
-    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}"
+    "${CMAKE_INSTALL_FULL_BINDIR}"
     CACHE PATH
     "User executables directory")
 
 SET(SBIN_DIR
-    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_SBINDIR}"
+    "${CMAKE_INSTALL_FULL_SBINDIR}"
     CACHE PATH
     "System admin executables directory")
 
 SET(SYS_CONFIG_DIR
-    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_SYSCONFDIR}"
+    "${CMAKE_INSTALL_FULL_SYSCONFDIR}"
     CACHE PATH
     "Read-only single-machine data directory")
 
 SET(INCLUDE_DIR
-    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}"
+    "${CMAKE_INSTALL_FULL_INCLUDEDIR}"
     CACHE PATH
     "Header files directory")
 
 SET(LOCAL_STATE_DIR
-    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALSTATEDIR}"
+    "${CMAKE_INSTALL_FULL_LOCALSTATEDIR}"
     CACHE PATH
     "Modifiable single-machine data directory")
 
 SET(DATA_ROOT_DIR
-    "${CMAKE_INSTALL_PREFIX}/share"
+    "${CMAKE_INSTALL_FULL_DATAROOTDIR}"
     CACHE PATH
     "Read-only architecture-independent data root directory")
 

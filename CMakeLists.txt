@@ -43,31 +43,27 @@ ENDIF (NOT BUILD_COMMONS AND NOT BUILD_SERVICE AND NOT BUILD_DBUS)
 
 ########################## search for packages ################################
 
-#1st case. User choose to build with systemd.
-IF (DEFINED BUILD_WITH_SYSTEMD AND BUILD_WITH_SYSTEMD)
-    PKG_CHECK_MODULES(SYSTEMD_DEP
-        REQUIRED
-        libsystemd-daemon
-        libsystemd-journal
-        )
-ENDIF (DEFINED BUILD_WITH_SYSTEMD AND BUILD_WITH_SYSTEMD)
+#Search the new libsystemd package
+PKG_CHECK_MODULES(SYSTEMD_DEP QUIET libsystemd)
 
-#2nd case. User choose not to build with systemd. Noting to do in this case.
-#IF (DEFINED BUILD_WITH_SYSTEMD AND NOT BUILD_WITH_SYSTEMD)
-#ENDIF (DEFINED BUILD_WITH_SYSTEMD AND NOT BUILD_WITH_SYSTEMD)
-
-#3rd case. User did not choose. If we can we will use systemd.
-IF (NOT DEFINED BUILD_WITH_SYSTEMD)
+#Fallback to the older libsystemd packages
+IF(NOT SYSTEMD_DEP_FOUND)
     PKG_CHECK_MODULES(SYSTEMD_DEP
         QUIET
         libsystemd-daemon
         libsystemd-journal
         )
+ENDIF(NOT SYSTEMD_DEP_FOUND)
 
-    IF (SYSTEMD_DEP_FOUND)
+#Enforce and check
+IF(SYSTEMD_DEP_FOUND)
+    #Enforce use of systemd if present
+    IF(NOT DEFINED BUILD_WITH_SYSTEMD)
         SET(BUILD_WITH_SYSTEMD ON)
-    ENDIF (SYSTEMD_DEP_FOUND)
-ENDIF (NOT DEFINED BUILD_WITH_SYSTEMD)
+    ENDIF()
+ELSEIF(BUILD_WITH_SYSTEMD)
+    MESSAGE(FATAL_ERROR "Can't find libsystemd")
+ENDIF()
 
 ########################  directory configuration  ############################
 

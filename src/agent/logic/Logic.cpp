@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2017 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -56,6 +56,11 @@ Logic::Logic(const AgentType &agentType) : m_agentType(agentType),
         m_socketClient(PathConfig::SocketPath::agent, std::make_shared<ProtocolAgent>()) {
     m_responseTakerPtr = std::make_shared<ProtocolAgent>();
     m_responseBuffer = std::make_shared<BinaryQueue>();
+    if (!m_notify.init()) {
+        LOGW("Couldn't initialize notification object.");
+        return;
+    }
+    m_socketClient.setNotifyFd(m_notify.getNotifyFd());
 }
 
 int Logic::registerInCynara(void) {
@@ -91,7 +96,8 @@ int Logic::registerInCynara(void) {
 }
 
 int Logic::ensureConnection(void) {
-    switch (m_socketClient.connect()) {
+    auto state = m_socketClient.connect();
+    switch (state) {
         case SS_CONNECTED:
             return CYNARA_API_SUCCESS;
         case SS_RECONNECTED:
@@ -99,8 +105,16 @@ int Logic::ensureConnection(void) {
         case SS_DISCONNECTED:
             LOGE("Agent socket disconnected.");
             return CYNARA_API_SERVICE_NOT_AVAILABLE;
+        case SS_REQUEST:
+        case SS_QUITREQUEST:
+            LOGE("Unexpected state returned : [" << state << "]");
+            return CYNARA_API_UNKNOWN_ERROR;
+        case SS_ERROR:
+            LOGE("Failed to connect to cynara service");
+            return CYNARA_API_SERVICE_NOT_AVAILABLE;
     }
 
+    LOGE("Unknown state returned : [" << state << "]");
     return CYNARA_API_UNKNOWN_ERROR;
 }
 
@@ -109,12 +123,28 @@ int Logic::getRequest(AgentActionResponsePtr &resultPtr) {
     if (ret != CYNARA_API_SUCCESS)
         return ret;
 
-    ResponsePtr responsePtr = m_socketClient.receiveResponseFromServer();
-    if (!responsePtr) {
-        LOGW("Disconnected by cynara server.");
-        return CYNARA_API_SERVICE_NOT_AVAILABLE;
+    ResponsePtr responsePtr = m_socketClient.getBufferedResponse();
+    if (responsePtr == nullptr) {
+        AgentSocketState state = m_socketClient.waitForEvent();
+        switch (state) {
+        case AgentSocketState::SS_QUITREQUEST:
+            LOGD("Waiting interrupted. Finishing");
+            m_notify.snooze();
+            return CYNARA_API_INTERRUPTED;
+        case AgentSocketState::SS_REQUEST:
+        {
+            responsePtr = m_socketClient.receiveResponseFromServer();
+            if (!responsePtr) {
+                LOGW("Disconnected by cynara server.");
+                return CYNARA_API_SERVICE_NOT_AVAILABLE;
+            }
+            break;
+        }
+        default:
+            LOGE("Wrong state returned [" << state << "]");
+            return CYNARA_API_UNKNOWN_ERROR;
+        }
     }
-
     AgentActionResponsePtr actionResponsePtr =
         std::dynamic_pointer_cast<AgentActionResponse>(responsePtr);
     if (!actionResponsePtr) {
@@ -142,6 +172,14 @@ int Logic::putResponse(const AgentResponseType responseType,
     request.execute(*m_responseTakerPtr, context);
     return m_socketClient.sendDataToServer(*m_responseBuffer) ? CYNARA_API_SUCCESS :
                                                      CYNARA_API_SERVICE_NOT_AVAILABLE;
+}
+
+int Logic::cancelWaiting(void) {
+    if (!m_notify.notify()) {
+        LOGW("Couldn't notify agent loop");
+        return CYNARA_API_UNKNOWN_ERROR;
+    }
+    return CYNARA_API_SUCCESS;
 }
 
 } // namespace Cynara

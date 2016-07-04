@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2017 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -123,5 +123,15 @@ int cynara_agent_put_response(cynara_agent *p_cynara_agent, const cynara_agent_m
         const char *last = first + data_size;
         Cynara::RawBuffer pluginData(first, last);
         return p_cynara_agent->impl->putResponse(resp_type, req_id, pluginData);
+    });
+}
+
+CYNARA_API
+int cynara_agent_cancel_waiting(cynara_agent *p_cynara_agent) {
+    if (!p_cynara_agent || !p_cynara_agent->impl)
+        return CYNARA_API_INVALID_PARAM;
+
+    return Cynara::tryCatch([&p_cynara_agent]() {
+        return p_cynara_agent->impl->cancelWaiting();
     });
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2017 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,8 +20,12 @@
  * @brief       This file contains implementation of agent socket client
  */
 
+#include <cstring>
 #include <memory>
+#include <poll.h>
 #include <string>
+#include <sys/ioctl.h>
+#include <unistd.h>
 
 #include <log/log.h>
 #include <protocol/Protocol.h>
@@ -36,9 +40,13 @@
 namespace Cynara {
 
 AgentSocketClient::AgentSocketClient(const std::string &socketPath, ProtocolPtr protocol)
-        : m_socket(socketPath), m_protocol(protocol) {
+        : m_socket(socketPath), m_protocol(protocol), m_notifyFd(-1) {
     m_writeQueue = std::make_shared<BinaryQueue>();
     m_readQueue = std::make_shared<BinaryQueue>();
+}
+
+void AgentSocketClient::setNotifyFd(int notifyFd) {
+    m_notifyFd = notifyFd;
 }
 
 ResponsePtr AgentSocketClient::askCynaraServer(const Request &request) {
@@ -53,6 +61,46 @@ ResponsePtr AgentSocketClient::askCynaraServer(const Request &request) {
 
     // receive response from cynara
     return receiveResponseFromServer();
+}
+
+AgentSocketState AgentSocketClient::waitForEvent(void) {
+    int cynaraFd = m_socket.getSockFd();
+    pollfd desc[2] = {};
+    desc[0].fd = cynaraFd;
+    desc[0].events = POLLIN;
+    nfds_t eventCount = 1;
+
+    if (m_notifyFd == -1) {
+        LOGW("Notification fd not set, agent will be waiting forever");
+    } else {
+        desc[1].fd = m_notifyFd;
+        desc[1].events = POLLIN;
+        eventCount = 2;
+    }
+
+    int ret = TEMP_FAILURE_RETRY(poll(desc, eventCount, -1));
+    if (ret == -1) {
+        int err = errno;
+        LOGE("Poll returned with error: " << strerror(err));
+        return AgentSocketState::SS_ERROR;
+    }
+    if (desc[1].revents & POLLIN) {
+        LOGD("Poll returned with notification to return");
+        return AgentSocketState::SS_QUITREQUEST;
+    }
+
+    if (desc[0].revents & POLLIN) {
+        LOGD("Poll returned with fetch entries");
+        return AgentSocketState::SS_REQUEST;
+    }
+
+    // This should not occur
+    LOGE("Poll woke up, but no known event received");
+    return AgentSocketState::SS_ERROR;
+}
+
+ResponsePtr AgentSocketClient::getBufferedResponse(void) {
+    return m_protocol->extractResponseFromBuffer(m_readQueue);
 }
 
 ResponsePtr AgentSocketClient::receiveResponseFromServer(void) {

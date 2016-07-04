@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2017 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,6 +41,9 @@ typedef enum {
     SS_DISCONNECTED,
     SS_CONNECTED,
     SS_RECONNECTED,
+    SS_REQUEST,
+    SS_QUITREQUEST,
+    SS_ERROR,
 } AgentSocketState;
 
 class AgentSocketClient {
@@ -48,9 +51,12 @@ public:
     AgentSocketClient(const std::string &socketPath, ProtocolPtr protocol);
     virtual ~AgentSocketClient() {};
 
+    void setNotifyFd(int notifyFd);
     bool isConnected(void);
     AgentSocketState connect(void);
+    AgentSocketState waitForEvent(void);
 
+    ResponsePtr getBufferedResponse(void);
     ResponsePtr receiveResponseFromServer(void);
     bool sendDataToServer(BinaryQueue &data);
     ResponsePtr askCynaraServer(const Request &request);
@@ -60,6 +66,7 @@ private:
     ProtocolPtr m_protocol;
     BinaryQueuePtr m_readQueue;
     BinaryQueuePtr m_writeQueue;
+    int m_notifyFd;
 
     void resetState(void);
 };

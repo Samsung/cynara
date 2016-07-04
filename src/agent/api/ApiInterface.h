@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2017 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ public:
     virtual int putResponse(AgentRequestType requestType,
                             ProtocolFrameSequenceNumber sequenceNumber,
                             const RawBuffer &pluginData) = 0;
+    virtual int cancelWaiting(void) = 0;
 };
 
 } // namespace Cynara

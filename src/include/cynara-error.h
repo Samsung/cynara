@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2017 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,6 +33,10 @@
  * Exported by the foundation API. Return codes beginning with negative codes indicate an error.
  * @{
 */
+
+/*! \brief  indicating that API call was interrupted by user*/
+#define CYNARA_API_INTERRUPTED                  4
+
 /*! \brief  indicating access that cannot be resolved without further actions*/
 #define CYNARA_API_ACCESS_NOT_RESOLVED          3
 

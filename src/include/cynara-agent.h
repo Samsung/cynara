@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2017 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -165,7 +165,9 @@ int cynara_agent_finish(cynara_agent *p_cynara_agent);
  * \param[out] data_size Size of plugin data (bytes count). In case of out of memory this value
  *                  stays untouched.
  *
- * \return CYNARA_API_SUCCESS on successfully read request, or negative error code otherwise.
+ * \return CYNARA_API_SUCCESS on successfully read request,
+ *         CYNARA_API_INTERRUPTED when cynara_agent_cancel_waiting() is called during waiting,
+ *         or negative error code otherwise.
  */
 int cynara_agent_get_request(cynara_agent *p_cynara_agent, cynara_agent_msg_type *req_type,
                              cynara_agent_req_id *req_id, void **data, size_t *data_size);
@@ -214,6 +216,38 @@ int cynara_agent_get_request(cynara_agent *p_cynara_agent, cynara_agent_msg_type
 int cynara_agent_put_response(cynara_agent *p_cynara_agent, const cynara_agent_msg_type resp_type,
                               const cynara_agent_req_id req_id, const void *data,
                               const size_t data_size);
+
+/**
+ * \par Description:
+ * Break from waiting for cynara service request using cynara_agent_get_request().
+ *
+ * \par Purpose:
+ * This API should be used when cynara_agent_get_request() is blocked and before calling
+ * cynara_agent_finish().
+ *
+ * \par Typical use case:
+ * Agent calls this API, when it wants to gracefully quit.
+ *
+ * \par Method of function operation:
+ * Function notifies cynara_agent_get_request() to stop waiting for request from cynara.
+ * Then cynara_agent_get_request() returns CYNARA_API_INTERRUPTED and no request is fetched.
+ *
+ * \par Sync (or) Async:
+ * This is a synchronous API.
+ *
+ * \par Thread safety:
+ * This function can be used only together with cynara_agent_get_request(), otherwise should
+ * be treaded as NOT thread safe.
+ *
+ * \par Important notes:
+ * Call to cynara_agent_cancel_waiting() needs cynara_agent structure to be created first and
+ * cynara_agent_get_request() running.
+ * Use cynara_agent_initialize() before calling this function.
+ *
+ * \param[in] p_cynara_agent cynara_agent structure.
+ * \return CYNARA_API_SUCCESS on successful waiting cancel, or negative error code otherwise.
+ */
+int cynara_agent_cancel_waiting(cynara_agent *p_cynara_agent);
 
 #ifdef __cplusplus
 }

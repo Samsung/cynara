@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -57,7 +57,8 @@ static ProtocolFrameSequenceNumber generateSequenceNumber(void) {
 Logic::Logic(cynara_status_callback callback, void *userStatusData, const Configuration &conf)
     : m_statusCallback(callback, userStatusData), m_cache(conf.getCacheSize()),
       m_socketClient(PathConfig::SocketPath::client, std::make_shared<ProtocolClient>()),
-      m_operationPermitted(true), m_inAnswerCancelResponseCallback(false) {
+      m_operationPermitted(true), m_inAnswerCancelResponseCallback(false),
+      m_monitoringEnabled(conf.monitoringEnabled()) {
 
     auto naiveInterpreter = std::make_shared<NaiveInterpreter>();
     for (auto &descr : naiveInterpreter->getSupportedPolicyDescr()) {
@@ -68,16 +69,18 @@ Logic::Logic(cynara_status_callback callback, void *userStatusData, const Config
 Logic::~Logic() {
     m_operationPermitted = false;
 
-    // The client invoked cynara_async_finish(), so it's basically game over.
-    // Just try to flush as many entries as possible, before the socket is replete.
-    for (const auto &entry : m_monitorCache.entries()) {
-        ProtocolFrameSequenceNumber sequenceNumber = generateSequenceNumber();
-        MonitorEntryPutRequest request(entry, sequenceNumber);
-        m_socketClient.appendRequest(request);
-    }
+    if (m_monitoringEnabled) {
+        // The client invoked cynara_async_finish(), so it's basically game over.
+        // Just try to flush as many entries as possible, before the socket is replete.
+        for (const auto &entry : m_monitorCache.entries()) {
+            ProtocolFrameSequenceNumber sequenceNumber = generateSequenceNumber();
+            MonitorEntryPutRequest request(entry, sequenceNumber);
+            m_socketClient.appendRequest(request);
+        }
 
-    if (m_socketClient.sendToCynara() != Socket::SendStatus::ALL_DATA_SENT) {
-        LOGW("Some monitor entries were lost");
+        if (m_socketClient.sendToCynara() != Socket::SendStatus::ALL_DATA_SENT) {
+            LOGW("Some monitor entries were lost");
+        }
     }
 
     for (auto &kv : m_checks) {
@@ -98,14 +101,17 @@ int Logic::checkCache(const std::string &client, const std::string &session,
 
     auto ret = m_cache.get(session, PolicyKey(client, user, privilege));
 
-    // Cache returns only CYNARA_API_ACCESS_ALLOWED, CYNARA_API_ACCESS_DENIED
-    // and CYNARA_API_CACHE_MISS. The condition below must be revamped it this invariant changes.
-    if (ret != CYNARA_API_CACHE_MISS) {
-        updateMonitor({client, user, privilege}, ret);
-    }
+    if (m_monitoringEnabled) {
+        // Cache returns only CYNARA_API_ACCESS_ALLOWED, CYNARA_API_ACCESS_DENIED
+        // and CYNARA_API_CACHE_MISS. The condition below must be revamped,
+        // if this invariant changes.
+        if (ret != CYNARA_API_CACHE_MISS) {
+            updateMonitor({client, user, privilege}, ret);
+        }
 
-    if (m_monitorCache.shouldFlush()) {
-        flushMonitor();
+        if (m_monitorCache.shouldFlush()) {
+            flushMonitor();
+        }
     }
 
     return ret;
@@ -417,6 +423,9 @@ void Logic::onDisconnected(void) {
 }
 
 void Logic::updateMonitor(const PolicyKey &policyKey, int result) {
+    if (!m_monitoringEnabled)
+        return;
+
     m_monitorCache.update(policyKey, result);
 
     if (m_monitorCache.shouldFlush())
@@ -424,6 +433,9 @@ void Logic::updateMonitor(const PolicyKey &policyKey, int result) {
 }
 
 void Logic::flushMonitor() {
+    if (!m_monitoringEnabled)
+        return;
+
     if (m_monitorCache.entries().size() == 0)
         return;
 

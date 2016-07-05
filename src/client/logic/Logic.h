@@ -56,6 +56,7 @@ private:
     SocketClient m_socketClient;
     CapacityCache m_cache;
     MonitorCache m_monitorCache;
+    const bool m_monitoringEnabled;
 
     void onDisconnected(void);
     bool ensureConnection(void);

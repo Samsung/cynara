@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2015 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2015-2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,9 +43,19 @@ public:
     std::size_t getCacheSize(void) const {
         return m_cacheSize;
     }
+
+    bool monitoringEnabled(void) const {
+        return m_monitoringEnabled;
+    }
+
     ~Configuration() {}
 private:
     std::size_t m_cacheSize;
+#if defined(MONITORING)
+    static constexpr bool m_monitoringEnabled = true;
+#else
+    static constexpr bool m_monitoringEnabled = false;
+#endif
 };
 
 } /* namespace Cynara */

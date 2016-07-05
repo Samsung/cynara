@@ -55,7 +55,7 @@ static ProtocolFrameSequenceNumber generateSequenceNumber(void) {
 
 Logic::Logic(const Configuration &conf) :
         m_socketClient(PathConfig::SocketPath::client, std::make_shared<ProtocolClient>()),
-        m_cache(conf.getCacheSize()) {
+        m_cache(conf.getCacheSize()), m_monitoringEnabled(conf.monitoringEnabled()) {
     auto naiveInterpreter = std::make_shared<NaiveInterpreter>();
     for (auto &descr : naiveInterpreter->getSupportedPolicyDescr()) {
         m_cache.registerPlugin(descr, naiveInterpreter);
@@ -183,6 +183,9 @@ void Logic::onDisconnected(void) {
 }
 
 void Logic::updateMonitor(const PolicyKey &policyKey, int result) {
+    if (!m_monitoringEnabled)
+        return;
+
     m_monitorCache.update(policyKey, result);
 
     if (m_monitorCache.shouldFlush())
@@ -190,6 +193,9 @@ void Logic::updateMonitor(const PolicyKey &policyKey, int result) {
 }
 
 void Logic::flushMonitor() {
+    if (!m_monitoringEnabled)
+        return;
+
     if (m_monitorCache.entries().size() == 0)
         return;
 

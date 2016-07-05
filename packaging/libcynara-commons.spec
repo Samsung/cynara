@@ -188,7 +188,8 @@ export LDFLAGS+="-Wl,--rpath=%{_libdir}"
         -DDATA_ROOT_DIR:PATH=%{_datadir} \
         -DSYSTEMD_UNIT_DIR:PATH=%{_unitdir} \
         -DSOCKET_DIR:PATH=/run/%{project_name} \
-        -DDB_FILES_SMACK_LABEL="System"
+        -DDB_FILES_SMACK_LABEL="System" \
+        -DMONITORING=ON
 make %{?jobs:-j%jobs}
 
 %install

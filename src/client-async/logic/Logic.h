@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -77,6 +77,7 @@ private:
     bool m_operationPermitted;
     bool m_inAnswerCancelResponseCallback;
     MonitorCache m_monitorCache;
+    const bool m_monitoringEnabled;
 
     bool checkCacheValid(void);
     int createRequest(bool simple, const std::string &client, const std::string &session,

@@ -114,6 +114,8 @@ SET(CYNARA_TESTS_SOURCES
     service/main/cmdlineparser.cpp
     service/monitor/entriesmanager.cpp
     service/monitor/entriesqueue.cpp
+    shared-string/SharedStringEx.cpp
+    shared-string/SharedStringTests.cpp
     storage/checksum/checksumvalidator.cpp
     storage/performance/bucket.cpp
     storage/storage/policies.cpp

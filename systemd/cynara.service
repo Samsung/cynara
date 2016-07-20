@@ -18,6 +18,7 @@ Sockets=cynara-monitor-get.socket
 UMask=0000
 User=cynara
 Group=cynara
+SmackProcessLabel=System
 #NoNewPrivileges=true
 
 #Environment="CYNARA_LOG_LEVEL=LOG_DEBUG"

@@ -1,3 +1,37 @@
+Release: 0.14.3
+Date:    2016.07.21
+Name:    Upgrade to usage of new libsystemd and apply SMACK security label for cynara service
+
+Libraries:
+libcynara-admin.0.14.3
+libcynara-agent.0.14.3
+libcynara-client-async.0.14.3
+libcynara-client-commons.0.14.3
+libcynara-client.0.14.3
+libcynara-commons.0.14.3
+libcynara-creds-commons.0.14.3
+libcynara-creds-dbus.0.14.3
+libcynara-creds-gdbus.0.14.3
+libcynara-creds-self.0.14.3
+libcynara-creds-socket.0.14.3
+libcynara-monitor.0.14.3
+libcynara-session.0.14.3
+libcynara-storage.0.14.3
+
+Executables:
+cynara
+cyad
+cynara-db-chsgen
+
+Description:
+A "System" SMACK label is set for cyanra service.
+Build scripts are configured to work with latest systemd version and paths expected by Yocto.
+Remove dependency of credentials libraries from libsmack.
+Make monitor functionality optional.
+Fix minor issues.
+
+###############################
+
 Release: 0.14.2
 Date:    2016.06.28
 Name:    Add credential helpers for self process, pass access denied error to clients

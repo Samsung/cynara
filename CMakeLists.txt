@@ -46,15 +46,6 @@ ENDIF (NOT BUILD_COMMONS AND NOT BUILD_SERVICE AND NOT BUILD_DBUS)
 #Search the new libsystemd package
 PKG_CHECK_MODULES(SYSTEMD_DEP QUIET libsystemd)
 
-#Fallback to the older libsystemd packages
-IF(NOT SYSTEMD_DEP_FOUND)
-    PKG_CHECK_MODULES(SYSTEMD_DEP
-        QUIET
-        libsystemd-daemon
-        libsystemd-journal
-        )
-ENDIF(NOT SYSTEMD_DEP_FOUND)
-
 #Enforce and check
 IF(SYSTEMD_DEP_FOUND)
     #Enforce use of systemd if present

@@ -12,7 +12,7 @@ Requires:      libcynara-commons = %{version}
 Requires(post):   smack
 BuildRequires: cmake
 BuildRequires: zip
-BuildRequires: pkgconfig(libsystemd-daemon)
+BuildRequires: pkgconfig(libsystemd)
 BuildRequires: pkgconfig(libsmack)
 BuildRequires: pkgconfig(cynara-commons)
 %{?systemd_requires}

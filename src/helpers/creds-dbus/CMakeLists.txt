@@ -25,7 +25,6 @@ SET(LIB_CREDS_DBUS_PATH ${CYNARA_PATH}/helpers/creds-dbus)
 
 SET(LIB_CREDS_DBUS_SOURCES
     ${LIB_CREDS_DBUS_PATH}/creds-dbus.cpp
-    ${LIB_CREDS_DBUS_PATH}/creds-dbus-inner.cpp
     )
 
 PKG_CHECK_MODULES(LIB_CREDS_DBUS_DEP

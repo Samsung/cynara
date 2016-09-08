@@ -26,6 +26,7 @@
 #include <cynara-creds-commons.h>
 #include <cynara-creds-gdbus.h>
 #include <cynara-error.h>
+#include <log/log.h>
 
 namespace {
 
@@ -36,13 +37,21 @@ struct Credentials
 
     }
     int init(GDBusConnection *connection, const gchar *uniqueId) {
+        GError *err = nullptr;
         GVariant *reply = g_dbus_connection_call_sync(connection,
                             "org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus",
                             "GetConnectionCredentials", g_variant_new("(s)", uniqueId),
-                            G_VARIANT_TYPE("(a{sv})"), G_DBUS_CALL_FLAGS_NONE, -1, NULL, NULL);
+                            G_VARIANT_TYPE("(a{sv})"), G_DBUS_CALL_FLAGS_NONE, -1, NULL, &err);
 
-        if (reply == nullptr)
+        if (reply == nullptr) {
+            if (err != nullptr) {
+                LOGE("Getting client credentials by calling dbus method GetConnectionCredentials "
+                     "on Id <%s> failed with error <%s>\n",
+                     (uniqueId != nullptr) ? uniqueId : "null", err->message);
+                g_error_free(err);
+            }
             return CYNARA_API_UNKNOWN_ERROR;
+        }
 
         GVariantIter *iter;
         gchar *key;

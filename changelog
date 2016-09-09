@@ -1,3 +1,43 @@
+Release: 0.14.4
+Date:    2016.09.09
+Name:    New dbus and gdbus helpers
+
+Libraries:
+
+Libraries:
+libcynara-admin.0.14.4
+libcynara-agent.0.14.4
+libcynara-client-async.0.14.4
+libcynara-client-commons.0.14.4
+libcynara-client.0.14.4
+libcynara-commons.0.14.4
+libcynara-creds-commons.0.14.4
+libcynara-creds-dbus.0.14.4
+libcynara-creds-gdbus.0.14.4
+libcynara-creds-self.0.14.4
+libcynara-creds-socket.0.14.4
+libcynara-monitor.0.14.4
+libcynara-session.0.14.4
+libcynara-storage.0.14.4
+
+
+Executables:
+cynara
+cyad
+cynara-db-chsge
+
+Description:
+Use GetConnectionCredentials method in dbus helpers.
+Log gdbus method execution error in case of failure.
+Use GetConnectionCredentials method in gdbus helpers.
+Fix changelog for 14.3 release.
+Add tests for SharedString.
+Add new implementation of PolicyMap.
+Implement SharedString.
+
+###############################
+
+
 Release: 0.14.3
 Date:    2016.07.21
 Name:    Upgrade to usage of new libsystemd and apply SMACK security label for cynara service

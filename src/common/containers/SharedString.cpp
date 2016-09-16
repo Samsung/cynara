@@ -31,30 +31,38 @@
 
 namespace Cynara {
 
-StringStorage& StringStorage::getInstance(void) {
-    static StringStorage storage;
-    return storage;
-}
+StringStorage::SharedStringMap *StringStorage::s_sharedStringMap = nullptr;
 
 SharedStringInternal* StringStorage::get(const std::string &key) {
-    auto it = m_sharedStringMap.find(key);
-    if (it != m_sharedStringMap.end())
+    if (!s_sharedStringMap)
+        s_sharedStringMap = new SharedStringMap;
+
+    auto it = s_sharedStringMap->find(key);
+    if (it != s_sharedStringMap->end())
         return it->second.get();
 
     SharedStringUniquePtr n(new SharedStringInternal);
     n->refCount = 0;
     n->value = key;
-    return m_sharedStringMap.emplace(std::make_pair(key, std::move(n))).first->second.get();
+    return s_sharedStringMap->emplace(std::make_pair(key, std::move(n))).first->second.get();
 }
 
 void StringStorage::erase(const std::string &key) {
-    m_sharedStringMap.erase(key);
+    if (!s_sharedStringMap)
+        return;
+
+    s_sharedStringMap->erase(key);
+
+    if (s_sharedStringMap->empty()) {
+        delete s_sharedStringMap;
+        s_sharedStringMap = nullptr;
+    }
 }
 
 SharedString::SharedString(const std::string &key)
   : m_internal(nullptr)
 {
-    m_internal = StringStorage::getInstance().get(key);
+    m_internal = StringStorage::get(key);
     addref();
 }
 
@@ -118,7 +126,7 @@ void SharedString::unref(void) {
         return;
     --(m_internal->refCount);
     if (0 == m_internal->refCount)
-        StringStorage::getInstance().erase(m_internal->value);
+        StringStorage::erase(m_internal->value);
 }
 
 } // namespace Cynara

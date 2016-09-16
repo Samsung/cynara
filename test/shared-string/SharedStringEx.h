@@ -31,11 +31,14 @@ namespace Cynara {
 class StringStorageEx : public StringStorage {
 public:
     static const int NOT_FOUND;
+    static const int NOT_INITIALIZED;
 
-    static StringStorageEx& getInstance(void);
-    int getRefCount(const std::string &key) {
-        auto it = m_sharedStringMap.find(key);
-        if (it == m_sharedStringMap.end())
+    static int getRefCount(const std::string &key) {
+        if (!s_sharedStringMap)
+            return NOT_INITIALIZED;
+
+        auto it = s_sharedStringMap->find(key);
+        if (it == s_sharedStringMap->end())
             return NOT_FOUND;
 
         return it->second->refCount;

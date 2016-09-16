@@ -24,12 +24,7 @@
 namespace Cynara {
 
 const int StringStorageEx::NOT_FOUND = -1;
-
-StringStorageEx& StringStorageEx::getInstance(void) {
-    // this is dirty hack but without it we will not be able
-    // to extract refCount number from StringStorage
-    return static_cast<StringStorageEx&>(StringStorage::getInstance());
-}
+const int StringStorageEx::NOT_INITIALIZED = -2;
 
 } // namespace Cynara
 

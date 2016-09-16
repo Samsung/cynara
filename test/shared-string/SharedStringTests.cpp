@@ -29,7 +29,7 @@ using namespace Cynara;
 
 namespace {
 int getRefCount(const std::string &pattern) {
-    return StringStorageEx::getInstance().getRefCount(pattern);
+    return StringStorageEx::getRefCount(pattern);
 }
 } // namespace anonymous
 
@@ -82,6 +82,7 @@ TEST(SharedString, CopyOperator1) {
     {
         SharedString ex(pattern);
         ASSERT_EQ(1, getRefCount(pattern));
+        ASSERT_EQ(StringStorageEx::NOT_FOUND, getRefCount(pattern2));
         {
             SharedString copy(pattern2);
             ASSERT_EQ(1, getRefCount(pattern2));
@@ -114,6 +115,7 @@ TEST(SharedString, MoveOperator1) {
     {
         SharedString ex(pattern);
         ASSERT_EQ(1, getRefCount(pattern));
+        ASSERT_EQ(StringStorageEx::NOT_FOUND, getRefCount(pattern2));
         {
             SharedString copy(pattern2);
             ASSERT_EQ(1, getRefCount(pattern2));

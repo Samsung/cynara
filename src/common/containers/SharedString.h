@@ -34,15 +34,15 @@ struct SharedStringInternal {
     std::string value;
 };
 
+// monotype
 class StringStorage {
 public:
     typedef std::unique_ptr<SharedStringInternal> SharedStringUniquePtr;
-    static StringStorage& getInstance(void);
-    SharedStringInternal* get(const std::string &key);
-    void erase(const std::string &key);
+    typedef std::map<std::string, SharedStringUniquePtr> SharedStringMap;
+    static SharedStringInternal* get(const std::string &key);
+    static void erase(const std::string &key);
 protected:
-    StringStorage(){}
-    std::map<std::string, SharedStringUniquePtr> m_sharedStringMap;
+    static SharedStringMap *s_sharedStringMap;
 };
 
 class SharedString {

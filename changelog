@@ -1,3 +1,36 @@
+Release: 0.14.5
+Date:    2016.09.16
+Name:    Fix destruction of SharedStrings
+
+Libraries:
+
+Libraries:
+libcynara-admin.0.14.5
+libcynara-agent.0.14.5
+libcynara-client-async.0.14.5
+libcynara-client-commons.0.14.5
+libcynara-client.0.14.5
+libcynara-commons.0.14.5
+libcynara-creds-commons.0.14.5
+libcynara-creds-dbus.0.14.5
+libcynara-creds-gdbus.0.14.5
+libcynara-creds-self.0.14.5
+libcynara-creds-socket.0.14.5
+libcynara-monitor.0.14.5
+libcynara-session.0.14.5
+libcynara-storage.0.14.5
+
+
+Executables:
+cynara
+cyad
+cynara-db-chsge
+
+Description:
+Replace singleton with monotype in SharedString.
+
+###############################
+
 Release: 0.14.4
 Date:    2016.09.09
 Name:    New dbus and gdbus helpers

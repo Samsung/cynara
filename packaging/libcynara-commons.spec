@@ -52,6 +52,7 @@ Requires:   libcynara-creds-commons = %{version}
 Requires:   libcynara-creds-self = %{version}
 Requires:   libcynara-creds-socket = %{version}
 Requires:   libcynara-session = %{version}
+Requires:   libcynara-monitor = %{version}
 Obsoletes:  libcynara-admin-devel
 Obsoletes:  libcynara-agent-devel
 Obsoletes:  libcynara-client-async-devel

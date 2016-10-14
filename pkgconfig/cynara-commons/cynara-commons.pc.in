@@ -8,4 +8,4 @@ Description: cynara-commons package
 Version: @CYNARA_VERSION@
 Requires:
 Libs: -L${libdir} -lcynara-commons -lcynara-storage
-Cflags:
+Cflags: -I${includedir}/cynara

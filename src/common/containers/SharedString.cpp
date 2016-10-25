@@ -31,7 +31,7 @@
 
 namespace Cynara {
 
-StringStorage::SharedStringMap *StringStorage::s_sharedStringMap = nullptr;
+thread_local StringStorage::SharedStringMap *StringStorage::s_sharedStringMap = nullptr;
 
 SharedStringInternal* StringStorage::get(const std::string &key) {
     if (!s_sharedStringMap)

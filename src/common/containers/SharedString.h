@@ -42,7 +42,7 @@ public:
     static SharedStringInternal* get(const std::string &key);
     static void erase(const std::string &key);
 protected:
-    static SharedStringMap *s_sharedStringMap;
+    thread_local static SharedStringMap *s_sharedStringMap;
 };
 
 class SharedString {

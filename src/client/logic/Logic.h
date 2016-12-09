@@ -46,12 +46,12 @@ typedef std::unique_ptr<Logic> LogicUniquePtr;
 class Logic : public ApiInterface {
 public:
     explicit Logic(const Configuration &conf = Configuration());
-    virtual ~Logic();
 
     virtual int check(const std::string &client, const ClientSession &session,
                       const std::string &user, const std::string &privilege);
     virtual int simpleCheck(const std::string &client, const ClientSession &session,
                             const std::string &user, const std::string &privilege);
+    virtual void flushMonitor(void);
 private:
     SocketClient m_socketClient;
     CapacityCache m_cache;
@@ -67,7 +67,6 @@ private:
     bool requestMonitorEntriesPut();
 
     void updateMonitor(const PolicyKey &policyKey, int result);
-    void flushMonitor();
 };
 
 } // namespace Cynara

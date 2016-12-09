@@ -112,7 +112,13 @@ int cynara_initialize(cynara **pp_cynara, const cynara_configuration *p_conf)
 CYNARA_API
 int cynara_finish(cynara *p_cynara)
 {
-    delete p_cynara;
+    (void)Cynara::tryCatch([&]() {
+        if (!p_cynara)
+            return CYNARA_API_SUCCESS;
+        p_cynara->impl->flushMonitor();
+        delete p_cynara;
+        return CYNARA_API_SUCCESS;
+    });
 
     return CYNARA_API_SUCCESS;
 }

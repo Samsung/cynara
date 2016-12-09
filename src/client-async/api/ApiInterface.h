@@ -47,6 +47,7 @@ public:
     virtual int process(void) = 0;
     virtual int cancelRequest(cynara_check_id checkId) = 0;
     virtual bool isFinishPermitted(void) = 0;
+    virtual void tryFlushMonitor(void) = 0;
 };
 
 } // namespace Cynara

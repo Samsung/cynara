@@ -64,6 +64,7 @@ public:
     virtual int process(void);
     virtual int cancelRequest(cynara_check_id checkId);
     virtual bool isFinishPermitted(void);
+    virtual void tryFlushMonitor(void);
 
 private:
     typedef std::map<ProtocolFrameSequenceNumber, CheckData> CheckMap;

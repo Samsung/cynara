@@ -62,10 +62,6 @@ Logic::Logic(const Configuration &conf) :
     }
 }
 
-Logic::~Logic() {
-    flushMonitor();
-}
-
 int Logic::check(const std::string &client, const ClientSession &session, const std::string &user,
                  const std::string &privilege) {
     if (!ensureConnection())

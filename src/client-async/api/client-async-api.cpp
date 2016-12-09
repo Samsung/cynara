@@ -113,10 +113,14 @@ int cynara_async_initialize(cynara_async **pp_cynara,
 
 CYNARA_API
 void cynara_async_finish(cynara_async *p_cynara) {
-    if (!p_cynara || !p_cynara->impl->isFinishPermitted())
-        return;
+    (void)Cynara::tryCatch([&](){
+        if (!p_cynara || !p_cynara->impl->isFinishPermitted())
+            return CYNARA_API_SUCCESS;
+        p_cynara->impl->tryFlushMonitor();
 
-    delete p_cynara;
+        delete p_cynara;
+        return CYNARA_API_SUCCESS;
+    });
 }
 
 CYNARA_API

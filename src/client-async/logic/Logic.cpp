@@ -68,7 +68,15 @@ Logic::Logic(cynara_status_callback callback, void *userStatusData, const Config
 
 Logic::~Logic() {
     m_operationPermitted = false;
+    for (auto &kv : m_checks) {
+        if (!kv.second.cancelled())
+            kv.second.callback().onFinish(kv.first);
+    }
 
+    m_statusCallback.onDisconnected();
+}
+
+void Logic::tryFlushMonitor(void) {
     if (m_monitoringEnabled) {
         // The client invoked cynara_async_finish(), so it's basically game over.
         // Just try to flush as many entries as possible, before the socket is replete.
@@ -82,13 +90,6 @@ Logic::~Logic() {
             LOGW("Some monitor entries were lost");
         }
     }
-
-    for (auto &kv : m_checks) {
-        if (!kv.second.cancelled())
-            kv.second.callback().onFinish(kv.first);
-    }
-
-    m_statusCallback.onDisconnected();
 }
 
 int Logic::checkCache(const std::string &client, const std::string &session,

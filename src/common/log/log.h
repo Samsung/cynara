@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Contact: Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
  *
@@ -42,32 +42,33 @@ extern int __log_level;
 #ifndef CYNARA_NO_LOGS
 namespace {
     template <typename ...Args>
-    void UNUSED __LOG_FUN(int level, const std::stringstream &format, Args&&... args) {
+    void UNUSED __DIRECT_LOG_FUN(int level, Args&&... args) {
 #ifdef BUILD_WITH_SYSTEMD
-        sd_journal_print(level, format.str().c_str(), std::forward<Args>(args)...);
-#else // BUILD_WITH_SYSTEMD
-        syslog(level, format.str().c_str(), std::forward<Args>(args)...);
-#endif // BUILD_WITH_SYSTEMD
+        sd_journal_print(level, std::forward<Args>(args)...);
+#else
+        syslog(level, std::forward<Args>(args)...);
+#endif
+    }
+
+    template <typename ...Args>
+    void UNUSED __LOG_FUN(int level, const std::stringstream &format, Args&&... args) {
+         __DIRECT_LOG_FUN(level, format.str().c_str(), std::forward<Args>(args)...);
     }
 
     template <>
     void UNUSED __LOG_FUN(int level, const std::stringstream &format) {
-#ifdef BUILD_WITH_SYSTEMD
-        sd_journal_print(level, "%s", format.str().c_str());
-#else // BUILD_WITH_SYSTEMD
-        syslog(level, "%s", format.str().c_str());
-#endif // BUILD_WITH_SYSTEMD
+        __DIRECT_LOG_FUN(level, "%s", format.str().c_str());
     }
 } // namespace anonymous
 
-    #define __LOG(LEVEL, FORMAT, ...) \
-        do { \
-            if (LEVEL <= __log_level) { \
-                std::stringstream __LOG_FORMAT; \
-                __LOG_FORMAT << FORMAT; \
-                __LOG_FUN(LEVEL, __LOG_FORMAT, ##__VA_ARGS__); \
-            } \
-        } while (0)
+#define __LOG(LEVEL, FORMAT, ...) \
+    do { \
+        if (LEVEL <= __log_level) { \
+            std::stringstream __LOG_FORMAT; \
+            __LOG_FORMAT << FORMAT; \
+            __LOG_FUN(LEVEL, __LOG_FORMAT, ##__VA_ARGS__); \
+        } \
+    } while (0)
 
 #else // CYNARA_NO_LOGS
     #define __LOG(LEVEL, ...)

@@ -59,6 +59,17 @@ namespace {
     void UNUSED __LOG_FUN(int level, const std::stringstream &format) {
         __DIRECT_LOG_FUN(level, "%s", format.str().c_str());
     }
+
+    template <typename ...Args>
+    void UNUSED __LOG_FUN(int level, const char *format, Args&&... args) {
+         __DIRECT_LOG_FUN(level, format, std::forward<Args>(args)...);
+    }
+
+    template <>
+    void UNUSED __LOG_FUN(int level, const char *format) {
+        __DIRECT_LOG_FUN(level, "%s", format);
+    }
+
 } // namespace anonymous
 
 #define __LOG(LEVEL, FORMAT, ...) \
@@ -70,8 +81,15 @@ namespace {
         } \
     } while (0)
 
+#define __LOG_NOTHROW(LEVEL, FORMAT, ...) \
+    do { \
+        if (LEVEL <= __log_level) \
+            __LOG_FUN(LEVEL, FORMAT, ##__VA_ARGS__); \
+    } while (0)
+
 #else // CYNARA_NO_LOGS
     #define __LOG(LEVEL, ...)
+    #define __LOG_NOTHROW(LEVEL, ...)
 #endif
 
 #define LOGM(...)  __LOG(LOG_EMERG, __VA_ARGS__)   /* system is unusable */
@@ -82,6 +100,16 @@ namespace {
 #define LOGN(...)  __LOG(LOG_NOTICE, __VA_ARGS__)  /* normal but significant condition */
 #define LOGI(...)  __LOG(LOG_INFO, __VA_ARGS__)    /* informational */
 #define LOGD(...)  __LOG(LOG_DEBUG, __VA_ARGS__)   /* debug-level messages */
+
+//no throw versions
+#define LOGM_NOTHROW(...)  __LOG_NOTHROW(LOG_EMERG, __VA_ARGS__)   /* system is unusable */
+#define LOGA_NOTHROW(...)  __LOG_NOTHROW(LOG_ALERT, __VA_ARGS__)   /* action must be taken immediately */
+#define LOGC_NOTHROW(...)  __LOG_NOTHROW(LOG_CRIT, __VA_ARGS__)    /* critical conditions */
+#define LOGE_NOTHROW(...)  __LOG_NOTHROW(LOG_ERR, __VA_ARGS__)     /* error conditions */
+#define LOGW_NOTHROW(...)  __LOG_NOTHROW(LOG_WARNING, __VA_ARGS__) /* warning conditions */
+#define LOGN_NOTHROW(...)  __LOG_NOTHROW(LOG_NOTICE, __VA_ARGS__)  /* normal but significant condition */
+#define LOGI_NOTHROW(...)  __LOG_NOTHROW(LOG_INFO, __VA_ARGS__)    /* informational */
+#define LOGD_NOTHROW(...)  __LOG_NOTHROW(LOG_DEBUG, __VA_ARGS__)   /* debug-level messages */
 
 void init_log(void);
 

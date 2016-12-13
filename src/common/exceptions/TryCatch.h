@@ -41,22 +41,22 @@ int tryCatch(const std::function<int(void)> &func) {
     try {
         return func();
     } catch (const std::bad_alloc &e) {
-        LOGE("%s", e.what());
+        LOGE_NOTHROW("%s", e.what());
         return CYNARA_API_OUT_OF_MEMORY;
     } catch (const NoMemoryException &e) {
-        LOGE("%s", e.what());
+        LOGE_NOTHROW("%s", e.what());
         return CYNARA_API_OUT_OF_MEMORY;
     } catch (const InvalidProtocolException &e) {
-        LOGE("%s", e.what());
+        LOGE_NOTHROW("%s", e.what());
         return CYNARA_API_INVALID_PARAM;
     } catch (const AccessDeniedException &e) {
-        LOGE("%s", e.what());
+        LOGE_NOTHROW("%s", e.what());
         return CYNARA_API_PERMISSION_DENIED;
     } catch (const std::exception &e) {
-        LOGE("%s", e.what());
+        LOGE_NOTHROW("%s", e.what());
         return CYNARA_API_UNKNOWN_ERROR;
     } catch (...) {
-        LOGE("Unexpected exception");
+        LOGE_NOTHROW("Unexpected exception");
         return CYNARA_API_UNKNOWN_ERROR;
     }
 }

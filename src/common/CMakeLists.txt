@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
+# Copyright (c) 2014-2017 Samsung Electronics Co., Ltd All Rights Reserved
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ INCLUDE_DIRECTORIES(
 SET(COMMON_SOURCES
     ${COMMON_PATH}/config/PathConfig.cpp
     ${COMMON_PATH}/containers/BinaryQueue.cpp
-    ${COMMON_PATH}/containers/SharedString.cpp
     ${COMMON_PATH}/error/api.cpp
     ${COMMON_PATH}/lock/FileLock.cpp
     ${COMMON_PATH}/log/AuditLog.cpp

@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
+# Copyright (c) 2014-2017 Samsung Electronics Co., Ltd All Rights Reserved
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ SET(CYNARA_SOURCES_FOR_TESTS
     ${CYNARA_SRC}/client-common/cache/MonitorCache.cpp
     ${CYNARA_SRC}/common/config/PathConfig.cpp
     ${CYNARA_SRC}/common/containers/BinaryQueue.cpp
-    ${CYNARA_SRC}/common/containers/SharedString.cpp
     ${CYNARA_SRC}/common/protocol/ProtocolAdmin.cpp
     ${CYNARA_SRC}/common/protocol/ProtocolFrame.cpp
     ${CYNARA_SRC}/common/protocol/ProtocolFrameHeader.cpp
@@ -114,8 +113,6 @@ SET(CYNARA_TESTS_SOURCES
     service/main/cmdlineparser.cpp
     service/monitor/entriesmanager.cpp
     service/monitor/entriesqueue.cpp
-    shared-string/SharedStringEx.cpp
-    shared-string/SharedStringTests.cpp
     storage/checksum/checksumvalidator.cpp
     storage/performance/bucket.cpp
     storage/storage/policies.cpp

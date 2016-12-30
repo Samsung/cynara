@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2014-2017 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -26,8 +26,7 @@
 #define CYNARA_COMMON_TYPES_POLICYKEY_H_
 
 #include <string>
-
-#include <containers/SharedString.h>
+#include <tuple>
 
 namespace Cynara {
 
@@ -70,10 +69,6 @@ public:
     const std::string &toString(void) const;
 
     const ValueType &value(void) const {
-        return m_value.toString();
-    }
-
-    SharedString toSharedString(void) const {
         return m_value;
     }
 
@@ -98,7 +93,7 @@ protected:
     }
 
 private:
-    SharedString m_value;
+    ValueType m_value;
     bool m_isAny;
 
     const static std::string &wildcardValue(void);

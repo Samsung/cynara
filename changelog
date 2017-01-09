@@ -1,3 +1,40 @@
+Release: 0.14.7
+Dae:     2017.01.09
+Name:    Build system cleanup, set security_fw group, revert SharedString
+
+Libraries:
+
+Libraries:
+libcynara-admin.0.14.7
+libcynara-agent.0.14.7
+libcynara-client-async.0.14.7
+libcynara-client-commons.0.14.7
+libcynara-client.0.14.7
+libcynara-commons.0.14.7
+libcynara-creds-commons.0.14.7
+libcynara-creds-dbus.0.14.7
+libcynara-creds-gdbus.0.14.7
+libcynara-creds-self.0.14.7
+libcynara-creds-socket.0.14.7
+libcynara-monitor.0.14.7
+libcynara-session.0.14.7
+libcynara-storage.0.14.7
+
+
+Executables:
+cynara
+cyad
+cynara-db-chsge
+
+Description:
+Set security_fw group permissions for cynara-agent.socket
+Temporarily revert SharedString memory optimization
+Fix Cynara logging mechanism
+Split BUILD_WITH_SYSTEMD to BUILD_WITH_SYSTEMD_DAEMON/JOURNAL
+Removing usage of the older libsystemd-daemon/journal
+
+###############################
+
 Release: 0.14.6
 Dae:     2016.12.15
 Name:    No-throw logging added & thread_local added to SharedStringMap

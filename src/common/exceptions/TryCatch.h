@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2014-2017 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@
 #ifndef SRC_COMMON_EXCEPTIONS_TRYCATCH_H_
 #define SRC_COMMON_EXCEPTIONS_TRYCATCH_H_
 
+#include <cxxabi.h>
 #include <exception>
 #include <functional>
 #include <new>
@@ -55,6 +56,13 @@ int tryCatch(const std::function<int(void)> &func) {
     } catch (const std::exception &e) {
         LOGE_NOTHROW("%s", e.what());
         return CYNARA_API_UNKNOWN_ERROR;
+    } catch (const abi::__forced_unwind &) {
+        /**
+         * workaround for pthread_cancel, which cancels thread using this exception
+         * and expects it to be rethrown in every try-catch
+         */
+        LOGD_NOTHROW("We are 'gracefully' stopped by pthread_cancel");
+        throw;
     } catch (...) {
         LOGE_NOTHROW("Unexpected exception");
         return CYNARA_API_UNKNOWN_ERROR;

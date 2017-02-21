@@ -1,5 +1,38 @@
+Release  0.14.8
+Date:    2017.02.21
+Name:    Support pthread_cancel exception rethrow
+
+Libraries:
+
+Libraries:
+libcynara-admin.0.14.8
+libcynara-agent.0.14.8
+libcynara-client-async.0.14.8
+libcynara-client-commons.0.14.8
+libcynara-client.0.14.8
+libcynara-commons.0.14.8
+libcynara-creds-commons.0.14.8
+libcynara-creds-dbus.0.14.8
+libcynara-creds-gdbus.0.14.8
+libcynara-creds-self.0.14.8
+libcynara-creds-socket.0.14.8
+libcynara-monitor.0.14.8
+libcynara-session.0.14.8
+libcynara-storage.0.14.8
+
+
+Executables:
+cynara
+cyad
+cynara-db-chsge
+
+Description:
+Support pthread_cancel exception rethrow
+
+###############################
+
 Release: 0.14.7
-Dae:     2017.01.09
+Date:    2017.01.09
 Name:    Build system cleanup, set security_fw group, revert SharedString
 
 Libraries:

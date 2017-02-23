@@ -73,10 +73,12 @@ rm -rf %{buildroot}
 %make_install
 
 mkdir -p %{buildroot}%{_unitdir}/sockets.target.wants
+mkdir -p %{buildroot}%{_unitdir}/multi-user.target.wants
 ln -s ../cynara.socket %{buildroot}%{_unitdir}/sockets.target.wants/cynara.socket
 ln -s ../cynara-admin.socket %{buildroot}%{_unitdir}/sockets.target.wants/cynara-admin.socket
 ln -s ../cynara-agent.socket %{buildroot}%{_unitdir}/sockets.target.wants/cynara-agent.socket
 ln -s ../cynara-monitor-get.socket %{buildroot}%{_unitdir}/sockets.target.wants/cynara-monitor-get.socket
+ln -s ../cynara.service %{buildroot}%{_unitdir}/multi-user.target.wants/cynara.service
 
 %post
 ### Add file capabilities if needed
@@ -84,11 +86,6 @@ ln -s ../cynara-monitor-get.socket %{buildroot}%{_unitdir}/sockets.target.wants/
 ### In such case uncomment Requires with those packages
 
 systemctl daemon-reload
-
-if [ $1 = 1 ]; then
-    systemctl enable %{name}.service
-fi
-
 systemctl restart %{name}.service
 
 %preun
@@ -102,6 +99,7 @@ fi
 %license LICENSE
 %attr(755,root,root) %{_bindir}/cynara
 %attr(-,root,root) %{_unitdir}/cynara.service
+%attr(-,root,root) %{_unitdir}/multi-user.target.wants/cynara.service
 %attr(-,root,root) %{_unitdir}/cynara.target
 %attr(-,root,root) %{_unitdir}/sockets.target.wants/cynara.socket
 %attr(-,root,root) %{_unitdir}/cynara.socket

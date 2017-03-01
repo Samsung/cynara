@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2016 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2016-2017 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,6 +28,13 @@ namespace Cynara {
 class FdNotifyObject {
 public:
     FdNotifyObject();
+
+    FdNotifyObject(const FdNotifyObject &) = delete;
+    FdNotifyObject& operator=(const FdNotifyObject &) = delete;
+
+    FdNotifyObject(FdNotifyObject &&) = delete;
+    FdNotifyObject& operator=(FdNotifyObject &&) = delete;
+
     ~FdNotifyObject();
     int getNotifyFd(void);
     bool init(void);

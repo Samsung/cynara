@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2016 Samsung Electronics Co., Ltd All Rights Reserved
+ *  Copyright (c) 2016-2017 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@
 
 #include <cerrno>
 #include <cstring>
+#include <sys/socket.h>
 #include <unistd.h>
 
 #include <log/log.h>
@@ -49,7 +50,7 @@ int FdNotifyObject::getNotifyFd(void) {
 
 bool FdNotifyObject::notify(void) {
     const char wakeup[] = "w";
-    int ret = TEMP_FAILURE_RETRY(write(m_pipeFd[1], wakeup, sizeof(wakeup)));
+    int ret = TEMP_FAILURE_RETRY(send(m_pipeFd[1], wakeup, sizeof(wakeup), MSG_NOSIGNAL));
     if (ret == -1) {
         return false;
     }

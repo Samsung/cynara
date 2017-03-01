@@ -22,7 +22,7 @@
 
 #include <cerrno>
 #include <cstring>
-#include <sys/socket.h>
+#include <sys/eventfd.h>
 #include <unistd.h>
 
 #include <log/log.h>
@@ -31,37 +31,47 @@
 
 namespace Cynara {
 
-FdNotifyObject::FdNotifyObject() : m_pipeFd{-1, -1} {
+FdNotifyObject::FdNotifyObject() : m_eventFd(-1) {
 }
 
 bool FdNotifyObject::init(void) {
-    int ret = pipe(m_pipeFd);
-    if (ret != 0) {
+    m_eventFd = eventfd(0, 0);
+    if (m_eventFd == -1) {
         int err = errno;
-        LOGE("Couldn't initialize pipes: " << strerror(err));
+        LOGE("Couldn't initialize event fd: " << strerror(err));
         return false;
     }
     return true;
 }
 
 int FdNotifyObject::getNotifyFd(void) {
-    return m_pipeFd[0];
+    return m_eventFd;
 }
 
 bool FdNotifyObject::notify(void) {
-    const char wakeup[] = "w";
-    int ret = TEMP_FAILURE_RETRY(send(m_pipeFd[1], wakeup, sizeof(wakeup), MSG_NOSIGNAL));
+    int ret = eventfd_write(m_eventFd, 1);
     if (ret == -1) {
+        int err = errno;
+        LOGE("Couldn't write to event fd " << strerror(err));
         return false;
     }
     return true;
 }
 
+bool FdNotifyObject::snooze(void) {
+    eventfd_t value;
+    int ret = eventfd_read(m_eventFd, &value);
+    if (ret == -1) {
+        int err = errno;
+        LOGE("Couldn't read from event fd " << strerror(err));
+        return false;
+    }
+    return true;
+
+}
+
 FdNotifyObject::~FdNotifyObject() {
-    if (m_pipeFd[0] != -1)
-        close(m_pipeFd[0]);
-    if (m_pipeFd[1] != -1)
-        close(m_pipeFd[1]);
+    close(m_eventFd);
 }
 
 } /* namespace Cynara */

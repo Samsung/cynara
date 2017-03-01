@@ -124,6 +124,7 @@ int Logic::sendAndFetch(std::vector<MonitorEntry> &entries) {
     }
     case MonitorSocketClient::Event::NOTIFY_RETURN:
         LOGD("Got notification to stop working");
+        (void)m_notify.snooze();
         break;
     }
     return CYNARA_API_SUCCESS;

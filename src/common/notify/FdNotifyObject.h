@@ -39,8 +39,9 @@ public:
     int getNotifyFd(void);
     bool init(void);
     bool notify(void);
+    bool snooze(void);
 private:
-    int m_pipeFd[2];
+    int m_eventFd;
 };
 
 } /* namespace Cynara */

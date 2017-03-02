@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
+# Copyright (c) 2014-2017 Samsung Electronics Co., Ltd All Rights Reserved
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
 PROJECT("cynara")
-set(CYNARA_VERSION 0.14.8)
+set(CYNARA_VERSION 0.14.9)
 
 ############################# cmake packages ##################################
 

@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2016 Samsung Electronics Co., Ltd All Rights Reserved
+# Copyright (c) 2014-2017 Samsung Electronics Co., Ltd All Rights Reserved
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 #
 
 SET(LIB_SESSION_VERSION_MAJOR 0)
-SET(LIB_SESSION_VERSION ${LIB_SESSION_VERSION_MAJOR}.14.8)
+SET(LIB_SESSION_VERSION ${LIB_SESSION_VERSION_MAJOR}.14.9)
 
 SET(LIB_SESSION_PATH ${CYNARA_PATH}/helpers/session)
 

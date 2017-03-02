@@ -1,3 +1,34 @@
+Release  0.14.9
+Date:    2017.03.02
+Name:    Remove systemctl enable command
+
+Libraries:
+libcynara-admin.0.14.9
+libcynara-agent.0.14.9
+libcynara-client-async.0.14.9
+libcynara-client-commons.0.14.9
+libcynara-client.0.14.9
+libcynara-commons.0.14.9
+libcynara-creds-commons.0.14.9
+libcynara-creds-dbus.0.14.9
+libcynara-creds-gdbus.0.14.9
+libcynara-creds-self.0.14.9
+libcynara-creds-socket.0.14.9
+libcynara-monitor.0.14.9
+libcynara-session.0.14.9
+libcynara-storage.0.14.9
+
+
+Executables:
+cynara
+cyad
+cynara-db-chsge
+
+Description:
+Remove systemctl enable command.
+
+###############################
+
 Release  0.14.8
 Date:    2017.02.21
 Name:    Support pthread_cancel exception rethrow

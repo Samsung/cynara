@@ -1,6 +1,6 @@
 Name:       libcynara-commons
 Summary:    Cynara service with client libraries
-Version:    0.14.8
+Version:    0.14.9
 Release:    1
 Group:      Security/Application Privilege
 License:    Apache-2.0

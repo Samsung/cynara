@@ -315,11 +315,13 @@ fi
 %files -n cynara-db-migration
 %manifest cynara-db-migration.manifest
 %manifest cynara-db-chsgen.manifest
+%license LICENSE
 %attr(700,root,root) %{_sbindir}/cynara-db-migration
 %attr(700,root,root) %{_sbindir}/cynara-db-chsgen
 
 %files -n cyad
 %manifest cyad.manifest
+%license LICENSE
 %attr(700,root,root) %{_sbindir}/cyad
 
 %files -n libcynara-monitor

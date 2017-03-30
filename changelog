@@ -1,3 +1,37 @@
+Release: 0.14.10
+Date:    2017.03.30
+Name:    Release 0.14.10
+
+Libraries:
+libcynara-admin.0.14.10
+libcynara-agent.0.14.10
+libcynara-client-async.0.14.10
+libcynara-client-commons.0.14.10
+libcynara-client.0.14.10
+libcynara-commons.0.14.10
+libcynara-creds-commons.0.14.10
+libcynara-creds-dbus.0.14.10
+libcynara-creds-gdbus.0.14.10
+libcynara-creds-self.0.14.10
+libcynara-creds-socket.0.14.10
+libcynara-monitor.0.14.10
+libcynara-session.0.14.10
+libcynara-storage.0.14.10
+
+Executables:
+cynara
+cyad
+cynara-db-chsge
+
+Description:
+Add missing license files.
+Add cancelling function to agent API
+Reimplement FdNotificationObject
+Fix FdNotificationObject
+Move notification object to commons
+
+###############################
+
 Release  0.14.9
 Date:    2017.03.02
 Name:    Remove systemctl enable command

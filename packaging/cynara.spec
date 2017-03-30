@@ -1,6 +1,6 @@
 Name:       cynara
 Summary:    Cynara service with client libraries
-Version:    0.14.9
+Version:    0.14.10
 Release:    1
 Group:      Security/Application Privilege
 License:    Apache-2.0

@@ -30,6 +30,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <functional>
 
 #include <exceptions/NotImplementedException.h>
 #include <types/pointers.h>

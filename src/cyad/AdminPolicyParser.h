@@ -25,6 +25,7 @@
 
 #include <istream>
 #include <memory>
+#include <functional>
 
 #include <cyad/CynaraAdminPolicies.h>
 

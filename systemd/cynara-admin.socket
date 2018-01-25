@@ -1,6 +1,6 @@
 [Socket]
 ListenStream=/run/cynara/cynara-admin.socket
-SocketMode=0700
+SocketMode=0600
 SmackLabelIPIn=@
 SmackLabelIPOut=@
 

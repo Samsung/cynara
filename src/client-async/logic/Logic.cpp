@@ -233,6 +233,7 @@ bool Logic::processOut(void) {
         case Socket::SendStatus::ALL_DATA_SENT:
             onStatusChange(m_socketClient.getSockFd(),
                            cynara_async_status::CYNARA_STATUS_FOR_READ);
+            /*@fallthrough@*/
         case Socket::SendStatus::PARTIAL_DATA_SENT:
             return true;
         default:

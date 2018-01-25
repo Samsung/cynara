@@ -45,6 +45,7 @@ bool SocketClient::connect(void) {
                 LOGW("Error connecting to Cynara. Service not available.");
                 return false;
             }
+            /*@fallthrough@*/
         default:
             return true;
     }

@@ -1,8 +1,7 @@
 [Socket]
-ListenStream=/run/cynara/cynara-agent.socket
-SocketGroup=security_fw
-SocketMode=0060
-SmackLabelIPIn=*
+ListenStream=@SOCKET_DIR@/cynara-admin.socket
+SocketMode=0600
+SmackLabelIPIn=@
 SmackLabelIPOut=@
 
 Service=cynara.service

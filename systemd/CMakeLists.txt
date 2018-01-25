@@ -16,13 +16,24 @@
 # @author      Lukasz Wojciechowski <l.wojciechow@partner.samsung.com>
 #
 
+SET(CYNARA_ADMIN_SOCKET_GROUP
+    "security_fw"
+    CACHE STRING
+    "Group to apply on administrative sockets")
+
+
+CONFIGURE_FILE(cynara.socket.in             cynara.socket @ONLY)
+CONFIGURE_FILE(cynara-admin.socket.in       cynara-admin.socket @ONLY)
+CONFIGURE_FILE(cynara-agent.socket.in       cynara-agent.socket @ONLY)
+CONFIGURE_FILE(cynara-monitor-get.socket.in cynara-monitor-get.socket @ONLY)
+
 INSTALL(FILES
     ${CMAKE_SOURCE_DIR}/systemd/cynara.service
     ${CMAKE_SOURCE_DIR}/systemd/cynara.target
-    ${CMAKE_SOURCE_DIR}/systemd/cynara.socket
-    ${CMAKE_SOURCE_DIR}/systemd/cynara-admin.socket
-    ${CMAKE_SOURCE_DIR}/systemd/cynara-agent.socket
-    ${CMAKE_SOURCE_DIR}/systemd/cynara-monitor-get.socket
+    ${CMAKE_BINARY_DIR}/systemd/cynara.socket
+    ${CMAKE_BINARY_DIR}/systemd/cynara-admin.socket
+    ${CMAKE_BINARY_DIR}/systemd/cynara-agent.socket
+    ${CMAKE_BINARY_DIR}/systemd/cynara-monitor-get.socket
     DESTINATION
     ${SYSTEMD_UNIT_DIR}
 )

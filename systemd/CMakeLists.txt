@@ -38,3 +38,10 @@ INSTALL(FILES
     ${SYSTEMD_UNIT_DIR}
 )
 
+INSTALL(DIRECTORY
+    ${CMAKE_SOURCE_DIR}/systemd/sockets.target.wants
+    DESTINATION
+    ${SYSTEMD_UNIT_DIR}
+)
+
+

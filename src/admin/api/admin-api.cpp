@@ -146,6 +146,7 @@ int cynara_admin_set_policies(struct cynara_admin *p_cynara_admin,
                 case CYNARA_ADMIN_BUCKET:
                     if (!isStringValid(policy->result_extra))
                         return CYNARA_API_INVALID_PARAM;
+                    /*@fallthrough@*/
                 default:
                 {
                     std::string extraStr = policy->result_extra ? policy->result_extra : "";

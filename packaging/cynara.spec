@@ -72,12 +72,7 @@ make %{?jobs:-j%jobs}
 rm -rf %{buildroot}
 %make_install
 
-mkdir -p %{buildroot}%{_unitdir}/sockets.target.wants
 mkdir -p %{buildroot}%{_unitdir}/multi-user.target.wants
-ln -s ../cynara.socket %{buildroot}%{_unitdir}/sockets.target.wants/cynara.socket
-ln -s ../cynara-admin.socket %{buildroot}%{_unitdir}/sockets.target.wants/cynara-admin.socket
-ln -s ../cynara-agent.socket %{buildroot}%{_unitdir}/sockets.target.wants/cynara-agent.socket
-ln -s ../cynara-monitor-get.socket %{buildroot}%{_unitdir}/sockets.target.wants/cynara-monitor-get.socket
 ln -s ../cynara.service %{buildroot}%{_unitdir}/multi-user.target.wants/cynara.service
 
 %post
